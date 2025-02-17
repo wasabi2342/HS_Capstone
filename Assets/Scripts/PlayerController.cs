@@ -5,35 +5,104 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("ÀÌµ¿ ¼Óµµ ¼³Á¤")]
-    public float horizontalSpeed = 5f;
-    public float verticalSpeed = 5f;
-    public float diagonalSpeed = 4.5f;
+    [Header("ì´ë™ ì†ë„ ì„¤ì • (8ë°©í–¥)")]
+    public float speedHorizontal = 5f;
+    public float speedVertical = 5f;
+    public float speedDiagonalLeftUp = 4.5f;
+    public float speedDiagonalRightUp = 4.5f;
+    public float speedDiagonalLeftDown = 4.5f;
+    public float speedDiagonalRightDown = 4.5f;
 
-    [Header("°ø°İ ¹× ½ºÅ³ µ¥¹ÌÁö ¼³Á¤")]
-    public int basicAttackDamage = 10;       // ÆòÅ¸ µ¥¹ÌÁö (¸¶¿ì½º ÁÂÅ¬¸¯)
-    public int specialAttackDamage = 15;     // Æ¯¼ö °ø°İ µ¥¹ÌÁö (¸¶¿ì½º ¿ìÅ¬¸¯)
-    public int skillDamage = 30;             // ½ºÅ³ µ¥¹ÌÁö (ÁÂ Shift)
-    public int ultimateDamage = 50;          // ±Ã±Ø±â µ¥¹ÌÁö (RÅ°)
+    [Header("ëŒ€ì‰¬ ì„¤ì •")]
+    public float dashDuration = 0.2f;
+    public float dashDistance = 2f; // ëŒ€ì‰¬ ì‹œ ì´ë™í•  ê³ ì • ê±°ë¦¬ (ì˜ˆ: 2ì¹¸)
+    [Header("Dash Double Click ì„¤ì •")]
+    public float dashDoubleClickThreshold = 0.3f;  // ì´ì¤‘ í´ë¦­ í—ˆìš© ì‹œê°„
+    private float lastDashClickTime = -Mathf.Infinity;
 
-    [Header("°ø°İ ¹üÀ§ ¼³Á¤")]
-    public float basicAttackRange = 1.5f;      // ÆòÅ¸ °ø°İ ¹üÀ§ (¿¹: 1.5 À¯´Ö)
-    public float specialAttackRange = 1.5f;    // Æ¯¼ö °ø°İ ¹üÀ§ (¿¹: 1.5 À¯´Ö)
-    public float skillRange = 2f;              // ½ºÅ³ °ø°İ ¹üÀ§ (¿¹: 2 À¯´Ö)
-    public float ultimateRange = 3f;           // ±Ã±Ø±â °ø°İ ¹üÀ§ (¿¹: 3 À¯´Ö)
+    [Header("ê³µê²© ë° ìŠ¤í‚¬ ë°ë¯¸ì§€ ì„¤ì •")]
+    public int basicAttackDamage = 10;
+    public int specialAttackDamage = 15;
+    public int skillDamage = 30;
+    public int ultimateDamage = 50;
 
-    [Header("UI °ü·Ã")]
+    [Header("ê³µê²© ë²”ìœ„ ì„¤ì •")]
+    public float basicAttackRange = 1.5f;
+    public float specialAttackRange = 1.5f;
+    public float skillRange = 2f;
+    public float ultimateRange = 3f;
+
+    [Header("ì¿¨íƒ€ì„ ì„¤ì • (ì´ˆ)")]
+    public float basicAttackCooldown = 0.5f;
+    public float specialAttackCooldown = 1f;
+    public float skillCooldown = 2f;
+    public float ultimateCooldown = 3f;
+
+    [Header("í‰íƒ€ ìŠ¤íƒ ì´ˆê¸°í™” (2ì´ˆ)")]
+    public float basicAttackResetTime = 2f;
+
+    [Header("UI ê´€ë ¨")]
     public GameObject pauseMenuPanel;
     public Button quitButton;
     public Button lobbyButton;
 
-    [Header("¹«±â °ü·Ã")]
-    [Tooltip("ÇÃ·¹ÀÌ¾î ÀÚ½Ä¿¡ ¹èÄ¡µÈ Weapon ¿ÀºêÁ§Æ®ÀÇ Weapon ½ºÅ©¸³Æ®¸¦ ÇÒ´çÇÕ´Ï´Ù.")]
-    public Weapon weapon;  // (ÇöÀç ÆòÅ¸/Æ¯¼ö °ø°İ¿¡´Â »ç¿ëµÇÁö ¾Ê½À´Ï´Ù.)
+    [Header("ì¤‘ì‹¬ì  ì„¤ì •")]
+    public Transform centerPoint;
+    public float centerPointOffsetDistance = 0.5f;
 
+    [Header("ì¤‘ì‹¬ì  ì„¤ì • (8ê°œ)")]
+    [SerializeField] private Transform[] centerPoints = new Transform[8];
+
+    [Header("í”Œë ˆì´ì–´ ì²´ë ¥ ì„¤ì •")]
+    public int maxHealth = 100;
+    private int currentHealth;
+
+    [Header("í”Œë ˆì´ì–´ ë°ë¯¸ì§€ ë²”ìœ„ ì„¤ì •")]
+    // í”Œë ˆì´ì–´ì˜ ë°ë¯¸ì§€ íŒì •ìš© Collider (Player ì˜¤ë¸Œì íŠ¸ì— ì¶”ê°€í•œ SphereCollider)
+    public SphereCollider damageCollider;
+    // Inspectorì—ì„œ ë°ë¯¸ì§€ íŒì • ë²”ìœ„ë¥¼ ì„¤ì • (ì˜ˆ: 0.7)
+    public float damageColliderRadius = 0.7f;
+
+    [Header("ìƒí˜¸ì‘ìš© ì„¤ì •")]
+    // ìƒí˜¸ì‘ìš©ìš© ë ˆì´ì–´ ë§ˆìŠ¤í¬ (Trap, NPC ë“±ì´ í¬í•¨ëœ ë ˆì´ì–´)
+    public LayerMask interactionLayerMask;
+    // ìƒí˜¸ì‘ìš© íŒì •ìš© ë°˜ê²½ (í”Œë ˆì´ì–´ì˜ ìì‹ì— ì¶”ê°€í•œ ìƒí˜¸ì‘ìš©ìš© Colliderì˜ ë°˜ê²½)
+    public float interactionRadius = 1.5f;
+    public KeyCode trapClearKey = KeyCode.K;
+    public KeyCode stageProgressKey = KeyCode.G;
+    public KeyCode npcInteractKey = KeyCode.F;
+
+    // ê³µê²© ì¿¨íƒ€ì„ ì²´í¬ìš© ë³€ìˆ˜
+    private float lastBasicAttackTime = -Mathf.Infinity;
+    private float lastSpecialAttackTime = -Mathf.Infinity;
+    private float lastSkillTime = -Mathf.Infinity;
+    private float lastUltimateTime = -Mathf.Infinity;
+
+    // í‰íƒ€ ìŠ¤íƒ ë³€ìˆ˜
+    private int basicAttackStack = 0;
+    private float lastBasicAttackStackTime = 0f;
+
+    // Animator ì°¸ì¡°
     private Animator animator;
-    private enum PlayerState { Idle, Moving, Attacking, UsingSkill, UsingUltimate, Dashing, InUI }
+
+    // ê³µê²© ì§„í–‰ ì—¬ë¶€ (ê³µê²© ì¤‘ì—ëŠ” ì¶”ê°€ ê³µê²© ì…ë ¥ ë¬´ì‹œ)
+    private bool isAttacking = false;
+
+    // í”Œë ˆì´ì–´ ìƒíƒœ
+    public enum PlayerState { Idle, Run, Attack_L, Attack_R, Skill, Ultimate, Death }
     private PlayerState currentState = PlayerState.Idle;
+
+    // Trap ìƒí˜¸ì‘ìš© ë³€ìˆ˜
+    private int trapClearCount = 0;
+    private GameObject currentTrap = null;
+    private bool isTrapCleared = false;
+
+    // NPC ëŒ€í™” ì„¤ì •
+    public GameObject dialoguePanel;
+    public UnityEngine.UI.Text dialogueText;
+    public string[] npcDialogues;
+    private int currentDialogueIndex = 0;
+    private bool isDialogueActive = false;
 
     void Start()
     {
@@ -41,117 +110,236 @@ public class PlayerController : MonoBehaviour
 
         if (pauseMenuPanel != null)
             pauseMenuPanel.SetActive(false);
-
         if (quitButton != null)
             quitButton.onClick.AddListener(OnQuitButton);
         if (lobbyButton != null)
             lobbyButton.onClick.AddListener(OnLobbyButton);
+
+        if (centerPoint != null)
+            centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
+
+        basicAttackStack = 0;
+        lastBasicAttackStackTime = Time.time;
+        animator.SetInteger("AttackStack", basicAttackStack);
+
+        if (dialoguePanel != null)
+            dialoguePanel.SetActive(false);
+
+        currentState = PlayerState.Idle;
+        animator.SetBool("isRunning", false);
+
+        currentHealth = maxHealth;
+
+        // Inspectorì—ì„œ ì„¤ì •í•œ damageColliderRadius ê°’ìœ¼ë¡œ ë°ë¯¸ì§€ íŒì •ìš© Collider ë°˜ê²½ ì„¤ì •
+        if (damageCollider != null)
+        {
+            damageCollider.radius = damageColliderRadius;
+        }
     }
 
     void Update()
     {
+        if (pauseMenuPanel != null && pauseMenuPanel.activeSelf)
+            return;
+        if (currentState == PlayerState.Death)
+            return;
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (Time.time - lastDashClickTime <= dashDoubleClickThreshold)
+            {
+                Vector3 dashDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+                if (dashDirection == Vector3.zero)
+                    dashDirection = transform.forward;
+                StartCoroutine(DoDash(dashDirection));
+                lastDashClickTime = -Mathf.Infinity;
+                return;
+            }
+            else
+            {
+                lastDashClickTime = Time.time;
+            }
+        }
+
+        if (Time.time - lastBasicAttackStackTime >= basicAttackResetTime)
+        {
+            basicAttackStack = 0;
+            animator.SetInteger("AttackStack", basicAttackStack);
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             TogglePauseMenu();
             return;
         }
 
-        if (currentState == PlayerState.InUI)
-            return;
+        bool attackInput = Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)
+                           || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.R);
+        if (attackInput)
+        {
+            HandleActions();
+        }
+        else
+        {
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) ||
+                Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+            {
+                basicAttackStack = 0;
+                animator.SetInteger("AttackStack", basicAttackStack);
+                currentState = PlayerState.Run;
+                HandleMovement();
+            }
+            else
+            {
+                currentState = PlayerState.Idle;
+                animator.SetBool("isRunning", false);
+            }
+        }
 
-        HandleMovement();
-        HandleActions();
+        if (centerPoint != null)
+            centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
+
+        if (currentState != PlayerState.Attack_L && currentState != PlayerState.Attack_R &&
+            currentState != PlayerState.Skill && currentState != PlayerState.Ultimate)
+        {
+            CheckInteractions();
+        }
     }
 
-    // ÇÃ·¹ÀÌ¾î ÀÌµ¿ Ã³¸® (Ä«¸Ş¶ó ±âÁØ)
     void HandleMovement()
     {
-        if (currentState == PlayerState.Attacking || currentState == PlayerState.UsingSkill ||
-            currentState == PlayerState.UsingUltimate || currentState == PlayerState.Dashing)
-            return;
-
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
         Vector3 inputDir = new Vector3(h, 0, v);
 
-        if (inputDir != Vector3.zero)
+        if (inputDir.sqrMagnitude > 0.01f)
         {
-            Vector3 camForward = Camera.main.transform.forward;
-            camForward.y = 0;
-            camForward.Normalize();
-
-            Vector3 camRight = Camera.main.transform.right;
-            camRight.y = 0;
-            camRight.Normalize();
-
-            Vector3 moveDir = (camForward * v) + (camRight * h);
-            moveDir.Normalize();
-
-            float speed = horizontalSpeed;
-            if (Mathf.Abs(h) > 0 && Mathf.Abs(v) > 0)
-                speed = diagonalSpeed;
-            else if (Mathf.Abs(v) > 0)
-                speed = verticalSpeed;
-
-            transform.Translate(moveDir * speed * Time.deltaTime, Space.World);
+            Vector3 moveDir = inputDir.normalized;
+            float moveSpeed = (Mathf.Abs(h) > 0 && Mathf.Approximately(v, 0f)) ? speedHorizontal : speedVertical;
+            transform.Translate(moveDir * moveSpeed * Time.deltaTime, Space.World);
 
             animator.SetFloat("moveX", moveDir.x);
             animator.SetFloat("moveY", moveDir.z);
-            animator.SetBool("isMoving", true);
-            currentState = PlayerState.Moving;
+            animator.SetBool("isRunning", true);
+
+            if (centerPoint != null)
+                centerPoint.position = transform.position + moveDir * centerPointOffsetDistance;
+            UpdateCenterPoints(moveDir);
         }
         else
         {
-            animator.SetBool("isMoving", false);
+            animator.SetBool("isRunning", false);
             currentState = PlayerState.Idle;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space) && inputDir != Vector3.zero)
-        {
-            StartCoroutine(DoDash(inputDir));
+            if (centerPoint != null)
+                centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
         }
     }
 
-    // °ø°İ ÀÔ·Â Ã³¸®
+    void UpdateCenterPoints(Vector3 moveDir)
+    {
+        if (centerPoints == null || centerPoints.Length != 8)
+        {
+            Debug.LogWarning("centerPoints ë°°ì—´ 8ê°œë¥¼ Inspectorì—ì„œ í• ë‹¹í•˜ì„¸ìš”.");
+            return;
+        }
+        for (int i = 0; i < 8; i++)
+        {
+            if (centerPoints[i] != null)
+            {
+                float angle = i * 45f;
+                Vector3 offset = Quaternion.Euler(0, angle, 0) * moveDir * centerPointOffsetDistance;
+                centerPoints[i].position = transform.position + offset;
+            }
+            else
+            {
+                Debug.LogWarning($"centerPoints[{i}] ë¯¸í• ë‹¹");
+            }
+        }
+    }
+
+    IEnumerator DoDash(Vector3 direction)
+    {
+        animator.SetTrigger("Dash");
+        Vector3 startPos = transform.position;
+        Vector3 targetPos = startPos + direction.normalized * dashDistance;
+        float elapsed = 0f;
+        while (elapsed < dashDuration)
+        {
+            transform.position = Vector3.Lerp(startPos, targetPos, elapsed / dashDuration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.position = targetPos;
+        if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
+        {
+            currentState = PlayerState.Run;
+            animator.SetBool("isRunning", true);
+        }
+        else
+        {
+            currentState = PlayerState.Idle;
+            animator.SetBool("isRunning", false);
+        }
+    }
+
     void HandleActions()
     {
-        // ÆòÅ¸ (¸¶¿ì½º ÁÂÅ¬¸¯)
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !isAttacking)
         {
-            StartCoroutine(UseBasicAttack());
+            if (Time.time - lastBasicAttackTime >= basicAttackCooldown)
+            {
+                if (Time.time - lastBasicAttackStackTime >= basicAttackResetTime)
+                    basicAttackStack = 1;
+                else if (basicAttackStack < 4)
+                    basicAttackStack++;
+                lastBasicAttackTime = Time.time;
+                lastBasicAttackStackTime = Time.time;
+                animator.SetInteger("AttackStack", basicAttackStack);
+                StartCoroutine(PerformBasicAttack());
+            }
         }
-        // Æ¯¼ö °ø°İ (¸¶¿ì½º ¿ìÅ¬¸¯)
         else if (Input.GetMouseButtonDown(1))
         {
-            StartCoroutine(UseSpecialAttack());
+            if (Time.time - lastSpecialAttackTime >= specialAttackCooldown)
+            {
+                lastSpecialAttackTime = Time.time;
+                StartCoroutine(PerformSpecialAttack());
+            }
         }
-        // ½ºÅ³ °ø°İ (ÁÂ Shift)
         else if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            UseSkillAttack();
+            if (Time.time - lastSkillTime >= skillCooldown)
+            {
+                lastSkillTime = Time.time;
+                PerformSkillAttack();
+            }
         }
-        // ±Ã±Ø±â (RÅ°)
         else if (Input.GetKeyDown(KeyCode.R))
         {
-            UseUltimateAttack();
+            if (Time.time - lastUltimateTime >= ultimateCooldown)
+            {
+                lastUltimateTime = Time.time;
+                PerformUltimateAttack();
+            }
         }
     }
 
-    // ÆòÅ¸: ÁöÁ¤ÇÑ ¹üÀ§ ³»¿¡ ÀÖ´Â Àû Áß °¡Àå °¡±î¿î Àû¿¡°Ô µ¥¹ÌÁö Àû¿ë
-    IEnumerator UseBasicAttack()
+    IEnumerator PerformBasicAttack()
     {
-        currentState = PlayerState.Attacking;
-        animator.SetTrigger("Attack");
+        isAttacking = true;
+        animator.SetBool("isAttacking", true);
+        animator.SetTrigger("Attack_L");
+        currentState = PlayerState.Attack_L;
         yield return new WaitForSeconds(0.2f);
-
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, basicAttackRange, LayerMask.GetMask("Enemy"));
-        if (hitColliders.Length > 0)
+        Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
+        Collider[] cols = Physics.OverlapSphere(checkPos, basicAttackRange, LayerMask.GetMask("Enemy"));
+        if (cols.Length > 0)
         {
-            Collider closest = hitColliders[0];
-            float minDist = Vector3.Distance(transform.position, closest.transform.position);
-            foreach (Collider col in hitColliders)
+            Collider closest = cols[0];
+            float minDist = Vector3.Distance(checkPos, closest.transform.position);
+            foreach (Collider col in cols)
             {
-                float dist = Vector3.Distance(transform.position, col.transform.position);
+                float dist = Vector3.Distance(checkPos, col.transform.position);
                 if (dist < minDist)
                 {
                     minDist = dist;
@@ -162,28 +350,57 @@ public class PlayerController : MonoBehaviour
             if (enemy != null)
             {
                 enemy.TakeDamage(basicAttackDamage);
-                Debug.Log($"[ÆòÅ¸] Àû¿¡°Ô {basicAttackDamage}ÀÇ µ¥¹ÌÁö¸¦ ÀÔÇû½À´Ï´Ù. ³²Àº Ã¼·Â: {enemy.GetCurrentHealth()}");
+                Debug.Log($"[í‰íƒ€] ìŠ¤íƒ {basicAttackStack}: ì ì—ê²Œ {basicAttackDamage} ë°ë¯¸ì§€. ë‚¨ì€ ì²´ë ¥: {enemy.GetCurrentHealth()}");
             }
         }
-        yield return new WaitForSeconds(0.3f);
-        currentState = PlayerState.Idle;
+        // Attack_4_loop ì²˜ë¦¬: ì½¤ë³´ê°€ 4ì´ë©´ 2ì´ˆ ë™ì•ˆ ì¶”ê°€ ì¢Œí´ë¦­ ì…ë ¥ ëŒ€ê¸°
+        if (basicAttackStack >= 4)
+        {
+            float waitTimer = 0f;
+            while (waitTimer < basicAttackResetTime)
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    lastBasicAttackTime = Time.time;
+                    lastBasicAttackStackTime = Time.time;
+                    animator.SetInteger("AttackStack", basicAttackStack);
+                    yield return StartCoroutine(PerformBasicAttack());
+                    yield break;
+                }
+                waitTimer += Time.deltaTime;
+                yield return null;
+            }
+            basicAttackStack = 0;
+            animator.SetInteger("AttackStack", basicAttackStack);
+            currentState = PlayerState.Idle;
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.3f);
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) ||
+                Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+                currentState = PlayerState.Run;
+            else
+                currentState = PlayerState.Idle;
+        }
+        isAttacking = false;
+        animator.SetBool("isAttacking", false);
     }
 
-    // Æ¯¼ö °ø°İ: ÁöÁ¤ÇÑ ¹üÀ§ ³»¿¡ ÀÖ´Â Àû Áß °¡Àå °¡±î¿î Àû¿¡°Ô µ¥¹ÌÁö Àû¿ë
-    IEnumerator UseSpecialAttack()
+    IEnumerator PerformSpecialAttack()
     {
-        currentState = PlayerState.Attacking;
-        animator.SetTrigger("SpecialAttack");
+        currentState = PlayerState.Attack_R;
+        animator.SetTrigger("Attack_R");
         yield return new WaitForSeconds(0.2f);
-
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, specialAttackRange, LayerMask.GetMask("Enemy"));
-        if (hitColliders.Length > 0)
+        Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
+        Collider[] cols = Physics.OverlapSphere(checkPos, specialAttackRange, LayerMask.GetMask("Enemy"));
+        if (cols.Length > 0)
         {
-            Collider closest = hitColliders[0];
-            float minDist = Vector3.Distance(transform.position, closest.transform.position);
-            foreach (Collider col in hitColliders)
+            Collider closest = cols[0];
+            float minDist = Vector3.Distance(checkPos, closest.transform.position);
+            foreach (Collider col in cols)
             {
-                float dist = Vector3.Distance(transform.position, col.transform.position);
+                float dist = Vector3.Distance(checkPos, col.transform.position);
                 if (dist < minDist)
                 {
                     minDist = dist;
@@ -194,27 +411,30 @@ public class PlayerController : MonoBehaviour
             if (enemy != null)
             {
                 enemy.TakeDamage(specialAttackDamage);
-                Debug.Log($"[Æ¯¼ö °ø°İ] Àû¿¡°Ô {specialAttackDamage}ÀÇ µ¥¹ÌÁö¸¦ ÀÔÇû½À´Ï´Ù. ³²Àº Ã¼·Â: {enemy.GetCurrentHealth()}");
+                Debug.Log($"[íŠ¹ìˆ˜] ì ì—ê²Œ {specialAttackDamage} ë°ë¯¸ì§€. ë‚¨ì€ ì²´ë ¥: {enemy.GetCurrentHealth()}");
             }
         }
         yield return new WaitForSeconds(0.3f);
-        currentState = PlayerState.Idle;
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) ||
+            Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+            currentState = PlayerState.Run;
+        else
+            currentState = PlayerState.Idle;
     }
 
-    // ½ºÅ³ °ø°İ: ÇÃ·¹ÀÌ¾î ÁÖº¯ skillRange ³»ÀÇ Àû Áß °¡Àå °¡±î¿î Àû¿¡°Ô µ¥¹ÌÁö Àû¿ë
-    void UseSkillAttack()
+    void PerformSkillAttack()
     {
-        currentState = PlayerState.UsingSkill;
+        currentState = PlayerState.Skill;
         animator.SetTrigger("Skill");
-
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, skillRange, LayerMask.GetMask("Enemy"));
-        if (hitColliders.Length > 0)
+        Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
+        Collider[] cols = Physics.OverlapSphere(checkPos, skillRange, LayerMask.GetMask("Enemy"));
+        if (cols.Length > 0)
         {
-            Collider closest = hitColliders[0];
-            float minDist = Vector3.Distance(transform.position, closest.transform.position);
-            foreach (Collider col in hitColliders)
+            Collider closest = cols[0];
+            float minDist = Vector3.Distance(checkPos, closest.transform.position);
+            foreach (Collider col in cols)
             {
-                float dist = Vector3.Distance(transform.position, col.transform.position);
+                float dist = Vector3.Distance(checkPos, col.transform.position);
                 if (dist < minDist)
                 {
                     minDist = dist;
@@ -225,26 +445,35 @@ public class PlayerController : MonoBehaviour
             if (enemy != null)
             {
                 enemy.TakeDamage(skillDamage);
-                Debug.Log($"[½ºÅ³] Àû¿¡°Ô {skillDamage}ÀÇ µ¥¹ÌÁö¸¦ ÀÔÇû½À´Ï´Ù. ³²Àº Ã¼·Â: {enemy.GetCurrentHealth()}");
+                Debug.Log($"[ìŠ¤í‚¬] ì ì—ê²Œ {skillDamage} ë°ë¯¸ì§€. ë‚¨ì€ ì²´ë ¥: {enemy.GetCurrentHealth()}");
             }
         }
-        currentState = PlayerState.Idle;
+        StartCoroutine(TransitionAfterSkill());
     }
 
-    // ±Ã±Ø±â °ø°İ: ÇÃ·¹ÀÌ¾î ÁÖº¯ ultimateRange ³»ÀÇ Àû Áß °¡Àå °¡±î¿î Àû¿¡°Ô µ¥¹ÌÁö Àû¿ë
-    void UseUltimateAttack()
+    IEnumerator TransitionAfterSkill()
     {
-        currentState = PlayerState.UsingUltimate;
-        animator.SetTrigger("Ultimate");
+        yield return new WaitForSeconds(0.3f);
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) ||
+            Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+            currentState = PlayerState.Run;
+        else
+            currentState = PlayerState.Idle;
+    }
 
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, ultimateRange, LayerMask.GetMask("Enemy"));
-        if (hitColliders.Length > 0)
+    void PerformUltimateAttack()
+    {
+        currentState = PlayerState.Ultimate;
+        animator.SetTrigger("Ultimate");
+        Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
+        Collider[] cols = Physics.OverlapSphere(checkPos, ultimateRange, LayerMask.GetMask("Enemy"));
+        if (cols.Length > 0)
         {
-            Collider closest = hitColliders[0];
-            float minDist = Vector3.Distance(transform.position, closest.transform.position);
-            foreach (Collider col in hitColliders)
+            Collider closest = cols[0];
+            float minDist = Vector3.Distance(checkPos, closest.transform.position);
+            foreach (Collider col in cols)
             {
-                float dist = Vector3.Distance(transform.position, col.transform.position);
+                float dist = Vector3.Distance(checkPos, col.transform.position);
                 if (dist < minDist)
                 {
                     minDist = dist;
@@ -255,53 +484,107 @@ public class PlayerController : MonoBehaviour
             if (enemy != null)
             {
                 enemy.TakeDamage(ultimateDamage);
-                Debug.Log($"[±Ã±Ø±â] Àû¿¡°Ô {ultimateDamage}ÀÇ µ¥¹ÌÁö¸¦ ÀÔÇû½À´Ï´Ù. ³²Àº Ã¼·Â: {enemy.GetCurrentHealth()}");
+                Debug.Log($"[ê¶ê·¹] ì ì—ê²Œ {ultimateDamage} ë°ë¯¸ì§€. ë‚¨ì€ ì²´ë ¥: {enemy.GetCurrentHealth()}");
             }
         }
-        currentState = PlayerState.Idle;
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) ||
+            Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+            currentState = PlayerState.Run;
+        else
+            currentState = PlayerState.Idle;
     }
 
-    // µ¹Áø (Dash) Ã³¸®
-    IEnumerator DoDash(Vector3 direction)
+    void CheckInteractions()
     {
-        currentState = PlayerState.Dashing;
-        animator.SetTrigger("Dash");
-
-        float dashDistance = 2f;
-        Vector3 startPos = transform.position;
-        Vector3 targetPos = startPos + direction.normalized * dashDistance;
-        float dashDuration = 0.2f;
-        float elapsed = 0f;
-
-        while (elapsed < dashDuration)
+        if (isDialogueActive)
         {
-            transform.position = Vector3.Lerp(startPos, targetPos, elapsed / dashDuration);
-            elapsed += Time.deltaTime;
-            yield return null;
+            if (Input.GetKeyDown(npcInteractKey))
+            {
+                currentDialogueIndex++;
+                if (currentDialogueIndex < npcDialogues.Length)
+                    dialogueText.text = npcDialogues[currentDialogueIndex];
+                else
+                {
+                    dialoguePanel.SetActive(false);
+                    isDialogueActive = false;
+                    currentDialogueIndex = 0;
+                }
+            }
+            return;
         }
-        transform.position = targetPos;
-        currentState = PlayerState.Idle;
+
+        if (Input.GetKeyDown(stageProgressKey))
+        {
+            if (!isTrapCleared)
+                Debug.Log("ì¡°ê±´ì„ ì¶©ì¡±ì‹œì¼œì•¼ ë‹¤ìŒìœ¼ë¡œ ë„˜ì–´ê°‘ë‹ˆë‹¤.");
+            else
+                Debug.Log("ë‹¤ìŒ ìŠ¤í…Œì´ì§€ë¡œ ë„˜ì–´ê°‘ë‹ˆë‹¤.");
+        }
+
+        // ìƒí˜¸ì‘ìš© íŒì •: interactionRadiusì™€ interactionLayerMask ì‚¬ìš©
+        Collider[] cols = Physics.OverlapSphere(centerPoint.position, interactionRadius, interactionLayerMask);
+        bool trapInRange = false;
+        foreach (Collider col in cols)
+        {
+            if (col.gameObject.layer == LayerMask.NameToLayer("Trap"))
+            {
+                trapInRange = true;
+                currentTrap = col.gameObject;
+                if (Input.GetKeyDown(trapClearKey))
+                {
+                    trapClearCount++;
+                    Debug.Log("í•¨ì • í‚¤ ì…ë ¥ íšŸìˆ˜: " + trapClearCount);
+                    if (trapClearCount >= 2)
+                    {
+                        isTrapCleared = true;
+                        Debug.Log("í•¨ì • í•´ì œë¨.");
+                        Destroy(currentTrap);
+                        trapClearCount = 0;
+                        currentTrap = null;
+                    }
+                }
+            }
+            else if (col.gameObject.layer == LayerMask.NameToLayer("NPC"))
+            {
+                if (Input.GetKeyDown(npcInteractKey))
+                {
+                    isDialogueActive = true;
+                    currentDialogueIndex = 0;
+                    dialoguePanel.SetActive(true);
+                    if (npcDialogues != null && npcDialogues.Length > 0)
+                        dialogueText.text = npcDialogues[currentDialogueIndex];
+                }
+            }
+        }
     }
 
-    // ¸Ş´º Åä±Û (ESC Å°)
     void TogglePauseMenu()
     {
         if (pauseMenuPanel != null)
         {
             bool isActive = pauseMenuPanel.activeSelf;
             pauseMenuPanel.SetActive(!isActive);
-            currentState = (!isActive) ? PlayerState.InUI : PlayerState.Idle;
         }
     }
 
-    void OnQuitButton()
+    void OnQuitButton() { TogglePauseMenu(); }
+    void OnLobbyButton() { Debug.Log("ë¡œë¹„ë¡œ ì´ë™ (ì¶”í›„ êµ¬í˜„)"); }
+
+    public void Die()
     {
-        TogglePauseMenu();
+        currentState = PlayerState.Death;
+        animator.SetTrigger("Death");
     }
 
-    void OnLobbyButton()
+    // í”Œë ˆì´ì–´ê°€ ì´ì•Œ ë“±ìœ¼ë¡œ ë°ë¯¸ì§€ë¥¼ ì…ì„ ë•Œ í˜¸ì¶œ (BulletControllerì—ì„œ)
+    public void TakeDamage(int damage)
     {
-        Debug.Log("·Îºñ·Î ÀÌµ¿ (ÃßÈÄ ±¸Çö)");
-        // SceneManager.LoadScene("LobbyScene");
+        currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        Debug.Log("í”Œë ˆì´ì–´ ì²´ë ¥: " + currentHealth);
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
     }
 }
