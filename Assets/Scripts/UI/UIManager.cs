@@ -1,28 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum UIState
-{
-    Start,
-    Lobby,
-    Room,
-    CreateRoom
-}
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
 
-    private Dictionary<UIState, RectTransform> uiPanels = new Dictionary<UIState, RectTransform>();
-    private Stack<UIState> uiStack = new Stack<UIState>();
-
-    [SerializeField]
-    private RectTransform startUI;
-    [SerializeField]
-    private RectTransform lobbyUI;
-    [SerializeField]
-    private RectTransform roomUI;
-    [SerializeField]
-    private RectTransform createRoomUI;
+    private Stack<UIBase> uiStack = new Stack<UIBase>();
 
     private void Awake()
     {
@@ -35,37 +18,59 @@ public class UIManager : MonoBehaviour
 
     void Start()
     {
-        uiPanels[UIState.Start] = startUI;
-        uiPanels[UIState.Lobby] = lobbyUI;
-        uiPanels[UIState.CreateRoom] = createRoomUI;
-
-        OpenPanel(UIState.Start);
+        OpenPanel<UiStartPanel>();
     }
 
-    public void OpenPanel(UIState newPanel)
+    public void OpenPanel<T>() where T : UIBase
+    {
+        string prefabName = typeof(T).Name;
+        GameObject prefab = Resources.Load<GameObject>($"UI/{prefabName}");
+
+        GameObject panelInstance = Instantiate(prefab);
+        panelInstance.transform.SetParent(transform, false);
+
+        ClosePeekUI();
+
+        uiStack.Push(panelInstance.GetComponent<T>());
+    }
+
+    public void ClosePeekUI()
     {
         if (uiStack.Count > 0)
         {
-            uiPanels[uiStack.Peek()].gameObject.SetActive(false);
+            Destroy(uiStack.Pop().gameObject);
         }
 
-        uiPanels[newPanel].gameObject.SetActive(true);
-        uiStack.Push(newPanel);
-    }
-
-    public void GoBack()
-    {
-        if (uiStack.Count > 1)
+        if (uiStack.Count > 0)
         {
-            uiPanels[uiStack.Pop()].gameObject.SetActive(false);
-
-            uiPanels[uiStack.Peek()].gameObject.SetActive(true);
+            uiStack.Peek().gameObject.GetComponent<CanvasGroup>().interactable = true;
         }
     }
 
-    public void OpenPopupPanel(UIState newPanel)
+    public void CloseAllUI()
     {
-        uiPanels[newPanel].gameObject.SetActive(true);
-        uiStack.Push(newPanel);
+        if (uiStack.Count > 0)
+        {
+            Destroy(uiStack.Pop().gameObject);
+            CloseAllUI();
+        }
+    }
+
+    public T OpenPopupPanel<T>() where T : UIBase
+    {
+        if (uiStack.Count > 0)
+            uiStack.Peek().gameObject.GetComponent<CanvasGroup  >().interactable = false;
+
+        string prefabName = typeof(T).Name;
+        GameObject prefab = Resources.Load<GameObject>($"UI/{prefabName}");
+
+        GameObject panelInstance = Instantiate(prefab);
+        panelInstance.transform.SetParent(transform, false);
+
+        T popup = panelInstance.GetComponent<T>();
+
+        uiStack.Push(popup);
+
+        return popup;
     }
 }

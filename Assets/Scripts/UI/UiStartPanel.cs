@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UiStartPanel : MonoBehaviour
+public class UiStartPanel : UIBase
 {
     [SerializeField] 
     private Button singlePlayButton;
@@ -14,12 +14,17 @@ public class UiStartPanel : MonoBehaviour
 
     void Start()
     {
-        multiPlayButton.onClick.AddListener(OnClikedMultiPlayButton);
+        Init();
     }
 
     private void OnClikedMultiPlayButton()
     {
         PhotonNetworkManager.Instance.ConnectPhoton();
-        UIManager.Instance.OpenPanel(UIState.Lobby);
+        UIManager.Instance.OpenPanel<UILobbyPanel>();
+    }
+
+    public override void Init()
+    {
+        multiPlayButton.onClick.AddListener(OnClikedMultiPlayButton);
     }
 }

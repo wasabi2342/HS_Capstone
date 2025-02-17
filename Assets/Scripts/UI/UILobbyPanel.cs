@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UILobbyPanel : MonoBehaviour
+public class UILobbyPanel : UIBase
 {
     [SerializeField]
     private Button createRoomButton;
@@ -20,12 +20,7 @@ public class UILobbyPanel : MonoBehaviour
 
     private void Start()
     {
-        createRoomButton.onClick.AddListener(OnClickedCreateRoomButton);
-    }
-
-    private void OnEnable()
-    {
-        PhotonNetworkManager.Instance.OnRoomListUpdated += UpdateRoomList;
+        Init();
     }
 
     private void OnDisable()
@@ -58,8 +53,12 @@ public class UILobbyPanel : MonoBehaviour
 
     private void OnClickedCreateRoomButton()
     {
-        UIManager.Instance.OpenPopupPanel(UIState.CreateRoom);
+        UIManager.Instance.OpenPopupPanel<UICreateRoomPanel>();
     }
 
-
+    public override void Init()
+    {
+        createRoomButton.onClick.AddListener(OnClickedCreateRoomButton);
+        PhotonNetworkManager.Instance.OnRoomListUpdated += UpdateRoomList;
+    }
 }
