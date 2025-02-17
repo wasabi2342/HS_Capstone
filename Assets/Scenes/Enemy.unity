@@ -625,8 +625,77 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8725552417164091836, guid: aba237fa9f1633c42ad2f2d4a2699d82, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4802805782400185520}
   m_SourcePrefab: {fileID: 100100000, guid: aba237fa9f1633c42ad2f2d4a2699d82, type: 3}
+--- !u!1 &4802805782400185519 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8725552417164091836, guid: aba237fa9f1633c42ad2f2d4a2699d82, type: 3}
+  m_PrefabInstance: {fileID: 4802805782400185518}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4802805782400185520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4802805782400185519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57eedc32c223bbd4e8afa6443ed77ef7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speedHorizontal: 5
+  speedVertical: 5
+  speedDiagonalLeftUp: 4.5
+  speedDiagonalRightUp: 4.5
+  speedDiagonalLeftDown: 4.5
+  speedDiagonalRightDown: 4.5
+  dashDuration: 0.2
+  dashDistance: 2
+  dashDoubleClickThreshold: 0.3
+  basicAttackDamage: 10
+  specialAttackDamage: 15
+  skillDamage: 30
+  ultimateDamage: 50
+  basicAttackRange: 1.5
+  specialAttackRange: 1.5
+  skillRange: 2
+  ultimateRange: 3
+  basicAttackCooldown: 0.5
+  specialAttackCooldown: 1
+  skillCooldown: 2
+  ultimateCooldown: 3
+  basicAttackResetTime: 2
+  pauseMenuPanel: {fileID: 0}
+  quitButton: {fileID: 0}
+  lobbyButton: {fileID: 0}
+  centerPoint: {fileID: 0}
+  centerPointOffsetDistance: 0.5
+  centerPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  maxHealth: 100
+  damageCollider: {fileID: 0}
+  damageColliderRadius: 0.7
+  interactionLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  interactionRadius: 1.5
+  trapClearKey: 107
+  stageProgressKey: 103
+  npcInteractKey: 102
+  dialoguePanel: {fileID: 0}
+  dialogueText: {fileID: 0}
+  npcDialogues: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
