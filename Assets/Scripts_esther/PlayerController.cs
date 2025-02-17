@@ -2,9 +2,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+
     [Header("이동 속도 설정 (8방향)")]
     public float speedHorizontal = 5f;
     public float speedVertical = 5f;
@@ -15,9 +17,9 @@ public class PlayerController : MonoBehaviour
 
     [Header("대쉬 설정")]
     public float dashDuration = 0.2f;
-    public float dashDistance = 2f; // 대쉬 시 이동할 고정 거리 (예: 2칸)
+    public float dashDistance = 2f;
     [Header("Dash Double Click 설정")]
-    public float dashDoubleClickThreshold = 0.3f;  // 이중 클릭 허용 시간
+    public float dashDoubleClickThreshold = 0.3f;
     private float lastDashClickTime = -Mathf.Infinity;
 
     [Header("공격 및 스킬 데미지 설정")]
@@ -58,19 +60,13 @@ public class PlayerController : MonoBehaviour
     private int currentHealth;
 
     [Header("플레이어 데미지 범위 설정")]
-    // 플레이어의 데미지 판정용 Collider (Player 오브젝트에 추가한 SphereCollider)
     public SphereCollider damageCollider;
-    // Inspector에서 데미지 판정 범위를 설정 (예: 0.7)
     public float damageColliderRadius = 0.7f;
 
     [Header("상호작용 설정")]
-    // 상호작용용 레이어 마스크 (Trap, NPC 등이 포함된 레이어)
     public LayerMask interactionLayerMask;
-    // 상호작용 판정용 반경 (플레이어의 자식에 추가한 상호작용용 Collider의 반경)
     public float interactionRadius = 1.5f;
-    public KeyCode trapClearKey = KeyCode.K;
-    public KeyCode stageProgressKey = KeyCode.G;
-    public KeyCode npcInteractKey = KeyCode.F;
+    // (기존 키 설정은 더 이상 사용하지 않습니다)
 
     // 공격 쿨타임 체크용 변수
     private float lastBasicAttackTime = -Mathf.Infinity;
@@ -85,24 +81,40 @@ public class PlayerController : MonoBehaviour
     // Animator 참조
     private Animator animator;
 
-    // 공격 진행 여부 (공격 중에는 추가 공격 입력 무시)
+    // 공격 진행 여부
     private bool isAttacking = false;
 
     // 플레이어 상태
     public enum PlayerState { Idle, Run, Attack_L, Attack_R, Skill, Ultimate, Death }
     private PlayerState currentState = PlayerState.Idle;
 
-    // Trap 상호작용 변수
+    // Trap 및 NPC 관련 변수
     private int trapClearCount = 0;
     private GameObject currentTrap = null;
     private bool isTrapCleared = false;
-
-    // NPC 대화 설정
     public GameObject dialoguePanel;
     public UnityEngine.UI.Text dialogueText;
     public string[] npcDialogues;
     private int currentDialogueIndex = 0;
     private bool isDialogueActive = false;
+
+    // === 새 인풋 시스템 관련 변수 ===
+    private PlayerInputActions inputActions; // 자동 생성된 Input Action 클래스
+
+    void Awake()
+    {
+        inputActions = new PlayerInputActions();
+    }
+
+    void OnEnable()
+    {
+        inputActions.Enable();
+    }
+
+    void OnDisable()
+    {
+        inputActions.Disable();
+    }
 
     void Start()
     {
@@ -130,7 +142,6 @@ public class PlayerController : MonoBehaviour
 
         currentHealth = maxHealth;
 
-        // Inspector에서 설정한 damageColliderRadius 값으로 데미지 판정용 Collider 반경 설정
         if (damageCollider != null)
         {
             damageCollider.radius = damageColliderRadius;
@@ -139,16 +150,20 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        // UI나 죽은 상태에서는 입력 무시
         if (pauseMenuPanel != null && pauseMenuPanel.activeSelf)
             return;
         if (currentState == PlayerState.Death)
             return;
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        // === 대쉬 입력 처리 (기존 Space키 → 새 액션 "Dash") ===
+        if (inputActions.Player.Dash.triggered)
         {
             if (Time.time - lastDashClickTime <= dashDoubleClickThreshold)
             {
-                Vector3 dashDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+                // 이동 액션에서 이동값 읽기 (Vector2 → Vector3)
+                Vector2 dashInput = inputActions.Player.Move.ReadValue<Vector2>();
+                Vector3 dashDirection = new Vector3(dashInput.x, 0, dashInput.y);
                 if (dashDirection == Vector3.zero)
                     dashDirection = transform.forward;
                 StartCoroutine(DoDash(dashDirection));
@@ -167,22 +182,28 @@ public class PlayerController : MonoBehaviour
             animator.SetInteger("AttackStack", basicAttackStack);
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        // === 일시정지 입력 처리 (새 액션 "Pause") ===
+        if (inputActions.Player.Pause.triggered)
         {
             TogglePauseMenu();
             return;
         }
 
-        bool attackInput = Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)
-                           || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.R);
-        if (attackInput)
+        // === 공격 입력 처리 (각 액션의 triggered 상태 사용) ===
+        bool basicAttackInput = inputActions.Player.BasicAttack.triggered;
+        bool specialAttackInput = inputActions.Player.SpecialAttack.triggered;
+        bool skillAttackInput = inputActions.Player.SkillAttack.triggered;
+        bool ultimateAttackInput = inputActions.Player.UltimateAttack.triggered;
+
+        if (basicAttackInput || specialAttackInput || skillAttackInput || ultimateAttackInput)
         {
             HandleActions();
         }
         else
         {
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) ||
-                Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+            // === 이동 입력 처리 (새 액션 "Move") ===
+            Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+            if (moveInput.magnitude > 0.1f)
             {
                 basicAttackStack = 0;
                 animator.SetInteger("AttackStack", basicAttackStack);
@@ -208,8 +229,9 @@ public class PlayerController : MonoBehaviour
 
     void HandleMovement()
     {
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
+        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+        float h = moveInput.x;
+        float v = moveInput.y;
         Vector3 inputDir = new Vector3(h, 0, v);
 
         if (inputDir.sqrMagnitude > 0.01f)
@@ -270,7 +292,7 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         transform.position = targetPos;
-        if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
+        if (inputActions.Player.Move.ReadValue<Vector2>().magnitude > 0.1f)
         {
             currentState = PlayerState.Run;
             animator.SetBool("isRunning", true);
@@ -284,7 +306,7 @@ public class PlayerController : MonoBehaviour
 
     void HandleActions()
     {
-        if (Input.GetMouseButtonDown(0) && !isAttacking)
+        if (inputActions.Player.BasicAttack.triggered && !isAttacking)
         {
             if (Time.time - lastBasicAttackTime >= basicAttackCooldown)
             {
@@ -298,7 +320,7 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(PerformBasicAttack());
             }
         }
-        else if (Input.GetMouseButtonDown(1))
+        else if (inputActions.Player.SpecialAttack.triggered)
         {
             if (Time.time - lastSpecialAttackTime >= specialAttackCooldown)
             {
@@ -306,7 +328,7 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(PerformSpecialAttack());
             }
         }
-        else if (Input.GetKeyDown(KeyCode.LeftShift))
+        else if (inputActions.Player.SkillAttack.triggered)
         {
             if (Time.time - lastSkillTime >= skillCooldown)
             {
@@ -314,7 +336,7 @@ public class PlayerController : MonoBehaviour
                 PerformSkillAttack();
             }
         }
-        else if (Input.GetKeyDown(KeyCode.R))
+        else if (inputActions.Player.UltimateAttack.triggered)
         {
             if (Time.time - lastUltimateTime >= ultimateCooldown)
             {
@@ -353,13 +375,12 @@ public class PlayerController : MonoBehaviour
                 Debug.Log($"[평타] 스택 {basicAttackStack}: 적에게 {basicAttackDamage} 데미지. 남은 체력: {enemy.GetCurrentHealth()}");
             }
         }
-        // Attack_4_loop 처리: 콤보가 4이면 2초 동안 추가 좌클릭 입력 대기
         if (basicAttackStack >= 4)
         {
             float waitTimer = 0f;
             while (waitTimer < basicAttackResetTime)
             {
-                if (Input.GetMouseButtonDown(0))
+                if (inputActions.Player.BasicAttack.triggered)
                 {
                     lastBasicAttackTime = Time.time;
                     lastBasicAttackStackTime = Time.time;
@@ -377,11 +398,8 @@ public class PlayerController : MonoBehaviour
         else
         {
             yield return new WaitForSeconds(0.3f);
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) ||
-                Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
-                currentState = PlayerState.Run;
-            else
-                currentState = PlayerState.Idle;
+            Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+            currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
         }
         isAttacking = false;
         animator.SetBool("isAttacking", false);
@@ -415,11 +433,8 @@ public class PlayerController : MonoBehaviour
             }
         }
         yield return new WaitForSeconds(0.3f);
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) ||
-            Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
-            currentState = PlayerState.Run;
-        else
-            currentState = PlayerState.Idle;
+        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+        currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
     }
 
     void PerformSkillAttack()
@@ -454,11 +469,8 @@ public class PlayerController : MonoBehaviour
     IEnumerator TransitionAfterSkill()
     {
         yield return new WaitForSeconds(0.3f);
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) ||
-            Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
-            currentState = PlayerState.Run;
-        else
-            currentState = PlayerState.Idle;
+        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+        currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
     }
 
     void PerformUltimateAttack()
@@ -487,18 +499,15 @@ public class PlayerController : MonoBehaviour
                 Debug.Log($"[궁극] 적에게 {ultimateDamage} 데미지. 남은 체력: {enemy.GetCurrentHealth()}");
             }
         }
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) ||
-            Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
-            currentState = PlayerState.Run;
-        else
-            currentState = PlayerState.Idle;
+        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+        currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
     }
 
     void CheckInteractions()
     {
         if (isDialogueActive)
         {
-            if (Input.GetKeyDown(npcInteractKey))
+            if (inputActions.Player.NPCInteract.triggered)
             {
                 currentDialogueIndex++;
                 if (currentDialogueIndex < npcDialogues.Length)
@@ -513,7 +522,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        if (Input.GetKeyDown(stageProgressKey))
+        if (inputActions.Player.StageProgress.triggered)
         {
             if (!isTrapCleared)
                 Debug.Log("조건을 충족시켜야 다음으로 넘어갑니다.");
@@ -521,16 +530,13 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("다음 스테이지로 넘어갑니다.");
         }
 
-        // 상호작용 판정: interactionRadius와 interactionLayerMask 사용
         Collider[] cols = Physics.OverlapSphere(centerPoint.position, interactionRadius, interactionLayerMask);
-        bool trapInRange = false;
         foreach (Collider col in cols)
         {
             if (col.gameObject.layer == LayerMask.NameToLayer("Trap"))
             {
-                trapInRange = true;
                 currentTrap = col.gameObject;
-                if (Input.GetKeyDown(trapClearKey))
+                if (inputActions.Player.TrapClear.triggered)
                 {
                     trapClearCount++;
                     Debug.Log("함정 키 입력 횟수: " + trapClearCount);
@@ -546,7 +552,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (col.gameObject.layer == LayerMask.NameToLayer("NPC"))
             {
-                if (Input.GetKeyDown(npcInteractKey))
+                if (inputActions.Player.NPCInteract.triggered)
                 {
                     isDialogueActive = true;
                     currentDialogueIndex = 0;
@@ -576,7 +582,6 @@ public class PlayerController : MonoBehaviour
         animator.SetTrigger("Death");
     }
 
-    // 플레이어가 총알 등으로 데미지를 입을 때 호출 (BulletController에서)
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
