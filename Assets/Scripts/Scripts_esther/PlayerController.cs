@@ -6,7 +6,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-
     [Header("이동 속도 설정 (8방향)")]
     public float speedHorizontal = 5f;
     public float speedVertical = 5f;
@@ -18,6 +17,7 @@ public class PlayerController : MonoBehaviour
     [Header("대쉬 설정")]
     public float dashDuration = 0.2f;
     public float dashDistance = 2f;
+
     [Header("Dash Double Click 설정")]
     public float dashDoubleClickThreshold = 0.3f;
     private float lastDashClickTime = -Mathf.Infinity;
@@ -66,7 +66,6 @@ public class PlayerController : MonoBehaviour
     [Header("상호작용 설정")]
     public LayerMask interactionLayerMask;
     public float interactionRadius = 1.5f;
-    // (기존 키 설정은 더 이상 사용하지 않습니다)
 
     // 공격 쿨타임 체크용 변수
     private float lastBasicAttackTime = -Mathf.Infinity;
@@ -98,11 +97,12 @@ public class PlayerController : MonoBehaviour
     private int currentDialogueIndex = 0;
     private bool isDialogueActive = false;
 
-    // === 새 인풋 시스템 관련 변수 ===
-    private PlayerInputActions inputActions; // 자동 생성된 Input Action 클래스
+    // 인풋 시스템
+    private PlayerInputActions inputActions; // 플레이어 관련 인풋 액션
 
     void Awake()
     {
+        
         inputActions = new PlayerInputActions();
     }
 
@@ -151,12 +151,10 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         // UI나 죽은 상태에서는 입력 무시
-        if (pauseMenuPanel != null && pauseMenuPanel.activeSelf)
-            return;
-        if (currentState == PlayerState.Death)
-            return;
+        if (pauseMenuPanel != null && pauseMenuPanel.activeSelf) return;
+        if (currentState == PlayerState.Death) return;
 
-        // === 대쉬 입력 처리 (기존 Space키 → 새 액션 "Dash") ===
+        // 대쉬 입력 처리 
         if (inputActions.Player.Dash.triggered)
         {
             if (Time.time - lastDashClickTime <= dashDoubleClickThreshold)
@@ -166,6 +164,7 @@ public class PlayerController : MonoBehaviour
                 Vector3 dashDirection = new Vector3(dashInput.x, 0, dashInput.y);
                 if (dashDirection == Vector3.zero)
                     dashDirection = transform.forward;
+
                 StartCoroutine(DoDash(dashDirection));
                 lastDashClickTime = -Mathf.Infinity;
                 return;
@@ -176,50 +175,40 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        // 평타 스택 초기화 체크
         if (Time.time - lastBasicAttackStackTime >= basicAttackResetTime)
         {
             basicAttackStack = 0;
             animator.SetInteger("AttackStack", basicAttackStack);
         }
 
-        // === 일시정지 입력 처리 (새 액션 "Pause") ===
+        // 일시정지 입력 처리 
         if (inputActions.Player.Pause.triggered)
         {
             TogglePauseMenu();
             return;
         }
 
-        // === 공격 입력 처리 (각 액션의 triggered 상태 사용) ===
+        // 공격/스킬 입력 확인 
         bool basicAttackInput = inputActions.Player.BasicAttack.triggered;
         bool specialAttackInput = inputActions.Player.SpecialAttack.triggered;
         bool skillAttackInput = inputActions.Player.SkillAttack.triggered;
         bool ultimateAttackInput = inputActions.Player.UltimateAttack.triggered;
 
+        // 공격 입력이 들어왔으면 우선 처리
         if (basicAttackInput || specialAttackInput || skillAttackInput || ultimateAttackInput)
         {
             HandleActions();
         }
-        else
-        {
-            // === 이동 입력 처리 (새 액션 "Move") ===
-            Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-            if (moveInput.magnitude > 0.1f)
-            {
-                basicAttackStack = 0;
-                animator.SetInteger("AttackStack", basicAttackStack);
-                currentState = PlayerState.Run;
-                HandleMovement();
-            }
-            else
-            {
-                currentState = PlayerState.Idle;
-                animator.SetBool("isRunning", false);
-            }
-        }
 
+        // 이동 입력 처리
+        HandleMovement();
+
+        // 중심점 
         if (centerPoint != null)
             centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
 
+        // 공격 중이 아닐 때만 상호작용 처리
         if (currentState != PlayerState.Attack_L && currentState != PlayerState.Attack_R &&
             currentState != PlayerState.Skill && currentState != PlayerState.Ultimate)
         {
@@ -227,43 +216,67 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void HandleMovement()
+    private void HandleMovement()
     {
         Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
         float h = moveInput.x;
         float v = moveInput.y;
-        Vector3 inputDir = new Vector3(h, 0, v);
 
-        if (inputDir.sqrMagnitude > 0.01f)
+        // 이동 입력이 전혀 없는지 여부
+        bool isMoving = (Mathf.Abs(h) > 0f || Mathf.Abs(v) > 0f);
+
+        // 현재 공격 중/데스 상태가 아니라면 이동 상태를 업데이트
+        bool canMoveState = (currentState != PlayerState.Attack_L &&
+                             currentState != PlayerState.Attack_R &&
+                             currentState != PlayerState.Skill &&
+                             currentState != PlayerState.Ultimate &&
+                             currentState != PlayerState.Death);
+
+        if (isMoving)
         {
-            Vector3 moveDir = inputDir.normalized;
-            float moveSpeed = (Mathf.Abs(h) > 0 && Mathf.Approximately(v, 0f)) ? speedHorizontal : speedVertical;
+            // Run 상태로 전환
+            if (canMoveState)
+            {
+                currentState = PlayerState.Run;
+                animator.SetBool("isRunning", true);
+            }
+
+            // 실제 이동 로직
+            Vector3 moveDir = new Vector3(h, 0, v).normalized;
+
+            // 가로 이동 vs 세로 이동에 따른 속도 선택 (원한다면 더 정교하게 분기)
+            float moveSpeed = (Mathf.Abs(h) > 0 && Mathf.Approximately(v, 0f))
+                ? speedHorizontal : speedVertical;
+
             transform.Translate(moveDir * moveSpeed * Time.deltaTime, Space.World);
 
+            // 애니메이터 파라미터
             animator.SetFloat("moveX", moveDir.x);
             animator.SetFloat("moveY", moveDir.z);
-            animator.SetBool("isRunning", true);
 
-            if (centerPoint != null)
-                centerPoint.position = transform.position + moveDir * centerPointOffsetDistance;
+            // 8개 중심점 업데이트
             UpdateCenterPoints(moveDir);
         }
         else
         {
-            animator.SetBool("isRunning", false);
-            currentState = PlayerState.Idle;
-            if (centerPoint != null)
-                centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
+            // 이동 입력이 전혀 없다면 Idle
+            if (canMoveState)
+            {
+                currentState = PlayerState.Idle;
+                animator.SetBool("isRunning", false);
+            }
         }
     }
 
-    void UpdateCenterPoints(Vector3 moveDir)
+
+    private void UpdateCenterPoints(Vector3 moveDir)
     {
         if (centerPoints == null || centerPoints.Length != 8)
         {
             Debug.LogWarning("centerPoints 배열 8개를 Inspector에서 할당하세요.");
             return;
         }
+
         for (int i = 0; i < 8; i++)
         {
             if (centerPoints[i] != null)
@@ -285,6 +298,7 @@ public class PlayerController : MonoBehaviour
         Vector3 startPos = transform.position;
         Vector3 targetPos = startPos + direction.normalized * dashDistance;
         float elapsed = 0f;
+
         while (elapsed < dashDuration)
         {
             transform.position = Vector3.Lerp(startPos, targetPos, elapsed / dashDuration);
@@ -292,7 +306,10 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         transform.position = targetPos;
-        if (inputActions.Player.Move.ReadValue<Vector2>().magnitude > 0.1f)
+
+        // 대쉬 후 이동 입력 여부에 따라 상태 복귀
+        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+        if (moveInput.magnitude > 0.1f)
         {
             currentState = PlayerState.Run;
             animator.SetBool("isRunning", true);
@@ -304,23 +321,26 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void HandleActions()
+    private void HandleActions()
     {
         if (inputActions.Player.BasicAttack.triggered && !isAttacking)
         {
             if (Time.time - lastBasicAttackTime >= basicAttackCooldown)
             {
+                // 평타 스택 계산
                 if (Time.time - lastBasicAttackStackTime >= basicAttackResetTime)
                     basicAttackStack = 1;
                 else if (basicAttackStack < 4)
                     basicAttackStack++;
+
                 lastBasicAttackTime = Time.time;
                 lastBasicAttackStackTime = Time.time;
                 animator.SetInteger("AttackStack", basicAttackStack);
+
                 StartCoroutine(PerformBasicAttack());
             }
         }
-        else if (inputActions.Player.SpecialAttack.triggered)
+        else if (inputActions.Player.SpecialAttack.triggered && !isAttacking)
         {
             if (Time.time - lastSpecialAttackTime >= specialAttackCooldown)
             {
@@ -328,7 +348,7 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(PerformSpecialAttack());
             }
         }
-        else if (inputActions.Player.SkillAttack.triggered)
+        else if (inputActions.Player.SkillAttack.triggered && !isAttacking)
         {
             if (Time.time - lastSkillTime >= skillCooldown)
             {
@@ -336,7 +356,7 @@ public class PlayerController : MonoBehaviour
                 PerformSkillAttack();
             }
         }
-        else if (inputActions.Player.UltimateAttack.triggered)
+        else if (inputActions.Player.UltimateAttack.triggered && !isAttacking)
         {
             if (Time.time - lastUltimateTime >= ultimateCooldown)
             {
@@ -352,11 +372,16 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("isAttacking", true);
         animator.SetTrigger("Attack_L");
         currentState = PlayerState.Attack_L;
+
+        // 모션 앞부분 대기
         yield return new WaitForSeconds(0.2f);
+
+        // 범위 내 적 찾기
         Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
         Collider[] cols = Physics.OverlapSphere(checkPos, basicAttackRange, LayerMask.GetMask("Enemy"));
         if (cols.Length > 0)
         {
+            // 가장 가까운 적에게 데미지
             Collider closest = cols[0];
             float minDist = Vector3.Distance(checkPos, closest.transform.position);
             foreach (Collider col in cols)
@@ -375,6 +400,8 @@ public class PlayerController : MonoBehaviour
                 Debug.Log($"[평타] 스택 {basicAttackStack}: 적에게 {basicAttackDamage} 데미지. 남은 체력: {enemy.GetCurrentHealth()}");
             }
         }
+
+        // 4타 콤보 후 대기
         if (basicAttackStack >= 4)
         {
             float waitTimer = 0f;
@@ -397,19 +424,27 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            // 콤보가 아직 끝나지 않았다면 모션 끝날 때까지 대기
             yield return new WaitForSeconds(0.3f);
+
+            // 이동 입력이 있으면 Run, 없으면 Idle
             Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
             currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
         }
+
         isAttacking = false;
         animator.SetBool("isAttacking", false);
     }
 
     IEnumerator PerformSpecialAttack()
     {
+        isAttacking = true;
         currentState = PlayerState.Attack_R;
         animator.SetTrigger("Attack_R");
+
         yield return new WaitForSeconds(0.2f);
+
+        // 범위 내 적 찾기
         Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
         Collider[] cols = Physics.OverlapSphere(checkPos, specialAttackRange, LayerMask.GetMask("Enemy"));
         if (cols.Length > 0)
@@ -432,15 +467,23 @@ public class PlayerController : MonoBehaviour
                 Debug.Log($"[특수] 적에게 {specialAttackDamage} 데미지. 남은 체력: {enemy.GetCurrentHealth()}");
             }
         }
+
         yield return new WaitForSeconds(0.3f);
+
+        // 이동 입력 여부
         Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
         currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
+
+        isAttacking = false;
     }
 
-    void PerformSkillAttack()
+    private void PerformSkillAttack()
     {
+        isAttacking = true;
         currentState = PlayerState.Skill;
         animator.SetTrigger("Skill");
+
+        // 즉시 데미지 처리
         Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
         Collider[] cols = Physics.OverlapSphere(checkPos, skillRange, LayerMask.GetMask("Enemy"));
         if (cols.Length > 0)
@@ -463,20 +506,28 @@ public class PlayerController : MonoBehaviour
                 Debug.Log($"[스킬] 적에게 {skillDamage} 데미지. 남은 체력: {enemy.GetCurrentHealth()}");
             }
         }
+
+        // 모션 끝난 뒤 상태 복귀
         StartCoroutine(TransitionAfterSkill());
     }
 
     IEnumerator TransitionAfterSkill()
     {
         yield return new WaitForSeconds(0.3f);
+
         Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
         currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
+
+        isAttacking = false;
     }
 
-    void PerformUltimateAttack()
+    private void PerformUltimateAttack()
     {
+        isAttacking = true;
         currentState = PlayerState.Ultimate;
         animator.SetTrigger("Ultimate");
+
+        // 즉시 데미지 처리
         Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
         Collider[] cols = Physics.OverlapSphere(checkPos, ultimateRange, LayerMask.GetMask("Enemy"));
         if (cols.Length > 0)
@@ -499,19 +550,33 @@ public class PlayerController : MonoBehaviour
                 Debug.Log($"[궁극] 적에게 {ultimateDamage} 데미지. 남은 체력: {enemy.GetCurrentHealth()}");
             }
         }
-        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-        currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
+
+        // 모션 끝난 뒤 상태 복귀
+        StartCoroutine(TransitionAfterUltimate());
     }
 
-    void CheckInteractions()
+    IEnumerator TransitionAfterUltimate()
     {
+        yield return new WaitForSeconds(0.3f);
+
+        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+        currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
+
+        isAttacking = false;
+    }
+
+    private void CheckInteractions()
+    {
+        // 대화 중이면 대화 진행
         if (isDialogueActive)
         {
             if (inputActions.Player.NPCInteract.triggered)
             {
                 currentDialogueIndex++;
                 if (currentDialogueIndex < npcDialogues.Length)
+                {
                     dialogueText.text = npcDialogues[currentDialogueIndex];
+                }
                 else
                 {
                     dialoguePanel.SetActive(false);
@@ -522,6 +587,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        // 스테이지 진행
         if (inputActions.Player.StageProgress.triggered)
         {
             if (!isTrapCleared)
@@ -530,9 +596,13 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("다음 스테이지로 넘어갑니다.");
         }
 
-        Collider[] cols = Physics.OverlapSphere(centerPoint.position, interactionRadius, interactionLayerMask);
+        // 상호작용(함정/대화) 범위 확인
+        Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
+        Collider[] cols = Physics.OverlapSphere(checkPos, interactionRadius, interactionLayerMask);
+
         foreach (Collider col in cols)
         {
+            // 함정
             if (col.gameObject.layer == LayerMask.NameToLayer("Trap"))
             {
                 currentTrap = col.gameObject;
@@ -550,6 +620,7 @@ public class PlayerController : MonoBehaviour
                     }
                 }
             }
+            // NPC
             else if (col.gameObject.layer == LayerMask.NameToLayer("NPC"))
             {
                 if (inputActions.Player.NPCInteract.triggered)
@@ -557,14 +628,17 @@ public class PlayerController : MonoBehaviour
                     isDialogueActive = true;
                     currentDialogueIndex = 0;
                     dialoguePanel.SetActive(true);
+
                     if (npcDialogues != null && npcDialogues.Length > 0)
+                    {
                         dialogueText.text = npcDialogues[currentDialogueIndex];
+                    }
                 }
             }
         }
     }
 
-    void TogglePauseMenu()
+    private void TogglePauseMenu()
     {
         if (pauseMenuPanel != null)
         {
@@ -573,8 +647,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void OnQuitButton() { TogglePauseMenu(); }
-    void OnLobbyButton() { Debug.Log("로비로 이동 (추후 구현)"); }
+    private void OnQuitButton()
+    {
+        TogglePauseMenu();
+    }
+
+    private void OnLobbyButton()
+    {
+        Debug.Log("로비로 이동 (추후 구현)");
+    }
 
     public void Die()
     {
@@ -587,6 +668,7 @@ public class PlayerController : MonoBehaviour
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         Debug.Log("플레이어 체력: " + currentHealth);
+
         if (currentHealth <= 0)
         {
             Die();
