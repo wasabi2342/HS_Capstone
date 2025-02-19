@@ -1,10 +1,11 @@
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviourPunCallbacks
 {
     [Header("이동 속도 설정 (8방향)")]
     public float speedHorizontal = 5f;
@@ -102,7 +103,6 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
-        
         inputActions = new PlayerInputActions();
     }
 
@@ -118,6 +118,18 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        // Photon 네트워크 소유권 체크: 로컬 플레이어만 입력 및 카메라 활성화
+        if (!photonView.IsMine)
+        {
+            // 자식에 있는 카메라 비활성화 (있을 경우)
+            Camera cam = GetComponentInChildren<Camera>();
+            if (cam != null)
+                cam.enabled = false;
+            // 이 스크립트를 비활성화하여 로컬 입력을 받지 않도록 합니다.
+            this.enabled = false;
+            return;
+        }
+
         animator = GetComponent<Animator>();
 
         if (pauseMenuPanel != null)
@@ -267,7 +279,6 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
 
     private void UpdateCenterPoints(Vector3 moveDir)
     {

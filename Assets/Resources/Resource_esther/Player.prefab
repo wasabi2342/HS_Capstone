@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6389345504270291820}
-  m_Layer: 10
+  m_Layer: 6
   m_Name: CenterPoint_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 739063013299719982}
-  m_Layer: 10
+  m_Layer: 6
   m_Name: CenterPoint_8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71,7 +71,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1330702589638773871}
-  m_Layer: 10
+  m_Layer: 6
   m_Name: CenterPoint_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,7 +102,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8230584595030747881}
-  m_Layer: 10
+  m_Layer: 6
   m_Name: CenterPoint_6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -141,7 +141,8 @@ GameObject:
   - component: {fileID: 3893625609994687788}
   - component: {fileID: 5046260287561047278}
   - component: {fileID: 4412398138277556100}
-  m_Layer: 10
+  - component: {fileID: 7687062139411390392}
+  m_Layer: 6
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -437,9 +438,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   interactionRadius: 2.5
-  trapClearKey: 107
-  stageProgressKey: 103
-  npcInteractKey: 102
   dialoguePanel: {fileID: 0}
   dialogueText: {fileID: 0}
   npcDialogues:
@@ -457,6 +455,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a55b8a539137cc84b85b16737508e990, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7687062139411390392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4131734313779836671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &4327386904321127018
 GameObject:
   m_ObjectHideFlags: 0
@@ -467,7 +487,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4797830853248287678}
   - component: {fileID: 7432034532123895083}
-  m_Layer: 10
+  m_Layer: 6
   m_Name: DamageCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -519,7 +539,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5109228140562016688}
-  m_Layer: 10
+  m_Layer: 6
   m_Name: CenterPoint_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -550,7 +570,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1194036335750457889}
-  m_Layer: 10
+  m_Layer: 6
   m_Name: CenterPoint_7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -581,7 +601,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1142754326731836901}
-  m_Layer: 10
+  m_Layer: 6
   m_Name: CenterPoint_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -612,7 +632,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1333132904043162585}
-  m_Layer: 10
+  m_Layer: 6
   m_Name: CenterPoint_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -643,7 +663,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2649936402368327885}
-  m_Layer: 10
+  m_Layer: 6
   m_Name: CenterPoints
   m_TagString: Untagged
   m_Icon: {fileID: 0}
