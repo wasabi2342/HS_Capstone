@@ -6,14 +6,23 @@ public class PlayerDamageZone : MonoBehaviour
     [Header("이 영역에 들어온 총알에게 받는 데미지")]
     public int bulletDamage = 10;
 
-    
-    public PlayerController playerController;
+    private PlayerController playerController;
 
     private void Awake()
     {
-        
+        // 자동으로 SphereCollider를 Trigger로 설정
         SphereCollider col = GetComponent<SphereCollider>();
-        if (col != null) col.isTrigger = true;
+        if (col != null)
+        {
+            col.isTrigger = true;
+        }
+
+        // 상위에 있는 PlayerController를 찾는다
+        playerController = GetComponentInParent<PlayerController>();
+        if (playerController == null)
+        {
+            Debug.LogWarning("[PlayerDamageZone] 상위에 PlayerController가 없습니다!");
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -31,5 +40,4 @@ public class PlayerDamageZone : MonoBehaviour
             Destroy(other.gameObject);
         }
     }
-
 }

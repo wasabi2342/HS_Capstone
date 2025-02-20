@@ -6,36 +6,27 @@ public class Launcher : MonoBehaviourPunCallbacks
 {
     void Start()
     {
-        // Photon 서버에 연결
+        // Photon 연결
         PhotonNetwork.ConnectUsingSettings();
     }
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("Photon 마스터 서버에 연결됨");
-        // 랜덤 룸에 입장 시도
-        PhotonNetwork.JoinRandomRoom();
-    }
-
-    public override void OnJoinRandomFailed(short returnCode, string message)
-    {
-        Debug.Log("랜덤 룸 입장 실패, 새 룸 생성");
-        // 4명 방 생성
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 4 });
+        Debug.Log("Connected to MasterServer");
+        RoomOptions options = new RoomOptions { MaxPlayers = 4 };
+        PhotonNetwork.JoinOrCreateRoom("MyFixedRoom", options, TypedLobby.Default);
     }
 
     public override void OnJoinedRoom()
     {
-        Debug.Log("룸에 입장함");
+        Debug.Log($"방 입장: {PhotonNetwork.CurrentRoom.Name}, 현재 인원: {PhotonNetwork.CurrentRoom.PlayerCount}");
 
-        // UnityEngine.Random 을 명시적으로 사용 (System.Random과 구분)
-        Vector3 spawnPosition = new Vector3(
-            UnityEngine.Random.Range(-2f, 2f),
-            0f,
-            UnityEngine.Random.Range(-2f, 2f)
-        );
-
-        
-        PhotonNetwork.Instantiate("Resources_esther/Player", spawnPosition, Quaternion.identity);
+        // Player 프리팹 동적 생성 (Assets/Resources/Resource_esther/Player.prefab 이라고 가정)
+        PhotonNetwork.Instantiate("Resource_esther/Player", Vector3.zero, Quaternion.identity);
     }
-} 
+
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        Debug.Log($"새 플레이어 입장: {newPlayer.NickName}, 현재 인원: {PhotonNetwork.CurrentRoom.PlayerCount}");
+    }
+}
