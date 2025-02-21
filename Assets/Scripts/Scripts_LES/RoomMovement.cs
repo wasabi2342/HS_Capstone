@@ -30,7 +30,7 @@ public class RoomMovement : MonoBehaviourPun
 
     private bool canControl;
     private bool isInTrainingRoom;
-    
+
     private Vector2 inputMoveDir;
 
 
@@ -39,7 +39,6 @@ public class RoomMovement : MonoBehaviourPun
         if (!photonView.IsMine)
         {
             gameObject.GetComponent<SpriteRenderer>().color = Color.black;
-            Destroy(transform.GetComponentInChildren<Camera>().gameObject);
         }
         canUsePortal = true;
         canControl = true;
@@ -52,71 +51,76 @@ public class RoomMovement : MonoBehaviourPun
         {
             if (!canControl)
                 return;
-            if(!isInTrainingRoom)
+            if (!isInTrainingRoom)
                 transform.Translate(new Vector3(inputMoveDir.x, 0, 0) * moveSpeed * Time.deltaTime);
             else
                 transform.Translate(new Vector3(inputMoveDir.x, inputMoveDir.y, 0) * moveSpeed * Time.deltaTime);
         }
     }
 
-    private void OnMove(InputValue inputValue)
+    public void OnMove(InputAction.CallbackContext context)
     {
-        inputMoveDir = inputValue.Get<Vector2>();
-        //transform.Translate(new Vector3(inputMoveDir.x, 0, 0) * moveSpeed * Time.deltaTime);
+        if (photonView.IsMine)
+            inputMoveDir = context.ReadValue<Vector2>();
     }
 
-    private void OnInteract(InputValue inputValue)
+    public void OnInteract()
     {
-        Debug.Log("OnInteract 호출됨!");
-        switch (nowObject)
+        if (photonView.IsMine && canControl)
         {
-            case InteractableObject.portal:
-                if (canUsePortal)
-                {
-                    Debug.Log("포탈 사용");
-                    UsePortal();
-                }
-                break;
-            case InteractableObject.gameStart:
-                if (!RoomManager.Instance.isEnteringStage)
-                {
-                    if (!RoomManager.Instance.IsPlayerInRestrictedArea())
+            Debug.Log("OnInteract 호출됨!");
+            switch (nowObject)
+            {
+                case InteractableObject.portal:
+                    if (canUsePortal)
                     {
-                        RoomManager.Instance.InteractWithDungeonNPC().onClose += () => canControl = true;
-                        canControl = false;
+                        Debug.Log("포탈 사용");
+                        UsePortal();
                     }
-                    else
+                    break;
+                case InteractableObject.gameStart:
+                    if (!RoomManager.Instance.isEnteringStage)
                     {
-                        UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("모든 플레이어가 밖으로 나와야 합니다.");
+                        if (!RoomManager.Instance.IsPlayerInRestrictedArea())
+                        {
+                            RoomManager.Instance.InteractWithDungeonNPC().onClose += () => canControl = true;
+                            canControl = false;
+                        }
+                        else
+                        {
+                            UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("모든 플레이어가 밖으로 나와야 합니다.");
+                        }
                     }
-                }
-                break;
-            case InteractableObject.upgrade: // 업그래이드 UI생성하기
-                break;
-            case InteractableObject.selectCharacter: // 캐릭터 선택 UI생성하기
-                RoomManager.Instance.EnterRestrictedArea(GetComponent<PhotonView>().ViewID);
-                canControl = false;
-
-                UIManager.Instance.OpenPopupPanel<UISelectCharacterPanel>().onClose += () =>
-                {
-                    RoomManager.Instance.ExitRestrictedArea(GetComponent<PhotonView>().ViewID);
-                    canControl = true;
-                };
-                break;
-            case InteractableObject.changeSkill: // 스킬변경 UI 생성하기
-                break;
-            case InteractableObject.trainingRoom:
-                if (!isInTrainingRoom) // 훈련소로 화면 전환
-                {
+                    break;
+                case InteractableObject.upgrade: // 업그래이드 UI생성하기
+                    break;
+                case InteractableObject.selectCharacter: // 캐릭터 선택 UI생성하기
                     RoomManager.Instance.EnterRestrictedArea(GetComponent<PhotonView>().ViewID);
-                    EnterTrainingRoom();
-                    isInTrainingRoom = true;
-                }
-                else // 훈련소에서 나오기
-                {
+                    canControl = false;
 
-                }
-                break;
+                    UIManager.Instance.OpenPopupPanel<UISelectCharacterPanel>().onClose += () =>
+                    {
+                        RoomManager.Instance.ExitRestrictedArea(GetComponent<PhotonView>().ViewID);
+                        canControl = true;
+                    };
+                    break;
+                case InteractableObject.changeSkill: // 스킬변경 UI 생성하기
+                    break;
+                case InteractableObject.trainingRoom:
+                    if (!isInTrainingRoom) // 훈련소로 화면 전환
+                    {
+                        RoomManager.Instance.EnterRestrictedArea(GetComponent<PhotonView>().ViewID);
+                        EnterTrainingRoom();
+                        isInTrainingRoom = true;
+                    }
+                    else // 훈련소에서 나오기
+                    {
+                        RoomManager.Instance.ExitRestrictedArea(GetComponent<PhotonView>().ViewID);
+                        ExitTrainingRoom();
+                        isInTrainingRoom = false;
+                    }
+                    break;
+            }
         }
     }
 
@@ -141,12 +145,24 @@ public class RoomMovement : MonoBehaviourPun
 
         sequence.Append(transform.DORotate(new Vector3(0, -90, 0), 1f, RotateMode.LocalAxisAdd));
         sequence.Append(transform.DOMoveZ(transform.position.z + 3, 1f));
-        sequence.Append(transform.DORotate(new Vector3(90, 0, 0), 1f, RotateMode.LocalAxisAdd));
-        sequence.OnComplete(() => CompleteEnterTrainingRoom());
+        //sequence.Append(transform.DORotate(new Vector3(90, 0, 0), 1f, RotateMode.LocalAxisAdd));
+        sequence.OnComplete(() => CanControl());
         sequence.Play();
     }
 
-    private void CompleteEnterTrainingRoom()
+    private void ExitTrainingRoom()
+    {
+        canControl = false;
+
+        Sequence sequence = DOTween.Sequence();
+
+        sequence.Append(transform.DORotate(new Vector3(0, 90, 0), 1f, RotateMode.LocalAxisAdd));
+        sequence.Append(transform.DOMoveZ(transform.position.z - 3, 1f));
+        sequence.OnComplete(() => CanControl());
+        sequence.Play();
+    }
+
+    private void CanControl()
     {
         canControl = true;
     }
@@ -159,5 +175,6 @@ public class RoomMovement : MonoBehaviourPun
     public void UpdateNowInteractable(InteractableObject obj)
     {
         nowObject = obj;
+        Debug.Log(nowObject);
     }
 }

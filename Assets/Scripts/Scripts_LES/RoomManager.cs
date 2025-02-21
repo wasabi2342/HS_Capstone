@@ -1,11 +1,14 @@
 using Photon.Pun;
 using System.Collections.Generic;
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class RoomManager : MonoBehaviourPun
 {
     [SerializeField]
     private GameObject playerInRoom;
+    [SerializeField]
+    private CinemachineCamera cinemachineCamera;
 
     public static RoomManager Instance { get; private set; }
 
@@ -23,7 +26,10 @@ public class RoomManager : MonoBehaviourPun
 
     private void Start()
     {
-        PhotonNetwork.Instantiate(playerInRoom.name, Vector3.zero, Quaternion.identity);
+        GameObject playerInstance = PhotonNetwork.Instantiate(playerInRoom.name, Vector3.zero, Quaternion.identity);
+        cinemachineCamera.Follow = playerInstance.transform;
+        cinemachineCamera.LookAt = playerInstance.transform;
+
         isEnteringStage = false;
     }
 
