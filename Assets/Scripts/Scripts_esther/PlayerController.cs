@@ -59,22 +59,22 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public LayerMask interactionLayerMask;
     public float interactionRadius = 1.5f;
 
-    // ---- 여기가 중요! Trap 관련 변수 선언 ----
+    // 함정 관련 변수
     private int trapClearCount = 0;
     private GameObject currentTrap = null;
     private bool isTrapCleared = false;
 
-    // 공격 쿨타임 체크용 변수
+    // 공격 쿨타임 체크용
     private float lastBasicAttackTime = -Mathf.Infinity;
     private float lastSpecialAttackTime = -Mathf.Infinity;
     private float lastSkillTime = -Mathf.Infinity;
     private float lastUltimateTime = -Mathf.Infinity;
 
-    // 평타 스택 변수
+    // 평타 스택
     private int basicAttackStack = 0;
     private float lastBasicAttackStackTime = 0f;
 
-    // Animator 참조
+    // Animator
     private Animator animator;
 
     // 공격 진행 여부
@@ -104,7 +104,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        // Animator
         animator = GetComponent<Animator>();
         if (animator == null)
         {
@@ -114,9 +113,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         // Photon 소유권 체크
         if (!photonView.IsMine)
         {
-            Camera cam = GetComponentInChildren<Camera>();
-            if (cam != null)
-                cam.enabled = false;
+          
             this.enabled = false;
             return;
         }
@@ -134,15 +131,19 @@ public class PlayerController : MonoBehaviourPunCallbacks
         currentHealth = maxHealth;
 
         if (damageCollider != null)
+        {
             damageCollider.radius = damageColliderRadius;
+        }
 
         if (centerPoint != null)
+        {
             centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
+        }
     }
 
     void Update()
     {
-        // UI가 활성화되어 있으면 입력 무시
+        // UIManager_player가 존재하고, 일시정지 패널이 열려 있으면 입력 무시
         if (UIManager_player.Instance != null && UIManager_player.Instance.pauseMenuPanel != null)
         {
             if (UIManager_player.Instance.pauseMenuPanel.activeSelf)
@@ -159,6 +160,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 Vector3 dashDir = new Vector3(dashInput.x, 0, dashInput.y);
                 if (dashDir == Vector3.zero)
                     dashDir = transform.forward;
+
                 StartCoroutine(DoDash(dashDir));
                 lastDashClickTime = -Mathf.Infinity;
                 return;
@@ -177,7 +179,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 animator.SetInteger("AttackStack", basicAttackStack);
         }
 
-        // 일시정지 처리
+        // 일시정지 입력 처리
         if (inputActions.Player.Pause.triggered)
         {
             UIManager_player.Instance?.TogglePauseMenu();
@@ -553,7 +555,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         Collider[] cols = Physics.OverlapSphere(checkPos, interactionRadius, interactionLayerMask);
         foreach (Collider col in cols)
         {
-            // 함정 (Layer = "Trap")
+            // 함정
             if (col.gameObject.layer == LayerMask.NameToLayer("Trap"))
             {
                 currentTrap = col.gameObject;
@@ -571,7 +573,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                     }
                 }
             }
-            // NPC (Layer = "NPC")
+            // NPC
             else if (col.gameObject.layer == LayerMask.NameToLayer("NPC"))
             {
                 if (inputActions.Player.NPCInteract.triggered)
