@@ -104,7 +104,7 @@ public class ArrowIndicator : MonoBehaviour
                 // 이전에 하이라이트된 NPC가 있다면 비활성화
                 DisableCurrentOutline();
 
-                // 새 타겟의 Outline 컴포넌트 활성화
+                // 새 타겟의 Outline 활성화
                 Outline outline = npcTarget.GetComponent<Outline>();
                 if (outline != null)
                 {
