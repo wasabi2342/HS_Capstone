@@ -21,4 +21,20 @@ public class Interactable : MonoBehaviour
             collision.GetComponent<RoomMovement>().UpdateNowInteractable(InteractableObject.none);
         }
     }
+
+    protected void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            other.GetComponentInParent<RoomMovement>().UpdateNowInteractable(thisPlace);
+        }
+    }
+
+    protected void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            other.GetComponentInParent<RoomMovement>().UpdateNowInteractable(InteractableObject.none);
+        }
+    }
 }
