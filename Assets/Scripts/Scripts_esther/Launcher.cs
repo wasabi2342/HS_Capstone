@@ -6,7 +6,6 @@ public class Launcher : MonoBehaviourPunCallbacks
 {
     void Start()
     {
-        // Photon 연결
         PhotonNetwork.ConnectUsingSettings();
     }
 
@@ -21,8 +20,9 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         Debug.Log($"방 입장: {PhotonNetwork.CurrentRoom.Name}, 현재 인원: {PhotonNetwork.CurrentRoom.PlayerCount}");
 
-        // Player 프리팹 동적 생성 (Assets/Resources/Resource_esther/Player.prefab 이라고 가정)
-        PhotonNetwork.Instantiate("Resource_esther/Player", Vector3.zero, Quaternion.identity);
+        // (1) Player 프리팹을 바닥 위로 살짝 올려서 스폰
+        Vector3 spawnPos = new Vector3(0, 1f, 0); // y=1 정도로 높임
+        PhotonNetwork.Instantiate("Resource_esther/Player", spawnPos, Quaternion.identity);
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
