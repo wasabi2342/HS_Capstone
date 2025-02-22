@@ -5,6 +5,9 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviourPunCallbacks
 {
+    // 로컬 플레이어 정적 참조
+    public static PlayerController localPlayer;
+
     [Header("이동 속도 설정 (8방향)")]
     public float speedHorizontal = 5f;
     public float speedVertical = 5f;
@@ -84,6 +87,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public enum PlayerState { Idle, Run, Attack_L, Attack_R, Skill, Ultimate, Death }
     private PlayerState currentState = PlayerState.Idle;
 
+    // Animator 파라미터
+    private bool isDashing = false;   // 대쉬 중인지
+    private int attackIndex = 0;      // 1=Attack_L, 2=Attack_R, 3=Skill, 4=Ultimate
+    private bool isDead = false;      // 사망 여부
+
     // 인풋 시스템
     private PlayerInputActions inputActions;
 
@@ -111,7 +119,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
 
         // Photon 소유권 체크
-        if (!photonView.IsMine)
+        if (photonView != null && photonView.IsMine)
+        {
+            localPlayer = this;
+        }
+        else
         {
             this.enabled = false;
             return;
@@ -127,6 +139,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
         {
             animator.SetInteger("AttackStack", basicAttackStack);
             animator.SetBool("isRunning", false);
+            animator.SetBool("isAttacking", false);
+            animator.SetInteger("AttackIndex", 0);
+            animator.SetBool("isDashing", false);
+            animator.SetBool("isDead", false);
         }
 
         if (damageCollider != null)
@@ -142,14 +158,18 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        // 혹시 모를 UI 매니저에서 일시정지나 대화 중이면 입력 무시
+        // StageProgress (G키)
+        if (inputActions.Player.StageProgress.triggered)
+        {
+            Debug.Log("[PlayerController] 다음 스테이지로 넘어갈 예정입니다!");
+        }
+
+        // UI / 대화 중이면 입력 무시
         if (UIManager_player.Instance != null)
         {
-            // 일시정지 메뉴 확인
             if (UIManager_player.Instance.pauseMenuPanel != null && UIManager_player.Instance.pauseMenuPanel.activeSelf)
                 return;
 
-            // 대화 중이면 NextDialogue만
             if (UIManager_player.Instance.IsDialogueActive())
             {
                 if (inputActions.Player.NPCInteract.triggered)
@@ -160,21 +180,21 @@ public class PlayerController : MonoBehaviourPunCallbacks
             }
         }
 
-        // 죽은 상태면 입력 무시
-        if (currentState == PlayerState.Death)
+        // 사망 상태면 모든 입력 무시
+        if (isDead || currentState == PlayerState.Death)
             return;
 
-        // 일시정지 입력 처리
+        // 일시정지
         if (inputActions.Player.Pause.triggered)
         {
             UIManager_player.Instance?.TogglePauseMenu();
             return;
         }
 
-        // 대쉬 처리(더블클릭)
+        // 대쉬(더블클릭)
         HandleDash();
 
-        // 평타 스택 리셋 체크
+        // 평타 스택 리셋
         if (Time.time - lastBasicAttackStackTime >= basicAttackResetTime)
         {
             ResetBasicAttackStack();
@@ -183,19 +203,26 @@ public class PlayerController : MonoBehaviourPunCallbacks
         // 공격/스킬 입력
         HandleActions();
 
-        // 이동 처리 (공격 중이 아니면)
+        // 이동 처리
         HandleMovement();
 
         // 중심점 업데이트
         if (centerPoint != null)
-        {
             centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
-        }
 
-        // 상호작용 처리 (공격 중이 아닐 때만)
+        // 상호작용
         if (!isAttacking && currentState != PlayerState.Skill && currentState != PlayerState.Ultimate)
         {
             CheckInteractions();
+        }
+
+        // --- Animator 파라미터를 매 프레임 갱신
+        if (animator != null)
+        {
+            animator.SetBool("isAttacking", isAttacking);
+            animator.SetInteger("AttackIndex", attackIndex);
+            animator.SetBool("isDashing", isDashing);
+            animator.SetBool("isDead", isDead);
         }
     }
 
@@ -203,7 +230,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private void HandleMovement()
     {
-        // 공격, 스킬, 궁극 중이면 이동 불가
         bool canMove = (currentState != PlayerState.Attack_L &&
                         currentState != PlayerState.Attack_R &&
                         currentState != PlayerState.Skill &&
@@ -215,7 +241,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
         Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
         float h = moveInput.x;
         float v = moveInput.y;
-
         bool isMoving = (Mathf.Abs(h) > 0.01f || Mathf.Abs(v) > 0.01f);
 
         if (isMoving)
@@ -226,24 +251,16 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
             Vector3 moveDir = new Vector3(h, 0, v).normalized;
             float moveSpeed = speedVertical;
-
-            // 8방향 세밀한 속도 분기 필요 시, 여기서 조건 처리
-            // 예: 좌우만 움직일 때 speedHorizontal, 대각일 때 별도 처리 등
-            // (아래는 간단 예시. 실제로는 조건을 더 세밀히 구분하세요.)
             if (Mathf.Abs(h) > 0 && Mathf.Abs(v) < 0.01f)
                 moveSpeed = speedHorizontal;
 
-            // 이동
             transform.Translate(moveDir * moveSpeed * Time.deltaTime, Space.World);
 
-            // 애니메이터 파라미터
             if (animator != null)
             {
                 animator.SetFloat("moveX", moveDir.x);
                 animator.SetFloat("moveY", moveDir.z);
             }
-
-            // 8개 centerPoints 업데이트 (원하는 경우에만)
             UpdateCenterPoints(moveDir);
         }
         else
@@ -260,11 +277,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
         {
             if (Time.time - lastDashClickTime <= dashDoubleClickThreshold)
             {
-                // 더블 클릭 간격 내라면 대쉬
                 Vector2 dashInput = inputActions.Player.Move.ReadValue<Vector2>();
                 Vector3 dashDir = new Vector3(dashInput.x, 0, dashInput.y);
-
-                // 입력이 없으면 바라보는 방향으로
                 if (dashDir == Vector3.zero)
                     dashDir = transform.forward;
 
@@ -281,13 +295,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     IEnumerator DoDash(Vector3 direction)
     {
-        if (animator != null)
-            animator.SetTrigger("Dash");
+        isDashing = true;
 
         Vector3 startPos = transform.position;
         Vector3 targetPos = startPos + direction.normalized * dashDistance;
         float elapsed = 0f;
-
         while (elapsed < dashDuration)
         {
             transform.position = Vector3.Lerp(startPos, targetPos, elapsed / dashDuration);
@@ -296,7 +308,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
         transform.position = targetPos;
 
-        // 대쉬 후 상태 복귀
+        // 대쉬 종료
+        isDashing = false;
+
+        // Idle or Run
         Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
         if (moveInput.magnitude > 0.1f)
         {
@@ -320,7 +335,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
         for (int i = 0; i < centerPoints.Length; i++)
         {
             if (centerPoints[i] == null) continue;
-
             float angle = i * 45f;
             Vector3 offset = Quaternion.Euler(0, angle, 0) * moveDir * centerPointOffsetDistance;
             centerPoints[i].position = transform.position + offset;
@@ -333,7 +347,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private void HandleActions()
     {
-        // 이미 공격 중이면(모션 도중이면) 새로운 공격 입력 무시
         if (isAttacking) return;
 
         bool basicAttackInput = inputActions.Player.BasicAttack.triggered;
@@ -361,16 +374,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private void PerformBasicAttack()
     {
-        // 평타 스택 갱신
+        // 스택 리셋 시간 지났으면 1부터 시작, 아니면 스택++
         if (Time.time - lastBasicAttackStackTime >= basicAttackResetTime)
-        {
             basicAttackStack = 1;
-        }
-        else
-        {
-            if (basicAttackStack < 4)
-                basicAttackStack++;
-        }
+        else if (basicAttackStack < 4)
+            basicAttackStack++;
 
         lastBasicAttackTime = Time.time;
         lastBasicAttackStackTime = Time.time;
@@ -378,152 +386,99 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (animator != null)
             animator.SetInteger("AttackStack", basicAttackStack);
 
-        // 코루틴 시작
-        StartCoroutine(CoPerformBasicAttack());
+        // Attack_L = 1
+        StartCoroutine(CoPerformAttack(1));
     }
 
-    IEnumerator CoPerformBasicAttack()
+    IEnumerator CoPerformAttack(int index)
     {
         isAttacking = true;
-        currentState = PlayerState.Attack_L;
+        attackIndex = index; // 1=Attack_L, 2=Attack_R, 3=Skill, 4=Ultimate
 
-        if (animator != null)
+        // 상태 설정
+        switch (index)
         {
-            animator.SetBool("isAttacking", true);
-            animator.SetTrigger("Attack_L");
+            case 1: currentState = PlayerState.Attack_L; break;
+            case 2: currentState = PlayerState.Attack_R; break;
+            case 3: currentState = PlayerState.Skill; break;
+            case 4: currentState = PlayerState.Ultimate; break;
         }
 
-        // 공격 판정 시점까지 대기(애니메이션에 맞춰 조절)
+        // 공격 모션 시작 후 약간 대기(타격 타이밍)
         yield return new WaitForSeconds(0.2f);
 
-        // 실제 데미지 판정
-        AttackOverlapCheck(basicAttackRange, basicAttackDamage);
+        // 공격 판정
+        float range = (index == 1) ? basicAttackRange :
+                      (index == 2) ? specialAttackRange :
+                      (index == 3) ? skillRange : ultimateRange;
+        int damage = (index == 1) ? basicAttackDamage :
+                     (index == 2) ? specialAttackDamage :
+                     (index == 3) ? skillDamage : ultimateDamage;
 
-        // 만약 스택이 4회 도달했다면, 일정 시간 안에 추가 입력을 받으면 연속 공격
+        AttackOverlapCheck(range, damage);
+
+        // ★ 만약 AttackStack이 4까지 찼다면 (콤보의 마지막)
+        //    추가 입력 없이도 자동으로 Idle로 돌아가게 처리
         if (basicAttackStack >= 4)
         {
-            float waitTimer = 0f;
-            while (waitTimer < basicAttackResetTime)
-            {
-                if (inputActions.Player.BasicAttack.triggered)
-                {
-                    // 연속 공격
-                    lastBasicAttackTime = Time.time;
-                    lastBasicAttackStackTime = Time.time;
-                    if (animator != null)
-                        animator.SetInteger("AttackStack", basicAttackStack);
+            // 마지막 평타 모션 재생 후 대기
+            yield return new WaitForSeconds(0.3f);
 
-                    // 재귀적으로 같은 코루틴 재실행
-                    yield return StartCoroutine(CoPerformBasicAttack());
-                    yield break;
-                }
-                waitTimer += Time.deltaTime;
-                yield return null;
-            }
-
-            // 여기까지 오면 스택 초기화
+            // 스택 리셋
             ResetBasicAttackStack();
-            currentState = PlayerState.Idle;
+            // Idle or Run
+            Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+            currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
+        }
+        else if (index == 1 && basicAttackStack >= 4)
+        {
+            // 위와 동일 로직이나, "AttackStack=4"를 처리할 때
+            // (현재 index=1일 때 4연타가 완성되면 여기서도 처리 가능)
+            // -- 이 로직은 상황에 따라 조정
         }
         else
         {
-            // 연속공격(스택 < 4)은 다음 모션까지 약간의 대기
+            // AttackStack이 4 미만일 때
             yield return new WaitForSeconds(0.3f);
 
-            // 대기 후 이동 입력 확인 → Idle 또는 Run
+            // 이동 입력 체크
             Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
             currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
         }
 
+        // 공격 종료
         isAttacking = false;
-        if (animator != null)
-            animator.SetBool("isAttacking", false);
+        attackIndex = 0;
     }
 
     IEnumerator PerformSpecialAttack()
     {
-        isAttacking = true;
-        currentState = PlayerState.Attack_R;
-
         lastSpecialAttackTime = Time.time;
-
-        if (animator != null)
-            animator.SetTrigger("Attack_R");
-
-        yield return new WaitForSeconds(0.2f);
-
-        // 실제 데미지 판정
-        AttackOverlapCheck(specialAttackRange, specialAttackDamage);
-
-        yield return new WaitForSeconds(0.3f);
-
-        // 이동 입력 확인 후 상태 복귀
-        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-        currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
-
-        isAttacking = false;
+        yield return StartCoroutine(CoPerformAttack(2));
     }
 
     IEnumerator PerformSkillAttack()
     {
-        isAttacking = true;
-        currentState = PlayerState.Skill;
-
         lastSkillTime = Time.time;
-
-        if (animator != null)
-            animator.SetTrigger("Skill");
-
-        yield return new WaitForSeconds(0.2f);
-
-        // 실제 데미지 판정
-        AttackOverlapCheck(skillRange, skillDamage);
-
-        yield return new WaitForSeconds(0.3f);
-
-        // 이동 입력 확인 후 상태 복귀
-        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-        currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
-
-        isAttacking = false;
+        yield return StartCoroutine(CoPerformAttack(3));
     }
 
     IEnumerator PerformUltimateAttack()
     {
-        isAttacking = true;
-        currentState = PlayerState.Ultimate;
-
         lastUltimateTime = Time.time;
-
-        if (animator != null)
-            animator.SetTrigger("Ultimate");
-
-        yield return new WaitForSeconds(0.3f);
-
-        // 실제 데미지 판정
-        AttackOverlapCheck(ultimateRange, ultimateDamage);
-
-        yield return new WaitForSeconds(0.3f);
-
-        // 이동 입력 확인 후 상태 복귀
-        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-        currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
-
-        isAttacking = false;
+        yield return StartCoroutine(CoPerformAttack(4));
     }
 
-    /// <summary>
-    /// OverlapSphere로 적을 찾아 데미지를 입힌다.
-    /// </summary>
-    /// <param name="range">공격 범위</param>
-    /// <param name="damage">데미지</param>
+    #endregion
+
+    #region 공격 판정 & 평타 스택
+
     private void AttackOverlapCheck(float range, int damage)
     {
         Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
         Collider[] cols = Physics.OverlapSphere(checkPos, range, LayerMask.GetMask("Enemy"));
         if (cols.Length > 0)
         {
-            // 가장 가까운 적 찾기
             Collider closest = cols[0];
             float minDist = Vector3.Distance(checkPos, closest.transform.position);
             foreach (Collider col in cols)
@@ -544,9 +499,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
     }
 
-    /// <summary>
-    /// 평타 스택을 0으로 초기화하고 Animator에도 반영
-    /// </summary>
     private void ResetBasicAttackStack()
     {
         basicAttackStack = 0;
@@ -562,7 +514,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
     {
         Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
         Collider[] cols = Physics.OverlapSphere(checkPos, interactionRadius, interactionLayerMask);
-
         foreach (Collider col in cols)
         {
             // 함정
@@ -600,7 +551,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         Debug.Log("플레이어 체력: " + currentHealth);
 
-        if (currentHealth <= 0)
+        if (currentHealth <= 0 && !isDead)
         {
             Die();
         }
@@ -608,14 +559,22 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     public void Die()
     {
+        if (isDead) return; // 중복 호출 방지
+
         currentState = PlayerState.Death;
+        isDead = true; // Animator 파라미터도 동기화
+
+        Debug.Log("[PlayerController] 플레이어 사망!");
+
+        // 사망 시 공격/대쉬 상태 해제
+        isAttacking = false;
+        attackIndex = 0;
+        isDashing = false;
+
+        // Animator에 Death 파라미터 전달 (Bool)
         if (animator != null)
         {
-            animator.SetTrigger("Death");
-        }
-        else
-        {
-            Debug.LogWarning("[PlayerController] Animator가 null이라 Death 애니메이션 실행 불가.");
+            animator.SetBool("isDead", true);
         }
     }
 
