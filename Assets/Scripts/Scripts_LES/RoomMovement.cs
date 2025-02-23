@@ -159,7 +159,7 @@ public class RoomMovement : MonoBehaviourPun
 
         sequence.Append(transform.DOMoveZ(transform.position.z - 3, 1f));
         sequence.Append(transform.DORotate(new Vector3(0, 90, 0), 1f, RotateMode.LocalAxisAdd));
-        sequence.Append(transform.DOMove(new Vector3(transform.position.x, 0, 0), 0.5f));
+        sequence.Append(transform.DOMove(new Vector3(transform.position.x, -0.5f, 0), 0.5f));
         sequence.OnComplete(() => CanControl());
         sequence.Play();
     }

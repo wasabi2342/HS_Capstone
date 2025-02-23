@@ -10,17 +10,17 @@ public class Portal : Interactable
         return point.position;
     }
 
-    protected override void OnTriggerEnter2D(Collider2D collision)
+    protected override void OnTriggerEnter(Collider other)
     {
-        base.OnTriggerEnter2D(collision);
-        if (collision.CompareTag("Player"))
+        base.OnTriggerEnter(other);
+        if (other.CompareTag("Player"))
         {
-            collision.GetComponent<RoomMovement>().GetPortalExitPosition(point.position);
-        }   
+            other.GetComponent<RoomMovement>().GetPortalExitPosition(point.position);
+        }
     }
 
-    protected override void OnTriggerExit2D(Collider2D collision)
+    protected override void OnTriggerExit(Collider other)
     {
-        base.OnTriggerExit2D(collision);
+        base.OnTriggerExit(other);
     }
 }

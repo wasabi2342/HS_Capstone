@@ -26,7 +26,7 @@ public class RoomManager : MonoBehaviourPun
 
     private void Start()
     {
-        GameObject playerInstance = PhotonNetwork.Instantiate(playerInRoom.name, Vector3.zero, Quaternion.identity);
+        GameObject playerInstance = PhotonNetwork.Instantiate(playerInRoom.name, new Vector3(0f, -0.5f, 0f), Quaternion.identity);
         cinemachineCamera.Follow = playerInstance.transform;
         cinemachineCamera.LookAt = playerInstance.transform;
 
