@@ -1,4 +1,3 @@
-using DG.Tweening;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
@@ -8,7 +7,6 @@ public class MeleeAttack : MonoBehaviour
     [Header("Common")]
     public Transform player;
     public EnemyStatus status;
-    public LayerMask AttackableLayer;
 
     private bool canAttack = true;
 
@@ -19,11 +17,8 @@ public class MeleeAttack : MonoBehaviour
     private NavMeshAgent agent;
     private EnemyStateController stateController;
 
-    public static MeleeAttack instance; // 싱글톤 패턴 추가
-
     void Awake()
     {
-        instance = this; // 싱글톤 초기화
         player = GameObject.FindWithTag("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         stateController = GetComponent<EnemyStateController>();
@@ -31,80 +26,108 @@ public class MeleeAttack : MonoBehaviour
 
         if (attackCollider == null)
         {
-            Debug.LogError("[오류] AttackBox에 Collider가 없습니다!");
+            Debug.LogError("AttackBox에 Collider가 없습니다!");
         }
     }
 
     void Start()
     {
-        attackBox.SetActive(false); // 기본적으로 비활성화
+        attackBox.SetActive(false);
     }
 
     void Update()
     {
-        if (stateController.isDying) return;
+        if (stateController.isDying || !player) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
 
-        if (distance <= status.attackSize.x)
-        {
-            Debug.Log($"[공격 감지] 몬스터가 공격 범위 내에 플레이어를 감지 (거리: {distance})");
-        }
-
         if (distance <= status.attackSize.x && canAttack)
         {
-            Debug.Log("[공격] 몬스터가 공격을 시도합니다!");
             AttackTrigger();
         }
     }
 
     void AttackTrigger()
     {
-        Debug.Log("[공격] " + status.name + " 공격 실행!");
-
         switch (status.id)
         {
-            case 1: // Ghoul 공격 패턴
+            case 1:
                 StartCoroutine(AttackRoutineGhoul());
                 break;
-            case 2: // 다른 몬스터의 공격 패턴 (추후 추가 가능)
-                StartCoroutine(AttackRoutineGhoul()); // 추가 몬스터 공격 방식 지정 가능
+
+            case 2: // Wolf의 돌진 공격
+                StartCoroutine(AttackRoutineWolf());
                 break;
+
             default:
-                Debug.LogWarning("[경고] 해당 몬스터 ID에 대한 공격 방식이 지정되지 않음!");
+                Debug.LogWarning("지정되지 않은 몬스터 ID!");
                 break;
         }
     }
 
     IEnumerator AttackRoutineGhoul()
     {
-        Debug.Log("[공격] Ghoul이 공격을 준비 중...");
         canAttack = false;
         agent.isStopped = true;
 
         yield return new WaitForSeconds(status.waitCool);
 
-
+        attackBox.SetActive(true);
         yield return new WaitForSeconds(0.2f);
+        attackBox.SetActive(false);
 
-
-        agent.isStopped = false;
         yield return new WaitForSeconds(status.attackCool);
-
+        agent.isStopped = false;
         canAttack = true;
     }
 
-    public void GiveDamage(Collider target)
+    IEnumerator AttackRoutineWolf()
     {
-        PlayerController playerController = target.GetComponent<PlayerController>();
+        canAttack = false;
+
+        // 공격 준비 모션 (waitCool 동안 정지)
+        agent.isStopped = true;
+        yield return new WaitForSeconds(status.waitCool);
+
+        // 플레이어 방향 설정 (돌진 직전에 방향 재설정)
+        Vector3 targetDir = (player.position - transform.position).normalized;
+        Vector3 targetPos = transform.position + targetDir * status.attackSize.x * 1.5f;
+
+        float dashSpeed = status.speed * 3f;
+        float dashDuration = 0.5f;
+        float elapsedTime = 0f;
+
+        agent.updatePosition = false;
+
+        while (elapsedTime < dashDuration)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, dashSpeed * Time.deltaTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        agent.Warp(transform.position);
+        agent.updatePosition = true;
+        agent.ResetPath(); // ⭐️ 목적지 초기화 ⭐️
+
+        attackBox.SetActive(true);
+        yield return new WaitForSeconds(0.2f);
+        attackBox.SetActive(false);
+
+        yield return new WaitForSeconds(status.attackCool);
+
+        agent.isStopped = false;
+        canAttack = true;
+    }
+
+
+    public void GiveDamage()
+    {
+        PlayerController playerController = GetComponent<PlayerController>();
         if (playerController != null)
         {
             playerController.TakeDamage(status.dmg);
-            Debug.Log($"[피격] 플레이어가 {status.dmg}의 피해를 입음!");
-        }
-        else
-        {
-            Debug.Log("[피격] 타겟이 플레이어가 아닙니다!");
+            Debug.Log($"플레이어가 {status.dmg}의 피해를 입었습니다!");
         }
     }
 }
