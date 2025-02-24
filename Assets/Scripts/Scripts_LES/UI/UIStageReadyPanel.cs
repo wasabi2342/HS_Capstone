@@ -50,8 +50,9 @@ public class UIStageReadyPanel : UIBase
         }
     }
 
-    private void OnDisable()
+    protected override void OnDisable()
     {
+        base.OnDisable();
         PhotonNetworkManager.Instance.OnUpdateReadyPlayer -= UpdateToggls;
     }
 

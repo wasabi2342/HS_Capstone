@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Portal : MonoBehaviour
+public class Portal : Interactable
 {
     [SerializeField]
     private Transform point;
@@ -8,5 +8,19 @@ public class Portal : MonoBehaviour
     public Vector3 PortalExitPos()
     {
         return point.position;
+    }
+
+    protected override void OnTriggerEnter(Collider other)
+    {
+        base.OnTriggerEnter(other);
+        if (other.CompareTag("Player"))
+        {
+            other.GetComponent<RoomMovement>().GetPortalExitPosition(point.position);
+        }
+    }
+
+    protected override void OnTriggerExit(Collider other)
+    {
+        base.OnTriggerExit(other);
     }
 }

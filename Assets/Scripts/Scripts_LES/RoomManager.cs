@@ -1,13 +1,16 @@
 using Photon.Pun;
 using System.Collections.Generic;
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class RoomManager : MonoBehaviourPun
 {
     [SerializeField]
     private GameObject playerInRoom;
+    [SerializeField]
+    private CinemachineCamera cinemachineCamera;
 
-    public static RoomManager Instance {  get; private set; }
+    public static RoomManager Instance { get; private set; }
 
     private Dictionary<int, bool> playerInRestrictedArea = new Dictionary<int, bool>();
 
@@ -15,7 +18,7 @@ public class RoomManager : MonoBehaviourPun
 
     private void Awake()
     {
-        if(Instance == null)
+        if (Instance == null)
             Instance = this;
         else
             Destroy(gameObject);
@@ -23,17 +26,22 @@ public class RoomManager : MonoBehaviourPun
 
     private void Start()
     {
-        PhotonNetwork.Instantiate(playerInRoom.name, Vector3.zero, Quaternion.identity);
+        GameObject playerInstance = PhotonNetwork.Instantiate(playerInRoom.name, new Vector3(0f, -0.5f, 0f), Quaternion.identity);
+        cinemachineCamera.Follow = playerInstance.transform;
+        cinemachineCamera.LookAt = playerInstance.transform;
+
         isEnteringStage = false;
     }
 
-    public void InteractWithDungeonNPC()
+    public UIConfirmPanel InteractWithDungeonNPC()
     {
-        UIManager.Instance.OpenPopupPanel<UIConfirmPanel>().Init(
-            () => WaitForEnterStage(), 
-            () => UIManager.Instance.ClosePeekUI(), 
+        var panel = UIManager.Instance.OpenPopupPanel<UIConfirmPanel>();
+        panel.Init(
+            () => WaitForEnterStage(),
+            () => UIManager.Instance.ClosePeekUI(),
             "게임 스테이지에 진입하시겠습니까?"
             );
+        return panel;
     }
 
     public void WaitForEnterStage()

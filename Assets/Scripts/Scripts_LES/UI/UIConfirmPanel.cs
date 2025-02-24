@@ -23,4 +23,9 @@ public class UIConfirmPanel : UIBase
         cancelButton.onClick.AddListener(() => cancelEvent.Invoke());
         this.message.text = message;
     }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+    }
 }
