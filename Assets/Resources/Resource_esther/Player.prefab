@@ -314,7 +314,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Actions: {fileID: -944628639613478452, guid: ce6cc89143753e245be04a2534be4a9c, type: 3}
-  m_NotificationBehavior: 0
+  m_NotificationBehavior: 2
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
     m_PersistentCalls:
@@ -325,7 +325,83 @@ MonoBehaviour:
   m_ControlsChangedEvent:
     m_PersistentCalls:
       m_Calls: []
-  m_ActionEvents: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5046260287561047278}
+        m_TargetAssemblyTypeName: BasePlayerController, Assembly-CSharp
+        m_MethodName: OnMove
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 27e9f0b9-a1eb-49c1-a25a-1b97345d09e0
+    m_ActionName: 'Player/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ac25d826-2163-4eca-a0e0-6acfb1f2468a
+    m_ActionName: 'Player/Dash[/Keyboard/space]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6ff531e5-3766-4cae-afc0-c3301fe42784
+    m_ActionName: 'Player/BasicAttack[/Mouse/leftButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0cac70dc-5797-43f2-bcd4-dcd649578d3d
+    m_ActionName: 'Player/SpecialAttack[/Mouse/rightButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f1675007-02c9-49b3-ae21-b5e1f2f7d008
+    m_ActionName: 'Player/SkillAttack[/Keyboard/leftShift]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 9f4ef2a2-0437-4700-8ccc-24531d29d316
+    m_ActionName: 'Player/UltimateAttack[/Keyboard/r]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 545c2eed-cd83-4fe2-8d72-22ba31703910
+    m_ActionName: 'Player/Pause[/Keyboard/escape]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5046260287561047278}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnTrapClear
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 30724cac-df4c-453e-a4f3-8285dbff54cd
+    m_ActionName: 'Player/TrapClear[/Keyboard/k]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8d54a6b7-23a4-4d54-9c3a-3b0c217af2cc
+    m_ActionName: 'Player/StagePregress[/Keyboard/g]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5046260287561047278}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnNPCInteract
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 0fc444d2-8989-4e70-844e-bba3cd6b4b15
+    m_ActionName: 'Player/NPCInteract[/Keyboard/f]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -398,12 +474,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57eedc32c223bbd4e8afa6443ed77ef7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedHorizontal: 5
-  speedVertical: 5
-  speedDiagonalLeftUp: 4.5
-  speedDiagonalRightUp: 4.5
-  speedDiagonalLeftDown: 4.5
-  speedDiagonalRightDown: 4.5
+  moveSpeedHorizontal: 5
+  moveSpeedVertical: 5
+  moveSpeedDiagonalLeftUp: 4.5
+  moveSpeedDiagonalRightUp: 4.5
+  moveSpeedDiagonalLeftDown: 4.5
+  moveSpeedDiagonalRightDown: 4.5
   dashDuration: 0.2
   dashDistance: 5
   dashDoubleClickThreshold: 0.3
@@ -433,11 +509,11 @@ MonoBehaviour:
   - {fileID: 739063013299719982}
   maxHealth: 20
   damageCollider: {fileID: 7432034532123895083}
-  damageColliderRadius: 0.4
+  damageColliderRadius: 0.7
   interactionLayerMask:
     serializedVersion: 2
     m_Bits: 768
-  interactionRadius: 2.5
+  interactionRadius: 1.5
 --- !u!114 &4412398138277556100
 MonoBehaviour:
   m_ObjectHideFlags: 0
