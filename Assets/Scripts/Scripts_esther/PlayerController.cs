@@ -1,11 +1,12 @@
+using Photon.Pun;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using System.Collections;
 using UnityEngine.InputSystem;
+using System.Collections;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviourPunCallbacks
 {
+    // 로컬 플레이어 정적 참조
+    public static PlayerController localPlayer;
 
     [Header("이동 속도 설정 (8방향)")]
     public float speedHorizontal = 5f;
@@ -18,7 +19,6 @@ public class PlayerController : MonoBehaviour
     [Header("대쉬 설정")]
     public float dashDuration = 0.2f;
     public float dashDistance = 2f;
-    [Header("Dash Double Click 설정")]
     public float dashDoubleClickThreshold = 0.3f;
     private float lastDashClickTime = -Mathf.Infinity;
 
@@ -40,15 +40,10 @@ public class PlayerController : MonoBehaviour
     public float skillCooldown = 2f;
     public float ultimateCooldown = 3f;
 
-    [Header("평타 스택 초기화 (2초)")]
+    [Header("평타 스택 초기화 (초)")]
     public float basicAttackResetTime = 2f;
 
-    [Header("UI 관련")]
-    public GameObject pauseMenuPanel;
-    public Button quitButton;
-    public Button lobbyButton;
-
-    [Header("중심점 설정")]
+    [Header("중심점 설정 (기본)")]
     public Transform centerPoint;
     public float centerPointOffsetDistance = 0.5f;
 
@@ -66,40 +61,39 @@ public class PlayerController : MonoBehaviour
     [Header("상호작용 설정")]
     public LayerMask interactionLayerMask;
     public float interactionRadius = 1.5f;
-    // (기존 키 설정은 더 이상 사용하지 않습니다)
 
-    // 공격 쿨타임 체크용 변수
+    // 함정 관련 변수
+    private int trapClearCount = 0;
+    private GameObject currentTrap = null;
+    private bool isTrapCleared = false;
+
+    // 공격 쿨타임 체크용
     private float lastBasicAttackTime = -Mathf.Infinity;
     private float lastSpecialAttackTime = -Mathf.Infinity;
     private float lastSkillTime = -Mathf.Infinity;
     private float lastUltimateTime = -Mathf.Infinity;
 
-    // 평타 스택 변수
+    // 평타 스택
     private int basicAttackStack = 0;
     private float lastBasicAttackStackTime = 0f;
 
-    // Animator 참조
+    // Animator
     private Animator animator;
 
-    // 공격 진행 여부
+    // 공격 중 여부
     private bool isAttacking = false;
 
     // 플레이어 상태
     public enum PlayerState { Idle, Run, Attack_L, Attack_R, Skill, Ultimate, Death }
     private PlayerState currentState = PlayerState.Idle;
 
-    // Trap 및 NPC 관련 변수
-    private int trapClearCount = 0;
-    private GameObject currentTrap = null;
-    private bool isTrapCleared = false;
-    public GameObject dialoguePanel;
-    public UnityEngine.UI.Text dialogueText;
-    public string[] npcDialogues;
-    private int currentDialogueIndex = 0;
-    private bool isDialogueActive = false;
+    // Animator 파라미터
+    private bool isDashing = false;   // 대쉬 중인지
+    private int attackIndex = 0;      // 1=Attack_L, 2=Attack_R, 3=Skill, 4=Ultimate
+    private bool isDead = false;      // 사망 여부
 
-    // === 새 인풋 시스템 관련 변수 ===
-    private PlayerInputActions inputActions; // 자동 생성된 Input Action 클래스
+    // 인풋 시스템
+    private PlayerInputActions inputActions;
 
     void Awake()
     {
@@ -119,54 +113,176 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
+        if (animator == null)
+        {
+            Debug.LogError("[PlayerController] Animator 컴포넌트가 없습니다!");
+        }
 
-        if (pauseMenuPanel != null)
-            pauseMenuPanel.SetActive(false);
-        if (quitButton != null)
-            quitButton.onClick.AddListener(OnQuitButton);
-        if (lobbyButton != null)
-            lobbyButton.onClick.AddListener(OnLobbyButton);
+        // Photon 소유권 체크
+        if (photonView != null && photonView.IsMine)
+        {
+            localPlayer = this;
+        }
+        else
+        {
+            this.enabled = false;
+            return;
+        }
 
-        if (centerPoint != null)
-            centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
-
+        // 초기화
         basicAttackStack = 0;
         lastBasicAttackStackTime = Time.time;
-        animator.SetInteger("AttackStack", basicAttackStack);
-
-        if (dialoguePanel != null)
-            dialoguePanel.SetActive(false);
-
         currentState = PlayerState.Idle;
-        animator.SetBool("isRunning", false);
-
         currentHealth = maxHealth;
+
+        if (animator != null)
+        {
+            animator.SetInteger("AttackStack", basicAttackStack);
+            animator.SetBool("isRunning", false);
+            animator.SetBool("isAttacking", false);
+            animator.SetInteger("AttackIndex", 0);
+            animator.SetBool("isDashing", false);
+            animator.SetBool("isDead", false);
+        }
 
         if (damageCollider != null)
         {
             damageCollider.radius = damageColliderRadius;
         }
+
+        if (centerPoint != null)
+        {
+            centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
+        }
     }
 
     void Update()
     {
-        // UI나 죽은 상태에서는 입력 무시
-        if (pauseMenuPanel != null && pauseMenuPanel.activeSelf)
-            return;
-        if (currentState == PlayerState.Death)
+        // StageProgress (G키)
+        if (inputActions.Player.StageProgress.triggered)
+        {
+            Debug.Log("[PlayerController] 다음 스테이지로 넘어갈 예정입니다!");
+        }
+
+        // UI / 대화 중이면 입력 무시
+        if (UIManager_player.Instance != null)
+        {
+            if (UIManager_player.Instance.pauseMenuPanel != null && UIManager_player.Instance.pauseMenuPanel.activeSelf)
+                return;
+
+            if (UIManager_player.Instance.IsDialogueActive())
+            {
+                if (inputActions.Player.NPCInteract.triggered)
+                {
+                    UIManager_player.Instance.NextDialogue();
+                }
+                return;
+            }
+        }
+
+        // 사망 상태면 모든 입력 무시
+        if (isDead || currentState == PlayerState.Death)
             return;
 
-        // === 대쉬 입력 처리 (기존 Space키 → 새 액션 "Dash") ===
+        // 일시정지
+        if (inputActions.Player.Pause.triggered)
+        {
+            UIManager_player.Instance?.TogglePauseMenu();
+            return;
+        }
+
+        // 대쉬(더블클릭)
+        HandleDash();
+
+        // 평타 스택 리셋
+        if (Time.time - lastBasicAttackStackTime >= basicAttackResetTime)
+        {
+            ResetBasicAttackStack();
+        }
+
+        // 공격/스킬 입력
+        HandleActions();
+
+        // 이동 처리
+        HandleMovement();
+
+        // 중심점 업데이트
+        if (centerPoint != null)
+            centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
+
+        // 상호작용
+        if (!isAttacking && currentState != PlayerState.Skill && currentState != PlayerState.Ultimate)
+        {
+            CheckInteractions();
+        }
+
+        // --- Animator 파라미터를 매 프레임 갱신
+        if (animator != null)
+        {
+            animator.SetBool("isAttacking", isAttacking);
+            animator.SetInteger("AttackIndex", attackIndex);
+            animator.SetBool("isDashing", isDashing);
+            animator.SetBool("isDead", isDead);
+        }
+    }
+
+    #region 이동 & 대쉬
+
+    private void HandleMovement()
+    {
+        bool canMove = (currentState != PlayerState.Attack_L &&
+                        currentState != PlayerState.Attack_R &&
+                        currentState != PlayerState.Skill &&
+                        currentState != PlayerState.Ultimate &&
+                        currentState != PlayerState.Death);
+
+        if (!canMove) return;
+
+        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+        float h = moveInput.x;
+        float v = moveInput.y;
+        bool isMoving = (Mathf.Abs(h) > 0.01f || Mathf.Abs(v) > 0.01f);
+
+        if (isMoving)
+        {
+            currentState = PlayerState.Run;
+            if (animator != null)
+                animator.SetBool("isRunning", true);
+
+            Vector3 moveDir = new Vector3(h, 0, v).normalized;
+            float moveSpeed = speedVertical;
+            if (Mathf.Abs(h) > 0 && Mathf.Abs(v) < 0.01f)
+                moveSpeed = speedHorizontal;
+
+            transform.Translate(moveDir * moveSpeed * Time.deltaTime, Space.World);
+
+            if (animator != null)
+            {
+                animator.SetFloat("moveX", moveDir.x);
+                animator.SetFloat("moveY", moveDir.z);
+            }
+            UpdateCenterPoints(moveDir);
+        }
+        else
+        {
+            currentState = PlayerState.Idle;
+            if (animator != null)
+                animator.SetBool("isRunning", false);
+        }
+    }
+
+    private void HandleDash()
+    {
         if (inputActions.Player.Dash.triggered)
         {
             if (Time.time - lastDashClickTime <= dashDoubleClickThreshold)
             {
-                // 이동 액션에서 이동값 읽기 (Vector2 → Vector3)
                 Vector2 dashInput = inputActions.Player.Move.ReadValue<Vector2>();
-                Vector3 dashDirection = new Vector3(dashInput.x, 0, dashInput.y);
-                if (dashDirection == Vector3.zero)
-                    dashDirection = transform.forward;
-                StartCoroutine(DoDash(dashDirection));
+                Vector3 dashDir = new Vector3(dashInput.x, 0, dashInput.y);
+                if (dashDir == Vector3.zero)
+                    dashDir = transform.forward;
+
+                StartCoroutine(DoDash(dashDir));
                 lastDashClickTime = -Mathf.Infinity;
                 return;
             }
@@ -175,113 +291,12 @@ public class PlayerController : MonoBehaviour
                 lastDashClickTime = Time.time;
             }
         }
-
-        if (Time.time - lastBasicAttackStackTime >= basicAttackResetTime)
-        {
-            basicAttackStack = 0;
-            animator.SetInteger("AttackStack", basicAttackStack);
-        }
-
-        // === 일시정지 입력 처리 (새 액션 "Pause") ===
-        if (inputActions.Player.Pause.triggered)
-        {
-            TogglePauseMenu();
-            return;
-        }
-
-        // === 공격 입력 처리 (각 액션의 triggered 상태 사용) ===
-        bool basicAttackInput = inputActions.Player.BasicAttack.triggered;
-        bool specialAttackInput = inputActions.Player.SpecialAttack.triggered;
-        bool skillAttackInput = inputActions.Player.SkillAttack.triggered;
-        bool ultimateAttackInput = inputActions.Player.UltimateAttack.triggered;
-
-        if (basicAttackInput || specialAttackInput || skillAttackInput || ultimateAttackInput)
-        {
-            HandleActions();
-        }
-        else
-        {
-            // === 이동 입력 처리 (새 액션 "Move") ===
-            Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-            if (moveInput.magnitude > 0.1f)
-            {
-                basicAttackStack = 0;
-                animator.SetInteger("AttackStack", basicAttackStack);
-                currentState = PlayerState.Run;
-                HandleMovement();
-            }
-            else
-            {
-                currentState = PlayerState.Idle;
-                animator.SetBool("isRunning", false);
-            }
-        }
-
-        if (centerPoint != null)
-            centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
-
-        if (currentState != PlayerState.Attack_L && currentState != PlayerState.Attack_R &&
-            currentState != PlayerState.Skill && currentState != PlayerState.Ultimate)
-        {
-            CheckInteractions();
-        }
-    }
-
-    void HandleMovement()
-    {
-        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-        float h = moveInput.x;
-        float v = moveInput.y;
-        Vector3 inputDir = new Vector3(h, 0, v);
-
-        if (inputDir.sqrMagnitude > 0.01f)
-        {
-            Vector3 moveDir = inputDir.normalized;
-            float moveSpeed = (Mathf.Abs(h) > 0 && Mathf.Approximately(v, 0f)) ? speedHorizontal : speedVertical;
-            transform.Translate(moveDir * moveSpeed * Time.deltaTime, Space.World);
-
-            animator.SetFloat("moveX", moveDir.x);
-            animator.SetFloat("moveY", moveDir.z);
-            animator.SetBool("isRunning", true);
-
-            if (centerPoint != null)
-                centerPoint.position = transform.position + moveDir * centerPointOffsetDistance;
-            UpdateCenterPoints(moveDir);
-        }
-        else
-        {
-            animator.SetBool("isRunning", false);
-            currentState = PlayerState.Idle;
-            if (centerPoint != null)
-                centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
-        }
-    }
-
-    void UpdateCenterPoints(Vector3 moveDir)
-    {
-        if (centerPoints == null || centerPoints.Length != 8)
-        {
-            Debug.LogWarning("centerPoints 배열 8개를 Inspector에서 할당하세요.");
-            return;
-        }
-        for (int i = 0; i < 8; i++)
-        {
-            if (centerPoints[i] != null)
-            {
-                float angle = i * 45f;
-                Vector3 offset = Quaternion.Euler(0, angle, 0) * moveDir * centerPointOffsetDistance;
-                centerPoints[i].position = transform.position + offset;
-            }
-            else
-            {
-                Debug.LogWarning($"centerPoints[{i}] 미할당");
-            }
-        }
     }
 
     IEnumerator DoDash(Vector3 direction)
     {
-        animator.SetTrigger("Dash");
+        isDashing = true;
+
         Vector3 startPos = transform.position;
         Vector3 targetPos = startPos + direction.normalized * dashDistance;
         float elapsed = 0f;
@@ -292,126 +307,176 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         transform.position = targetPos;
-        if (inputActions.Player.Move.ReadValue<Vector2>().magnitude > 0.1f)
+
+        // 대쉬 종료
+        isDashing = false;
+
+        // Idle or Run
+        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+        if (moveInput.magnitude > 0.1f)
         {
             currentState = PlayerState.Run;
-            animator.SetBool("isRunning", true);
+            if (animator != null)
+                animator.SetBool("isRunning", true);
         }
         else
         {
             currentState = PlayerState.Idle;
-            animator.SetBool("isRunning", false);
+            if (animator != null)
+                animator.SetBool("isRunning", false);
         }
     }
 
-    void HandleActions()
+    private void UpdateCenterPoints(Vector3 moveDir)
     {
-        if (inputActions.Player.BasicAttack.triggered && !isAttacking)
+        if (centerPoints == null || centerPoints.Length != 8)
+            return;
+
+        for (int i = 0; i < centerPoints.Length; i++)
         {
-            if (Time.time - lastBasicAttackTime >= basicAttackCooldown)
-            {
-                if (Time.time - lastBasicAttackStackTime >= basicAttackResetTime)
-                    basicAttackStack = 1;
-                else if (basicAttackStack < 4)
-                    basicAttackStack++;
-                lastBasicAttackTime = Time.time;
-                lastBasicAttackStackTime = Time.time;
-                animator.SetInteger("AttackStack", basicAttackStack);
-                StartCoroutine(PerformBasicAttack());
-            }
-        }
-        else if (inputActions.Player.SpecialAttack.triggered)
-        {
-            if (Time.time - lastSpecialAttackTime >= specialAttackCooldown)
-            {
-                lastSpecialAttackTime = Time.time;
-                StartCoroutine(PerformSpecialAttack());
-            }
-        }
-        else if (inputActions.Player.SkillAttack.triggered)
-        {
-            if (Time.time - lastSkillTime >= skillCooldown)
-            {
-                lastSkillTime = Time.time;
-                PerformSkillAttack();
-            }
-        }
-        else if (inputActions.Player.UltimateAttack.triggered)
-        {
-            if (Time.time - lastUltimateTime >= ultimateCooldown)
-            {
-                lastUltimateTime = Time.time;
-                PerformUltimateAttack();
-            }
+            if (centerPoints[i] == null) continue;
+            float angle = i * 45f;
+            Vector3 offset = Quaternion.Euler(0, angle, 0) * moveDir * centerPointOffsetDistance;
+            centerPoints[i].position = transform.position + offset;
         }
     }
 
-    IEnumerator PerformBasicAttack()
+    #endregion
+
+    #region 공격 & 스킬
+
+    private void HandleActions()
+    {
+        if (isAttacking) return;
+
+        bool basicAttackInput = inputActions.Player.BasicAttack.triggered;
+        bool specialAttackInput = inputActions.Player.SpecialAttack.triggered;
+        bool skillAttackInput = inputActions.Player.SkillAttack.triggered;
+        bool ultimateAttackInput = inputActions.Player.UltimateAttack.triggered;
+
+        if (basicAttackInput && Time.time - lastBasicAttackTime >= basicAttackCooldown)
+        {
+            PerformBasicAttack();
+        }
+        else if (specialAttackInput && Time.time - lastSpecialAttackTime >= specialAttackCooldown)
+        {
+            StartCoroutine(PerformSpecialAttack());
+        }
+        else if (skillAttackInput && Time.time - lastSkillTime >= skillCooldown)
+        {
+            StartCoroutine(PerformSkillAttack());
+        }
+        else if (ultimateAttackInput && Time.time - lastUltimateTime >= ultimateCooldown)
+        {
+            StartCoroutine(PerformUltimateAttack());
+        }
+    }
+
+    private void PerformBasicAttack()
+    {
+        // 스택 리셋 시간 지났으면 1부터 시작, 아니면 스택++
+        if (Time.time - lastBasicAttackStackTime >= basicAttackResetTime)
+            basicAttackStack = 1;
+        else if (basicAttackStack < 4)
+            basicAttackStack++;
+
+        lastBasicAttackTime = Time.time;
+        lastBasicAttackStackTime = Time.time;
+
+        if (animator != null)
+            animator.SetInteger("AttackStack", basicAttackStack);
+
+        // Attack_L = 1
+        StartCoroutine(CoPerformAttack(1));
+    }
+
+    IEnumerator CoPerformAttack(int index)
     {
         isAttacking = true;
-        animator.SetBool("isAttacking", true);
-        animator.SetTrigger("Attack_L");
-        currentState = PlayerState.Attack_L;
-        yield return new WaitForSeconds(0.2f);
-        Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
-        Collider[] cols = Physics.OverlapSphere(checkPos, basicAttackRange, LayerMask.GetMask("Enemy"));
-        if (cols.Length > 0)
+        attackIndex = index; // 1=Attack_L, 2=Attack_R, 3=Skill, 4=Ultimate
+
+        // 상태 설정
+        switch (index)
         {
-            Collider closest = cols[0];
-            float minDist = Vector3.Distance(checkPos, closest.transform.position);
-            foreach (Collider col in cols)
-            {
-                float dist = Vector3.Distance(checkPos, col.transform.position);
-                if (dist < minDist)
-                {
-                    minDist = dist;
-                    closest = col;
-                }
-            }
-            EnemyController enemy = closest.GetComponentInParent<EnemyController>();
-            if (enemy != null)
-            {
-                enemy.TakeDamage(basicAttackDamage);
-                Debug.Log($"[평타] 스택 {basicAttackStack}: 적에게 {basicAttackDamage} 데미지. 남은 체력: {enemy.GetCurrentHealth()}");
-            }
+            case 1: currentState = PlayerState.Attack_L; break;
+            case 2: currentState = PlayerState.Attack_R; break;
+            case 3: currentState = PlayerState.Skill; break;
+            case 4: currentState = PlayerState.Ultimate; break;
         }
+
+        // 공격 모션 시작 후 약간 대기(타격 타이밍)
+        yield return new WaitForSeconds(0.2f);
+
+        // 공격 판정
+        float range = (index == 1) ? basicAttackRange :
+                      (index == 2) ? specialAttackRange :
+                      (index == 3) ? skillRange : ultimateRange;
+        int damage = (index == 1) ? basicAttackDamage :
+                     (index == 2) ? specialAttackDamage :
+                     (index == 3) ? skillDamage : ultimateDamage;
+
+        AttackOverlapCheck(range, damage);
+
+        // ★ 만약 AttackStack이 4까지 찼다면 (콤보의 마지막)
+        //    추가 입력 없이도 자동으로 Idle로 돌아가게 처리
         if (basicAttackStack >= 4)
         {
-            float waitTimer = 0f;
-            while (waitTimer < basicAttackResetTime)
-            {
-                if (inputActions.Player.BasicAttack.triggered)
-                {
-                    lastBasicAttackTime = Time.time;
-                    lastBasicAttackStackTime = Time.time;
-                    animator.SetInteger("AttackStack", basicAttackStack);
-                    yield return StartCoroutine(PerformBasicAttack());
-                    yield break;
-                }
-                waitTimer += Time.deltaTime;
-                yield return null;
-            }
-            basicAttackStack = 0;
-            animator.SetInteger("AttackStack", basicAttackStack);
-            currentState = PlayerState.Idle;
-        }
-        else
-        {
+            // 마지막 평타 모션 재생 후 대기
             yield return new WaitForSeconds(0.3f);
+
+            // 스택 리셋
+            ResetBasicAttackStack();
+            // Idle or Run
             Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
             currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
         }
+        else if (index == 1 && basicAttackStack >= 4)
+        {
+            // 위와 동일 로직이나, "AttackStack=4"를 처리할 때
+            // (현재 index=1일 때 4연타가 완성되면 여기서도 처리 가능)
+            // -- 이 로직은 상황에 따라 조정
+        }
+        else
+        {
+            // AttackStack이 4 미만일 때
+            yield return new WaitForSeconds(0.3f);
+
+            // 이동 입력 체크
+            Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+            currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
+        }
+
+        // 공격 종료
         isAttacking = false;
-        animator.SetBool("isAttacking", false);
+        attackIndex = 0;
     }
 
     IEnumerator PerformSpecialAttack()
     {
-        currentState = PlayerState.Attack_R;
-        animator.SetTrigger("Attack_R");
-        yield return new WaitForSeconds(0.2f);
+        lastSpecialAttackTime = Time.time;
+        yield return StartCoroutine(CoPerformAttack(2));
+    }
+
+    IEnumerator PerformSkillAttack()
+    {
+        lastSkillTime = Time.time;
+        yield return StartCoroutine(CoPerformAttack(3));
+    }
+
+    IEnumerator PerformUltimateAttack()
+    {
+        lastUltimateTime = Time.time;
+        yield return StartCoroutine(CoPerformAttack(4));
+    }
+
+    #endregion
+
+    #region 공격 판정 & 평타 스택
+
+    private void AttackOverlapCheck(float range, int damage)
+    {
         Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
-        Collider[] cols = Physics.OverlapSphere(checkPos, specialAttackRange, LayerMask.GetMask("Enemy"));
+        Collider[] cols = Physics.OverlapSphere(checkPos, range, LayerMask.GetMask("Enemy"));
         if (cols.Length > 0)
         {
             Collider closest = cols[0];
@@ -428,111 +493,30 @@ public class PlayerController : MonoBehaviour
             EnemyController enemy = closest.GetComponentInParent<EnemyController>();
             if (enemy != null)
             {
-                enemy.TakeDamage(specialAttackDamage);
-                Debug.Log($"[특수] 적에게 {specialAttackDamage} 데미지. 남은 체력: {enemy.GetCurrentHealth()}");
+                enemy.TakeDamage(damage);
+                Debug.Log($"[공격] {damage} 데미지 → 남은 체력: {enemy.GetCurrentHealth()}");
             }
         }
-        yield return new WaitForSeconds(0.3f);
-        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-        currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
     }
 
-    void PerformSkillAttack()
+    private void ResetBasicAttackStack()
     {
-        currentState = PlayerState.Skill;
-        animator.SetTrigger("Skill");
+        basicAttackStack = 0;
+        if (animator != null)
+            animator.SetInteger("AttackStack", basicAttackStack);
+    }
+
+    #endregion
+
+    #region 상호작용 & 데미지
+
+    private void CheckInteractions()
+    {
         Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
-        Collider[] cols = Physics.OverlapSphere(checkPos, skillRange, LayerMask.GetMask("Enemy"));
-        if (cols.Length > 0)
-        {
-            Collider closest = cols[0];
-            float minDist = Vector3.Distance(checkPos, closest.transform.position);
-            foreach (Collider col in cols)
-            {
-                float dist = Vector3.Distance(checkPos, col.transform.position);
-                if (dist < minDist)
-                {
-                    minDist = dist;
-                    closest = col;
-                }
-            }
-            EnemyController enemy = closest.GetComponentInParent<EnemyController>();
-            if (enemy != null)
-            {
-                enemy.TakeDamage(skillDamage);
-                Debug.Log($"[스킬] 적에게 {skillDamage} 데미지. 남은 체력: {enemy.GetCurrentHealth()}");
-            }
-        }
-        StartCoroutine(TransitionAfterSkill());
-    }
-
-    IEnumerator TransitionAfterSkill()
-    {
-        yield return new WaitForSeconds(0.3f);
-        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-        currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
-    }
-
-    void PerformUltimateAttack()
-    {
-        currentState = PlayerState.Ultimate;
-        animator.SetTrigger("Ultimate");
-        Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
-        Collider[] cols = Physics.OverlapSphere(checkPos, ultimateRange, LayerMask.GetMask("Enemy"));
-        if (cols.Length > 0)
-        {
-            Collider closest = cols[0];
-            float minDist = Vector3.Distance(checkPos, closest.transform.position);
-            foreach (Collider col in cols)
-            {
-                float dist = Vector3.Distance(checkPos, col.transform.position);
-                if (dist < minDist)
-                {
-                    minDist = dist;
-                    closest = col;
-                }
-            }
-            EnemyController enemy = closest.GetComponentInParent<EnemyController>();
-            if (enemy != null)
-            {
-                enemy.TakeDamage(ultimateDamage);
-                Debug.Log($"[궁극] 적에게 {ultimateDamage} 데미지. 남은 체력: {enemy.GetCurrentHealth()}");
-            }
-        }
-        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-        currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
-    }
-
-    void CheckInteractions()
-    {
-        if (isDialogueActive)
-        {
-            if (inputActions.Player.NPCInteract.triggered)
-            {
-                currentDialogueIndex++;
-                if (currentDialogueIndex < npcDialogues.Length)
-                    dialogueText.text = npcDialogues[currentDialogueIndex];
-                else
-                {
-                    dialoguePanel.SetActive(false);
-                    isDialogueActive = false;
-                    currentDialogueIndex = 0;
-                }
-            }
-            return;
-        }
-
-        if (inputActions.Player.StageProgress.triggered)
-        {
-            if (!isTrapCleared)
-                Debug.Log("조건을 충족시켜야 다음으로 넘어갑니다.");
-            else
-                Debug.Log("다음 스테이지로 넘어갑니다.");
-        }
-
-        Collider[] cols = Physics.OverlapSphere(centerPoint.position, interactionRadius, interactionLayerMask);
+        Collider[] cols = Physics.OverlapSphere(checkPos, interactionRadius, interactionLayerMask);
         foreach (Collider col in cols)
         {
+            // 함정
             if (col.gameObject.layer == LayerMask.NameToLayer("Trap"))
             {
                 currentTrap = col.gameObject;
@@ -550,36 +534,15 @@ public class PlayerController : MonoBehaviour
                     }
                 }
             }
+            // NPC
             else if (col.gameObject.layer == LayerMask.NameToLayer("NPC"))
             {
                 if (inputActions.Player.NPCInteract.triggered)
                 {
-                    isDialogueActive = true;
-                    currentDialogueIndex = 0;
-                    dialoguePanel.SetActive(true);
-                    if (npcDialogues != null && npcDialogues.Length > 0)
-                        dialogueText.text = npcDialogues[currentDialogueIndex];
+                    UIManager_player.Instance?.StartDialogue();
                 }
             }
         }
-    }
-
-    void TogglePauseMenu()
-    {
-        if (pauseMenuPanel != null)
-        {
-            bool isActive = pauseMenuPanel.activeSelf;
-            pauseMenuPanel.SetActive(!isActive);
-        }
-    }
-
-    void OnQuitButton() { TogglePauseMenu(); }
-    void OnLobbyButton() { Debug.Log("로비로 이동 (추후 구현)"); }
-
-    public void Die()
-    {
-        currentState = PlayerState.Death;
-        animator.SetTrigger("Death");
     }
 
     public void TakeDamage(int damage)
@@ -587,9 +550,33 @@ public class PlayerController : MonoBehaviour
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         Debug.Log("플레이어 체력: " + currentHealth);
-        if (currentHealth <= 0)
+
+        if (currentHealth <= 0 && !isDead)
         {
             Die();
         }
     }
+
+    public void Die()
+    {
+        if (isDead) return; // 중복 호출 방지
+
+        currentState = PlayerState.Death;
+        isDead = true; // Animator 파라미터도 동기화
+
+        Debug.Log("[PlayerController] 플레이어 사망!");
+
+        // 사망 시 공격/대쉬 상태 해제
+        isAttacking = false;
+        attackIndex = 0;
+        isDashing = false;
+
+        // Animator에 Death 파라미터 전달 (Bool)
+        if (animator != null)
+        {
+            animator.SetBool("isDead", true);
+        }
+    }
+
+    #endregion
 }
