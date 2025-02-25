@@ -2,6 +2,7 @@ using Photon.Pun;
 using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class RoomManager : MonoBehaviourPun
 {
@@ -26,21 +27,31 @@ public class RoomManager : MonoBehaviourPun
 
     private void Start()
     {
-        CreateCharacter(playerInRoom);
+        GameObject playerInstance;
+        if (PhotonNetwork.InRoom)
+        {
+            playerInstance = PhotonNetwork.Instantiate(playerInRoom.name, new Vector3(0, -0.35f, -0.35f), Quaternion.Euler(45, 0, 0));
+        }
+        else
+        {
+            playerInstance = Instantiate(playerInRoom, new Vector3(0, -0.35f, -0.35f), Quaternion.Euler(45, 0, 0));
+        }
+        cinemachineCamera.Follow = playerInstance.transform;
+        cinemachineCamera.LookAt = playerInstance.transform;
 
         isEnteringStage = false;
     }
 
-    public void CreateCharacter(GameObject prefab)
+    public void CreateCharacter(GameObject prefab, Transform transform)  
     {
         GameObject playerInstance;
         if (PhotonNetwork.InRoom)
         {
-            playerInstance = PhotonNetwork.Instantiate(prefab.name, new Vector3(0, -0.35f, -0.35f), Quaternion.Euler(45, 0, 0));
+            playerInstance = PhotonNetwork.Instantiate(prefab.name, transform.position, transform.rotation);
         }
         else
         {
-            playerInstance = Instantiate(prefab, new Vector3(0, -0.35f, -0.35f), Quaternion.Euler(45, 0, 0));
+            playerInstance = Instantiate(prefab, transform.position, transform.rotation);
         }
         cinemachineCamera.Follow = playerInstance.transform;
         cinemachineCamera.LookAt = playerInstance.transform;

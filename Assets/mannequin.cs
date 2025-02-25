@@ -20,8 +20,12 @@ public class Mannequin : Interactable
         {
             if (other.GetComponent<PhotonView>().IsMine || !PhotonNetwork.InRoom)
             {
-                canvas.gameObject.SetActive(true);
                 RoomMovement roomMovement = other.GetComponent<RoomMovement>();
+                if(roomMovement.ReturnName() == characterPrefab.name)
+                {
+                    return;
+                }
+                canvas.gameObject.SetActive(true);
                 roomMovement.startFillGauge += StartGaugeCoroutine;
                 roomMovement.canelFillGauge += CancelGaugeCoroutine;
                 roomMovement.changeCharacterPrefab = characterPrefab;
@@ -36,8 +40,12 @@ public class Mannequin : Interactable
         {
             if (other.GetComponent<PhotonView>().IsMine || !PhotonNetwork.InRoom)
             {
-                canvas.gameObject.SetActive(false);
                 RoomMovement roomMovement = other.GetComponent<RoomMovement>();
+                if (roomMovement.ReturnName() == characterPrefab.name)
+                {
+                    return;
+                }
+                canvas.gameObject.SetActive(false);
                 roomMovement.startFillGauge -= StartGaugeCoroutine;
                 roomMovement.canelFillGauge -= CancelGaugeCoroutine;
                 roomMovement.changeCharacterPrefab = null;
@@ -50,10 +58,14 @@ public class Mannequin : Interactable
         StartCoroutine(FillGauge());
     }
 
-    public void CancelGaugeCoroutine()
+    public void CancelGaugeCoroutine(bool isComplete)
     {
         StopAllCoroutines();
         gauge.fillAmount = 0;
+        if(isComplete)
+        {
+            canvas.gameObject.SetActive(false);
+        }
     }
 
     private IEnumerator FillGauge()

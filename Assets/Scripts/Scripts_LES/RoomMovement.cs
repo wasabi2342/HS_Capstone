@@ -3,6 +3,7 @@ using Photon.Pun;
 using System;
 using System.Collections;
 using Unity.Cinemachine;
+using UnityEditor.U2D.Animation;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -25,6 +26,8 @@ public class RoomMovement : MonoBehaviourPun
     private float moveSpeed;
     [SerializeField]
     private float portalCooldown;
+    [SerializeField]
+    private CharacterStats characterData;
 
     private bool canUsePortal;
     private Vector3 portalExitPosition;
@@ -37,7 +40,7 @@ public class RoomMovement : MonoBehaviourPun
     private Vector2 inputMoveDir;
 
     public Action startFillGauge;
-    public Action canelFillGauge;
+    public Action<bool> canelFillGauge;
 
     public GameObject changeCharacterPrefab;
 
@@ -134,11 +137,12 @@ public class RoomMovement : MonoBehaviourPun
                     }
                     else if(context.canceled)
                     {
-                        canelFillGauge?.Invoke();
+                        canelFillGauge?.Invoke(false);
                     }
                     else if(context.performed)
                     {
-                        RoomManager.Instance.CreateCharacter(changeCharacterPrefab);
+                        canelFillGauge?.Invoke(true);
+                        RoomManager.Instance.CreateCharacter(changeCharacterPrefab, transform);
                         Destroy(gameObject);
                     }
                     break;
@@ -200,5 +204,10 @@ public class RoomMovement : MonoBehaviourPun
     {
         nowObject = obj;
         Debug.Log(nowObject);
+    }
+
+    public string ReturnName()
+    {
+        return characterData.name;
     }
 }
