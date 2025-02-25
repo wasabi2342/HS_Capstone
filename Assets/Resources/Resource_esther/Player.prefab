@@ -329,7 +329,7 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5046260287561047278}
-        m_TargetAssemblyTypeName: BasePlayerController, Assembly-CSharp
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
         m_MethodName: OnMove
         m_Mode: 0
         m_Arguments:
@@ -391,7 +391,7 @@ MonoBehaviour:
       - m_Target: {fileID: 5046260287561047278}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
         m_MethodName: OnNPCInteract
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -474,15 +474,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57eedc32c223bbd4e8afa6443ed77ef7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speedHorizontal: 5
+  speedVertical: 5
+  dashDuration: 0.2
+  dashDistance: 5
+  dashDoubleClickThreshold: 0.3
+  centerPoint: {fileID: 2649936402368327885}
+  centerPointOffsetDistance: 1
   moveSpeedHorizontal: 5
   moveSpeedVertical: 5
   moveSpeedDiagonalLeftUp: 4.5
   moveSpeedDiagonalRightUp: 4.5
   moveSpeedDiagonalLeftDown: 4.5
   moveSpeedDiagonalRightDown: 4.5
-  dashDuration: 0.2
-  dashDistance: 5
-  dashDoubleClickThreshold: 0.3
   basicAttackDamage: 10
   specialAttackDamage: 15
   skillDamage: 30
@@ -496,8 +500,6 @@ MonoBehaviour:
   skillCooldown: 2
   ultimateCooldown: 3
   basicAttackResetTime: 2
-  centerPoint: {fileID: 2649936402368327885}
-  centerPointOffsetDistance: 1
   centerPoints:
   - {fileID: 1330702589638773871}
   - {fileID: 6389345504270291820}
