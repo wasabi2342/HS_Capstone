@@ -19,6 +19,17 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         OpenPanel<UiStartPanel>();
+        
+        string nickname = PlayerPrefs.GetString("Nickname");
+        
+        if (nickname != "")
+        {
+            PhotonNetworkManager.Instance.SetNickname(nickname);
+        }
+        else
+        {
+            OpenPopupPanel<UISetNicknamePanel>();
+        }
     }
 
     public void OpenPanel<T>() where T : UIBase

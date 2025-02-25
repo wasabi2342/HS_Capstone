@@ -36,7 +36,7 @@ public class RoomMovement : MonoBehaviourPun
 
     void Start()
     {
-        if (!photonView.IsMine)
+        if (!photonView.IsMine && PhotonNetwork.InRoom)
         {
             gameObject.GetComponent<SpriteRenderer>().color = Color.black;
         }
@@ -47,7 +47,7 @@ public class RoomMovement : MonoBehaviourPun
 
     void Update()
     {
-        if (photonView.IsMine)
+        if (photonView.IsMine || !PhotonNetwork.InRoom)
         {
             if (!canControl)
                 return;
@@ -60,13 +60,13 @@ public class RoomMovement : MonoBehaviourPun
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        if (photonView.IsMine)
+        if (photonView.IsMine || !PhotonNetwork.InRoom)
             inputMoveDir = context.ReadValue<Vector2>();
     }
 
     public void OnInteract()
     {
-        if (photonView.IsMine && canControl)
+        if (canControl && (!PhotonNetwork.InRoom || photonView.IsMine))
         {
             Debug.Log("OnInteract »£√‚µ !");
             switch (nowObject)
