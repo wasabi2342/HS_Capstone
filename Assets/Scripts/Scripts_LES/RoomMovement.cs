@@ -1,6 +1,8 @@
 using DG.Tweening;
 using Photon.Pun;
+using System;
 using System.Collections;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,6 +15,7 @@ public enum InteractableObject
     selectCharacter,
     changeSkill,
     trainingRoom,
+    mannequin
 }
 
 public class RoomMovement : MonoBehaviourPun
@@ -33,6 +36,10 @@ public class RoomMovement : MonoBehaviourPun
 
     private Vector2 inputMoveDir;
 
+    public Action startFillGauge;
+    public Action canelFillGauge;
+
+    public GameObject changeCharacterPrefab;
 
     void Start()
     {
@@ -64,7 +71,7 @@ public class RoomMovement : MonoBehaviourPun
             inputMoveDir = context.ReadValue<Vector2>();
     }
 
-    public void OnInteract()
+    public void OnInteract(InputAction.CallbackContext context)
     {
         if (canControl && (!PhotonNetwork.InRoom || photonView.IsMine))
         {
@@ -118,6 +125,21 @@ public class RoomMovement : MonoBehaviourPun
                         RoomManager.Instance.ExitRestrictedArea(GetComponent<PhotonView>().ViewID);
                         ExitTrainingRoom();
                         isInTrainingRoom = false;
+                    }
+                    break;
+                case InteractableObject.mannequin:
+                    if(context.started)
+                    {
+                        startFillGauge?.Invoke();
+                    }
+                    else if(context.canceled)
+                    {
+                        canelFillGauge?.Invoke();
+                    }
+                    else if(context.performed)
+                    {
+                        RoomManager.Instance.CreateCharacter(changeCharacterPrefab);
+                        Destroy(gameObject);
                     }
                     break;
             }
