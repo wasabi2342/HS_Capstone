@@ -41,6 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2515039576057121523}
   - component: {fileID: 3843436792146973078}
+  - component: {fileID: 8789968268913942805}
   m_Layer: 0
   m_Name: PlayerAttackZone
   m_TagString: Untagged
@@ -84,6 +85,21 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8789968268913942805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1018905123020567762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5f84eac89d2c334fb13ff0f4c6b9ca8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 0.7
+  enemiesInRange:
+  - {fileID: 6377923139903049726, guid: 0d83cc24c0b5b7147a09b4664b3db599, type: 3}
 --- !u!1 &1618922647488193223
 GameObject:
   m_ObjectHideFlags: 0
@@ -593,19 +609,6 @@ MonoBehaviour:
     m_Bits: 768
   interactionRadius: 1.5
   maxHealth: 20
-  basicAttackDamage: 10
-  specialAttackDamage: 15
-  skillDamage: 30
-  ultimateDamage: 50
-  basicAttackRange: 0.8
-  specialAttackRange: 0.8
-  skillRange: 2
-  ultimateRange: 3
-  basicAttackCooldown: 0.5
-  specialAttackCooldown: 1
-  skillCooldown: 2
-  ultimateCooldown: 3
-  basicAttackResetTime: 2
   moveSpeedHorizontal: 5
   moveSpeedVertical: 5
   moveSpeedDiagonalLeftUp: 4.5
@@ -621,6 +624,7 @@ MonoBehaviour:
   - {fileID: 8230584595030747881}
   - {fileID: 1194036335750457889}
   - {fileID: 739063013299719982}
+  comboInputTime: 2
 --- !u!114 &4412398138277556100
 MonoBehaviour:
   m_ObjectHideFlags: 0

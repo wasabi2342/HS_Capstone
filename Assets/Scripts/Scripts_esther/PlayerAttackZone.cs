@@ -23,7 +23,6 @@ public class PlayerAttackZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // "Enemy" 레이어에 있는 오브젝트만 추가
         if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
             if (!enemiesInRange.Contains(other.gameObject))

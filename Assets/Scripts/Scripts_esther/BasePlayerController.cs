@@ -19,8 +19,8 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
     public Transform centerPoint;
     public float centerPointOffsetDistance = 0.5f;
 
-    [Header("상호작용/데미지 범위 설정")]
-    public LayerMask interactionLayerMask;   // NPC, Trap 등
+    [Header("상호작용 / 데미지 범위 설정")]
+    public LayerMask interactionLayerMask;
     public float interactionRadius = 1.5f;
 
     [Header("플레이어 체력 설정")]
@@ -32,48 +32,16 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
     protected GameObject currentTrap = null;
     protected bool isTrapCleared = false;
 
-    // 공격 관련 (공통 데미지 설정)
-    [Header("공격 및 스킬 데미지 설정 (공통)")]
-    public int basicAttackDamage = 10;
-    public int specialAttackDamage = 15;
-    public int skillDamage = 30;
-    public int ultimateDamage = 50;
-
-    [Header("공격 범위 설정 (공통)")]
-    public float basicAttackRange = 1.5f;
-    public float specialAttackRange = 1.5f;
-    public float skillRange = 2f;
-    public float ultimateRange = 3f;
-
-    [Header("쿨타임 설정 (공통)")]
-    public float basicAttackCooldown = 0.5f;
-    public float specialAttackCooldown = 1f;
-    public float skillCooldown = 2f;
-    public float ultimateCooldown = 3f;
-
-    [Header("평타 스택 초기화 시간 (공통)")]
-    public float basicAttackResetTime = 2f;
-
-    // 공격 상태 및 타이밍 체크
+    // 공격/데미지 관련
     protected bool isAttacking = false;
-    protected int attackIndex = 0;
     protected bool isDead = false;
 
-    protected float lastBasicAttackTime = -Mathf.Infinity;
-    protected float lastSpecialAttackTime = -Mathf.Infinity;
-    protected float lastSkillTime = -Mathf.Infinity;
-    protected float lastUltimateTime = -Mathf.Infinity;
-
-    protected int basicAttackStack = 0;
-    protected float lastBasicAttackStackTime = 0f;
-
-    // 이동 입력값 (OnMove에서 업데이트)
+    // 이동 입력
     protected Vector2 moveInput;
 
     public enum PlayerState { Idle, Run, Attack_L, Attack_R, Skill, Ultimate, Death }
     protected PlayerState currentState = PlayerState.Idle;
 
-    // 애니메이터 및 대쉬
     protected Animator animator;
     protected bool isDashing = false;
 
@@ -90,8 +58,6 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
         }
         currentHealth = maxHealth;
         currentState = PlayerState.Idle;
-        basicAttackStack = 0;
-        lastBasicAttackStackTime = Time.time;
     }
 
     public override void OnEnable()
@@ -111,13 +77,15 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
 
         CheckDashInput();
         HandleMovement();
-        HandleActions();
+        HandleActions(); // 자식에서 override (공격/스킬 로직)
 
         if (centerPoint != null)
             centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
     }
 
-    
+    /// <summary>
+    /// 새 Input 시스템에서 "Move" 액션 → Invoke Unity Events
+    /// </summary>
     public virtual void OnMove(InputAction.CallbackContext context)
     {
         if (!photonView.IsMine) return;
@@ -156,8 +124,6 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
         {
             Vector3 moveDir = new Vector3(h, 0, v).normalized;
             transform.Translate(moveDir * speedVertical * Time.deltaTime, Space.World);
-            if (centerPoint != null)
-                centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
         }
 
         if (animator != null)
@@ -185,150 +151,37 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
         yield return null;
     }
 
-    
-    // 공격/스킬 관련 (공통 로직)
-   
+    /// <summary>
+    /// 자식에서 override하여 공격/스킬 로직 처리
+    /// </summary>
     protected virtual void HandleActions()
     {
-        
+        // 자식에서 구현
     }
 
-    protected virtual void PerformBasicAttack()
-    {
-        if (Time.time - lastBasicAttackStackTime >= basicAttackResetTime)
-            basicAttackStack = 1;
-        else if (basicAttackStack < 4)
-            basicAttackStack++;
-
-        lastBasicAttackTime = Time.time;
-        lastBasicAttackStackTime = Time.time;
-
-        if (animator != null)
-            animator.SetInteger("AttackStack", basicAttackStack);
-
-        StartCoroutine(CoPerformAttack(1));
-    }
-
-    protected virtual IEnumerator CoPerformAttack(int index)
-    {
-        isAttacking = true;
-        attackIndex = index;
-
-        switch (index)
-        {
-            case 1: currentState = PlayerState.Attack_L; break;
-            case 2: currentState = PlayerState.Attack_R; break;
-            case 3: currentState = PlayerState.Skill; break;
-            case 4: currentState = PlayerState.Ultimate; break;
-        }
-
-        yield return new WaitForSeconds(0.2f);
-
-        float range = (index == 1) ? basicAttackRange :
-                      (index == 2) ? specialAttackRange :
-                      (index == 3) ? skillRange : ultimateRange;
-        int damage = (index == 1) ? basicAttackDamage :
-                     (index == 2) ? specialAttackDamage :
-                     (index == 3) ? skillDamage : ultimateDamage;
-
-        AttackOverlapCheck(range, damage);
-
-        if (basicAttackStack >= 4)
-        {
-            yield return new WaitForSeconds(0.3f);
-            ResetBasicAttackStack();
-        }
-        else
-        {
-            yield return new WaitForSeconds(0.3f);
-        }
-
-        if (moveInput.magnitude > 0.1f)
-            currentState = PlayerState.Run;
-        else
-            currentState = PlayerState.Idle;
-
-        isAttacking = false;
-        attackIndex = 0;
-    }
-
-    protected virtual void PerformSpecialAttack()
-    {
-        lastSpecialAttackTime = Time.time;
-        StartCoroutine(CoPerformAttack(2));
-    }
-
-    protected virtual void PerformSkillAttack()
-    {
-        lastSkillTime = Time.time;
-        StartCoroutine(CoPerformAttack(3));
-    }
-
-    protected virtual void PerformUltimateAttack()
-    {
-        lastUltimateTime = Time.time;
-        StartCoroutine(CoPerformAttack(4));
-    }
-
-    protected virtual void AttackOverlapCheck(float range, int damage)
-    {
-        if (centerPoint == null) return;
-        Vector3 checkPos = centerPoint.position;
-        Collider[] cols = Physics.OverlapSphere(checkPos, range, LayerMask.GetMask("Enemy"));
-        if (cols.Length > 0)
-        {
-            Collider closest = cols[0];
-            float minDist = Vector3.Distance(checkPos, closest.transform.position);
-            foreach (Collider col in cols)
-            {
-                float dist = Vector3.Distance(checkPos, col.transform.position);
-                if (dist < minDist)
-                {
-                    minDist = dist;
-                    closest = col;
-                }
-            }
-            EnemyController enemy = closest.GetComponentInParent<EnemyController>();
-            if (enemy != null)
-            {
-                enemy.TakeDamage(damage);
-                Debug.Log($"[BasePlayerController] 공격: {damage} 데미지 → 남은 체력: {enemy.GetCurrentHealth()}");
-            }
-        }
-    }
-
-    protected virtual void ResetBasicAttackStack()
-    {
-        basicAttackStack = 0;
-        if (animator != null)
-            animator.SetInteger("AttackStack", basicAttackStack);
-    }
-
-    
-    // NPC/Trap 상호작용 및 데미지 처리 (부모에 위치)
-   
+    // --------------------------------------------------------------------
+    // 상호작용 (Trap/NPC)
+    // --------------------------------------------------------------------
     public virtual void OnTrapClear(InputAction.CallbackContext context)
     {
         if (!photonView.IsMine) return;
         if (!context.performed) return;
 
-        Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
+        if (centerPoint == null) return;
+        Vector3 checkPos = centerPoint.position;
         Collider[] cols = Physics.OverlapSphere(checkPos, interactionRadius, interactionLayerMask);
         foreach (Collider col in cols)
         {
             if (col.gameObject.layer == LayerMask.NameToLayer("Trap"))
             {
-                currentTrap = col.gameObject;
                 trapClearCount++;
                 Debug.Log($"[BasePlayerController] 함정 키 입력 횟수: {trapClearCount}");
-
                 if (trapClearCount >= 2)
                 {
                     isTrapCleared = true;
                     Debug.Log("[BasePlayerController] 함정 해제됨.");
-                    Destroy(currentTrap);
+                    Destroy(col.gameObject);
                     trapClearCount = 0;
-                    currentTrap = null;
                 }
             }
         }
@@ -339,18 +192,21 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
         if (!photonView.IsMine) return;
         if (!context.performed) return;
 
-        Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
+        if (centerPoint == null) return;
+        Vector3 checkPos = centerPoint.position;
         Collider[] cols = Physics.OverlapSphere(checkPos, interactionRadius, interactionLayerMask);
         foreach (Collider col in cols)
         {
             if (col.gameObject.layer == LayerMask.NameToLayer("NPC"))
             {
                 Debug.Log($"[BasePlayerController] NPC와 상호작용! : {col.name}");
-                // 대화 관련 로직은 자식에서 override하여 추가 가능
             }
         }
     }
 
+    // --------------------------------------------------------------------
+    // 데미지 처리
+    // --------------------------------------------------------------------
     public virtual void TakeDamage(int damage)
     {
         currentHealth -= damage;
@@ -371,7 +227,6 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
         Debug.Log("[BasePlayerController] 플레이어 사망!");
 
         isAttacking = false;
-        attackIndex = 0;
         isDashing = false;
 
         if (animator != null)
