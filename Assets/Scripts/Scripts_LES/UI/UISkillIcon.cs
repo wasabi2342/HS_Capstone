@@ -19,6 +19,11 @@ public class UISkillIcon : MonoBehaviour
         //skillButton.image.sprite = Resources.Load<Sprite>("°æ·Î");
     }
 
+    public void SetOutlineColor(Color outlineColr)
+    {
+        outline.effectColor = outlineColr;
+    }
+
     public void StartUpdateSkillCooldown(float cooldown)
     {
         StartCoroutine(UpdateSkillCooldown(cooldown));

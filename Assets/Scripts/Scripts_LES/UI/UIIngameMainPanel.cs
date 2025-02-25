@@ -2,9 +2,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum Skill
+public enum UIIcon
 {
-
+    mouseL,
+    mouseR,
+    space,
+    shift,
+    r,
+    hpBar,
+    mouseLStack
 }
 
 public class UIIngameMainPanel : UIBase
@@ -13,6 +19,8 @@ public class UIIngameMainPanel : UIBase
     private List<UISkillIcon> uISkillIcons = new List<UISkillIcon>();
     [SerializeField]
     private Image hpImage;
+    [SerializeField]
+    private Text mouseLStackText;
 
     private void Start()
     {
@@ -23,11 +31,34 @@ public class UIIngameMainPanel : UIBase
     {
         foreach (var icon in uISkillIcons)
         {
-            icon.Init(Color.green); // 스킬 아이콘에 가호를 통한 테두리 색상등 정보를 넘겨주기
+
         }
     }
 
-    public void UpdateHPImage(float fillAmount)
+    public void UpdateIconOutline(Color color, UIIcon icon)
+    {
+        if ((int)icon > 4)
+            return;
+        uISkillIcons[(int)icon].SetOutlineColor(color);
+    }
+
+    public void UpdateUI(UIIcon icon, float value)
+    {
+        if ((int)icon == 6)
+        {
+            mouseLStackText.text = ((int)value).ToString();
+        }
+        else if ((int)icon == 5)
+        {
+            UpdateHPImage(value);
+        }
+        else
+        {
+            uISkillIcons[(int)icon].StartUpdateSkillCooldown(value);
+        }
+    }
+
+    private void UpdateHPImage(float fillAmount)
     {
         hpImage.fillAmount = fillAmount;
     }

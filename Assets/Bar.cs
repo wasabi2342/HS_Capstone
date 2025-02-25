@@ -14,7 +14,7 @@ public class Bar : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            if (other.GetComponent<PhotonView>().IsMine)
+            if (other.GetComponent<PhotonView>().IsMine || !PhotonNetwork.InRoom)
             {
                 if (isLeftEntry)
                     color.a = Mathf.Clamp((transform.position.x - other.transform.position.x) / 2, 0f, 1f);
