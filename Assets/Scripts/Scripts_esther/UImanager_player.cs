@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UI;  // Unity UI 관련 네임스페이스 사용
 
 public class UIManager_player : MonoBehaviour
 {
@@ -12,16 +12,15 @@ public class UIManager_player : MonoBehaviour
 
     [Header("대화 패널 관련")]
     public GameObject dialoguePanel;
-    public UnityEngine.UI.Text dialogueText;  // 여기서 명시적으로 UnityEngine.UI.Text 사용
+    public UnityEngine.UI.Text dialogueText;  // UnityEngine.UI.Text로 명시적으로 사용
     public string[] npcDialogues;
 
-    // 내부 상태 관리
     private bool isDialogueActive = false;
     private int currentDialogueIndex = 0;
 
     private void Awake()
     {
-        // 싱글턴 패턴 (씬에 한 개만 존재하도록)
+        // 싱글턴 패턴: 씬에 한 개만 존재하도록
         if (Instance == null)
         {
             Instance = this;
@@ -34,20 +33,17 @@ public class UIManager_player : MonoBehaviour
 
     private void Start()
     {
-        // 초기 UI 상태 설정
         if (pauseMenuPanel != null)
             pauseMenuPanel.SetActive(false);
         if (dialoguePanel != null)
             dialoguePanel.SetActive(false);
 
-        // 버튼 이벤트 연결
         if (quitButton != null)
             quitButton.onClick.AddListener(OnQuitButton);
         if (lobbyButton != null)
             lobbyButton.onClick.AddListener(OnLobbyButton);
     }
 
-    // Pause 메뉴 토글
     public void TogglePauseMenu()
     {
         if (pauseMenuPanel == null)
@@ -68,10 +64,10 @@ public class UIManager_player : MonoBehaviour
         Debug.Log("로비로 이동 (추후 구현)");
     }
 
-    // 대화 관련
+    // 대화 관련 메서드
     public bool IsDialogueActive()
     {
-        return isDialogueActive;
+        return dialoguePanel != null && dialoguePanel.activeSelf;
     }
 
     public void StartDialogue()
@@ -82,7 +78,6 @@ public class UIManager_player : MonoBehaviour
         isDialogueActive = true;
         currentDialogueIndex = 0;
         dialoguePanel.SetActive(true);
-
         if (npcDialogues.Length > 0)
             dialogueText.text = npcDialogues[currentDialogueIndex];
     }

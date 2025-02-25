@@ -3,24 +3,18 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 
-public class PlayerController : MonoBehaviourPunCallbacks
+public class PlayerController : BasePlayerController
 {
     // 로컬 플레이어 정적 참조
     public static PlayerController localPlayer;
 
     [Header("이동 속도 설정 (8방향)")]
-    public float speedHorizontal = 5f;
-    public float speedVertical = 5f;
-    public float speedDiagonalLeftUp = 4.5f;
-    public float speedDiagonalRightUp = 4.5f;
-    public float speedDiagonalLeftDown = 4.5f;
-    public float speedDiagonalRightDown = 4.5f;
-
-    [Header("대쉬 설정")]
-    public float dashDuration = 0.2f;
-    public float dashDistance = 2f;
-    public float dashDoubleClickThreshold = 0.3f;
-    private float lastDashClickTime = -Mathf.Infinity;
+    public float moveSpeedHorizontal = 5f;
+    public float moveSpeedVertical = 5f;
+    public float moveSpeedDiagonalLeftUp = 4.5f;
+    public float moveSpeedDiagonalRightUp = 4.5f;
+    public float moveSpeedDiagonalLeftDown = 4.5f;
+    public float moveSpeedDiagonalRightDown = 4.5f;
 
     [Header("공격 및 스킬 데미지 설정")]
     public int basicAttackDamage = 10;
@@ -42,10 +36,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     [Header("평타 스택 초기화 (초)")]
     public float basicAttackResetTime = 2f;
-
-    [Header("중심점 설정 (기본)")]
-    public Transform centerPoint;
-    public float centerPointOffsetDistance = 0.5f;
 
     [Header("중심점 설정 (8개)")]
     [SerializeField] private Transform[] centerPoints = new Transform[8];
@@ -77,48 +67,42 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private int basicAttackStack = 0;
     private float lastBasicAttackStackTime = 0f;
 
-    // Animator
-    private Animator animator;
-
-    // 공격 중 여부
+    // 공격 관련 Animator 파라미터
     private bool isAttacking = false;
+    private int attackIndex = 0;
+    private bool isDead = false;
 
-    // 플레이어 상태
-    public enum PlayerState { Idle, Run, Attack_L, Attack_R, Skill, Ultimate, Death }
-    private PlayerState currentState = PlayerState.Idle;
+    // 자식 전용 대쉬 플래그 
+    private bool isDashingChild = false;
 
-    // Animator 파라미터
-    private bool isDashing = false;   // 대쉬 중인지
-    private int attackIndex = 0;      // 1=Attack_L, 2=Attack_R, 3=Skill, 4=Ultimate
-    private bool isDead = false;      // 사망 여부
+   
+    private PlayerInputActions playerInputActions;
 
-    // 인풋 시스템
-    private PlayerInputActions inputActions;
-
-    void Awake()
+    public override void OnEnable()
     {
-        inputActions = new PlayerInputActions();
+        base.OnEnable();
+        if (playerInputActions == null)
+            playerInputActions = new PlayerInputActions();
+        playerInputActions.Enable();
     }
 
-    void OnEnable()
+    public override void OnDisable()
     {
-        inputActions.Enable();
-    }
-
-    void OnDisable()
-    {
-        inputActions.Disable();
+        base.OnDisable();
+        if (playerInputActions != null)
+            playerInputActions.Disable();
     }
 
     void Start()
     {
+        base.Start();
+
         animator = GetComponent<Animator>();
         if (animator == null)
         {
             Debug.LogError("[PlayerController] Animator 컴포넌트가 없습니다!");
         }
 
-        // Photon 소유권 체크
         if (photonView != null && photonView.IsMine)
         {
             localPlayer = this;
@@ -129,10 +113,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
             return;
         }
 
-        // 초기화
         basicAttackStack = 0;
         lastBasicAttackStackTime = Time.time;
-        currentState = PlayerState.Idle;
+        currentState = PlayerState.Idle; // 부모의 enum 사용
         currentHealth = maxHealth;
 
         if (animator != null)
@@ -156,79 +139,43 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
     }
 
-    void Update()
+    // 부모의 OnMove override
+    public override void OnMove(InputAction.CallbackContext context)
     {
-        // StageProgress (G키)
-        if (inputActions.Player.StageProgress.triggered)
-        {
-            Debug.Log("[PlayerController] 다음 스테이지로 넘어갈 예정입니다!");
-        }
+        base.OnMove(context);
+    }
 
-        // UI / 대화 중이면 입력 무시
-        if (UIManager_player.Instance != null)
-        {
-            if (UIManager_player.Instance.pauseMenuPanel != null && UIManager_player.Instance.pauseMenuPanel.activeSelf)
-                return;
+    protected override void Update()
+    {
+        base.Update();
 
-            if (UIManager_player.Instance.IsDialogueActive())
-            {
-                if (inputActions.Player.NPCInteract.triggered)
-                {
-                    UIManager_player.Instance.NextDialogue();
-                }
-                return;
-            }
-        }
+        if (!photonView.IsMine) return;
+        if (isDead || currentState == PlayerState.Death) return;
 
-        // 사망 상태면 모든 입력 무시
-        if (isDead || currentState == PlayerState.Death)
-            return;
+        HandleActions();
 
-        // 일시정지
-        if (inputActions.Player.Pause.triggered)
-        {
-            UIManager_player.Instance?.TogglePauseMenu();
-            return;
-        }
-
-        // 대쉬(더블클릭)
-        HandleDash();
-
-        // 평타 스택 리셋
         if (Time.time - lastBasicAttackStackTime >= basicAttackResetTime)
         {
             ResetBasicAttackStack();
         }
 
-        // 공격/스킬 입력
-        HandleActions();
-
-        // 이동 처리
         HandleMovement();
 
-        // 중심점 업데이트
         if (centerPoint != null)
             centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
 
-        // 상호작용
-        if (!isAttacking && currentState != PlayerState.Skill && currentState != PlayerState.Ultimate)
-        {
-            CheckInteractions();
-        }
-
-        // --- Animator 파라미터를 매 프레임 갱신
         if (animator != null)
         {
             animator.SetBool("isAttacking", isAttacking);
             animator.SetInteger("AttackIndex", attackIndex);
-            animator.SetBool("isDashing", isDashing);
+            animator.SetBool("isDashing", isDashing); // 부모의 isDashing 사용
             animator.SetBool("isDead", isDead);
         }
     }
 
     #region 이동 & 대쉬
 
-    private void HandleMovement()
+    protected override void HandleMovement()
     {
         bool canMove = (currentState != PlayerState.Attack_L &&
                         currentState != PlayerState.Attack_R &&
@@ -238,21 +185,34 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         if (!canMove) return;
 
-        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-        float h = moveInput.x;
-        float v = moveInput.y;
+        Vector2 inputVector = playerInputActions.Player.Move.ReadValue<Vector2>();
+        float h = inputVector.x;
+        float v = inputVector.y;
         bool isMoving = (Mathf.Abs(h) > 0.01f || Mathf.Abs(v) > 0.01f);
+        currentState = isMoving ? PlayerState.Run : PlayerState.Idle;
 
         if (isMoving)
         {
-            currentState = PlayerState.Run;
             if (animator != null)
                 animator.SetBool("isRunning", true);
 
             Vector3 moveDir = new Vector3(h, 0, v).normalized;
-            float moveSpeed = speedVertical;
+            float moveSpeed = moveSpeedVertical;
             if (Mathf.Abs(h) > 0 && Mathf.Abs(v) < 0.01f)
-                moveSpeed = speedHorizontal;
+                moveSpeed = moveSpeedHorizontal;
+            else
+            {
+                if (v > 0)
+                {
+                    if (h > 0) moveSpeed = moveSpeedDiagonalRightUp;
+                    else if (h < 0) moveSpeed = moveSpeedDiagonalLeftUp;
+                }
+                else if (v < 0)
+                {
+                    if (h > 0) moveSpeed = moveSpeedDiagonalRightDown;
+                    else if (h < 0) moveSpeed = moveSpeedDiagonalLeftDown;
+                }
+            }
 
             transform.Translate(moveDir * moveSpeed * Time.deltaTime, Space.World);
 
@@ -273,15 +233,14 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private void HandleDash()
     {
-        if (inputActions.Player.Dash.triggered)
+        if (playerInputActions.Player.Dash.triggered)
         {
             if (Time.time - lastDashClickTime <= dashDoubleClickThreshold)
             {
-                Vector2 dashInput = inputActions.Player.Move.ReadValue<Vector2>();
+                Vector2 dashInput = playerInputActions.Player.Move.ReadValue<Vector2>();
                 Vector3 dashDir = new Vector3(dashInput.x, 0, dashInput.y);
                 if (dashDir == Vector3.zero)
                     dashDir = transform.forward;
-
                 StartCoroutine(DoDash(dashDir));
                 lastDashClickTime = -Mathf.Infinity;
                 return;
@@ -293,13 +252,12 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
     }
 
-    IEnumerator DoDash(Vector3 direction)
+    protected override IEnumerator DoDash(Vector3 direction)
     {
         isDashing = true;
-
+        float elapsed = 0f;
         Vector3 startPos = transform.position;
         Vector3 targetPos = startPos + direction.normalized * dashDistance;
-        float elapsed = 0f;
         while (elapsed < dashDuration)
         {
             transform.position = Vector3.Lerp(startPos, targetPos, elapsed / dashDuration);
@@ -307,31 +265,14 @@ public class PlayerController : MonoBehaviourPunCallbacks
             yield return null;
         }
         transform.position = targetPos;
-
-        // 대쉬 종료
         isDashing = false;
-
-        // Idle or Run
-        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-        if (moveInput.magnitude > 0.1f)
-        {
-            currentState = PlayerState.Run;
-            if (animator != null)
-                animator.SetBool("isRunning", true);
-        }
-        else
-        {
-            currentState = PlayerState.Idle;
-            if (animator != null)
-                animator.SetBool("isRunning", false);
-        }
+        yield return null;
     }
 
     private void UpdateCenterPoints(Vector3 moveDir)
     {
         if (centerPoints == null || centerPoints.Length != 8)
             return;
-
         for (int i = 0; i < centerPoints.Length; i++)
         {
             if (centerPoints[i] == null) continue;
@@ -343,16 +284,16 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     #endregion
 
-    #region 공격 & 스킬
+    #region 공격 & 스킬 (변경 없음)
 
     private void HandleActions()
     {
         if (isAttacking) return;
 
-        bool basicAttackInput = inputActions.Player.BasicAttack.triggered;
-        bool specialAttackInput = inputActions.Player.SpecialAttack.triggered;
-        bool skillAttackInput = inputActions.Player.SkillAttack.triggered;
-        bool ultimateAttackInput = inputActions.Player.UltimateAttack.triggered;
+        bool basicAttackInput = playerInputActions.Player.BasicAttack.triggered;
+        bool specialAttackInput = playerInputActions.Player.SpecialAttack.triggered;
+        bool skillAttackInput = playerInputActions.Player.SkillAttack.triggered;
+        bool ultimateAttackInput = playerInputActions.Player.UltimateAttack.triggered;
 
         if (basicAttackInput && Time.time - lastBasicAttackTime >= basicAttackCooldown)
         {
@@ -374,7 +315,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private void PerformBasicAttack()
     {
-        // 스택 리셋 시간 지났으면 1부터 시작, 아니면 스택++
         if (Time.time - lastBasicAttackStackTime >= basicAttackResetTime)
             basicAttackStack = 1;
         else if (basicAttackStack < 4)
@@ -386,16 +326,14 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (animator != null)
             animator.SetInteger("AttackStack", basicAttackStack);
 
-        // Attack_L = 1
         StartCoroutine(CoPerformAttack(1));
     }
 
     IEnumerator CoPerformAttack(int index)
     {
         isAttacking = true;
-        attackIndex = index; // 1=Attack_L, 2=Attack_R, 3=Skill, 4=Ultimate
+        attackIndex = index;
 
-        // 상태 설정
         switch (index)
         {
             case 1: currentState = PlayerState.Attack_L; break;
@@ -404,10 +342,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
             case 4: currentState = PlayerState.Ultimate; break;
         }
 
-        // 공격 모션 시작 후 약간 대기(타격 타이밍)
         yield return new WaitForSeconds(0.2f);
 
-        // 공격 판정
         float range = (index == 1) ? basicAttackRange :
                       (index == 2) ? specialAttackRange :
                       (index == 3) ? skillRange : ultimateRange;
@@ -417,36 +353,19 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         AttackOverlapCheck(range, damage);
 
-        // ★ 만약 AttackStack이 4까지 찼다면 (콤보의 마지막)
-        //    추가 입력 없이도 자동으로 Idle로 돌아가게 처리
         if (basicAttackStack >= 4)
         {
-            // 마지막 평타 모션 재생 후 대기
             yield return new WaitForSeconds(0.3f);
-
-            // 스택 리셋
             ResetBasicAttackStack();
-            // Idle or Run
-            Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-            currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
-        }
-        else if (index == 1 && basicAttackStack >= 4)
-        {
-            // 위와 동일 로직이나, "AttackStack=4"를 처리할 때
-            // (현재 index=1일 때 4연타가 완성되면 여기서도 처리 가능)
-            // -- 이 로직은 상황에 따라 조정
         }
         else
         {
-            // AttackStack이 4 미만일 때
             yield return new WaitForSeconds(0.3f);
-
-            // 이동 입력 체크
-            Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-            currentState = (moveInput.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
         }
 
-        // 공격 종료
+        Vector2 moveVal = playerInputActions.Player.Move.ReadValue<Vector2>();
+        currentState = (moveVal.magnitude > 0.1f) ? PlayerState.Run : PlayerState.Idle;
+
         isAttacking = false;
         attackIndex = 0;
     }
@@ -468,10 +387,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
         lastUltimateTime = Time.time;
         yield return StartCoroutine(CoPerformAttack(4));
     }
-
-    #endregion
-
-    #region 공격 판정 & 평타 스택
 
     private void AttackOverlapCheck(float range, int damage)
     {
@@ -505,45 +420,59 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (animator != null)
             animator.SetInteger("AttackStack", basicAttackStack);
     }
-
     #endregion
 
-    #region 상호작용 & 데미지
+    #region 상호작용 (Invoke Unity Events)
 
-    private void CheckInteractions()
+   
+    public void OnTrapClear(InputAction.CallbackContext context)
     {
+        if (!photonView.IsMine) return;
+        if (!context.performed) return;
+
         Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
         Collider[] cols = Physics.OverlapSphere(checkPos, interactionRadius, interactionLayerMask);
         foreach (Collider col in cols)
         {
-            // 함정
             if (col.gameObject.layer == LayerMask.NameToLayer("Trap"))
             {
                 currentTrap = col.gameObject;
-                if (inputActions.Player.TrapClear.triggered)
+                trapClearCount++;
+                Debug.Log("함정 키 입력 횟수: " + trapClearCount);
+
+                if (trapClearCount >= 2)
                 {
-                    trapClearCount++;
-                    Debug.Log("함정 키 입력 횟수: " + trapClearCount);
-                    if (trapClearCount >= 2)
-                    {
-                        isTrapCleared = true;
-                        Debug.Log("함정 해제됨.");
-                        Destroy(currentTrap);
-                        trapClearCount = 0;
-                        currentTrap = null;
-                    }
-                }
-            }
-            // NPC
-            else if (col.gameObject.layer == LayerMask.NameToLayer("NPC"))
-            {
-                if (inputActions.Player.NPCInteract.triggered)
-                {
-                    UIManager_player.Instance?.StartDialogue();
+                    isTrapCleared = true;
+                    Debug.Log("함정 해제됨.");
+                    Destroy(currentTrap);
+                    trapClearCount = 0;
+                    currentTrap = null;
                 }
             }
         }
     }
+
+    
+    public void OnNPCInteract(InputAction.CallbackContext context)
+    {
+        if (!photonView.IsMine) return;
+        if (!context.performed) return;
+
+        Vector3 checkPos = (centerPoint != null) ? centerPoint.position : transform.position;
+        Collider[] cols = Physics.OverlapSphere(checkPos, interactionRadius, interactionLayerMask);
+        foreach (Collider col in cols)
+        {
+            if (col.gameObject.layer == LayerMask.NameToLayer("NPC"))
+            {
+                Debug.Log($"[PlayerController] NPC와 상호작용! : {col.name}");
+                
+            }
+        }
+    }
+
+    #endregion
+
+    #region 데미지 & 사망
 
     public void TakeDamage(int damage)
     {
@@ -559,19 +488,15 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     public void Die()
     {
-        if (isDead) return; // 중복 호출 방지
-
+        if (isDead) return;
         currentState = PlayerState.Death;
-        isDead = true; // Animator 파라미터도 동기화
-
+        isDead = true;
         Debug.Log("[PlayerController] 플레이어 사망!");
 
-        // 사망 시 공격/대쉬 상태 해제
         isAttacking = false;
         attackIndex = 0;
         isDashing = false;
 
-        // Animator에 Death 파라미터 전달 (Bool)
         if (animator != null)
         {
             animator.SetBool("isDead", true);
