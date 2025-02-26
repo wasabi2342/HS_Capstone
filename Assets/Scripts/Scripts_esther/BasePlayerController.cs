@@ -16,8 +16,15 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
     protected float lastDashClickTime = -Mathf.Infinity;
 
     [Header("중심점 설정")]
+    [Tooltip("기본 CenterPoint. Invoke 이벤트 등에서 사용.")]
     public Transform centerPoint;
     public float centerPointOffsetDistance = 0.5f;
+
+    [Header("8방향 CenterPoints 설정")]
+    [Tooltip("플레이어의 8방향 CenterPoint들을 할당 (순서: 0=위, 1=우상, 2=오른쪽, 3=우하, 4=아래, 5=좌하, 6=왼쪽, 7=좌상)")]
+    public Transform[] centerPoints = new Transform[8];
+    // 현재 이동/회전 방향(0~7)
+    public int currentDirectionIndex = 0;
 
     [Header("상호작용 / 데미지 범위 설정")]
     public LayerMask interactionLayerMask;
@@ -75,17 +82,28 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
         if (!photonView.IsMine) return;
         if (isDead || currentState == PlayerState.Death) return;
 
+        // 8방향 CenterPoint 갱신: moveInput가 있으면 8방향 인덱스 계산 후 centerPoint 업데이트
+        if (centerPoints != null && centerPoints.Length >= 8)
+        {
+            if (moveInput.magnitude > 0.01f)
+            {
+                currentDirectionIndex = DetermineDirectionIndex(moveInput);
+            }
+            // 선택된 centerPoints의 위치로 centerPoint 업데이트
+            centerPoint.position = centerPoints[currentDirectionIndex].position;
+        }
+        else
+        {
+            // 기본: 플레이어 정면 방향에 오프셋 적용
+            centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
+        }
+
         CheckDashInput();
         HandleMovement();
         HandleActions(); // 자식에서 override (공격/스킬 로직)
-
-        if (centerPoint != null)
-            centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
     }
 
-    /// <summary>
-    /// 새 Input 시스템에서 "Move" 액션 → Invoke Unity Events
-    /// </summary>
+    // 이동 입력 콜백
     public virtual void OnMove(InputAction.CallbackContext context)
     {
         if (!photonView.IsMine) return;
@@ -151,17 +169,29 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
         yield return null;
     }
 
-    /// <summary>
-    /// 자식에서 override하여 공격/스킬 로직 처리
-    /// </summary>
     protected virtual void HandleActions()
     {
         // 자식에서 구현
     }
 
-    // --------------------------------------------------------------------
-    // 상호작용 (Trap/NPC)
-    // --------------------------------------------------------------------
+    // 기존 OnNPCInteract ? centerPoint는 이제 8방향 CenterPoint로 업데이트됨
+    public virtual void OnNPCInteract(InputAction.CallbackContext context)
+    {
+        if (!photonView.IsMine) return;
+        if (!context.performed) return;
+
+        if (centerPoint == null) return;
+        Vector3 checkPos = centerPoint.position;
+        Collider[] cols = Physics.OverlapSphere(checkPos, interactionRadius, interactionLayerMask);
+        foreach (Collider col in cols)
+        {
+            if (col.gameObject.layer == LayerMask.NameToLayer("NPC"))
+            {
+                Debug.Log($"[BasePlayerController] NPC와 상호작용! : {col.name}");
+            }
+        }
+    }
+
     public virtual void OnTrapClear(InputAction.CallbackContext context)
     {
         if (!photonView.IsMine) return;
@@ -187,26 +217,6 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
         }
     }
 
-    public virtual void OnNPCInteract(InputAction.CallbackContext context)
-    {
-        if (!photonView.IsMine) return;
-        if (!context.performed) return;
-
-        if (centerPoint == null) return;
-        Vector3 checkPos = centerPoint.position;
-        Collider[] cols = Physics.OverlapSphere(checkPos, interactionRadius, interactionLayerMask);
-        foreach (Collider col in cols)
-        {
-            if (col.gameObject.layer == LayerMask.NameToLayer("NPC"))
-            {
-                Debug.Log($"[BasePlayerController] NPC와 상호작용! : {col.name}");
-            }
-        }
-    }
-
-    // --------------------------------------------------------------------
-    // 데미지 처리
-    // --------------------------------------------------------------------
     public virtual void TakeDamage(int damage)
     {
         currentHealth -= damage;
@@ -233,5 +243,15 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
         {
             animator.SetBool("isDead", true);
         }
+    }
+
+    // 8방향 판별: moveInput을 기반으로 0~7 인덱스 결정 (위를 0도로 가정)
+    protected int DetermineDirectionIndex(Vector2 input)
+    {
+        if (input.magnitude < 0.01f) return currentDirectionIndex; // 정지 시 이전 방향 유지
+        float angle = Mathf.Atan2(input.x, input.y) * Mathf.Rad2Deg;
+        if (angle < 0) angle += 360f;
+        int idx = Mathf.RoundToInt(angle / 45f) % 8;
+        return idx;
     }
 }
