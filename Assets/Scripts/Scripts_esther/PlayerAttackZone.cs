@@ -11,18 +11,34 @@ public class PlayerAttackZone : MonoBehaviour
     // 범위 내에 있는 적 오브젝트 목록
     public List<GameObject> enemiesInRange = new List<GameObject>();
 
+    // SphereCollider 캐싱
+    private SphereCollider sphereCollider;
+
     private void Awake()
     {
-        SphereCollider col = GetComponent<SphereCollider>();
-        if (col != null)
+        
+        sphereCollider = GetComponent<SphereCollider>();
+        if (sphereCollider != null)
         {
-            col.isTrigger = true;
-            col.radius = attackRange;
+            sphereCollider.isTrigger = true;
+            sphereCollider.radius = attackRange;
+        }
+    }
+
+    
+    // 공격 콜라이더를 켜거나 끄는 메서드 (PlayerController 등에서 호출)
+    
+    public void EnableAttackCollider(bool enable)
+    {
+        if (sphereCollider != null)
+        {
+            sphereCollider.enabled = enable;
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        
         if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
             if (!enemiesInRange.Contains(other.gameObject))

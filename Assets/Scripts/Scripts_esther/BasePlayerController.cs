@@ -46,7 +46,8 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
     // 이동 입력
     protected Vector2 moveInput;
 
-    public enum PlayerState { Idle, Run, Attack_L, Attack_R, Skill, Ultimate, Death }
+    // PlayerState 열거형에 Hit 상태 추가
+    public enum PlayerState { Idle, Run, Attack_L, Attack_R, Skill, Ultimate, Hit, Death }
     protected PlayerState currentState = PlayerState.Idle;
 
     protected Animator animator;
@@ -174,7 +175,6 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
         // 자식에서 구현
     }
 
-    // 기존 OnNPCInteract ? centerPoint는 이제 8방향 CenterPoint로 업데이트됨
     public virtual void OnNPCInteract(InputAction.CallbackContext context)
     {
         if (!photonView.IsMine) return;
