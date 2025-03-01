@@ -2,6 +2,7 @@ using Photon.Pun;
 using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class RoomManager : MonoBehaviourPun
 {
@@ -16,6 +17,8 @@ public class RoomManager : MonoBehaviourPun
 
     public bool isEnteringStage;
 
+    public RoomMovement localPlayer;
+
     private void Awake()
     {
         if (Instance == null)
@@ -26,11 +29,33 @@ public class RoomManager : MonoBehaviourPun
 
     private void Start()
     {
-        GameObject playerInstance = PhotonNetwork.Instantiate(playerInRoom.name, new Vector3(0f, -0.5f, 0f), Quaternion.identity);
+        CreateCharacter(playerInRoom, new Vector3(0, -0.35f, -0.35f), Quaternion.Euler(45, 0, 0));
+    }
+
+    public void CreateCharacter(GameObject prefab, Vector3 pos, Quaternion quaternion)  
+    {
+        GameObject playerInstance;
+        if (PhotonNetwork.InRoom)
+        {
+            playerInstance = PhotonNetwork.Instantiate(prefab.name, pos, quaternion);
+        }
+        else
+        {
+            playerInstance = Instantiate(prefab, pos, quaternion);
+        }
+
         cinemachineCamera.Follow = playerInstance.transform;
         cinemachineCamera.LookAt = playerInstance.transform;
-
-        isEnteringStage = false;
+        
+        localPlayer = playerInstance.GetComponent<RoomMovement>();
+        localPlayer.InitBlessing();
+        
+        UIBase peekUI = UIManager.Instance.ReturnPeekUI();
+        if (peekUI is UIIngameMainPanel uIIngameMainPanel)
+        {
+            localPlayer.updateUIAction += uIIngameMainPanel.UpdateUI;
+            localPlayer.updateUIOutlineAction += uIIngameMainPanel.UpdateIconOutline;
+        }
     }
 
     public UIConfirmPanel InteractWithDungeonNPC()

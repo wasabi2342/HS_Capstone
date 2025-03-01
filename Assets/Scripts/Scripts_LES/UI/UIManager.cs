@@ -19,6 +19,17 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         OpenPanel<UiStartPanel>();
+        
+        string nickname = PlayerPrefs.GetString("Nickname");
+        
+        if (nickname != "")
+        {
+            PhotonNetworkManager.Instance.SetNickname(nickname);
+        }
+        else
+        {
+            OpenPopupPanel<UISetNicknamePanel>();
+        }
     }
 
     public void OpenPanel<T>() where T : UIBase
@@ -72,5 +83,18 @@ public class UIManager : MonoBehaviour
         uiStack.Push(popup);
 
         return popup;
+    }
+
+    public void OnSkillInfo()
+    {
+        if(uiStack.Peek() is UIIngameMainPanel)
+        {
+            OpenPopupPanel<UISkillInfoPanel>();
+        }
+    }
+
+    public UIBase ReturnPeekUI()
+    {
+        return uiStack.Peek();
     }
 }

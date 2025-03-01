@@ -1,6 +1,10 @@
 using DG.Tweening;
 using Photon.Pun;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using Unity.Cinemachine;
+using UnityEditor.U2D.Animation;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,6 +17,7 @@ public enum InteractableObject
     selectCharacter,
     changeSkill,
     trainingRoom,
+    mannequin
 }
 
 public class RoomMovement : MonoBehaviourPun
@@ -22,6 +27,8 @@ public class RoomMovement : MonoBehaviourPun
     private float moveSpeed;
     [SerializeField]
     private float portalCooldown;
+    [SerializeField]
+    private CharacterStats characterData;
 
     private bool canUsePortal;
     private Vector3 portalExitPosition;
@@ -33,10 +40,18 @@ public class RoomMovement : MonoBehaviourPun
 
     private Vector2 inputMoveDir;
 
+    public Action startFillGauge;
+    public Action<bool> canelFillGauge;
+
+    public GameObject changeCharacterPrefab;
+    public Dictionary<InputKey, (Blessing blessing, int level)> blessings;
+
+    public Action<UIIcon, float> updateUIAction;
+    public Action<UIIcon, Color> updateUIOutlineAction;
 
     void Start()
     {
-        if (!photonView.IsMine)
+        if (!photonView.IsMine && PhotonNetwork.InRoom)
         {
             gameObject.GetComponent<SpriteRenderer>().color = Color.black;
         }
@@ -47,7 +62,7 @@ public class RoomMovement : MonoBehaviourPun
 
     void Update()
     {
-        if (photonView.IsMine)
+        if (photonView.IsMine || !PhotonNetwork.InRoom)
         {
             if (!canControl)
                 return;
@@ -60,13 +75,13 @@ public class RoomMovement : MonoBehaviourPun
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        if (photonView.IsMine)
+        if (photonView.IsMine || !PhotonNetwork.InRoom)
             inputMoveDir = context.ReadValue<Vector2>();
     }
 
-    public void OnInteract()
+    public void OnInteract(InputAction.CallbackContext context)
     {
-        if (photonView.IsMine && canControl)
+        if (canControl && (!PhotonNetwork.InRoom || photonView.IsMine))
         {
             Debug.Log("OnInteract »£√‚µ !");
             switch (nowObject)
@@ -118,6 +133,22 @@ public class RoomMovement : MonoBehaviourPun
                         RoomManager.Instance.ExitRestrictedArea(GetComponent<PhotonView>().ViewID);
                         ExitTrainingRoom();
                         isInTrainingRoom = false;
+                    }
+                    break;
+                case InteractableObject.mannequin:
+                    if(context.started)
+                    {
+                        startFillGauge?.Invoke();
+                    }
+                    else if(context.canceled)
+                    {
+                        canelFillGauge?.Invoke(false);
+                    }
+                    else if(context.performed)
+                    {
+                        canelFillGauge?.Invoke(true);
+                        RoomManager.Instance.CreateCharacter(changeCharacterPrefab, transform.position, transform.rotation);
+                        Destroy(gameObject);
                     }
                     break;
             }
@@ -178,5 +209,20 @@ public class RoomMovement : MonoBehaviourPun
     {
         nowObject = obj;
         Debug.Log(nowObject);
+    }
+
+    public string ReturnName()
+    {
+        return characterData.name;
+    }
+
+    public void InitBlessing()
+    {
+        blessings = new Dictionary<InputKey, (Blessing blessing, int level)>();
+
+        for(int i = 0; i < 5; i++)
+        {
+            blessings.Add((InputKey)i, (Blessing.none, 0));
+        }
     }
 }

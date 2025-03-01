@@ -83,10 +83,17 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
         if (!RoomManager.Instance.isEnteringStage)
         {
-            photonView.RPC("OpenReadyPanel", RpcTarget.All);
+            if (PhotonNetwork.InRoom)
+            {
+                photonView.RPC("OpenReadyPanel", RpcTarget.All);
+            }
+            else
+            {
+                SceneManager.LoadScene("SampleScene");
+            }
         }
-
-        photonView.RPC("UpdateReadyPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber);
+        if (PhotonNetwork.InRoom)
+            photonView.RPC("UpdateReadyPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber);
     }
 
     [PunRPC]
@@ -108,7 +115,9 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("60초 경과 스테이지 진입");
         if (PhotonNetwork.IsMasterClient)
         {
+
             PhotonNetwork.LoadLevel("SampleScene");
+
         }
     }
 
@@ -125,6 +134,12 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         {
             Debug.Log("모두 준비 완료");
             PhotonNetwork.LoadLevel("SampleScene");
+
         }
+    }
+
+    public void SetNickname(string nickname)
+    {
+        PhotonNetwork.NickName = nickname;
     }
 }
