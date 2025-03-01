@@ -2,6 +2,7 @@ using DG.Tweening;
 using Photon.Pun;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEditor.U2D.Animation;
 using UnityEngine;
@@ -43,6 +44,10 @@ public class RoomMovement : MonoBehaviourPun
     public Action<bool> canelFillGauge;
 
     public GameObject changeCharacterPrefab;
+    public Dictionary<InputKey, (Blessing blessing, int level)> blessings;
+
+    public Action<UIIcon, float> updateUIAction;
+    public Action<UIIcon, Color> updateUIOutlineAction;
 
     void Start()
     {
@@ -142,7 +147,7 @@ public class RoomMovement : MonoBehaviourPun
                     else if(context.performed)
                     {
                         canelFillGauge?.Invoke(true);
-                        RoomManager.Instance.CreateCharacter(changeCharacterPrefab, transform);
+                        RoomManager.Instance.CreateCharacter(changeCharacterPrefab, transform.position, transform.rotation);
                         Destroy(gameObject);
                     }
                     break;
@@ -209,5 +214,15 @@ public class RoomMovement : MonoBehaviourPun
     public string ReturnName()
     {
         return characterData.name;
+    }
+
+    public void InitBlessing()
+    {
+        blessings = new Dictionary<InputKey, (Blessing blessing, int level)>();
+
+        for(int i = 0; i < 5; i++)
+        {
+            blessings.Add((InputKey)i, (Blessing.none, 0));
+        }
     }
 }

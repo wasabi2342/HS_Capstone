@@ -17,6 +17,8 @@ public class RoomManager : MonoBehaviourPun
 
     public bool isEnteringStage;
 
+    public RoomMovement localPlayer;
+
     private void Awake()
     {
         if (Instance == null)
@@ -27,34 +29,33 @@ public class RoomManager : MonoBehaviourPun
 
     private void Start()
     {
-        GameObject playerInstance;
-        if (PhotonNetwork.InRoom)
-        {
-            playerInstance = PhotonNetwork.Instantiate(playerInRoom.name, new Vector3(0, -0.35f, -0.35f), Quaternion.Euler(45, 0, 0));
-        }
-        else
-        {
-            playerInstance = Instantiate(playerInRoom, new Vector3(0, -0.35f, -0.35f), Quaternion.Euler(45, 0, 0));
-        }
-        cinemachineCamera.Follow = playerInstance.transform;
-        cinemachineCamera.LookAt = playerInstance.transform;
-
-        isEnteringStage = false;
+        CreateCharacter(playerInRoom, new Vector3(0, -0.35f, -0.35f), Quaternion.Euler(45, 0, 0));
     }
 
-    public void CreateCharacter(GameObject prefab, Transform transform)  
+    public void CreateCharacter(GameObject prefab, Vector3 pos, Quaternion quaternion)  
     {
         GameObject playerInstance;
         if (PhotonNetwork.InRoom)
         {
-            playerInstance = PhotonNetwork.Instantiate(prefab.name, transform.position, transform.rotation);
+            playerInstance = PhotonNetwork.Instantiate(prefab.name, pos, quaternion);
         }
         else
         {
-            playerInstance = Instantiate(prefab, transform.position, transform.rotation);
+            playerInstance = Instantiate(prefab, pos, quaternion);
         }
+
         cinemachineCamera.Follow = playerInstance.transform;
         cinemachineCamera.LookAt = playerInstance.transform;
+        
+        localPlayer = playerInstance.GetComponent<RoomMovement>();
+        localPlayer.InitBlessing();
+        
+        UIBase peekUI = UIManager.Instance.ReturnPeekUI();
+        if (peekUI is UIIngameMainPanel uIIngameMainPanel)
+        {
+            localPlayer.updateUIAction += uIIngameMainPanel.UpdateUI;
+            localPlayer.updateUIOutlineAction += uIIngameMainPanel.UpdateIconOutline;
+        }
     }
 
     public UIConfirmPanel InteractWithDungeonNPC()

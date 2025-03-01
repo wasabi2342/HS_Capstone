@@ -35,7 +35,7 @@ public class UIIngameMainPanel : UIBase
         }
     }
 
-    public void UpdateIconOutline(Color color, UIIcon icon)
+    public void UpdateIconOutline(UIIcon icon, Color color)
     {
         if ((int)icon > 4)
             return;

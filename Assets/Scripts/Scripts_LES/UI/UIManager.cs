@@ -85,11 +85,16 @@ public class UIManager : MonoBehaviour
         return popup;
     }
 
-    public void OnBlessingInfo()
+    public void OnSkillInfo()
     {
         if(uiStack.Peek() is UIIngameMainPanel)
         {
-            // blessingInfo패널 열어주기
+            OpenPopupPanel<UISkillInfoPanel>();
         }
+    }
+
+    public UIBase ReturnPeekUI()
+    {
+        return uiStack.Peek();
     }
 }
