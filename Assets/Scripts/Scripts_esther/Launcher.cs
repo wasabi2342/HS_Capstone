@@ -24,9 +24,10 @@ public class Launcher : MonoBehaviourPunCallbacks
         Vector3 spawnPos = new Vector3(0, 1f, 0); // y=1 정도로 높임
         PhotonNetwork.Instantiate("Resource_esther/Player", spawnPos, Quaternion.identity);
     }
-
+    /*
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         Debug.Log($"새 플레이어 입장: {newPlayer.NickName}, 현재 인원: {PhotonNetwork.CurrentRoom.PlayerCount}");
     }
+    */
 }
