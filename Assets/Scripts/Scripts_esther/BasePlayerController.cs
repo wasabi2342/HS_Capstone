@@ -23,7 +23,6 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
     [Header("8방향 CenterPoints 설정")]
     [Tooltip("플레이어의 8방향 CenterPoint들을 할당 (순서: 0=위, 1=우상, 2=오른쪽, 3=우하, 4=아래, 5=좌하, 6=왼쪽, 7=좌상)")]
     public Transform[] centerPoints = new Transform[8];
-    // 현재 이동/회전 방향(0~7)
     public int currentDirectionIndex = 0;
 
     [Header("상호작용 / 데미지 범위 설정")]
@@ -46,8 +45,8 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
     // 이동 입력
     protected Vector2 moveInput;
 
-    // PlayerState 열거형에 Hit 상태 추가
-    public enum PlayerState { Idle, Run, Attack_L, Attack_R, Skill, Ultimate, Hit, Death }
+    // PlayerState 열거형에 Guard와 Parry 상태 추가 (추가: Guard, Parry)
+    public enum PlayerState { Idle, Run, Attack_L, Attack_R, Skill, Ultimate, Hit, Guard, Parry, Death }
     protected PlayerState currentState = PlayerState.Idle;
 
     protected Animator animator;
@@ -83,28 +82,25 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
         if (!photonView.IsMine) return;
         if (isDead || currentState == PlayerState.Death) return;
 
-        // 8방향 CenterPoint 갱신: moveInput가 있으면 8방향 인덱스 계산 후 centerPoint 업데이트
+        // 8방향 CenterPoint 갱신
         if (centerPoints != null && centerPoints.Length >= 8)
         {
             if (moveInput.magnitude > 0.01f)
             {
                 currentDirectionIndex = DetermineDirectionIndex(moveInput);
             }
-            // 선택된 centerPoints의 위치로 centerPoint 업데이트
             centerPoint.position = centerPoints[currentDirectionIndex].position;
         }
         else
         {
-            // 기본: 플레이어 정면 방향에 오프셋 적용
             centerPoint.position = transform.position + transform.forward * centerPointOffsetDistance;
         }
 
         CheckDashInput();
         HandleMovement();
-        HandleActions(); // 자식에서 override (공격/스킬 로직)
+        HandleActions();
     }
 
-    // 이동 입력 콜백
     public virtual void OnMove(InputAction.CallbackContext context)
     {
         if (!photonView.IsMine) return;
@@ -245,10 +241,9 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
         }
     }
 
-    // 8방향 판별: moveInput을 기반으로 0~7 인덱스 결정 (위를 0도로 가정)
     protected int DetermineDirectionIndex(Vector2 input)
     {
-        if (input.magnitude < 0.01f) return currentDirectionIndex; // 정지 시 이전 방향 유지
+        if (input.magnitude < 0.01f) return currentDirectionIndex;
         float angle = Mathf.Atan2(input.x, input.y) * Mathf.Rad2Deg;
         if (angle < 0) angle += 360f;
         int idx = Mathf.RoundToInt(angle / 45f) % 8;

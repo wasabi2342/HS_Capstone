@@ -24,10 +24,18 @@ public class PlayerController : BasePlayerController
     private float lastSkillTime = -Mathf.Infinity;
     private float lastUltimateTime = -Mathf.Infinity;
 
-    // 3D 구 형태의 트리거
-    private PlayerAttackZone playerAttackZone;            // 플레이어가 적을 공격
-    private PlayerReceiveDamageZone playerReceiveDamageZone;  // 플레이어가 적에게 맞음
-    private PlayerInteractionZone playerInteractionZone;  // 플레이어가 상호작용
+    [Header("우클릭 Guard/Parry 설정")]
+    [Tooltip("우클릭 가드 모션 지속 시간(초) – 무적 시간")]
+    public float guardDuration = 2f;
+    [Tooltip("우클릭 패링 모션 지속 시간(초) – 무적 시간")]
+    public float parryDuration = 2f;
+    private bool isGuarding = false;
+    private bool isParrying = false;
+
+    // 3D 구 형태의 트리거 (PlayerAttackZone: 적 공격, PlayerReceiveDamageZone: 데미지, PlayerInteractionZone: 상호작용)
+    private PlayerAttackZone playerAttackZone;
+    private PlayerReceiveDamageZone playerReceiveDamageZone;
+    private PlayerInteractionZone playerInteractionZone;
 
     private PlayerInputActions playerInputActions;
 
@@ -67,25 +75,15 @@ public class PlayerController : BasePlayerController
         playerReceiveDamageZone = GetComponentInChildren<PlayerReceiveDamageZone>();
         playerInteractionZone = GetComponentInChildren<PlayerInteractionZone>();
 
-        // 혹시 없으면 경고
         if (playerAttackZone == null)
-        {
             Debug.LogWarning("[PlayerController] PlayerAttackZone이 자식 오브젝트에 없습니다!");
-        }
         if (playerReceiveDamageZone == null)
-        {
             Debug.LogWarning("[PlayerController] PlayerReceiveDamageZone이 자식 오브젝트에 없습니다!");
-        }
         if (playerInteractionZone == null)
-        {
             Debug.LogWarning("[PlayerController] PlayerInteractionZone이 자식 오브젝트에 없습니다!");
-        }
 
-        // 로컬 플레이어 체크
         if (photonView != null && photonView.IsMine)
-        {
             localPlayer = this;
-        }
         else
         {
             this.enabled = false;
@@ -97,14 +95,18 @@ public class PlayerController : BasePlayerController
     {
         base.Update();
 
-        // 피격 중, 사망 시 행동 중단
+        // 우클릭 입력 처리 (Guard/Parry는 별도 처리)
+        if (!isAttacking && !isGuarding && !isParrying && Mouse.current.rightButton.wasPressedThisFrame)
+        {
+            // 우클릭 입력 시 Guard 실행 (일반 상황에서)
+            StartCoroutine(CoGuardReaction());
+        }
+
         if (isHit || isDead || currentState == PlayerState.Death)
             return;
 
-        // 공격/스킬 입력
         HandleActions();
 
-        // 애니메이터 파라미터 동기화
         if (animator != null)
         {
             animator.SetInteger("AttackStack", attackStack);
@@ -115,7 +117,6 @@ public class PlayerController : BasePlayerController
     #region 8방향 이동 Override (부모에서 대부분 처리)
     protected override void HandleMovement()
     {
-        // 피격 중이거나 사망 시 이동 불가
         if (isHit || currentState == PlayerState.Death)
             return;
 
@@ -156,7 +157,6 @@ public class PlayerController : BasePlayerController
     #region 공격 & 스킬
     protected override void HandleActions()
     {
-        // 피격 중 or 이미 공격 중이면 행동 불가
         if (isHit || isAttacking)
             return;
 
@@ -165,17 +165,15 @@ public class PlayerController : BasePlayerController
         bool skillAttackInput = playerInputActions.Player.SkillAttack.triggered;
         bool ultimateAttackInput = playerInputActions.Player.UltimateAttack.triggered;
 
-        // [1] 선딜 구간 중에만 캔슬 가능
+        // [Attack_1] 선딜 구간 중 캔슬 (Guard/Parry는 우클릭/스페이스바에서 처리됨)
         if (canStartupCancel)
         {
-            // 우클릭 = Guard
             if (Mouse.current.rightButton.wasPressedThisFrame)
             {
                 Debug.Log("[Attack_1] 선딜 중 가드로 캔슬");
                 CancelAttackAndDoGuard();
                 return;
             }
-            // 스페이스바 = 회피
             if (Keyboard.current.spaceKey.wasPressedThisFrame)
             {
                 Debug.Log("[Attack_1] 선딜 중 회피로 캔슬");
@@ -184,28 +182,24 @@ public class PlayerController : BasePlayerController
             }
         }
 
-        // 기본 공격(마우스 좌클릭)
         if (basicAttackInput && Time.time - lastBasicAttackTime >= 0.5f)
         {
             lastBasicAttackTime = Time.time;
-            FaceMouseDirection(); // 공격 전 마우스 방향 바라보기
+            FaceMouseDirection();
             StartCoroutine(CoStackAttack());
         }
-        // 특수공격
         else if (specialAttackInput && Time.time - lastSpecialAttackTime >= 1f)
         {
             lastSpecialAttackTime = Time.time;
             FaceMouseDirection();
             // 특수공격 로직
         }
-        // 스킬
         else if (skillAttackInput && Time.time - lastSkillTime >= 2f)
         {
             lastSkillTime = Time.time;
             FaceMouseDirection();
             // 스킬 로직
         }
-        // 궁극기
         else if (ultimateAttackInput && Time.time - lastUltimateTime >= 3f)
         {
             lastUltimateTime = Time.time;
@@ -217,15 +211,13 @@ public class PlayerController : BasePlayerController
     private void CancelAttackAndDoGuard()
     {
         ResetStackAndReturnIdle();
-        // 가드 상태 
-        // animator.SetBool("isGuard", true);
+        // Guard 상태는 우클릭 입력에서 처리됨
     }
 
     private void CancelAttackAndDoDodge()
     {
         ResetStackAndReturnIdle();
-        // 회피 로직 
-       
+        // 회피 로직 (추가 구현 가능)
     }
 
     private IEnumerator CoStackAttack()
@@ -235,24 +227,23 @@ public class PlayerController : BasePlayerController
 
         isAttacking = true;
 
+        // AttackStack=1 → Attack_1, 2 → Attack_2, 3 → Attack_3, 4 → Attack_4 등으로 구분
         switch (attackStack)
         {
-            case 1: currentState = PlayerState.Attack_L; break;
-            case 2: currentState = PlayerState.Attack_R; break;
+            case 1: currentState = PlayerState.Attack_L; break;  // Attack_1
+            case 2: currentState = PlayerState.Attack_R; break;  // Attack_2
             case 3: currentState = PlayerState.Skill; break;
             case 4: currentState = PlayerState.Ultimate; break;
         }
 
         yield return new WaitForSeconds(0.2f);
 
-        // 근접 공격 범위 내 적에게 데미지 적용
         if (playerAttackZone != null)
         {
             int damage = (attackStack == 1) ? 10 :
                          (attackStack == 2) ? 15 :
                          (attackStack == 3) ? 30 : 50;
 
-            // playerAttackZone 내부의 적에게 데미지
             foreach (GameObject enemyObj in playerAttackZone.enemiesInRange)
             {
                 var enemy = enemyObj.GetComponentInParent<EnemyController>();
@@ -266,7 +257,6 @@ public class PlayerController : BasePlayerController
 
         yield return new WaitForSeconds(0.3f);
 
-        // 스택=4이면 자동 Idle 복귀
         if (attackStack >= 4)
         {
             yield return new WaitForSeconds(0.3f);
@@ -274,7 +264,6 @@ public class PlayerController : BasePlayerController
             yield break;
         }
 
-        // 1~3 스택 상태에서 추가 입력 대기
         float timer = 0f;
         bool nextAttack = false;
         while (timer < comboInputTime)
@@ -309,7 +298,7 @@ public class PlayerController : BasePlayerController
         attackStack = 0;
         isAttacking = false;
         currentState = PlayerState.Idle;
-        canStartupCancel = true; // 선딜 캔슬 플래그 초기화
+        canStartupCancel = true;
         if (animator != null)
         {
             animator.SetInteger("AttackStack", 0);
@@ -364,13 +353,162 @@ public class PlayerController : BasePlayerController
     }
     #endregion
 
+    #region Attack_2 프레임별 처리 (Animation Events)
+    public void OnAttack2StartupFrame1End()
+    {
+        Debug.Log("[Attack_2] 1프레임 종료 시 x=0.7 전진");
+        transform.Translate(Vector3.forward * 0.7f, Space.Self);
+    }
+
+    public void OnAttack2StartupFrame2End()
+    {
+        Debug.Log("[Attack_2] 2프레임 종료 시 x=0.7 전진");
+        transform.Translate(Vector3.forward * 0.7f, Space.Self);
+    }
+
+    public void OnAttack2DamageStart()
+    {
+        Debug.Log("[Attack_2] 공격 판정 시작");
+        if (playerAttackZone != null)
+        {
+            playerAttackZone.EnableAttackCollider(true);
+        }
+    }
+
+    public void OnAttack2DamageEnd()
+    {
+        Debug.Log("[Attack_2] 공격 판정 종료");
+        if (playerAttackZone != null)
+        {
+            playerAttackZone.EnableAttackCollider(false);
+        }
+    }
+
+    public void OnAttack2AllowNextInput()
+    {
+        Debug.Log("[Attack_2] 추가 평타(Attack_3) 입력 가능");
+    }
+
+    public void OnAttack2RecoveryEnd()
+    {
+        Debug.Log("[Attack_2] 후딜 끝, 이동/회피/스킬 등 자유롭게 가능");
+    }
+
+    public void OnAttack2AnimationEnd()
+    {
+        Debug.Log("[Attack_2] 애니메이션 완전 종료");
+        if (currentState == PlayerState.Attack_R)
+        {
+            ResetStackAndReturnIdle();
+        }
+    }
+    #endregion
+
+    #region 우클릭 Guard/Parry 처리
+    private IEnumerator CoGuardReaction()
+    {
+        isGuarding = true;
+        currentState = PlayerState.Guard; // Guard 상태는 플레이어 전용 기능으로 사용
+        if (animator != null)
+        {
+            animator.SetBool("isGuard", true);
+        }
+        Debug.Log("[Guard] Guard 시작, 무적 상태");
+
+        // Guard 모션 중에 이동 입력이 감지되면 조기 종료하도록 함
+        float elapsed = 0f;
+        while (elapsed < guardDuration)
+        {
+            if (moveInput.magnitude > 0.1f)
+            {
+                Debug.Log("[Guard] 이동 입력 감지, Guard 종료");
+                break;
+            }
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        isGuarding = false;
+        if (animator != null)
+        {
+            animator.SetBool("isGuard", false);
+        }
+        if (currentState == PlayerState.Guard)
+        {
+            currentState = PlayerState.Idle;
+        }
+        Debug.Log("[Guard] Guard 종료");
+    }
+
+    private IEnumerator CoParryReaction()
+    {
+        isParrying = true;
+        currentState = PlayerState.Parry; // Parry 상태는 플레이어 전용 기능으로 사용
+        if (animator != null)
+        {
+            animator.SetBool("isParry", true);
+        }
+        Debug.Log("[Parry] Parry 시작, 무적 상태");
+        float elapsed = 0f;
+        bool counterTriggered = false;
+        while (elapsed < parryDuration)
+        {
+            if (Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                Debug.Log("[Parry] Counter Attack (발도) triggered");
+                TriggerCounterAttack();
+                counterTriggered = true;
+                break;
+            }
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        if (animator != null)
+        {
+            animator.SetBool("isParry", false);
+        }
+        isParrying = false;
+        if (currentState == PlayerState.Parry)
+        {
+            currentState = PlayerState.Idle;
+        }
+        Debug.Log("[Parry] Parry 종료");
+    }
+
+    private void TriggerCounterAttack()
+    {
+        int counterDamage = 50; // 예시 데미지 값
+        if (playerAttackZone != null)
+        {
+            foreach (GameObject enemyObj in playerAttackZone.enemiesInRange)
+            {
+                var enemy = enemyObj.GetComponentInParent<EnemyController>();
+                if (enemy != null)
+                {
+                    enemy.TakeDamage(counterDamage);
+                    Debug.Log("[CounterAttack] 적에게 " + counterDamage + " 데미지");
+                }
+            }
+        }
+    }
+    #endregion
+
     #region 피격 (Hit) 처리
     public override void TakeDamage(int damage)
     {
+        if (isGuarding || isParrying)
+            return;
+
+        // 우클릭 입력 시, 피해 대신 Parry 처리
+        if (Mouse.current.rightButton.wasPressedThisFrame)
+        {
+            StartCoroutine(CoParryReaction());
+            return;
+        }
+
         base.TakeDamage(damage);
         if (isDead || currentState == PlayerState.Death)
             return;
-
         if (!isHit)
         {
             StartCoroutine(CoHitReaction());
@@ -381,20 +519,16 @@ public class PlayerController : BasePlayerController
     {
         isHit = true;
         currentState = PlayerState.Hit;
-
         if (animator != null)
         {
             animator.SetBool("isHit", true);
         }
-
         yield return new WaitForSeconds(0.5f);
-
         isHit = false;
         if (animator != null)
         {
             animator.SetBool("isHit", false);
         }
-
         if (!isDead)
         {
             currentState = PlayerState.Idle;
@@ -403,18 +537,13 @@ public class PlayerController : BasePlayerController
     #endregion
 
     #region 마우스 방향 바라보기
-    
-    // 마우스 위치를 기준으로 캐릭터가 해당 방향을 바라보도록 회전
-    
     private void FaceMouseDirection()
     {
         Vector2 mouseScreenPos = Mouse.current.position.ReadValue();
         if (Camera.main == null)
             return;
-
         Ray ray = Camera.main.ScreenPointToRay(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0f));
         Plane plane = new Plane(Vector3.up, Vector3.zero);
-
         if (plane.Raycast(ray, out float distance))
         {
             Vector3 hitPoint = ray.GetPoint(distance);
