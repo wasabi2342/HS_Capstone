@@ -25,7 +25,7 @@ AnimationClip:
     - time: 0.033333335
       value: {fileID: -120678367, guid: fc1fb33ae6cce374aaf17bd7a41a4f50, type: 3}
     - time: 0.06666667
-      value: {fileID: -1402689234, guid: fc1fb33ae6cce374aaf17bd7a41a4f50, type: 3}
+      value: {fileID: -120678367, guid: fc1fb33ae6cce374aaf17bd7a41a4f50, type: 3}
     - time: 0.1
       value: {fileID: -593020293, guid: fc1fb33ae6cce374aaf17bd7a41a4f50, type: 3}
     - time: 0.13333334
@@ -84,7 +84,7 @@ AnimationClip:
     pptrCurveMapping:
     - {fileID: -120678367, guid: fc1fb33ae6cce374aaf17bd7a41a4f50, type: 3}
     - {fileID: -120678367, guid: fc1fb33ae6cce374aaf17bd7a41a4f50, type: 3}
-    - {fileID: -1402689234, guid: fc1fb33ae6cce374aaf17bd7a41a4f50, type: 3}
+    - {fileID: -120678367, guid: fc1fb33ae6cce374aaf17bd7a41a4f50, type: 3}
     - {fileID: -593020293, guid: fc1fb33ae6cce374aaf17bd7a41a4f50, type: 3}
     - {fileID: 2027917440, guid: fc1fb33ae6cce374aaf17bd7a41a4f50, type: 3}
     - {fileID: 2118752467, guid: fc1fb33ae6cce374aaf17bd7a41a4f50, type: 3}
@@ -126,4 +126,46 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 0.06666667
+    functionName: OnAttack1StartupEnd
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.1
+    functionName: OnAttack1DamageStart
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.16666667
+    functionName: OnAttack1DamageEnd
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.23333333
+    functionName: OnAttack1AllowNextInput
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.28333333
+    functionName: OnAttack1RecoveryEnd
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.65
+    functionName: OnAttack1AnimationEnd
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
