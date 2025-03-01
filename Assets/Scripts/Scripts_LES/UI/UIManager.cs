@@ -84,4 +84,12 @@ public class UIManager : MonoBehaviour
 
         return popup;
     }
+
+    public void OnBlessingInfo()
+    {
+        if(uiStack.Peek() is UIIngameMainPanel)
+        {
+            // blessingInfo패널 열어주기
+        }
+    }
 }
