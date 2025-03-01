@@ -18,15 +18,10 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        Debug.Log($"¹æ ÀÔÀå: {PhotonNetwork.CurrentRoom.Name}, ÇöÀç ÀÎ¿ø: {PhotonNetwork.CurrentRoom.PlayerCount}");
+        Debug.Log($"ë°© ì…ì¥: {PhotonNetwork.CurrentRoom.Name}, í˜„ì¬ ì¸ì›: {PhotonNetwork.CurrentRoom.PlayerCount}");
 
-        // (1) Player ÇÁ¸®ÆÕÀ» ¹Ù´Ú À§·Î »ìÂ¦ ¿Ã·Á¼­ ½ºÆù
-        Vector3 spawnPos = new Vector3(0, 1f, 0); // y=1 Á¤µµ·Î ³ôÀÓ
+        // (1) Player í”„ë¦¬íŒ¹ì„ ë°”ë‹¥ ìœ„ë¡œ ì‚´ì§ ì˜¬ë ¤ì„œ ìŠ¤í°
+        Vector3 spawnPos = new Vector3(0, 1f, 0); // y=1 ì •ë„ë¡œ ë†’ì„
         PhotonNetwork.Instantiate("Resource_esther/Player", spawnPos, Quaternion.identity);
     }
-
-    //public override void OnPlayerEnteredRoom(Player newPlayer)
-    //{
-    //    Debug.Log($"»õ ÇÃ·¹ÀÌ¾î ÀÔÀå: {newPlayer.NickName}, ÇöÀç ÀÎ¿ø: {PhotonNetwork.CurrentRoom.PlayerCount}");
-    //}
 }
