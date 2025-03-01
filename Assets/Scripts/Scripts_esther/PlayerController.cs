@@ -32,7 +32,11 @@ public class PlayerController : BasePlayerController
     private bool isGuarding = false;
     private bool isParrying = false;
 
-    // 3D 구 형태의 트리거 (PlayerAttackZone: 적 공격, PlayerReceiveDamageZone: 데미지, PlayerInteractionZone: 상호작용)
+    [Header("Counter (발도) 설정")]
+    [Tooltip("패링 후 좌클릭 시 발도 데미지 (기본값 20)")]
+    public int counterDamage = 20;
+
+    // 3D 구 형태의 트리거
     private PlayerAttackZone playerAttackZone;
     private PlayerReceiveDamageZone playerReceiveDamageZone;
     private PlayerInteractionZone playerInteractionZone;
@@ -98,7 +102,7 @@ public class PlayerController : BasePlayerController
         // 우클릭 입력 처리 (Guard/Parry는 별도 처리)
         if (!isAttacking && !isGuarding && !isParrying && Mouse.current.rightButton.wasPressedThisFrame)
         {
-            // 우클릭 입력 시 Guard 실행 (일반 상황에서)
+            // 우클릭 입력 시 Guard 실행 (일반 상황)
             StartCoroutine(CoGuardReaction());
         }
 
@@ -211,7 +215,7 @@ public class PlayerController : BasePlayerController
     private void CancelAttackAndDoGuard()
     {
         ResetStackAndReturnIdle();
-        // Guard 상태는 우클릭 입력에서 처리됨
+        // Guard 상태는 우클릭 입력 시 별도로 처리됩니다.
     }
 
     private void CancelAttackAndDoDodge()
@@ -227,7 +231,7 @@ public class PlayerController : BasePlayerController
 
         isAttacking = true;
 
-        // AttackStack=1 → Attack_1, 2 → Attack_2, 3 → Attack_3, 4 → Attack_4 등으로 구분
+        // AttackStack=1: Attack_1, 2: Attack_2, 3: Attack_3, 4: Attack_4 등으로 구분
         switch (attackStack)
         {
             case 1: currentState = PlayerState.Attack_L; break;  // Attack_1
@@ -284,13 +288,9 @@ public class PlayerController : BasePlayerController
         }
 
         if (!nextAttack)
-        {
             ResetStackAndReturnIdle();
-        }
         else
-        {
             StartCoroutine(CoStackAttack());
-        }
     }
 
     private void ResetStackAndReturnIdle()
@@ -318,9 +318,7 @@ public class PlayerController : BasePlayerController
     {
         Debug.Log("[Attack_1] 공격 판정 시작");
         if (playerAttackZone != null)
-        {
             playerAttackZone.EnableAttackCollider(true);
-        }
         transform.Translate(Vector3.forward * 1.0f, Space.Self);
     }
 
@@ -328,9 +326,7 @@ public class PlayerController : BasePlayerController
     {
         Debug.Log("[Attack_1] 공격 판정 종료");
         if (playerAttackZone != null)
-        {
             playerAttackZone.EnableAttackCollider(false);
-        }
     }
 
     public void OnAttack1AllowNextInput()
@@ -347,9 +343,7 @@ public class PlayerController : BasePlayerController
     {
         Debug.Log("[Attack_1] 애니메이션 완전 종료");
         if (currentState == PlayerState.Attack_L)
-        {
             ResetStackAndReturnIdle();
-        }
     }
     #endregion
 
@@ -370,18 +364,14 @@ public class PlayerController : BasePlayerController
     {
         Debug.Log("[Attack_2] 공격 판정 시작");
         if (playerAttackZone != null)
-        {
             playerAttackZone.EnableAttackCollider(true);
-        }
     }
 
     public void OnAttack2DamageEnd()
     {
         Debug.Log("[Attack_2] 공격 판정 종료");
         if (playerAttackZone != null)
-        {
             playerAttackZone.EnableAttackCollider(false);
-        }
     }
 
     public void OnAttack2AllowNextInput()
@@ -398,9 +388,7 @@ public class PlayerController : BasePlayerController
     {
         Debug.Log("[Attack_2] 애니메이션 완전 종료");
         if (currentState == PlayerState.Attack_R)
-        {
             ResetStackAndReturnIdle();
-        }
     }
     #endregion
 
@@ -408,14 +396,14 @@ public class PlayerController : BasePlayerController
     private IEnumerator CoGuardReaction()
     {
         isGuarding = true;
-        currentState = PlayerState.Guard; // Guard 상태는 플레이어 전용 기능으로 사용
+        currentState = PlayerState.Idle; // Guard는 상태 전환은 Animator 파라미터로 처리
         if (animator != null)
         {
             animator.SetBool("isGuard", true);
         }
         Debug.Log("[Guard] Guard 시작, 무적 상태");
 
-        // Guard 모션 중에 이동 입력이 감지되면 조기 종료하도록 함
+        // Guard 모션 중에 이동 입력이 감지되면 조기 종료 (이때 Guard 애니메이션이 끝나도록 함)
         float elapsed = 0f;
         while (elapsed < guardDuration)
         {
@@ -433,17 +421,13 @@ public class PlayerController : BasePlayerController
         {
             animator.SetBool("isGuard", false);
         }
-        if (currentState == PlayerState.Guard)
-        {
-            currentState = PlayerState.Idle;
-        }
         Debug.Log("[Guard] Guard 종료");
     }
 
     private IEnumerator CoParryReaction()
     {
         isParrying = true;
-        currentState = PlayerState.Parry; // Parry 상태는 플레이어 전용 기능으로 사용
+        currentState = PlayerState.Idle; // Parry 상태는 Animator 파라미터로 처리
         if (animator != null)
         {
             animator.SetBool("isParry", true);
@@ -456,7 +440,7 @@ public class PlayerController : BasePlayerController
             if (Mouse.current.leftButton.wasPressedThisFrame)
             {
                 Debug.Log("[Parry] Counter Attack (발도) triggered");
-                TriggerCounterAttack();
+                OnCounterAttackEvent();
                 counterTriggered = true;
                 break;
             }
@@ -468,16 +452,16 @@ public class PlayerController : BasePlayerController
             animator.SetBool("isParry", false);
         }
         isParrying = false;
-        if (currentState == PlayerState.Parry)
-        {
-            currentState = PlayerState.Idle;
-        }
         Debug.Log("[Parry] Parry 종료");
     }
 
-    private void TriggerCounterAttack()
+    /// <summary>
+    /// 발도 모션 이벤트 함수: 패링 모션 도중 좌클릭 이벤트에 의해 발도(반격) 데미지 발생
+    /// 이 함수는 애니메이션 이벤트로 호출될 수 있으며, 또는 코루틴 내에서도 호출 가능합니다.
+    /// </summary>
+    public void OnCounterAttackEvent()
     {
-        int counterDamage = 50; // 예시 데미지 값
+        int damage = counterDamage; // 인스펙터에서 조정 가능
         if (playerAttackZone != null)
         {
             foreach (GameObject enemyObj in playerAttackZone.enemiesInRange)
@@ -485,8 +469,8 @@ public class PlayerController : BasePlayerController
                 var enemy = enemyObj.GetComponentInParent<EnemyController>();
                 if (enemy != null)
                 {
-                    enemy.TakeDamage(counterDamage);
-                    Debug.Log("[CounterAttack] 적에게 " + counterDamage + " 데미지");
+                    enemy.TakeDamage(damage);
+                    Debug.Log("[CounterAttack] 적에게 " + damage + " 데미지");
                 }
             }
         }
@@ -510,9 +494,7 @@ public class PlayerController : BasePlayerController
         if (isDead || currentState == PlayerState.Death)
             return;
         if (!isHit)
-        {
             StartCoroutine(CoHitReaction());
-        }
     }
 
     private IEnumerator CoHitReaction()
@@ -520,19 +502,13 @@ public class PlayerController : BasePlayerController
         isHit = true;
         currentState = PlayerState.Hit;
         if (animator != null)
-        {
             animator.SetBool("isHit", true);
-        }
         yield return new WaitForSeconds(0.5f);
         isHit = false;
         if (animator != null)
-        {
             animator.SetBool("isHit", false);
-        }
         if (!isDead)
-        {
             currentState = PlayerState.Idle;
-        }
     }
     #endregion
 
@@ -550,9 +526,7 @@ public class PlayerController : BasePlayerController
             Vector3 lookDir = hitPoint - transform.position;
             lookDir.y = 0f;
             if (lookDir.sqrMagnitude > 0.001f)
-            {
                 transform.forward = lookDir.normalized;
-            }
         }
     }
     #endregion
