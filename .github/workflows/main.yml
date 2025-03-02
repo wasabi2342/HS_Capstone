@@ -2,9 +2,9 @@ name: Automated Build ⭐멀로로
 
 on:
   push: # Master 브랜치에 Push가 되면 빌드가 되도록 동작시킵니다.
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
     
 jobs:
   buildWindows:
