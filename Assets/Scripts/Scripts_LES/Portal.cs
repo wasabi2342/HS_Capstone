@@ -15,7 +15,7 @@ public class Portal : Interactable
         base.OnTriggerEnter(other);
         if (other.CompareTag("Player"))
         {
-            other.GetComponent<RoomMovement>().GetPortalExitPosition(point.position);
+            other.GetComponent<BasePlayerController>().GetPortalExitPosition(point.position);
         }
     }
 

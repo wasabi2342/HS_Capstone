@@ -20,8 +20,9 @@ public class Mannequin : Interactable
         {
             if (other.GetComponent<PhotonView>().IsMine || !PhotonNetwork.InRoom)
             {
-                RoomMovement roomMovement = other.GetComponent<RoomMovement>();
-                if(roomMovement.ReturnName() == characterPrefab.name)
+                BasePlayerController roomMovement = other.GetComponent<BasePlayerController>();
+                Debug.Log(roomMovement.ReturnName() + characterPrefab.name);
+                if (roomMovement.ReturnName() == characterPrefab.name)
                 {
                     return;
                 }
@@ -40,7 +41,7 @@ public class Mannequin : Interactable
         {
             if (other.GetComponent<PhotonView>().IsMine || !PhotonNetwork.InRoom)
             {
-                RoomMovement roomMovement = other.GetComponent<RoomMovement>();
+                BasePlayerController roomMovement = other.GetComponent<BasePlayerController>();
                 if (roomMovement.ReturnName() == characterPrefab.name)
                 {
                     return;

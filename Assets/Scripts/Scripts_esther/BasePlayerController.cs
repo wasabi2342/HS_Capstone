@@ -2,9 +2,39 @@ using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using System.Collections.Generic;
+using System;
+using DG.Tweening;
+using UnityEngine.SceneManagement;
 
-public abstract class BasePlayerController : MonoBehaviourPunCallbacks
+public class BasePlayerController : MonoBehaviourPunCallbacks
 {
+    #region RoomMovement에서 추가 부분
+
+    [SerializeField]
+    protected float portalCooldown;
+    [SerializeField]
+    protected CharacterStats characterData;
+
+    protected bool canUsePortal;
+    protected Vector3 portalExitPosition;
+
+    protected InteractableObject nowObject;
+
+    protected bool canControl;
+    protected bool isInVillage;
+
+    public Action startFillGauge;
+    public Action<bool> canelFillGauge;
+
+    public GameObject changeCharacterPrefab;
+    public Dictionary<InputKey, (Blessing blessing, int level)> blessings;
+
+    public Action<UIIcon, float> updateUIAction;
+    public Action<UIIcon, Color> updateUIOutlineAction;
+
+    #endregion
+
     [Header("기본 이동 속도")]
     public float speedHorizontal = 5f;
     public float speedVertical = 5f;
@@ -55,31 +85,42 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
     protected virtual void Awake()
     {
         animator = GetComponent<Animator>();
+        DontDestroyOnLoad(this);
     }
 
     protected virtual void Start()
     {
-        if (photonView != null && !photonView.IsMine)
-        {
-            this.enabled = false;
-        }
+        //if (photonView != null && !photonView.IsMine)
+        //{
+        //    this.enabled = false;
+        //}
         currentHealth = maxHealth;
         currentState = PlayerState.Idle;
+        canControl = true;
+        canUsePortal = true;
+        isInVillage = true;
     }
 
     public override void OnEnable()
     {
         base.OnEnable();
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     public override void OnDisable()
     {
         base.OnDisable();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     protected virtual void Update()
     {
-        if (!photonView.IsMine) return;
+        if (!photonView.IsMine && PhotonNetwork.InRoom)
+        {
+            Debug.Log("업데이트에서 리턴 실행됨");
+            return;
+
+        }
         if (isDead || currentState == PlayerState.Death) return;
 
         // 8방향 CenterPoint 갱신
@@ -103,12 +144,14 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
 
     public virtual void OnMove(InputAction.CallbackContext context)
     {
-        if (!photonView.IsMine) return;
-        moveInput = context.ReadValue<Vector2>();
+        if (photonView.IsMine || !PhotonNetwork.InRoom)
+            moveInput = context.ReadValue<Vector2>();
     }
 
     protected virtual void CheckDashInput()
     {
+        if (isInVillage)
+            return;
         if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             if (Time.time - lastDashClickTime <= dashDoubleClickThreshold)
@@ -137,8 +180,14 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
 
         if (isMoving)
         {
-            Vector3 moveDir = new Vector3(h, 0, v).normalized;
+            Vector3 moveDir;
+            if (isInVillage)
+                moveDir = new Vector3(h, 0, 0).normalized;
+            else
+                moveDir = new Vector3(h, 0, v).normalized;
+
             transform.Translate(moveDir * speedVertical * Time.deltaTime, Space.World);
+            //transform.Translate(moveDir * speedVertical * Time.deltaTime);
         }
 
         if (animator != null)
@@ -173,8 +222,8 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
 
     public virtual void OnNPCInteract(InputAction.CallbackContext context)
     {
-        if (!photonView.IsMine) return;
-        if (!context.performed) return;
+        if (!photonView.IsMine && PhotonNetwork.InRoom) return;
+        //if (!context.performed) return;
 
         if (centerPoint == null) return;
         Vector3 checkPos = centerPoint.position;
@@ -184,6 +233,78 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
             if (col.gameObject.layer == LayerMask.NameToLayer("NPC"))
             {
                 Debug.Log($"[BasePlayerController] NPC와 상호작용! : {col.name}");
+            }
+        }
+        if (canControl && (!PhotonNetwork.InRoom || photonView.IsMine))
+        {
+            Debug.Log("OnInteract 호출됨!");
+            switch (nowObject)
+            {
+                case InteractableObject.portal:
+                    if (canUsePortal)
+                    {
+                        Debug.Log("포탈 사용");
+                        UsePortal();
+                    }
+                    break;
+                case InteractableObject.gameStart:
+                    if (!RoomManager.Instance.isEnteringStage)
+                    {
+                        if (!RoomManager.Instance.IsPlayerInRestrictedArea())
+                        {
+                            RoomManager.Instance.InteractWithDungeonNPC().onClose += () => canControl = true;
+                            canControl = false;
+                        }
+                        else
+                        {
+                            UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("모든 플레이어가 밖으로 나와야 합니다.");
+                        }
+                    }
+                    break;
+                case InteractableObject.upgrade: // 업그래이드 UI생성하기
+                    break;
+                case InteractableObject.selectCharacter: // 캐릭터 선택 UI생성하기
+                    RoomManager.Instance.EnterRestrictedArea(GetComponent<PhotonView>().ViewID);
+                    canControl = false;
+
+                    UIManager.Instance.OpenPopupPanel<UISelectCharacterPanel>().onClose += () =>
+                    {
+                        RoomManager.Instance.ExitRestrictedArea(GetComponent<PhotonView>().ViewID);
+                        canControl = true;
+                    };
+                    break;
+                case InteractableObject.changeSkill: // 스킬변경 UI 생성하기
+                    break;
+                case InteractableObject.trainingRoom:
+                    if (isInVillage) // 훈련소로 화면 전환
+                    {
+                        RoomManager.Instance.EnterRestrictedArea(GetComponent<PhotonView>().ViewID);
+                        EnterTrainingRoom();
+                        isInVillage = false;
+                    }
+                    else // 훈련소에서 나오기
+                    {
+                        RoomManager.Instance.ExitRestrictedArea(GetComponent<PhotonView>().ViewID);
+                        ExitTrainingRoom();
+                        isInVillage = true;
+                    }
+                    break;
+                case InteractableObject.mannequin:
+                    if (context.started)
+                    {
+                        startFillGauge?.Invoke();
+                    }
+                    else if (context.canceled)
+                    {
+                        canelFillGauge?.Invoke(false);
+                    }
+                    else if (context.performed)
+                    {
+                        canelFillGauge?.Invoke(true);
+                        RoomManager.Instance.CreateCharacter(changeCharacterPrefab, transform.position, transform.rotation);
+                        Destroy(gameObject);
+                    }
+                    break;
             }
         }
     }
@@ -213,16 +334,36 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
         }
     }
 
-    public virtual void TakeDamage(int damage)
+    [PunRPC]
+    protected void UpdateHP(int damage)
     {
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        Debug.Log($"[BasePlayerController] 플레이어 체력: {currentHealth}");
 
+        updateUIAction?.Invoke(UIIcon.hpBar, (float)currentHealth / maxHealth);
+       
+        Debug.Log($"[BasePlayerController] 플레이어 체력: {currentHealth}");
         if (currentHealth <= 0 && !isDead)
         {
             Die();
         }
+    }
+
+    public virtual void TakeDamage(int damage)
+    {
+        /*
+        currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        updateUIAction?.Invoke(UIIcon.hpBar, (float)currentHealth / maxHealth);
+        */
+        photonView.RPC("UpdateHP", RpcTarget.All, damage);
+
+        //Debug.Log($"[BasePlayerController] 플레이어 체력: {currentHealth}");
+        //if (currentHealth <= 0 && !isDead)
+        //{
+        //    Die();
+        //}
     }
 
     public virtual void Die()
@@ -248,5 +389,86 @@ public abstract class BasePlayerController : MonoBehaviourPunCallbacks
         if (angle < 0) angle += 360f;
         int idx = Mathf.RoundToInt(angle / 45f) % 8;
         return idx;
+    }
+
+    #region RoomMovement에서 가져온 함수
+    private void UsePortal()
+    {
+        gameObject.transform.position = portalExitPosition;
+        canUsePortal = false;
+        StartCoroutine(PortalCooldownCheck(portalCooldown));
+    }
+
+    private IEnumerator PortalCooldownCheck(float cooldown)
+    {
+        yield return new WaitForSeconds(cooldown);
+        canUsePortal = true;
+    }
+
+    private void EnterTrainingRoom()
+    {
+        canControl = false;
+
+        Sequence sequence = DOTween.Sequence();
+
+        sequence.Append(transform.DORotate(new Vector3(0, -90, 0), 1f, RotateMode.LocalAxisAdd));
+        sequence.Append(transform.DOMoveZ(transform.position.z + 3, 1f));
+        sequence.Append(transform.DOMoveX(20, 0.5f));
+        //sequence.Append(transform.DORotate(new Vector3(90, 0, 0), 1f, RotateMode.LocalAxisAdd));
+        sequence.OnComplete(() => CanControl());
+        sequence.Play();
+    }
+
+    private void ExitTrainingRoom()
+    {
+        canControl = false;
+
+        Sequence sequence = DOTween.Sequence();
+
+        sequence.Append(transform.DOMoveZ(transform.position.z - 3, 1f));
+        sequence.Append(transform.DORotate(new Vector3(0, 90, 0), 1f, RotateMode.LocalAxisAdd));
+        sequence.Append(transform.DOMove(new Vector3(transform.position.x, -0.35f, -0.35f), 0.5f));
+        sequence.OnComplete(() => CanControl());
+        sequence.Play();
+    }
+
+    private void CanControl()
+    {
+        canControl = true;
+    }
+
+    public void GetPortalExitPosition(Vector3 pos)
+    {
+        portalExitPosition = pos;
+    }
+
+    public void UpdateNowInteractable(InteractableObject obj)
+    {
+        nowObject = obj;
+        Debug.Log(nowObject);
+    }
+
+    public string ReturnName()
+    {
+        return characterData.characterName;
+    }
+
+    public void InitBlessing()
+    {
+        blessings = new Dictionary<InputKey, (Blessing blessing, int level)>();
+
+        for (int i = 0; i < 5; i++)
+        {
+            blessings.Add((InputKey)i, (Blessing.none, 0));
+        }
+    }
+    #endregion
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if(scene.name == "SampleScene")
+        {
+            isInVillage = false;
+        }
+        // 씬 로드 이후 초기화할 코드 추가 가능
     }
 }

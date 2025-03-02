@@ -10,7 +10,7 @@ public class Interactable : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            other.GetComponent<RoomMovement>().UpdateNowInteractable(thisPlace);
+            other.GetComponent<BasePlayerController>().UpdateNowInteractable(thisPlace);
         }
     }
 
@@ -18,7 +18,7 @@ public class Interactable : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            other.GetComponent<RoomMovement>().UpdateNowInteractable(InteractableObject.none);
+            other.GetComponent<BasePlayerController>().UpdateNowInteractable(InteractableObject.none);
         }
     }
 }

@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
+using Photon.Pun;
 
-public class EnemyStateController : MonoBehaviour
+public class EnemyStateController : MonoBehaviourPun
 {
     [Header("Common")]
     public EnemyStatus baseStatus;
@@ -118,5 +119,16 @@ public class EnemyStateController : MonoBehaviour
         Debug.Log("[사망] 몬스터가 사망했습니다.");
 
         Destroy(gameObject, 2f);
+    }
+
+    public void TakeDamage(int damage)
+    {
+        photonView.RPC("UpdateHP", RpcTarget.All, damage);
+    }
+
+    [PunRPC]
+    protected void UpdateHP(int damage)
+    {
+        status.hp -= damage;
     }
 }

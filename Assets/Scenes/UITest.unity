@@ -379,7 +379,19 @@ MonoBehaviour:
     m_ActionId: 0fc444d2-8989-4e70-844e-bba3cd6b4b15
     m_ActionName: 'Player/NPCInteract[/Keyboard/f]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 242794920}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+        m_MethodName: OnSkillInfo
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 9d39de0b-127b-4e68-9ecb-2590b6b6a589
     m_ActionName: 'UI/BlessingInfo[/Keyboard/tab]'
   m_NeverAutoSwitchControlSchemes: 0

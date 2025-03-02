@@ -34,6 +34,8 @@ public class MeleeMovement : MonoBehaviour
         agent.updateRotation = false;
         agent.updateUpAxis = false;
 
+        transform.rotation = Quaternion.Euler(45f, 0f, 0f);
+
         GameObject playerObj = GameObject.FindWithTag("Player");
         if (playerObj != null)
         {

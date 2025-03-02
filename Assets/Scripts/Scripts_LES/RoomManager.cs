@@ -17,7 +17,7 @@ public class RoomManager : MonoBehaviourPun
 
     public bool isEnteringStage;
 
-    public RoomMovement localPlayer;
+    public BasePlayerController localPlayer;
 
     private void Awake()
     {
@@ -25,10 +25,13 @@ public class RoomManager : MonoBehaviourPun
             Instance = this;
         else
             Destroy(gameObject);
+
+        DontDestroyOnLoad(cinemachineCamera);
     }
 
     private void Start()
     {
+        UIManager.Instance.OpenPanel<UIIngameMainPanel>();
         CreateCharacter(playerInRoom, new Vector3(0, -0.35f, -0.35f), Quaternion.Euler(45, 0, 0));
     }
 
@@ -47,8 +50,9 @@ public class RoomManager : MonoBehaviourPun
         cinemachineCamera.Follow = playerInstance.transform;
         cinemachineCamera.LookAt = playerInstance.transform;
         
-        localPlayer = playerInstance.GetComponent<RoomMovement>();
+        localPlayer = playerInstance.GetComponent<BasePlayerController>();
         localPlayer.InitBlessing();
+        
         
         UIBase peekUI = UIManager.Instance.ReturnPeekUI();
         if (peekUI is UIIngameMainPanel uIIngameMainPanel)
@@ -56,6 +60,7 @@ public class RoomManager : MonoBehaviourPun
             localPlayer.updateUIAction += uIIngameMainPanel.UpdateUI;
             localPlayer.updateUIOutlineAction += uIIngameMainPanel.UpdateIconOutline;
         }
+        
     }
 
     public UIConfirmPanel InteractWithDungeonNPC()

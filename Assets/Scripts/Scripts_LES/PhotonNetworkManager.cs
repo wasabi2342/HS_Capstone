@@ -96,12 +96,14 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             photonView.RPC("UpdateReadyPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber);
     }
 
+    private Coroutine stageEnterCoroutine;
+
     [PunRPC]
     private void OpenReadyPanel()
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            StartCoroutine(TimeCount());
+            stageEnterCoroutine = StartCoroutine(TimeCount());
         }
         RoomManager.Instance.isEnteringStage = true;
         UIStageReadyPanel panel = UIManager.Instance.OpenPopupPanel<UIStageReadyPanel>();
@@ -133,6 +135,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.CurrentRoom.PlayerCount == readyPlayers.Count && PhotonNetwork.IsMasterClient)
         {
             Debug.Log("모두 준비 완료");
+            StopCoroutine(stageEnterCoroutine);
+            UIManager.Instance.ClosePeekUI();
             PhotonNetwork.LoadLevel("SampleScene");
 
         }

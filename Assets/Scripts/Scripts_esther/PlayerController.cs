@@ -86,7 +86,7 @@ public class PlayerController : BasePlayerController
         if (playerInteractionZone == null)
             Debug.LogWarning("[PlayerController] PlayerInteractionZone이 자식 오브젝트에 없습니다!");
 
-        if (photonView != null && photonView.IsMine)
+        if ((photonView != null && photonView.IsMine) || !PhotonNetwork.InRoom)
             localPlayer = this;
         else
         {
@@ -131,9 +131,17 @@ public class PlayerController : BasePlayerController
 
         if (isMoving)
         {
-            Vector3 moveDir = new Vector3(h, 0, v).normalized;
+            Vector3 moveDir;
+            if (isInVillage)
+                moveDir = new Vector3(h, 0, 0).normalized;
+            else
+            {
+                //moveDir = new Vector3(h, 0, v).normalized;
+                moveDir = new Vector3(h, v, 0).normalized;
+            }
             float speed = GetMoveSpeedByDirection(h, v);
-            transform.Translate(moveDir * speed * Time.deltaTime, Space.World);
+            //transform.Translate(moveDir * speed * Time.deltaTime, Space.World);
+            transform.Translate(moveDir * speed * Time.deltaTime);
         }
 
         if (animator != null)
@@ -161,7 +169,7 @@ public class PlayerController : BasePlayerController
     #region 공격 & 스킬
     protected override void HandleActions()
     {
-        if (isHit || isAttacking)
+        if (isHit || isAttacking || isInVillage) // 마을일경우 공격 불가
             return;
 
         bool basicAttackInput = playerInputActions.Player.BasicAttack.triggered;
@@ -188,24 +196,29 @@ public class PlayerController : BasePlayerController
 
         if (basicAttackInput && Time.time - lastBasicAttackTime >= 0.5f)
         {
+            updateUIAction.Invoke(UIIcon.mouseL, 0.5f);
             lastBasicAttackTime = Time.time;
             FaceMouseDirection();
             StartCoroutine(CoStackAttack());
         }
         else if (specialAttackInput && Time.time - lastSpecialAttackTime >= 1f)
         {
+            updateUIAction.Invoke(UIIcon.mouseR, 1f);
             lastSpecialAttackTime = Time.time;
             FaceMouseDirection();
             // 특수공격 로직
         }
         else if (skillAttackInput && Time.time - lastSkillTime >= 2f)
         {
+            updateUIAction.Invoke(UIIcon.shift, 2f);
             lastSkillTime = Time.time;
             FaceMouseDirection();
             // 스킬 로직
         }
         else if (ultimateAttackInput && Time.time - lastUltimateTime >= 3f)
         {
+            updateUIAction.Invoke(UIIcon.r, 3f);
+
             lastUltimateTime = Time.time;
             FaceMouseDirection();
             // 궁극기 로직
@@ -228,6 +241,7 @@ public class PlayerController : BasePlayerController
     {
         attackStack++;
         if (attackStack > 4) attackStack = 4;
+        updateUIAction.Invoke(UIIcon.mouseLStack, attackStack);
 
         isAttacking = true;
 
@@ -250,12 +264,21 @@ public class PlayerController : BasePlayerController
 
             foreach (GameObject enemyObj in playerAttackZone.enemiesInRange)
             {
-                var enemy = enemyObj.GetComponentInParent<EnemyController>();
-                if (enemy != null)
+                //var enemy = enemyObj.GetComponentInParent<EnemyController>();
+
+                // 범위안에 있던 몬스터가 죽으면 null 발생 enemiesInRange에서 제거 해줘야함
+                EnemyStateController enemy;
+                if (enemyObj != null)
                 {
-                    enemy.TakeDamage(damage);
-                    Debug.Log($"[PlayerController] 공격: {damage} 데미지");
+                    enemy = enemyObj.GetComponentInParent<EnemyStateController>();
+                    
+                    if (enemy != null)
+                    {
+                        enemy.TakeDamage(damage);
+                        Debug.Log($"[PlayerController] 공격: {damage} 데미지");
+                    }
                 }
+
             }
         }
 
@@ -296,6 +319,7 @@ public class PlayerController : BasePlayerController
     private void ResetStackAndReturnIdle()
     {
         attackStack = 0;
+        updateUIAction.Invoke(UIIcon.mouseLStack, attackStack);
         isAttacking = false;
         currentState = PlayerState.Idle;
         canStartupCancel = true;
@@ -319,7 +343,7 @@ public class PlayerController : BasePlayerController
         Debug.Log("[Attack_1] 공격 판정 시작");
         if (playerAttackZone != null)
             playerAttackZone.EnableAttackCollider(true);
-        transform.Translate(Vector3.forward * 1.0f, Space.Self);
+        //transform.Translate(Vector3.forward * 1.0f, Space.Self);
     }
 
     public void OnAttack1DamageEnd()
@@ -351,13 +375,13 @@ public class PlayerController : BasePlayerController
     public void OnAttack2StartupFrame1End()
     {
         Debug.Log("[Attack_2] 1프레임 종료 시 x=0.7 전진");
-        transform.Translate(Vector3.forward * 0.7f, Space.Self);
+        //transform.Translate(Vector3.forward * 0.7f, Space.Self);
     }
 
     public void OnAttack2StartupFrame2End()
     {
         Debug.Log("[Attack_2] 2프레임 종료 시 x=0.7 전진");
-        transform.Translate(Vector3.forward * 0.7f, Space.Self);
+        //transform.Translate(Vector3.forward * 0.7f, Space.Self);
     }
 
     public void OnAttack2DamageStart()
@@ -515,6 +539,7 @@ public class PlayerController : BasePlayerController
     #region 마우스 방향 바라보기
     private void FaceMouseDirection()
     {
+        /*
         Vector2 mouseScreenPos = Mouse.current.position.ReadValue();
         if (Camera.main == null)
             return;
@@ -528,6 +553,7 @@ public class PlayerController : BasePlayerController
             if (lookDir.sqrMagnitude > 0.001f)
                 transform.forward = lookDir.normalized;
         }
+        */
     }
     #endregion
 }

@@ -91,10 +91,17 @@ public class UIManager : MonoBehaviour
         {
             OpenPopupPanel<UISkillInfoPanel>();
         }
+        else if(uiStack.Peek() is UISkillInfoPanel)
+        {
+            ClosePeekUI();
+        }
     }
 
     public UIBase ReturnPeekUI()
     {
-        return uiStack.Peek();
+        if (uiStack.Count > 0)
+            return uiStack.Peek();
+        else 
+            return null;
     }
 }

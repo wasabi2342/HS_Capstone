@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 
 public class Spawner : MonoBehaviour
@@ -15,11 +16,28 @@ public class Spawner : MonoBehaviour
 
     void SpawnEnemy()
     {
-        if (currentEnemyCount >= maxEnemies) return;
+        if (PhotonNetwork.InRoom)
+        {
+            if (!PhotonNetwork.IsMasterClient)
+                return;
+            else
+            {
+                if (currentEnemyCount >= maxEnemies) return;
+                GameObject enemy = PhotonNetwork.Instantiate(enemyPrefab.name, transform.position, Quaternion.Euler(45f, 0f, 0f));
+                enemy.GetComponent<EnemyStateController>().SetSpawnPoint(transform.position);
+                currentEnemyCount++;
+            }
+        }
+        else
+        {
+            if (currentEnemyCount >= maxEnemies) return;
+            GameObject enemy = Instantiate(enemyPrefab, transform.position, Quaternion.Euler(45f, 0f, 0f));
+            enemy.GetComponent<EnemyStateController>().SetSpawnPoint(transform.position);
+            currentEnemyCount++;
+        }
+        //if (currentEnemyCount >= maxEnemies) return;
 
-        GameObject enemy = Instantiate(enemyPrefab, transform.position, enemyPrefab.transform.rotation);
-        enemy.GetComponent<EnemyStateController>().SetSpawnPoint(transform.position);
-        currentEnemyCount++;
+        //GameObject enemy = Instantiate(enemyPrefab, transform.position, enemyPrefab.transform.rotation);
     }
 
     public void OnEnemyDestroyed()

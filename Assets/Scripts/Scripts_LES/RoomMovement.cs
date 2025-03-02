@@ -29,6 +29,8 @@ public class RoomMovement : MonoBehaviourPun
     private float portalCooldown;
     [SerializeField]
     private CharacterStats characterData;
+    
+    private Vector2 inputMoveDir;
 
     private bool canUsePortal;
     private Vector3 portalExitPosition;
@@ -36,9 +38,7 @@ public class RoomMovement : MonoBehaviourPun
     private InteractableObject nowObject;
 
     private bool canControl;
-    private bool isInTrainingRoom;
-
-    private Vector2 inputMoveDir;
+    private bool isInRoom;
 
     public Action startFillGauge;
     public Action<bool> canelFillGauge;
@@ -57,7 +57,7 @@ public class RoomMovement : MonoBehaviourPun
         }
         canUsePortal = true;
         canControl = true;
-        isInTrainingRoom = false;
+        isInRoom = true;
     }
 
     void Update()
@@ -66,7 +66,7 @@ public class RoomMovement : MonoBehaviourPun
         {
             if (!canControl)
                 return;
-            if (!isInTrainingRoom)
+            if (!isInRoom)
                 transform.Translate(new Vector3(inputMoveDir.x, 0, 0) * moveSpeed * Time.deltaTime);
             else
                 transform.Translate(new Vector3(inputMoveDir.x, inputMoveDir.y, 0) * moveSpeed * Time.deltaTime);
@@ -122,17 +122,17 @@ public class RoomMovement : MonoBehaviourPun
                 case InteractableObject.changeSkill: // 스킬변경 UI 생성하기
                     break;
                 case InteractableObject.trainingRoom:
-                    if (!isInTrainingRoom) // 훈련소로 화면 전환
+                    if (!isInRoom) // 훈련소로 화면 전환
                     {
                         RoomManager.Instance.EnterRestrictedArea(GetComponent<PhotonView>().ViewID);
                         EnterTrainingRoom();
-                        isInTrainingRoom = true;
+                        isInRoom = true;
                     }
                     else // 훈련소에서 나오기
                     {
                         RoomManager.Instance.ExitRestrictedArea(GetComponent<PhotonView>().ViewID);
                         ExitTrainingRoom();
-                        isInTrainingRoom = false;
+                        isInRoom = false;
                     }
                     break;
                 case InteractableObject.mannequin:
