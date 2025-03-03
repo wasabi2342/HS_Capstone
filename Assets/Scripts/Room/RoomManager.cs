@@ -40,7 +40,7 @@ public class RoomManager : MonoBehaviourPun
         GameObject playerInstance;
         if (PhotonNetwork.InRoom)
         {
-            playerInstance = PhotonNetwork.Instantiate(prefab.name, pos, quaternion);
+            playerInstance = PhotonNetwork.Instantiate("Prefab/" + prefab.name, pos, quaternion);
         }
         else
         {
