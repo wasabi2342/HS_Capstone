@@ -74,11 +74,6 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.JoinRoom(roomName);
     }
 
-    public int MemberCount()
-    {
-        return 0;
-    }
-
     public void ReadyToEnterStage()
     {
         if (!RoomManager.Instance.isEnteringStage)
@@ -111,7 +106,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         OnUpdateReadyPlayer += panel.UpdateToggls;
     }
 
-    IEnumerator TimeCount()
+    private IEnumerator TimeCount()
     {
         yield return new WaitForSeconds(60);
         Debug.Log("60초 경과 스테이지 진입");

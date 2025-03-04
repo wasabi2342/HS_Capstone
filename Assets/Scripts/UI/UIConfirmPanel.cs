@@ -11,7 +11,7 @@ public class UIConfirmPanel : UIBase
     [SerializeField]
     private Button cancelButton;
 
-    public override void Init(Action confirmEvent, Action cancelEvent, string message)
+    public void Init(Action confirmEvent, Action cancelEvent, string message)
     {
         if(confirmEvent ==  null)
         {
