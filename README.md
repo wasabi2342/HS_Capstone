@@ -3,7 +3,9 @@
 
 # Assets 구조
 ├─Animation
+
 ├─Data
+
 │ ├─Enemy
 
 ├─Prefab
