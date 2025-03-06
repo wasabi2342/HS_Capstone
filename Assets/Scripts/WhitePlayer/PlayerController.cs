@@ -490,12 +490,12 @@ public class PlayerController : BasePlayerController
         {
             foreach (GameObject enemyObj in playerAttackZone.enemiesInRange)
             {
-                var enemy = enemyObj.GetComponentInParent<EnemyController>();
-                if (enemy != null)
-                {
-                    enemy.TakeDamage(damage);
-                    Debug.Log("[CounterAttack] 적에게 " + damage + " 데미지");
-                }
+                //var enemy = enemyObj.GetComponentInParent<EnemyController>();
+                //if (enemy != null)
+                //{
+                //    enemy.TakeDamage(damage);
+                //    Debug.Log("[CounterAttack] 적에게 " + damage + " 데미지");
+                //}
             }
         }
     }
