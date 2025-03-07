@@ -282,6 +282,7 @@ GameObject:
   - component: {fileID: 5970755759370503948}
   - component: {fileID: 4723769890807690182}
   - component: {fileID: 3418122163377088963}
+  - component: {fileID: 7018926861384928313}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -357,9 +358,9 @@ MonoBehaviour:
   m_ActionEvents:
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5046260287561047278}
+      - m_Target: {fileID: 4131734313779836671}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnMove
+        m_MethodName: 
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -507,9 +508,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57eedc32c223bbd4e8afa6443ed77ef7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  portalCooldown: 3
-  characterData: {fileID: 11400000, guid: 14013a0b7b7881d49b4c582318678691, type: 2}
-  changeCharacterPrefab: {fileID: 0}
   speedHorizontal: 5
   speedVertical: 5
   dashDuration: 0.2
@@ -526,18 +524,7 @@ MonoBehaviour:
   - {fileID: 8230584595030747881}
   - {fileID: 1194036335750457889}
   - {fileID: 739063013299719982}
-  currentDirectionIndex: 0
-  interactionLayerMask:
-    serializedVersion: 2
-    m_Bits: 768
-  interactionRadius: 1.5
   maxHealth: 20
-  moveSpeedHorizontal: 5
-  moveSpeedVertical: 5
-  moveSpeedDiagonalLeftUp: 4.5
-  moveSpeedDiagonalRightUp: 4.5
-  moveSpeedDiagonalLeftDown: 4.5
-  moveSpeedDiagonalRightDown: 4.5
   comboInputTime: 2
   guardDuration: 2
   parryDuration: 2
@@ -695,6 +682,60 @@ CapsuleCollider:
   m_Height: 6
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7018926861384928313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4131734313779836671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d8823c45fd13d84ab0a0b1f4d928547, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnMoveEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4131734313779836671}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnInteractionEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4131734313779836671}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnMouseLEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnMouseREvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnKeyboardShiftLEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnKeyboardREvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &4855534633877809112
 GameObject:
   m_ObjectHideFlags: 0
