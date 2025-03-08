@@ -24,7 +24,7 @@ public class UIConfirmPanel : UIBase
         this.message.text = message;
     }
 
-    protected override void OnDisable()
+    public override void OnDisable()
     {
         base.OnDisable();
     }

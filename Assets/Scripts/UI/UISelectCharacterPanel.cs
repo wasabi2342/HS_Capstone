@@ -3,7 +3,7 @@ using UnityEngine;
 public class UISelectCharacterPanel : UIBase
 {
 
-    protected override void OnDisable()
+    public override void OnDisable()
     {
         base.OnDisable();
     }
