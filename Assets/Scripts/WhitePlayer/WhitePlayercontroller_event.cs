@@ -13,6 +13,20 @@ public class WhitePlayercontroller_event : MonoBehaviour
     public UnityEvent OnKeyboardShiftLEvent;
     public UnityEvent OnKeyboardREvent;
 
+
+    private void Start()
+    {
+        InputManager.Instance.PlayerInput.actions["Move"].performed += ctx => OnMove(ctx);
+        InputManager.Instance.PlayerInput.actions["Move"].canceled += ctx => OnMove(ctx);
+        InputManager.Instance.PlayerInput.actions["Interaction"].performed += ctx => OnInteraction(ctx);
+        InputManager.Instance.PlayerInput.actions["Interaction"].canceled += ctx => OnInteraction(ctx);
+        InputManager.Instance.PlayerInput.actions["Interaction"].started += ctx => OnInteraction(ctx);
+        InputManager.Instance.PlayerInput.actions["BasicAttack"].performed += ctx => OnMouse_L(ctx);
+        InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed += ctx => OnMouse_R(ctx);
+        InputManager.Instance.PlayerInput.actions["SkillAttack"].performed += ctx => OnKeyboard_Shift_L(ctx);
+        InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed += ctx => OnKeyboard_R(ctx);
+
+    }
     private void Awake()
     {
         whitePlayerController = GetComponent<WhitePlayerController>();
@@ -42,7 +56,7 @@ public class WhitePlayercontroller_event : MonoBehaviour
     {
         if (context.performed)
         {
-            Debug.Log("NPC 상호작용 호출됨.");
+            Debug.Log("상호작용 호출됨.");
             OnInteractionEvent?.Invoke();
         }
     }

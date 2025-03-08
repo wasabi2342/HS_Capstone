@@ -23,16 +23,8 @@ public class WhitePlayerInteractionZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // NPC와 Trap 레이어만 추가
-        if (other.gameObject.layer == LayerMask.NameToLayer("NPC") ||
-            other.gameObject.layer == LayerMask.NameToLayer("Trap"))
-        {
-            if (!interactables.Contains(other.gameObject))
-            {
-                interactables.Add(other.gameObject);
-                Debug.Log("[WhitePlayerInteractionZone] 상호작용 대상 추가: " + other.gameObject.name);
-            }
-        }
+
+       
     }
 
     private void OnTriggerExit(Collider other)
