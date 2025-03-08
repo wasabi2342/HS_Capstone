@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(SphereCollider))]
-public class PlayerInteractionZone : MonoBehaviour
+public class WhitePlayerInteractionZone : MonoBehaviour
 {
     [Header("상호작용 범위 설정")]
     [Tooltip("이 영역의 반지름이 NPC, Trap 등과 상호작용할 수 있는 범위입니다.")]
@@ -30,7 +30,7 @@ public class PlayerInteractionZone : MonoBehaviour
             if (!interactables.Contains(other.gameObject))
             {
                 interactables.Add(other.gameObject);
-                Debug.Log("[PlayerInteractionZone] 상호작용 대상 추가: " + other.gameObject.name);
+                Debug.Log("[WhitePlayerInteractionZone] 상호작용 대상 추가: " + other.gameObject.name);
             }
         }
     }
@@ -43,7 +43,7 @@ public class PlayerInteractionZone : MonoBehaviour
             if (interactables.Contains(other.gameObject))
             {
                 interactables.Remove(other.gameObject);
-                Debug.Log("[PlayerInteractionZone] 상호작용 대상 제거: " + other.gameObject.name);
+                Debug.Log("[WhitePlayerInteractionZone] 상호작용 대상 제거: " + other.gameObject.name);
             }
         }
     }

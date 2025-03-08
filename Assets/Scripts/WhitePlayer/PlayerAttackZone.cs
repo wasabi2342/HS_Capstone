@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(SphereCollider))]
-public class PlayerAttackZone : MonoBehaviour
+public class WhitePlayerAttackZone : MonoBehaviour
 {
     [Header("공격 범위 설정")]
     [Tooltip("이 영역의 반지름이 플레이어의 공격 범위입니다.")]
@@ -16,7 +16,6 @@ public class PlayerAttackZone : MonoBehaviour
 
     private void Awake()
     {
-        
         sphereCollider = GetComponent<SphereCollider>();
         if (sphereCollider != null)
         {
@@ -25,9 +24,7 @@ public class PlayerAttackZone : MonoBehaviour
         }
     }
 
-    
-    // 공격 콜라이더를 켜거나 끄는 메서드 (PlayerController 등에서 호출)
-    
+    // 공격 콜라이더를 켜거나 끄는 메서드 (WhitePlayerController 등에서 호출)
     public void EnableAttackCollider(bool enable)
     {
         if (sphereCollider != null)
@@ -38,13 +35,12 @@ public class PlayerAttackZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        
         if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
             if (!enemiesInRange.Contains(other.gameObject))
             {
                 enemiesInRange.Add(other.gameObject);
-                Debug.Log("[PlayerAttackZone] 적 추가: " + other.gameObject.name);
+                Debug.Log("[WhitePlayerAttackZone] 적 추가: " + other.gameObject.name);
             }
         }
     }
@@ -56,7 +52,7 @@ public class PlayerAttackZone : MonoBehaviour
             if (enemiesInRange.Contains(other.gameObject))
             {
                 enemiesInRange.Remove(other.gameObject);
-                Debug.Log("[PlayerAttackZone] 적 제거: " + other.gameObject.name);
+                Debug.Log("[WhitePlayerAttackZone] 적 제거: " + other.gameObject.name);
             }
         }
     }

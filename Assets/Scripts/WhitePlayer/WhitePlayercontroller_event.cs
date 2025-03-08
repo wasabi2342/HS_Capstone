@@ -4,9 +4,8 @@ using UnityEngine.InputSystem;
 
 public class WhitePlayercontroller_event : MonoBehaviour
 {
-    private PlayerController playerController;
+    private WhitePlayerController whitePlayerController;
 
-    
     public UnityEvent OnMoveEvent;
     public UnityEvent OnInteractionEvent;
     public UnityEvent OnMouseLEvent;
@@ -16,58 +15,75 @@ public class WhitePlayercontroller_event : MonoBehaviour
 
     private void Awake()
     {
-        playerController = GetComponent<PlayerController>();
-        if (playerController == null)
+        whitePlayerController = GetComponent<WhitePlayerController>();
+        if (whitePlayerController == null)
         {
-            Debug.LogError("PlayerController 컴포넌트가 없습니다!");
+            Debug.LogError("WhitePlayerController 컴포넌트가 없습니다!");
         }
     }
 
-    // 이동 인풋 ( WASD)
+    // 이동 (WASD)
     public void OnMove(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
-            playerController.OnMove(context);
+            Vector2 moveInput = context.ReadValue<Vector2>();
+            whitePlayerController.SetMoveInput(moveInput);
             OnMoveEvent?.Invoke();
+        }
+        else if (context.canceled)
+        {
+            whitePlayerController.SetMoveInput(Vector2.zero);
         }
     }
 
-    // 상호작용 인풋 (F키)
+    // 상호작용 (F키)
     public void OnInteraction(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
-            playerController.OnNPCInteract(context);
+            Debug.Log("NPC 상호작용 호출됨.");
             OnInteractionEvent?.Invoke();
         }
     }
 
     // 마우스 왼쪽 클릭 (평타)
-    public void OnMouse_L()
+    public void OnMouse_L(InputAction.CallbackContext context)
     {
-        playerController.HandleNormalAttack();
-        OnMouseLEvent?.Invoke();
+        if (context.performed)
+        {
+            whitePlayerController.HandleNormalAttack();
+            OnMouseLEvent?.Invoke();
+        }
     }
 
-    // 마우스 오른쪽 클릭 (가드, 데미지가 안 들어올 때 실행)
-    public void OnMouse_R()
+    // 마우스 오른쪽 클릭 (가드)
+    public void OnMouse_R(InputAction.CallbackContext context)
     {
-        playerController.HandleGuard();
-        OnMouseREvent?.Invoke();
+        if (context.performed)
+        {
+            whitePlayerController.HandleGuard();
+            OnMouseREvent?.Invoke();
+        }
     }
 
-    // 좌 Shift 키 (특수 공격: 평타보다 강한 공격)
-    public void OnKeyboard_Shift_L()
+    // 좌 Shift 키 (특수 공격)
+    public void OnKeyboard_Shift_L(InputAction.CallbackContext context)
     {
-        playerController.HandleSpecialAttack();
-        OnKeyboardShiftLEvent?.Invoke();
+        if (context.performed)
+        {
+            whitePlayerController.HandleSpecialAttack();
+            OnKeyboardShiftLEvent?.Invoke();
+        }
     }
 
-    // R 키 (궁극기: 평타, 특수공격보다 더 강한 공격)
-    public void OnKeyboard_R()
+    // R 키 (궁극기)
+    public void OnKeyboard_R(InputAction.CallbackContext context)
     {
-        playerController.HandleUltimateAttack();
-        OnKeyboardREvent?.Invoke();
+        if (context.performed)
+        {
+            whitePlayerController.HandleUltimateAttack();
+            OnKeyboardREvent?.Invoke();
+        }
     }
 }
