@@ -23,7 +23,7 @@ public class UILobbyPanel : UIBase
         Init();
     }
 
-    protected override void OnDisable()
+    public override void OnDisable()
     {
         base.OnDisable();
         PhotonNetworkManager.Instance.OnRoomListUpdated -= UpdateRoomList;

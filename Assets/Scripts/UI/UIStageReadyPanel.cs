@@ -2,6 +2,7 @@ using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class UIStageReadyPanel : UIBase
@@ -19,6 +20,16 @@ public class UIStageReadyPanel : UIBase
     private void Start()
     {
         StartCoroutine(TimeCount());
+        InputManager.Instance.PlayerInput.actions["StageEnterConfirm"].performed += ctx => Ready(ctx);
+    }
+
+
+    public void Ready(InputAction.CallbackContext ctx)
+    {
+        if (RoomManager.Instance.isEnteringStage)
+        {
+            PhotonNetworkManager.Instance.ReadyToEnterStage();
+        }
     }
 
     private IEnumerator TimeCount()
@@ -32,14 +43,6 @@ public class UIStageReadyPanel : UIBase
         }
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Tab) && RoomManager.Instance.isEnteringStage)
-        {
-            PhotonNetworkManager.Instance.ReadyToEnterStage();
-        }
-    }
-
     public override void Init()
     {
         maxPlayer = PhotonNetwork.CurrentRoom.PlayerCount;
@@ -50,10 +53,11 @@ public class UIStageReadyPanel : UIBase
         }
     }
 
-    protected override void OnDisable()
+    public override void OnDisable()
     {
         base.OnDisable();
         PhotonNetworkManager.Instance.OnUpdateReadyPlayer -= UpdateToggls;
+        InputManager.Instance.PlayerInput.actions["StageEnterConfirm"].performed -= ctx => Ready(ctx);
     }
 
     public void UpdateToggls(int readyPlayerNum)
