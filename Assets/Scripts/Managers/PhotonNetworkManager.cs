@@ -88,7 +88,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             }
         }
         if (PhotonNetwork.InRoom)
-            photonView.RPC("UpdateReadyPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber);
+            photonView.RPC("UpdateReadyPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer.UserId);
     }
 
     private Coroutine stageEnterCoroutine;
@@ -114,6 +114,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         {
 
             PhotonNetwork.LoadLevel("SampleScene");
+            PhotonNetwork.CurrentRoom.IsOpen = false;
 
         }
     }
@@ -133,7 +134,17 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             StopCoroutine(stageEnterCoroutine);
             UIManager.Instance.ClosePeekUI();
             PhotonNetwork.LoadLevel("SampleScene");
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+        }
+    }
 
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
+    {
+        StopCoroutine(stageEnterCoroutine);
+        if(UIManager.Instance.ReturnPeekUI() as UIStageReadyPanel)
+        {
+            UIManager.Instance.ClosePeekUI();
+            readyPlayers.Clear();
         }
     }
 

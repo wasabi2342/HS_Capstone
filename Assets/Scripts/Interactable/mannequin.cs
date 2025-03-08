@@ -1,10 +1,12 @@
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Drawing;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class Mannequin : Interactable
+public class Mannequin : MonoBehaviour, IInteractable
 {
     [SerializeField]
     private Image gauge;
@@ -13,44 +15,25 @@ public class Mannequin : Interactable
     [SerializeField]
     private GameObject characterPrefab;
 
-    protected override void OnTriggerEnter(Collider other)
+    private GameObject player;
+
+    private void OnTriggerEnter(Collider other)
     {
-        base.OnTriggerEnter(other);
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && (!PhotonNetwork.InRoom ||
+            (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
-            if (other.GetComponent<PhotonView>().IsMine || !PhotonNetwork.InRoom)
-            {
-                BasePlayerController roomMovement = other.GetComponent<BasePlayerController>();
-                Debug.Log(roomMovement.ReturnName() + characterPrefab.name);
-                if (roomMovement.ReturnName() == characterPrefab.name)
-                {
-                    return;
-                }
-                canvas.gameObject.SetActive(true);
-                roomMovement.startFillGauge += StartGaugeCoroutine;
-                roomMovement.canelFillGauge += CancelGaugeCoroutine;
-                roomMovement.changeCharacterPrefab = characterPrefab;
-            }
+            player = other.transform.root.gameObject;
+            canvas.gameObject.SetActive(true);
         }
     }
 
-    protected override void OnTriggerExit(Collider other)
+    private void OnTriggerExit(Collider other)
     {
-        base.OnTriggerExit(other);
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && (!PhotonNetwork.InRoom ||
+            (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
-            if (other.GetComponent<PhotonView>().IsMine || !PhotonNetwork.InRoom)
-            {
-                BasePlayerController roomMovement = other.GetComponent<BasePlayerController>();
-                if (roomMovement.ReturnName() == characterPrefab.name)
-                {
-                    return;
-                }
-                canvas.gameObject.SetActive(false);
-                roomMovement.startFillGauge -= StartGaugeCoroutine;
-                roomMovement.canelFillGauge -= CancelGaugeCoroutine;
-                roomMovement.changeCharacterPrefab = null;
-            }
+            player = null;
+            canvas.gameObject.SetActive(false);
         }
     }
 
@@ -63,7 +46,7 @@ public class Mannequin : Interactable
     {
         StopAllCoroutines();
         gauge.fillAmount = 0;
-        if(isComplete)
+        if (isComplete)
         {
             canvas.gameObject.SetActive(false);
         }
@@ -77,6 +60,31 @@ public class Mannequin : Interactable
             timeCount += Time.deltaTime;
             gauge.fillAmount = timeCount;
             yield return null;
+        }
+    }
+
+    public void OnInteract(InputAction.CallbackContext ctx)
+    {
+        if (ctx.started)
+        {
+            StartGaugeCoroutine();
+        }
+        else if (ctx.canceled)
+        {
+            CancelGaugeCoroutine(false);
+        }
+        else if (ctx.performed)
+        {
+            CancelGaugeCoroutine(true);
+            RoomManager.Instance.CreateCharacter(characterPrefab, transform.position, transform.rotation);
+            if (PhotonNetwork.InRoom)
+            {
+                PhotonNetwork.Destroy(player);
+            }
+            else
+            {
+                Destroy(player);
+            }
         }
     }
 }

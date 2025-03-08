@@ -85,6 +85,15 @@
                     "processors": "",
                     "interactions": "Hold(duration=1)",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "StageEnterConfirm",
+                    "type": "Button",
+                    "id": "eb8b3e0a-17b1-42bc-9ae8-fa32cdeaa4d3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -228,6 +237,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Interaction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6ac7973b-1bfc-4a50-82d7-8ae1214224a8",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "StageEnterConfirm",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
