@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(SphereCollider))]
 public class WhitePlayerInteractionZone : MonoBehaviour
@@ -9,7 +11,8 @@ public class WhitePlayerInteractionZone : MonoBehaviour
     public float interactionRange = 1.5f;
 
     // 범위 내에 있는 상호작용 가능한 오브젝트 목록 (NPC, Trap 등)
-    public List<GameObject> interactables = new List<GameObject>();
+    //public List<GameObject> interactables = new List<GameObject>();
+    public List<Action<InputAction.CallbackContext>> interactables = new List<Action<InputAction.CallbackContext>>();
 
     [SerializeField]
     private WhitePlayercontroller_event whitePlayercontroller_Event;
@@ -30,6 +33,7 @@ public class WhitePlayerInteractionZone : MonoBehaviour
     {
 
         whitePlayercontroller_Event.OnInteractionEvent += other.GetComponent<IInteractable>().OnInteract;
+        interactables.Add(other.GetComponent<IInteractable>().OnInteract);
         Debug.Log("충돌된다.");
        
     }
@@ -38,7 +42,15 @@ public class WhitePlayerInteractionZone : MonoBehaviour
     {
 
         whitePlayercontroller_Event.OnInteractionEvent -= other.GetComponent<IInteractable>().OnInteract;
+        interactables.Remove(other.GetComponent<IInteractable>().OnInteract);
+    }
 
-       
+    private void OnDisable()
+    {
+        for(int i = 0; i < interactables.Count; i++)
+        {
+            whitePlayercontroller_Event.OnInteractionEvent -= interactables[i];
+        }
+        interactables.Clear();
     }
 }
