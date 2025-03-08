@@ -11,8 +11,13 @@ public class WhitePlayerInteractionZone : MonoBehaviour
     // 범위 내에 있는 상호작용 가능한 오브젝트 목록 (NPC, Trap 등)
     public List<GameObject> interactables = new List<GameObject>();
 
+    [SerializeField]
+    private WhitePlayercontroller_event whitePlayercontroller_Event;
+
     private void Awake()
     {
+        whitePlayercontroller_Event  = GetComponentInParent<WhitePlayercontroller_event>();
+
         SphereCollider col = GetComponent<SphereCollider>();
         if (col != null)
         {
@@ -24,19 +29,16 @@ public class WhitePlayerInteractionZone : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
 
+        whitePlayercontroller_Event.OnInteractionEvent += other.GetComponent<IInteractable>().OnInteract;
+        Debug.Log("충돌된다.");
        
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("NPC") ||
-            other.gameObject.layer == LayerMask.NameToLayer("Trap"))
-        {
-            if (interactables.Contains(other.gameObject))
-            {
-                interactables.Remove(other.gameObject);
-                Debug.Log("[WhitePlayerInteractionZone] 상호작용 대상 제거: " + other.gameObject.name);
-            }
-        }
+
+        whitePlayercontroller_Event.OnInteractionEvent -= other.GetComponent<IInteractable>().OnInteract;
+
+       
     }
 }

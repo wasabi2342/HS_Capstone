@@ -260,9 +260,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactionRange: 1.5
-  interactables:
-  - {fileID: 7127885292095422483, guid: 028c18467eb90d248b1124209575da02, type: 3}
-  - {fileID: 6327953189275463617, guid: dd2ad4ee610e25241a08c84f62d72184, type: 3}
+  interactables: []
+  whitePlayercontroller_Event: {fileID: 7018926861384928313}
 --- !u!1 &4131734313779836671
 GameObject:
   m_ObjectHideFlags: 0
@@ -447,22 +446,6 @@ MonoBehaviour:
     m_ActionId: 545c2eed-cd83-4fe2-8d72-22ba31703910
     m_ActionName: 'Player/Pause[/Keyboard/escape]'
   - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7018926861384928313}
-        m_TargetAssemblyTypeName: WhitePlayercontroller_event, Assembly-CSharp
-        m_MethodName: OnInteraction
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 30724cac-df4c-453e-a4f3-8285dbff54cd
-    m_ActionName: 'Player/TrapClear[/Keyboard/k]'
-  - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 8d54a6b7-23a4-4d54-9c3a-3b0c217af2cc
     m_ActionName: 'Player/StagePregress[/Keyboard/g]'
@@ -486,6 +469,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9d39de0b-127b-4e68-9ecb-2590b6b6a589
     m_ActionName: 'UI/BlessingInfo[/Keyboard/tab]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: eb8b3e0a-17b1-42bc-9ae8-fa32cdeaa4d3
+    m_ActionName: 'Player/StageEnterConfirm[/Keyboard/tab]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -711,12 +698,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d8823c45fd13d84ab0a0b1f4d928547, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnMoveEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnInteractionEvent:
-    m_PersistentCalls:
-      m_Calls: []
   OnMouseLEvent:
     m_PersistentCalls:
       m_Calls: []

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -6,8 +7,9 @@ public class WhitePlayercontroller_event : MonoBehaviour
 {
     private WhitePlayerController whitePlayerController;
 
-    public UnityEvent OnMoveEvent;
-    public UnityEvent OnInteractionEvent;
+    public event Action<InputAction.CallbackContext>  OnMoveEvent;
+    public event Action<InputAction.CallbackContext> OnInteractionEvent;
+    
     public UnityEvent OnMouseLEvent;
     public UnityEvent OnMouseREvent;
     public UnityEvent OnKeyboardShiftLEvent;
@@ -18,9 +20,9 @@ public class WhitePlayercontroller_event : MonoBehaviour
     {
         InputManager.Instance.PlayerInput.actions["Move"].performed += ctx => OnMove(ctx);
         InputManager.Instance.PlayerInput.actions["Move"].canceled += ctx => OnMove(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].performed += ctx => OnInteraction(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].canceled += ctx => OnInteraction(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].started += ctx => OnInteraction(ctx);
+        InputManager.Instance.PlayerInput.actions["Interaction"].performed += ctx => OnInteractionEvent(ctx);
+        InputManager.Instance.PlayerInput.actions["Interaction"].canceled += ctx => OnInteractionEvent(ctx);
+        InputManager.Instance.PlayerInput.actions["Interaction"].started += ctx => OnInteractionEvent(ctx);
         InputManager.Instance.PlayerInput.actions["BasicAttack"].performed += ctx => OnMouse_L(ctx);
         InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed += ctx => OnMouse_R(ctx);
         InputManager.Instance.PlayerInput.actions["SkillAttack"].performed += ctx => OnKeyboard_Shift_L(ctx);
@@ -43,7 +45,7 @@ public class WhitePlayercontroller_event : MonoBehaviour
         {
             Vector2 moveInput = context.ReadValue<Vector2>();
             whitePlayerController.SetMoveInput(moveInput);
-            OnMoveEvent?.Invoke();
+            OnMoveEvent?.Invoke(context);
         }
         else if (context.canceled)
         {
@@ -54,10 +56,12 @@ public class WhitePlayercontroller_event : MonoBehaviour
     // 상호작용 (F키)
     public void OnInteraction(InputAction.CallbackContext context)
     {
+        OnInteractionEvent?.Invoke(context);
+
         if (context.performed)
         {
             Debug.Log("상호작용 호출됨.");
-            OnInteractionEvent?.Invoke();
+           
         }
     }
 
