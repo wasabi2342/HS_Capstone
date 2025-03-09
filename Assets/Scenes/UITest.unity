@@ -211,7 +211,6 @@ GameObject:
   - component: {fileID: 242794917}
   - component: {fileID: 242794916}
   - component: {fileID: 242794920}
-  - component: {fileID: 242794921}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -277,7 +276,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -313,92 +312,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a730053f34ff1c04688c04b55861294c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &242794921
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 242794915}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: ce6cc89143753e245be04a2534be4a9c, type: 3}
-  m_NotificationBehavior: 2
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents:
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 27e9f0b9-a1eb-49c1-a25a-1b97345d09e0
-    m_ActionName: 'Player/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: ac25d826-2163-4eca-a0e0-6acfb1f2468a
-    m_ActionName: 'Player/Dash[/Keyboard/space]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 6ff531e5-3766-4cae-afc0-c3301fe42784
-    m_ActionName: 'Player/BasicAttack[/Mouse/leftButton]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 0cac70dc-5797-43f2-bcd4-dcd649578d3d
-    m_ActionName: 'Player/SpecialAttack[/Mouse/rightButton]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: f1675007-02c9-49b3-ae21-b5e1f2f7d008
-    m_ActionName: 'Player/SkillAttack[/Keyboard/leftShift]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 9f4ef2a2-0437-4700-8ccc-24531d29d316
-    m_ActionName: 'Player/UltimateAttack[/Keyboard/r]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 545c2eed-cd83-4fe2-8d72-22ba31703910
-    m_ActionName: 'Player/Pause[/Keyboard/escape]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 30724cac-df4c-453e-a4f3-8285dbff54cd
-    m_ActionName: 'Player/TrapClear[/Keyboard/k]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 8d54a6b7-23a4-4d54-9c3a-3b0c217af2cc
-    m_ActionName: 'Player/StagePregress[/Keyboard/g]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 0fc444d2-8989-4e70-844e-bba3cd6b4b15
-    m_ActionName: 'Player/NPCInteract[/Keyboard/f]'
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 242794920}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: OnSkillInfo
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 9d39de0b-127b-4e68-9ecb-2590b6b6a589
-    m_ActionName: 'UI/BlessingInfo[/Keyboard/tab]'
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: UI
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
 --- !u!1 &405125982
 GameObject:
   m_ObjectHideFlags: 0
@@ -668,6 +581,8 @@ GameObject:
   - component: {fileID: 1637676951}
   - component: {fileID: 1637676950}
   - component: {fileID: 1637676952}
+  - component: {fileID: 1637676954}
+  - component: {fileID: 1637676953}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -724,6 +639,92 @@ MonoBehaviour:
   sceneViewId: 1
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &1637676953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1637676949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: ce6cc89143753e245be04a2534be4a9c, type: 3}
+  m_NotificationBehavior: 2
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 27e9f0b9-a1eb-49c1-a25a-1b97345d09e0
+    m_ActionName: 'Player/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ac25d826-2163-4eca-a0e0-6acfb1f2468a
+    m_ActionName: 'Player/Dash[/Keyboard/space]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6ff531e5-3766-4cae-afc0-c3301fe42784
+    m_ActionName: 'Player/BasicAttack[/Mouse/leftButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0cac70dc-5797-43f2-bcd4-dcd649578d3d
+    m_ActionName: 'Player/SpecialAttack[/Mouse/rightButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f1675007-02c9-49b3-ae21-b5e1f2f7d008
+    m_ActionName: 'Player/SkillAttack[/Keyboard/leftShift]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 9f4ef2a2-0437-4700-8ccc-24531d29d316
+    m_ActionName: 'Player/UltimateAttack[/Keyboard/r]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 545c2eed-cd83-4fe2-8d72-22ba31703910
+    m_ActionName: 'Player/Pause[/Keyboard/escape]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8d54a6b7-23a4-4d54-9c3a-3b0c217af2cc
+    m_ActionName: 'Player/StagePregress[/Keyboard/g]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0fc444d2-8989-4e70-844e-bba3cd6b4b15
+    m_ActionName: 'Player/NPCInteract[/Keyboard/f]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 9d39de0b-127b-4e68-9ecb-2590b6b6a589
+    m_ActionName: 'UI/BlessingInfo[/Keyboard/tab]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: eb8b3e0a-17b1-42bc-9ae8-fa32cdeaa4d3
+    m_ActionName: 'Player/StageEnterConfirm[/Keyboard/tab]'
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
+--- !u!114 &1637676954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1637676949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f40f249cdea02644b901b942720126f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

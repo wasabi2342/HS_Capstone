@@ -1,12 +1,12 @@
 using UnityEngine;
 
 [RequireComponent(typeof(SphereCollider))]
-public class PlayerReceiveDamageZone : MonoBehaviour
+public class WhitePlayerReceiveDamageZone : MonoBehaviour
 {
     [Header("총알 데미지 설정")]
     public int bulletDamage = 10;
 
-    private PlayerController playerController;
+    private WhitePlayerController whitePlayerController;
 
     private void Awake()
     {
@@ -17,25 +17,25 @@ public class PlayerReceiveDamageZone : MonoBehaviour
             col.isTrigger = true;
         }
 
-        // 상위에 있는 PlayerController를 찾음
-        playerController = GetComponentInParent<PlayerController>();
-        if (playerController == null)
+        // 상위에 있는 WhitePlayerController를 찾음
+        whitePlayerController = GetComponentInParent<WhitePlayerController>();
+        if (whitePlayerController == null)
         {
-            Debug.LogWarning("[PlayerReceiveDamageZone] 상위에 PlayerController가 없습니다!");
+            Debug.LogWarning("[WhitePlayerReceiveDamageZone] 상위에 WhitePlayerController가 없습니다!");
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("[PlayerReceiveDamageZone] 충돌한 오브젝트: " + other.gameObject.name);
-        // 예시로 "Bullet" 태그가 있는 총알이 충돌하면 데미지 적용
+        Debug.Log("[WhitePlayerReceiveDamageZone] 충돌한 오브젝트: " + other.gameObject.name);
+        // "Bullet" 태그가 있는 총알이 충돌하면 데미지 적용
         if (other.CompareTag("Bullet"))
         {
-            Debug.Log("[PlayerReceiveDamageZone] 총알 충돌 감지됨.");
-            if (playerController != null)
+            Debug.Log("[WhitePlayerReceiveDamageZone] 총알 충돌 감지됨.");
+            if (whitePlayerController != null)
             {
-                playerController.TakeDamage(bulletDamage);
-                Debug.Log("[PlayerReceiveDamageZone] 플레이어가 " + bulletDamage + " 데미지를 입었습니다.");
+                whitePlayerController.TakeDamage(bulletDamage);
+                Debug.Log("[WhitePlayerReceiveDamageZone] 플레이어가 " + bulletDamage + " 데미지를 입었습니다.");
             }
             Destroy(other.gameObject);
         }

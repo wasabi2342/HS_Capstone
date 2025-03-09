@@ -4,7 +4,7 @@ using System.Collections;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
 
-public class PlayerController : MonoBehaviour
+public class WhitePlayerController : MonoBehaviour
 {
     //  기본 이동 및 체력 관련 
     [Header("이동 속도")]
@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-
+        
         animator = GetComponent<Animator>();
         if (animator == null)
         {
@@ -187,11 +187,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
+    
     // 1~4단계 콤보를 순차적으로 실행하는 코루틴
     // 각 단계가 끝난 후 2초 내에 마우스 좌클릭이 없으면 Idle로 복귀
     // 4단계가 끝나면 즉시 Idle로 복귀
-
+   
     private IEnumerator CoStackAttack()
     {
         isAttacking = true;
@@ -334,7 +334,7 @@ public class PlayerController : MonoBehaviour
     public void HandleGuard()
     {
         Debug.Log("가드 호출됨");
-
+        
     }
 
     public void HandleParry()

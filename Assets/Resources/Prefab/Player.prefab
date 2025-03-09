@@ -206,7 +206,7 @@ GameObject:
   - component: {fileID: 2622170152874933506}
   m_Layer: 8
   m_Name: PlayerInteractionZone
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -260,9 +260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactionRange: 1.5
-  interactables:
-  - {fileID: 7127885292095422483, guid: 028c18467eb90d248b1124209575da02, type: 3}
-  - {fileID: 6327953189275463617, guid: dd2ad4ee610e25241a08c84f62d72184, type: 3}
+  whitePlayercontroller_Event: {fileID: 7018926861384928313}
 --- !u!1 &4131734313779836671
 GameObject:
   m_ObjectHideFlags: 0
@@ -275,13 +273,17 @@ GameObject:
   - component: {fileID: 613748843307250419}
   - component: {fileID: 8614163184393729823}
   - component: {fileID: 3893625609994687788}
-  - component: {fileID: 5046260287561047278}
   - component: {fileID: 4412398138277556100}
   - component: {fileID: 7687062139411390392}
   - component: {fileID: 4953368423216620942}
   - component: {fileID: 5970755759370503948}
   - component: {fileID: 4723769890807690182}
   - component: {fileID: 3418122163377088963}
+  - component: {fileID: 7018926861384928313}
+  - component: {fileID: 6226823664876207181}
+  - component: {fileID: 5927691077277574284}
+  - component: {fileID: 941759357708422702}
+  - component: {fileID: 5133387043596687802}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -337,7 +339,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4131734313779836671}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
@@ -357,8 +359,8 @@ MonoBehaviour:
   m_ActionEvents:
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5046260287561047278}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+      - m_Target: {fileID: 7018926861384928313}
+        m_TargetAssemblyTypeName: WhitePlayercontroller_event, Assembly-CSharp
         m_MethodName: OnMove
         m_Mode: 0
         m_Arguments:
@@ -376,30 +378,10 @@ MonoBehaviour:
     m_ActionId: ac25d826-2163-4eca-a0e0-6acfb1f2468a
     m_ActionName: 'Player/Dash[/Keyboard/space]'
   - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 6ff531e5-3766-4cae-afc0-c3301fe42784
-    m_ActionName: 'Player/BasicAttack[/Mouse/leftButton]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 0cac70dc-5797-43f2-bcd4-dcd649578d3d
-    m_ActionName: 'Player/SpecialAttack[/Mouse/rightButton]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: f1675007-02c9-49b3-ae21-b5e1f2f7d008
-    m_ActionName: 'Player/SkillAttack[/Keyboard/leftShift]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 9f4ef2a2-0437-4700-8ccc-24531d29d316
-    m_ActionName: 'Player/UltimateAttack[/Keyboard/r]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 545c2eed-cd83-4fe2-8d72-22ba31703910
-    m_ActionName: 'Player/Pause[/Keyboard/escape]'
-  - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5046260287561047278}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnTrapClear
+      - m_Target: {fileID: 7018926861384928313}
+        m_TargetAssemblyTypeName: WhitePlayercontroller_event, Assembly-CSharp
+        m_MethodName: OnMouse_L
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -409,17 +391,69 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_ActionId: 30724cac-df4c-453e-a4f3-8285dbff54cd
-    m_ActionName: 'Player/TrapClear[/Keyboard/k]'
+    m_ActionId: 6ff531e5-3766-4cae-afc0-c3301fe42784
+    m_ActionName: 'Player/BasicAttack[/Mouse/leftButton]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7018926861384928313}
+        m_TargetAssemblyTypeName: WhitePlayercontroller_event, Assembly-CSharp
+        m_MethodName: OnMouse_R
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 0cac70dc-5797-43f2-bcd4-dcd649578d3d
+    m_ActionName: 'Player/SpecialAttack[/Mouse/rightButton]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7018926861384928313}
+        m_TargetAssemblyTypeName: WhitePlayercontroller_event, Assembly-CSharp
+        m_MethodName: OnKeyboard_Shift_L
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: f1675007-02c9-49b3-ae21-b5e1f2f7d008
+    m_ActionName: 'Player/SkillAttack[/Keyboard/leftShift]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7018926861384928313}
+        m_TargetAssemblyTypeName: WhitePlayercontroller_event, Assembly-CSharp
+        m_MethodName: OnMouse_R
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 9f4ef2a2-0437-4700-8ccc-24531d29d316
+    m_ActionName: 'Player/UltimateAttack[/Keyboard/r]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 545c2eed-cd83-4fe2-8d72-22ba31703910
+    m_ActionName: 'Player/Pause[/Keyboard/escape]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 8d54a6b7-23a4-4d54-9c3a-3b0c217af2cc
     m_ActionName: 'Player/StagePregress[/Keyboard/g]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5046260287561047278}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnNPCInteract
+      - m_Target: {fileID: 7018926861384928313}
+        m_TargetAssemblyTypeName: WhitePlayercontroller_event, Assembly-CSharp
+        m_MethodName: OnInteraction
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -435,6 +469,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9d39de0b-127b-4e68-9ecb-2590b6b6a589
     m_ActionName: 'UI/BlessingInfo[/Keyboard/tab]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: eb8b3e0a-17b1-42bc-9ae8-fa32cdeaa4d3
+    m_ActionName: 'Player/StageEnterConfirm[/Keyboard/tab]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -495,53 +533,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &5046260287561047278
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4131734313779836671}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57eedc32c223bbd4e8afa6443ed77ef7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  portalCooldown: 3
-  characterData: {fileID: 11400000, guid: 14013a0b7b7881d49b4c582318678691, type: 2}
-  changeCharacterPrefab: {fileID: 0}
-  speedHorizontal: 5
-  speedVertical: 5
-  dashDuration: 0.2
-  dashDistance: 5
-  dashDoubleClickThreshold: 0.3
-  centerPoint: {fileID: 2649936402368327885}
-  centerPointOffsetDistance: 1
-  centerPoints:
-  - {fileID: 1330702589638773871}
-  - {fileID: 6389345504270291820}
-  - {fileID: 1142754326731836901}
-  - {fileID: 5109228140562016688}
-  - {fileID: 1333132904043162585}
-  - {fileID: 8230584595030747881}
-  - {fileID: 1194036335750457889}
-  - {fileID: 739063013299719982}
-  currentDirectionIndex: 0
-  interactionLayerMask:
-    serializedVersion: 2
-    m_Bits: 768
-  interactionRadius: 1.5
-  maxHealth: 20
-  moveSpeedHorizontal: 5
-  moveSpeedVertical: 5
-  moveSpeedDiagonalLeftUp: 4.5
-  moveSpeedDiagonalRightUp: 4.5
-  moveSpeedDiagonalLeftDown: 4.5
-  moveSpeedDiagonalRightDown: 4.5
-  comboInputTime: 2
-  guardDuration: 2
-  parryDuration: 2
-  counterDamage: 20
 --- !u!114 &4412398138277556100
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -695,6 +686,100 @@ CapsuleCollider:
   m_Height: 6
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7018926861384928313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4131734313779836671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d8823c45fd13d84ab0a0b1f4d928547, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnMouseLEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnMouseREvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnKeyboardShiftLEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnKeyboardREvent:
+    m_PersistentCalls:
+      m_Calls: []
+  isInVillage: 0
+--- !u!114 &6226823664876207181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4131734313779836671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63fe2f8107ab0ab4fba634f100f0a63e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5927691077277574284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4131734313779836671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1689ae99b43c65a41a0272eabdbd67f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &941759357708422702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4131734313779836671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd43531ef40c2541acf07c612282993, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speedHorizontal: 5
+  speedVertical: 5
+  dashDuration: 0.2
+  dashDistance: 2
+  dashDoubleClickThreshold: 0.3
+  centerPoint: {fileID: 2649936402368327885}
+  centerPointOffsetDistance: 0.5
+  centerPoints:
+  - {fileID: 1330702589638773871}
+  - {fileID: 6389345504270291820}
+  - {fileID: 1142754326731836901}
+  - {fileID: 5109228140562016688}
+  - {fileID: 1333132904043162585}
+  - {fileID: 8230584595030747881}
+  - {fileID: 1194036335750457889}
+  - {fileID: 739063013299719982}
+  maxHealth: 100
+  comboInputTime: 2
+  guardDuration: 2
+  parryDuration: 2
+  counterDamage: 20
+--- !u!114 &5133387043596687802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4131734313779836671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4625d83469617ee4b9e44541e9041064, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4855534633877809112
 GameObject:
   m_ObjectHideFlags: 0
