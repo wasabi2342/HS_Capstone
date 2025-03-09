@@ -3,8 +3,9 @@ using UnityEngine.InputSystem;
 using System.Collections;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
+using System;
 
-public class WhitePlayerController : MonoBehaviour
+public class WhitePlayerController : ParentPlayerController
 {
     //  기본 이동 및 체력 관련 
     [Header("이동 속도")]
@@ -26,13 +27,12 @@ public class WhitePlayerController : MonoBehaviour
     public Transform[] centerPoints = new Transform[8];
     private int currentDirectionIndex = 0;
 
-    [Header("플레이어 체력")]
-    public int maxHealth = 100;
-    private int currentHealth;
+    
+    
 
     // 이동 입력 및 상태
     private Vector2 moveInput;
-    public enum PlayerState { Idle, Run, Attack_L, Attack_R, Skill, Ultimate, Hit, Guard, Parry, Death }
+    public enum PlayerState { Idle, Run, Attack_L, Attack_R, Skill, Ultimate, Hit, Guard, Parry, Death, Attack_L_01, Attack_L_02, Attack_L_03, Attack_L_04 }
     private PlayerState currentState = PlayerState.Idle;
 
     // 공격/콤보 설정 (AttackStack 파라미터 사용)
@@ -55,9 +55,10 @@ public class WhitePlayerController : MonoBehaviour
     // 참조 컴포넌트 
     private Animator animator;
 
-    private void Awake()
+    protected override void Awake() 
+
     {
-        
+        base.Awake();
         animator = GetComponent<Animator>();
         if (animator == null)
         {
@@ -203,19 +204,19 @@ public class WhitePlayerController : MonoBehaviour
             switch (stage)
             {
                 case 1:
-                    currentState = PlayerState.Attack_L;
+                    currentState = PlayerState.Attack_L_01;
                     Debug.Log("평타 공격 스택 1단계 실행");
                     break;
                 case 2:
-                    currentState = PlayerState.Attack_R;
+                    currentState = PlayerState.Attack_L_02;
                     Debug.Log("평타 공격 스택 2단계 실행");
                     break;
                 case 3:
-                    currentState = PlayerState.Skill;
+                    currentState = PlayerState.Attack_L_03;
                     Debug.Log("평타 공격 스택 3단계 실행");
                     break;
                 case 4:
-                    currentState = PlayerState.Ultimate;
+                    currentState = PlayerState.Attack_L_04;
                     Debug.Log("평타 공격 스택 4단계 실행");
                     break;
             }
@@ -240,37 +241,37 @@ public class WhitePlayerController : MonoBehaviour
                 break;
             }
 
-            // 다음 단계로 넘어가기 위해 2초 동안 좌클릭을 기다림
-            float timer = 0f;
-            bool nextClick = false;
-            while (timer < comboInputTime)
-            {
-                timer += Time.deltaTime;
+        //    // 다음 단계로 넘어가기 위해 2초 동안 좌클릭을 기다림
+        //    float timer = 0f;
+        //    bool nextClick = false;
+        //    while (timer < comboInputTime)
+        //    {
+        //        timer += Time.deltaTime;
 
-                // 이동/대쉬가 발생하면 콤보 끊기
-                if (moveInput.magnitude > 0.01f || isDashing)
-                {
-                    ResetAttackStack();
-                    yield break;
-                }
+        //        // 이동/대쉬가 발생하면 콤보 끊기
+        //        if (moveInput.magnitude > 0.01f || isDashing)
+        //        {
+        //            ResetAttackStack();
+        //            yield break;
+        //        }
 
-                // 마우스 좌클릭 감지
-                if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-                {
-                    nextClick = true;
-                    break;
-                }
-                yield return null;
-            }
+        //        // 마우스 좌클릭 감지
+        //        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        //        {
+        //            nextClick = true;
+        //            break;
+        //        }
+        //        yield return null;
+        //    }
 
-            // 만약 2초 안에 좌클릭이 없었다면 콤보 끊기
-            if (!nextClick)
-            {
-                ResetAttackStack();
-                yield break;
-            }
+        //    // 만약 2초 안에 좌클릭이 없었다면 콤보 끊기
+        //    if (!nextClick)
+        //    {
+        //        ResetAttackStack();
+        //        yield break;
+        //    }
 
-            // 좌클릭이 있었다면 for 루프 다음 단계로 넘어감
+        //    // 좌클릭이 있었다면 for 루프 다음 단계로 넘어감
         }
 
         // 4단계까지 완료했거나 루프가 끝났으므로 종료
@@ -411,5 +412,10 @@ public class WhitePlayerController : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // 씬 전환 후 초기화 처리
+    }
+
+    internal void TakeDamage()
+    {
+        throw new NotImplementedException();
     }
 }

@@ -10,6 +10,6 @@ public class TestBullet : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log("피해 충돌 함 ");
-        other.GetComponent<IDamageable>().TakeDamage(10);
+        other.GetComponentInParent<IDamageable>().TakeDamage(10);
     }
 }
