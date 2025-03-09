@@ -25,19 +25,8 @@ public class WhitePlayerReceiveDamageZone :  MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        Debug.Log("[WhitePlayerReceiveDamageZone] 충돌한 오브젝트: " + other.gameObject.name);
-        
-        if (other.CompareTag("Enemy"))
-        {
-            Debug.Log("[WhitePlayerReceiveDamageZone] 총알 충돌 감지됨.");
-            if (whitePlayerController != null)
-            {
-                whitePlayerController.TakeDamage();
-                Debug.Log("[WhitePlayerReceiveDamageZone] 플레이어가 데미지를 입었습니다.");
-            }
-            Destroy(other.gameObject);
-        }
-    }
+    //private void OnTriggerEnter(Collider other)
+    //{
+       
+    //}
 }

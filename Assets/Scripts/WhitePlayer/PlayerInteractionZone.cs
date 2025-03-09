@@ -19,7 +19,7 @@ public class WhitePlayerInteractionZone : MonoBehaviour
 
     private void Awake()
     {
-        whitePlayercontroller_Event  = GetComponentInParent<WhitePlayercontroller_event>();
+        whitePlayercontroller_Event = GetComponentInParent<WhitePlayercontroller_event>();
 
         SphereCollider col = GetComponent<SphereCollider>();
         if (col != null)
@@ -32,26 +32,34 @@ public class WhitePlayerInteractionZone : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
 
-        whitePlayercontroller_Event.OnInteractionEvent += other.GetComponent<IInteractable>().OnInteract;
-        interactables.Add(other.GetComponent<IInteractable>().OnInteract);
-        Debug.Log("面倒等促.");
-       
+        if (other.GetComponent<IInteractable>() != null)
+        {
+            whitePlayercontroller_Event.OnInteractionEvent += other.GetComponent<IInteractable>().OnInteract;
+            interactables.Add(other.GetComponent<IInteractable>().OnInteract);
+            Debug.Log("面倒等促.");
+        }
+
     }
 
     private void OnTriggerExit(Collider other)
     {
 
-        whitePlayercontroller_Event.OnInteractionEvent -= other.GetComponent<IInteractable>().OnInteract;
-        interactables.Remove(other.GetComponent<IInteractable>().OnInteract);
+        if (other.GetComponent<IInteractable>() != null)
+        {
+            whitePlayercontroller_Event.OnInteractionEvent -= other.GetComponent<IInteractable>().OnInteract;
+            interactables.Remove(other.GetComponent<IInteractable>().OnInteract);
+        }
 
     }
 
+
     private void OnDisable()
     {
-        for(int i = 0; i < interactables.Count; i++)
+        for (int i = 0; i < interactables.Count; i++)
         {
             whitePlayercontroller_Event.OnInteractionEvent -= interactables[i];
         }
         interactables.Clear();
     }
 }
+

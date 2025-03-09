@@ -349,9 +349,12 @@ public class WhitePlayerController : ParentPlayerController
     }
 
     // 피격 및 사망 처리
-    public void TakeDamage(int damage)
+    public override void TakeDamage(float damage)
     {
-        currentHealth -= damage;
+        int intDamage = Mathf.RoundToInt(damage);
+        // intDamage를 사용한 로직을 구현합니다.
+        
+        currentHealth -= intDamage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         Debug.Log("플레이어 체력: " + currentHealth);
 
@@ -364,6 +367,7 @@ public class WhitePlayerController : ParentPlayerController
             StartCoroutine(CoHitReaction());
         }
     }
+
 
     private IEnumerator CoHitReaction()
     {
@@ -414,8 +418,5 @@ public class WhitePlayerController : ParentPlayerController
         // 씬 전환 후 초기화 처리
     }
 
-    internal void TakeDamage()
-    {
-        throw new NotImplementedException();
-    }
+   
 }
