@@ -7,27 +7,27 @@ public class WhitePlayercontroller_event : MonoBehaviour
 {
     private WhitePlayerController whitePlayerController;
 
-    public event Action<InputAction.CallbackContext>  OnMoveEvent;
+    public event Action<InputAction.CallbackContext> OnMoveEvent;
     public event Action<InputAction.CallbackContext> OnInteractionEvent;
-    
+
     public UnityEvent OnMouseLEvent;
     public UnityEvent OnMouseREvent;
     public UnityEvent OnKeyboardShiftLEvent;
     public UnityEvent OnKeyboardREvent;
 
+    public bool isInVillage;
 
     private void Start()
     {
         InputManager.Instance.PlayerInput.actions["Move"].performed += ctx => OnMove(ctx);
         InputManager.Instance.PlayerInput.actions["Move"].canceled += ctx => OnMove(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].performed += ctx => OnInteractionEvent(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].canceled += ctx => OnInteractionEvent(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].started += ctx => OnInteractionEvent(ctx);
+        InputManager.Instance.PlayerInput.actions["Interaction"].performed += ctx => OnInteraction(ctx);
+        InputManager.Instance.PlayerInput.actions["Interaction"].canceled += ctx => OnInteraction(ctx);
+        InputManager.Instance.PlayerInput.actions["Interaction"].started += ctx => OnInteraction(ctx);
         InputManager.Instance.PlayerInput.actions["BasicAttack"].performed += ctx => OnMouse_L(ctx);
         InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed += ctx => OnMouse_R(ctx);
         InputManager.Instance.PlayerInput.actions["SkillAttack"].performed += ctx => OnKeyboard_Shift_L(ctx);
         InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed += ctx => OnKeyboard_R(ctx);
-
     }
     private void Awake()
     {
@@ -43,7 +43,15 @@ public class WhitePlayercontroller_event : MonoBehaviour
     {
         if (context.performed)
         {
-            Vector2 moveInput = context.ReadValue<Vector2>();
+            Vector2 moveInput;
+            if (!isInVillage)
+            {
+                moveInput = context.ReadValue<Vector2>();
+            }
+            else
+            {
+                moveInput = new Vector2(context.ReadValue<Vector2>().x , 0);
+            }
             whitePlayerController.SetMoveInput(moveInput);
             OnMoveEvent?.Invoke(context);
         }
@@ -57,18 +65,12 @@ public class WhitePlayercontroller_event : MonoBehaviour
     public void OnInteraction(InputAction.CallbackContext context)
     {
         OnInteractionEvent?.Invoke(context);
-
-        if (context.performed)
-        {
-            Debug.Log("상호작용 호출됨.");
-           
-        }
     }
 
     // 마우스 왼쪽 클릭 (평타)
     public void OnMouse_L(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && !isInVillage)
         {
             whitePlayerController.HandleNormalAttack();
             OnMouseLEvent?.Invoke();
@@ -78,7 +80,7 @@ public class WhitePlayercontroller_event : MonoBehaviour
     // 마우스 오른쪽 클릭 (가드)
     public void OnMouse_R(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && !isInVillage)
         {
             whitePlayerController.HandleGuard();
             OnMouseREvent?.Invoke();
@@ -88,7 +90,7 @@ public class WhitePlayercontroller_event : MonoBehaviour
     // 좌 Shift 키 (특수 공격)
     public void OnKeyboard_Shift_L(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && !isInVillage)
         {
             whitePlayerController.HandleSpecialAttack();
             OnKeyboardShiftLEvent?.Invoke();
@@ -98,7 +100,7 @@ public class WhitePlayercontroller_event : MonoBehaviour
     // R 키 (궁극기)
     public void OnKeyboard_R(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && !isInVillage)
         {
             whitePlayerController.HandleUltimateAttack();
             OnKeyboardREvent?.Invoke();

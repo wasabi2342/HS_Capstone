@@ -147,7 +147,7 @@ public class RoomMovement : MonoBehaviourPun
                     else if(context.performed)
                     {
                         canelFillGauge?.Invoke(true);
-                        RoomManager.Instance.CreateCharacter(changeCharacterPrefab, transform.position, transform.rotation);
+                        //RoomManager.Instance.CreateCharacter(changeCharacterPrefab, transform.position, transform.rotation);
                         Destroy(gameObject);
                     }
                     break;

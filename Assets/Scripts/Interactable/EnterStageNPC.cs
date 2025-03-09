@@ -10,7 +10,7 @@ public class EnterStageNPC : MonoBehaviour, IInteractable
 
     public void OnInteract(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        if (ctx.started)
         {
             if (!RoomManager.Instance.isEnteringStage)
             {

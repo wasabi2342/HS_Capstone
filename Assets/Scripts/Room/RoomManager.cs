@@ -7,7 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEditor.PlayerSettings;
 
-public class RoomManager : MonoBehaviourPunCallbacks
+public class RoomManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject playerInRoom;
@@ -22,7 +22,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     public BasePlayerController localPlayer;
 
-    private Dictionary<int, BasePlayerController> players = new Dictionary<int, BasePlayerController>();
+    public Dictionary<int, GameObject> players = new Dictionary<int, GameObject>();
 
     private void Awake()
     {
@@ -30,30 +30,32 @@ public class RoomManager : MonoBehaviourPunCallbacks
             Instance = this;
         else
             Destroy(gameObject);
-
         DontDestroyOnLoad(cinemachineCamera);
     }
 
     private void Start()
     {
         UIManager.Instance.OpenPanel<UIIngameMainPanel>();
-        CreateCharacter(playerInRoom, Vector3.zero, Quaternion.identity);
+        CreateCharacter(playerInRoom, Vector3.zero, Quaternion.identity, true);
     }
 
-    public void CreateCharacter(GameObject prefab, Vector3 pos, Quaternion quaternion)
+    public void CreateCharacter(GameObject prefab, Vector3 pos, Quaternion quaternion, bool isInVillage)
     {
         GameObject playerInstance;
         if (PhotonNetwork.InRoom)
         {
             playerInstance = PhotonNetwork.Instantiate("Prefab/" + prefab.name, pos, quaternion);
-            BasePlayerController playerController = playerInstance.GetComponent<BasePlayerController>();
-            players.Add(PhotonNetwork.LocalPlayer.ActorNumber, playerController);
-            photonView.RPC("AddPlayerInDictionary", RpcTarget.OthersBuffered, PhotonNetwork.LocalPlayer.ActorNumber, playerController.GetComponent<PhotonView>().ViewID);
+            //BasePlayerController playerController = playerInstance.GetComponent<BasePlayerController>();
+            players[PhotonNetwork.LocalPlayer.ActorNumber] = playerInstance;
+            PhotonNetworkManager.Instance.AddPlayer(PhotonNetwork.LocalPlayer.ActorNumber, playerInstance.GetComponent<PhotonView>().ViewID);
+            playerInstance.GetComponent<WhitePlayercontroller_event>().isInVillage = isInVillage; // 플레이어의 공통 스크립트로 변경 해야함
+
+            //photonView.RPC("AddPlayerInDictionary", RpcTarget.OthersBuffered, PhotonNetwork.LocalPlayer.ActorNumber, playerInstance.GetComponent<PhotonView>().ViewID);
         }
         else
         {
             playerInstance = Instantiate(prefab, pos, quaternion);
-            players.Add(0, playerInstance.GetComponent<BasePlayerController>());
+            players[0] = playerInstance;
         }
 
         cinemachineCamera.Follow = playerInstance.transform;
@@ -72,28 +74,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     }
 
-    [PunRPC]
-    private void AddPlayerInDictionary(int actorNumber, int viewID)
-    {
-        PhotonView targetView = PhotonView.Find(viewID);
-        if (targetView != null)
-        {
-            players.Add(actorNumber, targetView.GetComponent<BasePlayerController>());
-        }
-    }
-
-    public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
-    {
-        foreach (var player in players)
-        {
-            int actorNumber = player.Key;
-            int viewID = player.Value.GetComponent<PhotonView>().ViewID;
-            photonView.RPC("AddPlayerInDictionary", newPlayer, actorNumber, viewID);
-        }
-    }
-
-
-    public BasePlayerController ReturnLocalPlayer()
+    public GameObject ReturnLocalPlayer()
     {
         if (!PhotonNetwork.InRoom)
         {
