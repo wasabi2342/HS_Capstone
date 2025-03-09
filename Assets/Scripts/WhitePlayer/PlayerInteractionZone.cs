@@ -43,6 +43,7 @@ public class WhitePlayerInteractionZone : MonoBehaviour
 
         whitePlayercontroller_Event.OnInteractionEvent -= other.GetComponent<IInteractable>().OnInteract;
         interactables.Remove(other.GetComponent<IInteractable>().OnInteract);
+
     }
 
     private void OnDisable()
