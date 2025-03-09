@@ -41,10 +41,7 @@ public class MeleeAttack : MonoBehaviour
 
         float distance = Vector3.Distance(transform.position, player.position);
 
-        if (distance <= status.attackSize.x && canAttack)
-        {
-            AttackTrigger();
-        }
+        AttackTrigger();
     }
 
     void AttackTrigger()
@@ -91,8 +88,7 @@ public class MeleeAttack : MonoBehaviour
 
         // 플레이어 방향 설정 (돌진 직전에 방향 재설정)
         Vector3 targetDir = (player.position - transform.position).normalized;
-        Vector3 targetPos = transform.position + targetDir * status.attackSize.x * 1.5f;
-
+        Vector3 targetPos = transform.position + targetDir * 3f;
         float dashSpeed = status.speed * 3f;
         float dashDuration = 0.5f;
         float elapsedTime = 0f;
