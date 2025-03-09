@@ -35,7 +35,7 @@ public class RoomManager : MonoBehaviour
 
     private void Start()
     {
-        UIManager.Instance.OpenPanel<UIIngameMainPanel>();
+        //UIManager.Instance.OpenPanel<UIIngameMainPanel>();
         CreateCharacter(playerInRoom, Vector3.zero, Quaternion.Euler(90, 0, 0), true);
     }
 
