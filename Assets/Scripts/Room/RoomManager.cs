@@ -36,7 +36,7 @@ public class RoomManager : MonoBehaviour
     private void Start()
     {
         UIManager.Instance.OpenPanel<UIIngameMainPanel>();
-        CreateCharacter(playerInRoom, Vector3.zero, Quaternion.identity, true);
+        CreateCharacter(playerInRoom, Vector3.zero, Quaternion.Euler(90, 0, 0), true);
     }
 
     public void CreateCharacter(GameObject prefab, Vector3 pos, Quaternion quaternion, bool isInVillage)
