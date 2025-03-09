@@ -22,7 +22,4 @@ public class EnemyStatus : ScriptableObject
     [Header("Attack")]
     public float waitCool; //공격 준비 시간
     public float attackCool; //쿨타임
-    public Vector3 detectionSize; //인식 범위
-    public Vector3 chaseSize; //추적 범위
-    public Vector3 attackSize; //공격 가능 범위
 }

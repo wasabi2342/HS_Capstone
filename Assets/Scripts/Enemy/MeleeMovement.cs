@@ -1,8 +1,9 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using Photon.Pun;
 
-public class MeleeMovement : MonoBehaviour
+public class MeleeMovement : MonoBehaviourPun, IPunObservable
 {
     [Header("Common")]
     public EnemyStatus baseStatus;
@@ -10,21 +11,27 @@ public class MeleeMovement : MonoBehaviour
     public EnemyStatus status;
     private Transform player;
     private NavMeshAgent agent;
-    private Vector3 spawnPoint; // 스폰 위치 저장
+    private Vector3 spawnPoint;
+    private PhotonView photonView;
 
     [Header("State")]
-    public bool isDetecting = false;
-    public bool isAttacking = false;
-    public bool isReturningToSpawn = false;
+    public bool isReturningToPatrol = false;
+    public bool isChasing = false;
+    public bool isPatrolling = true;
+
+    [Header("Patrol & Chase Settings")]
+    public Transform patrolArea;
+    private Vector3 patrolCenter;
+    private float patrolRadius;
+    public Transform chaseRange; // 하위 오브젝트로 `ChaseRange` 탐색
 
     private EnemyStateController stateController;
-    private MeleeAttack meleeAttack;
 
     void Awake()
     {
+        photonView = GetComponent<PhotonView>();
         agent = GetComponent<NavMeshAgent>();
         stateController = GetComponent<EnemyStateController>();
-        meleeAttack = GetComponent<MeleeAttack>();
     }
 
     void Start()
@@ -34,86 +41,143 @@ public class MeleeMovement : MonoBehaviour
         agent.updateRotation = false;
         agent.updateUpAxis = false;
 
-        transform.rotation = Quaternion.Euler(45f, 0f, 0f);
+        player = GameObject.FindWithTag("Player")?.transform;
+        spawnPoint = transform.position;
 
-        GameObject playerObj = GameObject.FindWithTag("Player");
-        if (playerObj != null)
+        if (patrolArea != null) SetPatrolArea(patrolArea);
+        else Debug.LogError("[오류] PatrolArea가 설정되지 않음!");
+
+        if (chaseRange == null) // 하위 오브젝트에서 ChaseRange 자동 탐색
         {
-            player = playerObj.transform;
-        }
-        else
-        {
-            Debug.LogError("[오류] 플레이어를 찾을 수 없습니다! 'Player' 태그가 있는지 확인하세요.");
+            Transform chaseObject = transform.Find("ChaseRange");
+            if (chaseObject != null)
+            {
+                chaseRange = chaseObject;
+            }
+            else
+            {
+                Debug.LogError("[오류] ChaseRange 하위 오브젝트가 없습니다!");
+            }
         }
 
-        spawnPoint = transform.position; // 초기 스폰 위치 저장
+        if (PhotonNetwork.IsMasterClient)
+        {
+            SetRandomStartPosition();
+            StartCoroutine(Patrol());
+        }
+    }
+
+    void SetRandomStartPosition()
+    {
+        Vector3 startPosition = GetRandomPointInPatrolArea();
+        transform.position = startPosition;
+        agent.Warp(startPosition);
+    }
+
+    public void SetPatrolArea(Transform area)
+    {
+        patrolArea = area;
+        patrolCenter = area.position;
+        SphereCollider collider = area.GetComponent<SphereCollider>();
+        patrolRadius = collider != null ? collider.radius : 5f;
     }
 
     void Update()
     {
-        if (stateController.isDying || player == null) return; // 사망 시 또는 플레이어가 없으면 이동 중단
+        if (!PhotonNetwork.IsMasterClient) return;
+        if (stateController.isDying || player == null) return;
 
-        float distance = Vector3.Distance(transform.position, player.position);
-        float spawnDistance = Vector3.Distance(transform.position, spawnPoint);
+        float distanceFromPatrolCenter = Vector3.Distance(transform.position, patrolCenter);
+        float distanceFromPlayer = Vector3.Distance(transform.position, player.position);
+        float chaseRadius = chaseRange.GetComponent<SphereCollider>().radius; // ChaseRange의 반경 가져오기
 
-        // 플레이어 감지
-        if (distance <= status.detectionSize.x && !isDetecting)
+        //플레이어를 추격 중인데 PatrolArea를 벗어나거나 ChaseRange 밖으로 나가면 추격 해제 후 PatrolArea로 복귀
+        if (isChasing && (distanceFromPatrolCenter > patrolRadius || distanceFromPlayer > chaseRadius))
         {
-            isDetecting = true;
-            Debug.Log("[탐지] 몬스터가 플레이어를 감지하고 추적을 시작합니다.");
-            agent.speed = status.speed * 1.5f; // 감지 시 속도 증가
+            StopChasingAndReturnToPatrol();
         }
 
-        // 공격 로직
-        if (isDetecting && distance <= status.attackSize.x && !isAttacking)
+        if (isChasing)
         {
-            StartCoroutine(AttackPlayer());
-        }
-
-        // 추적 로직
-        if (isDetecting && !isAttacking)
-        {
-            agent.isStopped = false;
             agent.SetDestination(player.position);
         }
 
-        // 스폰 포인트에서 너무 멀어지면 복귀
-        if (spawnDistance > 7f)
+        if (isReturningToPatrol && distanceFromPatrolCenter < patrolRadius * 0.8f)
         {
-            isDetecting = false;
-            isReturningToSpawn = true;
-            agent.SetDestination(spawnPoint);
-            Debug.Log("[이동] 몬스터가 스폰포인트로 복귀 중...");
-        }
-
-        // 복귀 완료 시 상태 초기화
-        if (isReturningToSpawn && spawnDistance < 0.5f)
-        {
-            isReturningToSpawn = false;
-            agent.isStopped = true;
-            Debug.Log("[대기] 몬스터가 스폰 포인트에 도착하여 대기 중...");
+            isReturningToPatrol = false;
+            isPatrolling = true;
+            StartCoroutine(Patrol());
+            photonView.RPC("SyncState", RpcTarget.All, false);
         }
     }
 
-    IEnumerator AttackPlayer()
+    public void StartChasing()
     {
-        isAttacking = true;
-        agent.isStopped = true;
-
-        Debug.Log("[공격] 몬스터가 공격을 준비 중...");
-        yield return new WaitForSeconds(status.waitCool);
-
-        Debug.Log("[공격] 몬스터가 공격을 실행합니다!");
-        meleeAttack.GiveDamage();
-
-        yield return new WaitForSeconds(status.attackCool);
-
-        isAttacking = false;
-        agent.isStopped = false;
+        isChasing = true;
+        isPatrolling = false;
+        agent.SetDestination(player.position);
+        photonView.RPC("SyncChaseState", RpcTarget.All, true);
     }
 
-    public void SetMoveSpeed(float speed)
+    public void StopChasingAndReturnToPatrol()
     {
-        agent.speed = speed;
+        isChasing = false;
+        isReturningToPatrol = true;
+        agent.SetDestination(GetRandomPointInPatrolArea());
+        photonView.RPC("SyncChaseState", RpcTarget.All, false);
+    }
+
+    IEnumerator Patrol()
+    {
+        while (isPatrolling)
+        {
+            Vector3 randomPoint = GetRandomPointInPatrolArea();
+            agent.SetDestination(randomPoint);
+            yield return new WaitForSeconds(3f);
+        }
+    }
+
+    Vector3 GetRandomPointInPatrolArea()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            Vector3 randomPoint = patrolCenter + Random.insideUnitSphere * patrolRadius;
+            randomPoint.y = transform.position.y;
+
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(randomPoint, out hit, 2.0f, NavMesh.AllAreas))
+            {
+                return hit.position;
+            }
+        }
+        return patrolCenter;
+    }
+
+    [PunRPC]
+    void SyncState(bool returning)
+    {
+        isReturningToPatrol = returning;
+    }
+
+    [PunRPC]
+    void SyncChaseState(bool chasing)
+    {
+        isChasing = chasing;
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(isReturningToPatrol);
+            stream.SendNext(isChasing);
+            stream.SendNext(transform.position);
+        }
+        else
+        {
+            isReturningToPatrol = (bool)stream.ReceiveNext();
+            isChasing = (bool)stream.ReceiveNext();
+            transform.position = (Vector3)stream.ReceiveNext();
+        }
     }
 }
