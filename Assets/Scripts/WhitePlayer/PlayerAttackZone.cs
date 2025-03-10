@@ -14,6 +14,8 @@ public class WhitePlayerAttackZone : MonoBehaviour
     // SphereCollider Ä³½Ì
     private SphereCollider sphereCollider;
 
+    public float Damage;
+
     private void Awake()
     {
         sphereCollider = GetComponent<SphereCollider>();
@@ -35,13 +37,9 @@ public class WhitePlayerAttackZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        if(other.GetComponent<IDamageable>() != null)
         {
-            if (!enemiesInRange.Contains(other.gameObject))
-            {
-                enemiesInRange.Add(other.gameObject);
-                Debug.Log("[WhitePlayerAttackZone] Àû Ãß°¡: " + other.gameObject.name);
-            }
+            other.GetComponent<IDamageable>().TakeDamage(Damage);
         }
     }
 

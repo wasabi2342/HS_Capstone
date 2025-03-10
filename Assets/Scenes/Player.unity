@@ -560,6 +560,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9d39de0b-127b-4e68-9ecb-2590b6b6a589
     m_ActionName: 'UI/BlessingInfo[/Keyboard/tab]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: eb8b3e0a-17b1-42bc-9ae8-fa32cdeaa4d3
+    m_ActionName: 'Player/StageEnterConfirm[/Keyboard/tab]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0f144ccd-6308-4337-b2d0-3e3c9f9067f3
+    m_ActionName: Player/OpenBlessingInfo
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -814,6 +822,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 613748843307250419, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 175e04317e7765247b28523daf1e9dac, type: 2}
+    - target: {fileID: 941759357708422702, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
+      propertyPath: attackStack
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 941759357708422702, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
+      propertyPath: isMoveInput
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2622170152874933506, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
       propertyPath: whitePlayercontroller_Event
       value: 
@@ -857,6 +877,18 @@ PrefabInstance:
     - target: {fileID: 2714852837274069670, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3179301021841967162, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3418122163377088963, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3843436792146973078, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4131734313779836671, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
       propertyPath: m_Name

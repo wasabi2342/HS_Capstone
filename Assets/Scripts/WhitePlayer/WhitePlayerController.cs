@@ -5,6 +5,9 @@ using DG.Tweening;
 using UnityEngine.SceneManagement;
 using System;
 
+
+public enum WhitePlayerState { Idle, Run, BasicAttack, Hit, Dash, Skill, Ultimate, Guard, Parry, Counter, Death }
+
 public class WhitePlayerController : ParentPlayerController
 {
     //  기본 이동 및 체력 관련 
@@ -27,21 +30,13 @@ public class WhitePlayerController : ParentPlayerController
     public Transform[] centerPoints = new Transform[8];
     private int currentDirectionIndex = 0;
 
-    
-    
+
+
 
     // 이동 입력 및 상태
     private Vector2 moveInput;
-    public enum PlayerState { Idle, Run, Attack_L, Attack_R, Skill, Ultimate, Hit, Guard, Parry, Death, Attack_L_01, Attack_L_02, Attack_L_03, Attack_L_04 }
-    private PlayerState currentState = PlayerState.Idle;
-
-    // 공격/콤보 설정 (AttackStack 파라미터 사용)
-    [Header("공격/콤보 설정")]
-    [Tooltip("콤보 다음 입력을 기다리는 시간(초) (2초 내에 좌클릭해야 다음 스택으로 넘어감)")]
-    public float comboInputTime = 2f;
-    private int attackStack = 0;         // 1~4단계 콤보
-    private bool isAttacking = false;
-    private bool canStartupCancel = true;  // 공격 선딜 캔슬 여부 (필요 시 사용)
+    public WhitePlayerState currentState = WhitePlayerState.Idle;
+    public WhitePlayerState nextState = WhitePlayerState.Idle;
 
     [Header("우클릭 가드/패링 설정")]
     public float guardDuration = 2f;
@@ -55,7 +50,9 @@ public class WhitePlayerController : ParentPlayerController
     // 참조 컴포넌트 
     private Animator animator;
 
-    protected override void Awake() 
+    public int attackStack = 0;
+
+    protected override void Awake()
 
     {
         base.Awake();
@@ -70,36 +67,57 @@ public class WhitePlayerController : ParentPlayerController
 
     private void Start()
     {
-        currentState = PlayerState.Idle;
+        currentState = WhitePlayerState.Idle;
     }
 
     private void Update()
     {
-        if (currentState == PlayerState.Death)
+        if (currentState == WhitePlayerState.Death)
             return;
 
         UpdateCenterPoint();
         CheckDashInput();
         HandleMovement();
         // 공격/스킬, 가드 등은 별도 스크립트에서 호출
+        if (isMoveInput)
+        {
+            if (nextState < WhitePlayerState.Run)
+            {
+                nextState = WhitePlayerState.Run;
+            }
+        }
     }
+
+    public bool isMoveInput;
 
     // 입력 처리 관련
     // WhitePlayercontroller_event.cs에서 호출하여 이동 입력을 설정
     public void SetMoveInput(Vector2 input)
     {
+        if (nextState < WhitePlayerState.Run)
+        {
+            nextState = WhitePlayerState.Run;
+        }
         moveInput = input;
+        isMoveInput = (Mathf.Abs(moveInput.x) > 0.01f || Mathf.Abs(moveInput.y) > 0.01f);
     }
 
     // === 이동 처리 ===
     private void HandleMovement()
     {
-        if (currentState == PlayerState.Death) return;
+        if (currentState == WhitePlayerState.Death) return;
+        if (nextState != WhitePlayerState.Idle && nextState != WhitePlayerState.Run)
+        {
+            animator.SetBool("run", false);
+            return;
+        }
+        if (currentState != WhitePlayerState.Run)
+            return;
 
         float h = moveInput.x;
         float v = moveInput.y;
         bool isMoving = (Mathf.Abs(h) > 0.01f || Mathf.Abs(v) > 0.01f);
-        currentState = isMoving ? PlayerState.Run : PlayerState.Idle;
+        currentState = isMoving ? WhitePlayerState.Run : WhitePlayerState.Idle;
 
         if (isMoving)
         {
@@ -110,7 +128,7 @@ public class WhitePlayerController : ParentPlayerController
 
         if (animator != null)
         {
-            animator.SetBool("isRunning", isMoving);
+            animator.SetBool("run", isMoving);
             animator.SetFloat("moveX", h);
             animator.SetFloat("moveY", v);
         }
@@ -178,140 +196,124 @@ public class WhitePlayerController : ParentPlayerController
         isDashing = false;
     }
 
-    // 평타 공격(1→2→3→4단계)
+
     public void HandleNormalAttack()
     {
-        // 이미 공격 중이 아니라면 콤보 시작
-        if (!isAttacking)
+
+        if (currentState != WhitePlayerState.Death)
         {
-            StartCoroutine(CoStackAttack());
+            if (currentState == WhitePlayerState.Parry)
+            {
+                nextState = WhitePlayerState.Counter;
+            }
+
+            else if (nextState < WhitePlayerState.BasicAttack)
+            {
+                nextState = WhitePlayerState.BasicAttack;
+            }
+
         }
     }
 
-    
+
     // 1~4단계 콤보를 순차적으로 실행하는 코루틴
     // 각 단계가 끝난 후 2초 내에 마우스 좌클릭이 없으면 Idle로 복귀
     // 4단계가 끝나면 즉시 Idle로 복귀
-   
-    private IEnumerator CoStackAttack()
-    {
-        isAttacking = true;
 
-        // 1~4단계를 순차적으로 진행
-        for (int stage = 1; stage <= 4; stage++)
-        {
-            attackStack = stage;
-            switch (stage)
-            {
-                case 1:
-                    currentState = PlayerState.Attack_L_01;
-                    Debug.Log("평타 공격 스택 1단계 실행");
-                    break;
-                case 2:
-                    currentState = PlayerState.Attack_L_02;
-                    Debug.Log("평타 공격 스택 2단계 실행");
-                    break;
-                case 3:
-                    currentState = PlayerState.Attack_L_03;
-                    Debug.Log("평타 공격 스택 3단계 실행");
-                    break;
-                case 4:
-                    currentState = PlayerState.Attack_L_04;
-                    Debug.Log("평타 공격 스택 4단계 실행");
-                    break;
-            }
+    //private IEnumerator CoStackAttack()
+    //{
+    //    isAttacking = true;
 
-            // 마우스 방향 보기 (필요하다면)
-            FaceMouseDirection();
+    //    // 1~4단계를 순차적으로 진행
+    //    for (int stage = 1; stage <= 4; stage++)
+    //    {
+    //        attackStack = stage;
+    //        switch (stage)
+    //        {
+    //            case 1:
+    //                currentState = PlayerState.Attack_L_01;
+    //                Debug.Log("평타 공격 스택 1단계 실행");
+    //                break;
+    //            case 2:
+    //                currentState = PlayerState.Attack_L_02;
+    //                Debug.Log("평타 공격 스택 2단계 실행");
+    //                break;
+    //            case 3:
+    //                currentState = PlayerState.Attack_L_03;
+    //                Debug.Log("평타 공격 스택 3단계 실행");
+    //                break;
+    //            case 4:
+    //                currentState = PlayerState.Attack_L_04;
+    //                Debug.Log("평타 공격 스택 4단계 실행");
+    //                break;
+    //        }
 
-            // Animator 파라미터 설정
-            if (animator != null)
-            {
-                animator.SetInteger("AttackStack", stage);
-                animator.SetBool("isAttacking", true);
-            }
+    //        // 마우스 방향 보기 (필요하다면)
+    //        FaceMouseDirection();
 
-            // 약간의 선딜(0.2초) 대기 
-            yield return new WaitForSeconds(0.2f);
+    //        // Animator 파라미터 설정
+    //        if (animator != null)
+    //        {
+    //            animator.SetInteger("AttackStack", stage);
+    //            animator.SetBool("isAttacking", true);
+    //        }
 
-            // 만약 현재가 4단계라면 바로 종료
-            if (stage == 4)
-            {
-                // 4단계 애니메이션이 끝나면 즉시 Idle로 돌아가도록 처리
-                break;
-            }
+    //        // 약간의 선딜(0.2초) 대기 
+    //        yield return new WaitForSeconds(0.2f);
 
-        //    // 다음 단계로 넘어가기 위해 2초 동안 좌클릭을 기다림
-        //    float timer = 0f;
-        //    bool nextClick = false;
-        //    while (timer < comboInputTime)
-        //    {
-        //        timer += Time.deltaTime;
+    //        // 만약 현재가 4단계라면 바로 종료
+    //        if (stage == 4)
+    //        {
+    //            // 4단계 애니메이션이 끝나면 즉시 Idle로 돌아가도록 처리
+    //            break;
+    //        }
 
-        //        // 이동/대쉬가 발생하면 콤보 끊기
-        //        if (moveInput.magnitude > 0.01f || isDashing)
-        //        {
-        //            ResetAttackStack();
-        //            yield break;
-        //        }
 
-        //        // 마우스 좌클릭 감지
-        //        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-        //        {
-        //            nextClick = true;
-        //            break;
-        //        }
-        //        yield return null;
-        //    }
+    //    }
 
-        //    // 만약 2초 안에 좌클릭이 없었다면 콤보 끊기
-        //    if (!nextClick)
-        //    {
-        //        ResetAttackStack();
-        //        yield break;
-        //    }
+    //    // 4단계까지 완료했거나 루프가 끝났으므로 종료
+    //    ResetAttackStack();
+    //}
 
-        //    // 좌클릭이 있었다면 for 루프 다음 단계로 넘어감
-        }
+    //private void ResetAttackStack()
+    //{
+    //    attackStack = 0;
+    //    isAttacking = false;
+    //    currentState = PlayerState.Idle;
+    //    canStartupCancel = true;
+    //    Debug.Log("평타 공격 스택 초기화 → Idle 상태로 복귀");
 
-        // 4단계까지 완료했거나 루프가 끝났으므로 종료
-        ResetAttackStack();
-    }
-
-    private void ResetAttackStack()
-    {
-        attackStack = 0;
-        isAttacking = false;
-        currentState = PlayerState.Idle;
-        canStartupCancel = true;
-        Debug.Log("평타 공격 스택 초기화 → Idle 상태로 복귀");
-
-        if (animator != null)
-        {
-            animator.SetInteger("AttackStack", 0);
-            animator.SetBool("isAttacking", false);
-        }
-    }
+    //    if (animator != null)
+    //    {
+    //        animator.SetInteger("AttackStack", 0);
+    //        animator.SetBool("isAttacking", false);
+    //    }
+    //}
 
     // 특수 공격
     public void HandleSpecialAttack()
     {
-        FaceMouseDirection();
-        Debug.Log("특수 공격 호출됨");
-        if (animator != null)
+        if (currentState != WhitePlayerState.Death)
         {
-            animator.SetTrigger("SpecialAttack");
+            if (nextState < WhitePlayerState.Skill)
+            {
+
+                nextState = WhitePlayerState.Skill;
+            }
+
         }
     }
 
     // 궁극기 공격 
     public void HandleUltimateAttack()
     {
-        FaceMouseDirection();
-        Debug.Log("궁극기 공격 호출됨");
-        if (animator != null)
+        if (currentState != WhitePlayerState.Death)
         {
-            animator.SetTrigger("UltimateAttack");
+            if (nextState < WhitePlayerState.Ultimate)
+            {
+
+                nextState = WhitePlayerState.Ultimate;
+            }
         }
     }
 
@@ -334,18 +336,39 @@ public class WhitePlayerController : ParentPlayerController
     // 가드/패링 처리
     public void HandleGuard()
     {
-        Debug.Log("가드 호출됨");
-        
+        if (currentState != WhitePlayerState.Death)
+        {
+            if (nextState < WhitePlayerState.Guard)
+            {
+
+                nextState = WhitePlayerState.Guard;
+            }
+        }
+
     }
 
     public void HandleParry()
     {
-        Debug.Log("패링 호출됨");
+        if (currentState != WhitePlayerState.Death)
+        {
+            if (nextState < WhitePlayerState.Parry)
+            {
+
+                nextState = WhitePlayerState.Parry;
+            }
+        }
     }
 
     public void OnCounterAttackEvent()
     {
-        Debug.Log("발도(반격) 호출됨, 데미지: " + counterDamage);
+        if (currentState != WhitePlayerState.Death)
+        {
+            if (nextState < WhitePlayerState.Counter)
+            {
+
+                nextState = WhitePlayerState.Counter;
+            }
+        }
     }
 
     // 피격 및 사망 처리
@@ -353,37 +376,37 @@ public class WhitePlayerController : ParentPlayerController
     {
         int intDamage = Mathf.RoundToInt(damage);
         // intDamage를 사용한 로직을 구현합니다.
-        
+
         currentHealth -= intDamage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         Debug.Log("플레이어 체력: " + currentHealth);
 
-        if (currentHealth <= 0 && currentState != PlayerState.Death)
+        if (currentHealth <= 0 && currentState != WhitePlayerState.Death)
         {
             Die();
         }
         else
         {
-            StartCoroutine(CoHitReaction());
+            //StartCoroutine(CoHitReaction());
         }
     }
 
 
-    private IEnumerator CoHitReaction()
-    {
-        currentState = PlayerState.Hit;
-        if (animator != null)
-            animator.SetBool("isHit", true);
-        yield return new WaitForSeconds(0.5f);
-        if (animator != null)
-            animator.SetBool("isHit", false);
-        if (currentState != PlayerState.Death)
-            currentState = PlayerState.Idle;
-    }
+    //private IEnumerator CoHitReaction()
+    //{
+    //    currentState = WhitePlayerState.Hit;
+    //    if (animator != null)
+    //        animator.SetBool("isHit", true);
+    //    yield return new WaitForSeconds(0.5f);
+    //    if (animator != null)
+    //        animator.SetBool("isHit", false);
+    //    if (currentState != WhitePlayerState.Death)
+    //        currentState = WhitePlayerState.Idle;
+    //}
 
     private void Die()
     {
-        currentState = PlayerState.Death;
+        currentState = WhitePlayerState.Death;
         Debug.Log("플레이어 사망");
         if (animator != null)
             animator.SetBool("isDead", true);
@@ -418,5 +441,5 @@ public class WhitePlayerController : ParentPlayerController
         // 씬 전환 후 초기화 처리
     }
 
-   
+
 }
