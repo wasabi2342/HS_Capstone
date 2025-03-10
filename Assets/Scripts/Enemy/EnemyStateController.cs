@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.AI;
 using Photon.Pun;
 using System.Collections;
+using System.Linq;
+using Unity.Behavior;
 
 public class EnemyStateController : MonoBehaviourPun, IPunObservable
 {
@@ -14,15 +16,25 @@ public class EnemyStateController : MonoBehaviourPun, IPunObservable
     private Vector3 spawnPoint;
     private PhotonView photonView;
     public GameObject attackBox;
+    private BehaviorGraphAgent behaviorAgent;
 
     public bool isChasing = false;
     public bool isReturning = false;
     public bool isDying = false;
 
-    void Awake()
+    public void Setup(Transform target, GameObject wayPoints)
     {
+        this.player = target;
+        behaviorAgent = GetComponent<BehaviorGraphAgent>();
         photonView = GetComponent<PhotonView>();
         agent = GetComponent<NavMeshAgent>();
+        
+        behaviorAgent.SetVariableValue("PatrolPoints", wayPoints);
+        behaviorAgent.SetVariableValue("Player", target);
+    }
+    void Awake()
+    {
+
     }
 
     void Start()
