@@ -8,6 +8,7 @@ public class WhitePlayer_Idle : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         whitePlayerController = animator.GetComponent<WhitePlayerController>();
+        whitePlayerController.currentState = WhitePlayerState.Idle;
     }
 
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
