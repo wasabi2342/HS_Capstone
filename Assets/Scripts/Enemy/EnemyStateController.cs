@@ -11,93 +11,57 @@ public class EnemyStateController : MonoBehaviourPun, IPunObservable
     public EnemyStatus baseStatus;
     [HideInInspector]
     public EnemyStatus status;
-    private Transform player;
     private NavMeshAgent agent;
-    private Vector3 spawnPoint;
     private PhotonView photonView;
     public GameObject attackBox;
     private BehaviorGraphAgent behaviorAgent;
 
-    public bool isChasing = false;
-    public bool isReturning = false;
+    private Vector3 spawnPoint;
+    private Transform player;
     public bool isDying = false;
-
-    public void Setup(Transform target, GameObject wayPoints)
-    {
-        this.player = target;
-        behaviorAgent = GetComponent<BehaviorGraphAgent>();
-        photonView = GetComponent<PhotonView>();
-        agent = GetComponent<NavMeshAgent>();
-        
-        behaviorAgent.SetVariableValue("PatrolPoints", wayPoints);
-        behaviorAgent.SetVariableValue("Player", target);
-    }
-    void Awake()
-    {
-
-    }
 
     void Start()
     {
         status = Instantiate(baseStatus);
+        agent = GetComponent<NavMeshAgent>();
         agent.speed = status.speed;
         agent.updateRotation = false;
         agent.updateUpAxis = false;
 
-        player = GameObject.FindWithTag("Player")?.transform;
-        attackBox.SetActive(false);
         spawnPoint = transform.position;
+        // 기타 HP, Photon 로직 등은 기존처럼
+    }
+
+    public void Setup(Transform player, GameObject[] wayPoints)
+    {
+        this.player = player;
+
+        // BehaviorGraphAgent 붙어있는지 확인
+        behaviorAgent = GetComponent<BehaviorGraphAgent>();
+        if (behaviorAgent != null)
+        {
+            behaviorAgent.SetVariableValue("PatrolPoints", wayPoints.ToList());
+            behaviorAgent.SetVariableValue("Player", player.gameObject);
+        }
     }
 
     void Update()
     {
+        // 마스터 클라이언트만 진행
         if (!PhotonNetwork.IsMasterClient) return;
-
+        // 이미 사망 처리 중이면 로직 중단
         if (isDying) return;
 
-        if (isChasing) agent.SetDestination(player.position);
-
-        if (isReturning)
+        // HP가 0 이하일 때 사망 처리
+        if (status.hp <= 0 && !isDying)
         {
-            agent.SetDestination(spawnPoint);
-
-            if (Vector3.Distance(transform.position, spawnPoint) < 0.5f)
-            {
-                isReturning = false;
-                agent.isStopped = true;
-                photonView.RPC("SyncState", RpcTarget.All, false, false);
-            }
-        }
-
-        if (status.hp <= 0 && !isDying) Die();
-    }
-
-    public void DetectPlayer()
-    {
-        if (isReturning) return; // 복귀 중이면 감지 X
-
-        isChasing = true;
-        agent.isStopped = false;
-        photonView.RPC("SyncState", RpcTarget.All, true, false);
-        Debug.Log("[추적] 플레이어 감지 - 추적 시작!");
-    }
-
-    public void LostPlayer()
-    {
-        if (isChasing)
-        {
-            isChasing = false;
-            isReturning = true;
-            agent.SetDestination(spawnPoint);
-            photonView.RPC("SyncState", RpcTarget.All, false, true);
-            Debug.Log("[해제] 플레이어 놓침 - 복귀 중...");
+            Die();
         }
     }
 
     public void TakeDamage(int damage)
     {
-        if (isDying) return; // 이미 죽은 상태면 처리 X
-
+        if (isDying) return;
         photonView.RPC("SyncDamage", RpcTarget.All, damage);
     }
 
@@ -115,38 +79,32 @@ public class EnemyStateController : MonoBehaviourPun, IPunObservable
     {
         isDying = true;
         agent.isStopped = true;
-        attackBox.SetActive(false);
-        photonView.RPC("SyncDeath", RpcTarget.All);
-        Destroy(gameObject, 2f);
-    }
 
-    [PunRPC]
-    void SyncState(bool chasing, bool returning)
-    {
-        isChasing = chasing;
-        isReturning = returning;
+        photonView.RPC("SyncDeath", RpcTarget.All);
+
+        // 2초 후 오브젝트 제거
+        Destroy(gameObject, 2f);
     }
 
     [PunRPC]
     void SyncDeath()
     {
         isDying = true;
-        attackBox.SetActive(false);
+
     }
 
+    // PUN 동기화
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
-            stream.SendNext(isChasing);
-            stream.SendNext(isReturning);
+            // 여기서는 필요 시 위치/회전/상태 등을 보낼 수 있음
             stream.SendNext(transform.position);
         }
         else
         {
-            isChasing = (bool)stream.ReceiveNext();
-            isReturning = (bool)stream.ReceiveNext();
             transform.position = (Vector3)stream.ReceiveNext();
         }
     }
+
 }

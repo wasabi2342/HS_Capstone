@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class EnemyProjectile : MonoBehaviour
 {
-    private MovementRigidbody2D movement;
+    private MovementRigidbody movement;
     private Transform target;
     private float damage;
 
     public void Setup(Transform target, float damage)
     {
-        movement = GetComponent<MovementRigidbody2D>();
+        movement = GetComponent<MovementRigidbody>();
         this.target = target;
         this.damage = damage;
     }
