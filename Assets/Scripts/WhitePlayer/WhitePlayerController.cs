@@ -252,7 +252,10 @@ public class WhitePlayerController : ParentPlayerController
 
     public float MoveFront1 = 1.0f;
     public float MoveFront2 = 0.7f;
-    public Collider attackCollider;
+    public WhitePlayerAttackZone Attack1Collider;
+    public WhitePlayerAttackZone Attack2Collider;
+    public WhitePlayerAttackZone Attack3Collider;
+    public WhitePlayerAttackZone Attack4Collider;
     // 공격 애니메이션 이벤트용 스텁 (WhitePlayerController_AttackStack에서 호출) 
 
     public void OnAttack1PreAttckStart()
@@ -272,33 +275,30 @@ public class WhitePlayerController : ParentPlayerController
     public void OnAttack1DamageStart()
     {
 
-        if (attackCollider != null)
-            attackCollider.enabled = true;
+        if (Attack1Collider != null)
+        {
+            Attack1Collider.Damage = 10f;
+            Attack1Collider.EnableAttackCollider(true);
+        }
         Debug.Log("Attack1: 데미지 시작");
     }
-    public void OnAttack1DamageEnd()
-    {
-        if (attackCollider != null)
-            attackCollider.enabled = false;
-        Debug.Log("Attack1 : 데미지 종료");
-    }
+    
 
     public void OnLastAttack1Start()
     {
+        if (Attack1Collider != null)
+        {
+            Attack1Collider.EnableAttackCollider(false);
+        }
         animator.SetBool("FreeState", true);
         Debug.Log("Attack1 : 후딜 시작");
     }
 
-    public void OnLastAttack1End()
-    {
-        animator.SetBool("FreeState", false);
-        attackStack = 0;
-        Debug.Log("Attack1: 후딜 종료");
-    }
 
 
     public void OnAttack1AllowNextInput()
     {
+        animator.SetBool("FreeState", false);
         animator.SetBool("FreeState", true);
         Debug.Log("Attack1: 자유상태");
     }
@@ -330,15 +330,20 @@ public class WhitePlayerController : ParentPlayerController
     }
     public void OnAttack2DamageStart()
     {
-        if (attackCollider != null)
-            attackCollider.enabled = true;
+        if (Attack2Collider != null)
+        {
+            Attack2Collider.Damage = 15f;
+            Attack2Collider.EnableAttackCollider(true);
+        }
         Debug.Log("Attack2: 데미지 시작");
     }
 
     public void OnAttack2DamageEnd()
     {
-        if (attackCollider != null)
-            attackCollider.enabled = false;
+        if (Attack2Collider != null)
+        {
+            Attack2Collider.EnableAttackCollider(false);
+        }
         Debug.Log("Attack2: 데미지 종료");
     }
 
@@ -429,10 +434,10 @@ public class WhitePlayerController : ParentPlayerController
     //{
     //    currentState = WhitePlayerState.Hit;
     //    if (animator != null)
-    //        animator.SetBool("isHit", true);
+    //        animator.SetBool("hit", true);
     //    yield return new WaitForSeconds(0.5f);
     //    if (animator != null)
-    //        animator.SetBool("isHit", false);
+    //        animator.SetBool("hit", false);
     //    if (currentState != WhitePlayerState.Death)
     //        currentState = WhitePlayerState.Idle;
     //}
@@ -442,7 +447,7 @@ public class WhitePlayerController : ParentPlayerController
         currentState = WhitePlayerState.Death;
         Debug.Log("플레이어 사망");
         if (animator != null)
-            animator.SetBool("isDead", true);
+            animator.SetBool("die", true);
     }
 
     // 기타 유틸리티

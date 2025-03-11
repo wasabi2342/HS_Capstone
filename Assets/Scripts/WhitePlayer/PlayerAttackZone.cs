@@ -26,7 +26,7 @@ public class WhitePlayerAttackZone : MonoBehaviour
         }
     }
 
-    // 공격 콜라이더를 켜거나 끄는 메서드 (WhitePlayerController 등에서 호출)
+    // 공격 콜라이더를 켜거나 끄는 메서드
     public void EnableAttackCollider(bool enable)
     {
         if (sphereCollider != null)
