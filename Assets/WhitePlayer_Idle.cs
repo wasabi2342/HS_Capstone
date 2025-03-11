@@ -9,6 +9,11 @@ public class WhitePlayer_Idle : StateMachineBehaviour
     {
         whitePlayerController = animator.GetComponent<WhitePlayerController>();
         whitePlayerController.currentState = WhitePlayerState.Idle;
+        animator.SetBool("Pre-Attack", false);
+        animator.SetBool("Pre-Input", false);
+        animator.SetBool("CancleState", false);
+        animator.SetBool("FreeState", false);
+
     }
 
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -52,6 +57,7 @@ public class WhitePlayer_Idle : StateMachineBehaviour
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         whitePlayerController.nextState = WhitePlayerState.Idle;
+        animator.SetBool("Pre-Attack", false);
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

@@ -16,7 +16,7 @@ public class WhitePlayerController_AttackStack : MonoBehaviour
     // Attack_1 관련 애니메이션 이벤트 함수들
     public void OnAttack1StartupEnd()
     {
-        whitePlayerController.OnAttack1StartupEnd();
+        //whitePlayerController.OnAttack1StartupEnd();
     }
 
     public void OnAttack1DamageStart()
@@ -36,7 +36,7 @@ public class WhitePlayerController_AttackStack : MonoBehaviour
 
     public void OnAttack1RecoveryEnd()
     {
-        whitePlayerController.OnAttack1RecoveryEnd();
+        //whitePlayerController.OnAttack1RecoveryEnd();
     }
 
     public void OnAttack1AnimationEnd()
@@ -47,12 +47,12 @@ public class WhitePlayerController_AttackStack : MonoBehaviour
     // Attack_2 관련 애니메이션 이벤트 함수들
     public void OnAttack2StartupFrame1End()
     {
-        whitePlayerController.OnAttack2StartupFrame1End();
+        //whitePlayerController.OnAttack2StartupFrame1End();
     }
 
     public void OnAttack2StartupFrame2End()
     {
-        whitePlayerController.OnAttack2StartupFrame2End();
+        //whitePlayerController.OnAttack2StartupFrame2End();
     }
 
     public void OnAttack2DamageStart()
@@ -72,7 +72,7 @@ public class WhitePlayerController_AttackStack : MonoBehaviour
 
     public void OnAttack2RecoveryEnd()
     {
-        whitePlayerController.OnAttack2RecoveryEnd();
+        //whitePlayerController.OnAttack2RecoveryEnd();
     }
 
     public void OnAttack2AnimationEnd()

@@ -51,6 +51,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
         if (PhotonNetwork.InRoom)
         {
+            if (!photonView.IsMine) return;
+
             if (PhotonNetwork.IsMasterClient)
             {
                 // Master Client는 직접 체력 계산
@@ -79,26 +81,6 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
             // 체력바 UI 업데이트
             OnHealthChanged?.Invoke(currentHealth / maxHealth);
         }
-
-        //if (PhotonNetwork.IsMasterClient)
-        //{
-        //    // Master Client는 직접 체력 계산
-        //    currentHealth -= damage;
-        //    currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-
-        //    // 체력바 UI 업데이트
-        //    OnHealthChanged?.Invoke(currentHealth / maxHealth);
-
-        //    // 모든 클라이언트에 체력 동기화
-        //    photonView.RPC("UpdateHP", RpcTarget.Others, currentHealth);
-        //}
-        //else
-        //{
-        //    // Master Client가 아니라면, 피해량을 Master에 전송
-        //    photonView.RPC("DamageToMaster", RpcTarget.MasterClient, damage);
-        //}
-
-
     }
 
 

@@ -84,6 +84,7 @@ public class WhitePlayerController : ParentPlayerController
             if (nextState < WhitePlayerState.Run)
             {
                 nextState = WhitePlayerState.Run;
+                animator.SetBool("Pre-Input", true);
             }
         }
     }
@@ -204,91 +205,19 @@ public class WhitePlayerController : ParentPlayerController
         {
             if (currentState == WhitePlayerState.Parry)
             {
-                nextState = WhitePlayerState.Counter;
+                animator.SetTrigger("basicattack");
+                currentState = WhitePlayerState.Counter;
             }
-
             else if (nextState < WhitePlayerState.BasicAttack)
             {
                 nextState = WhitePlayerState.BasicAttack;
             }
-
+            if(currentState == WhitePlayerState.BasicAttack)
+            {
+                animator.SetBool("Pre-Input", true);
+            }
         }
     }
-
-
-    // 1~4단계 콤보를 순차적으로 실행하는 코루틴
-    // 각 단계가 끝난 후 2초 내에 마우스 좌클릭이 없으면 Idle로 복귀
-    // 4단계가 끝나면 즉시 Idle로 복귀
-
-    //private IEnumerator CoStackAttack()
-    //{
-    //    isAttacking = true;
-
-    //    // 1~4단계를 순차적으로 진행
-    //    for (int stage = 1; stage <= 4; stage++)
-    //    {
-    //        attackStack = stage;
-    //        switch (stage)
-    //        {
-    //            case 1:
-    //                currentState = PlayerState.Attack_L_01;
-    //                Debug.Log("평타 공격 스택 1단계 실행");
-    //                break;
-    //            case 2:
-    //                currentState = PlayerState.Attack_L_02;
-    //                Debug.Log("평타 공격 스택 2단계 실행");
-    //                break;
-    //            case 3:
-    //                currentState = PlayerState.Attack_L_03;
-    //                Debug.Log("평타 공격 스택 3단계 실행");
-    //                break;
-    //            case 4:
-    //                currentState = PlayerState.Attack_L_04;
-    //                Debug.Log("평타 공격 스택 4단계 실행");
-    //                break;
-    //        }
-
-    //        // 마우스 방향 보기 (필요하다면)
-    //        FaceMouseDirection();
-
-    //        // Animator 파라미터 설정
-    //        if (animator != null)
-    //        {
-    //            animator.SetInteger("AttackStack", stage);
-    //            animator.SetBool("isAttacking", true);
-    //        }
-
-    //        // 약간의 선딜(0.2초) 대기 
-    //        yield return new WaitForSeconds(0.2f);
-
-    //        // 만약 현재가 4단계라면 바로 종료
-    //        if (stage == 4)
-    //        {
-    //            // 4단계 애니메이션이 끝나면 즉시 Idle로 돌아가도록 처리
-    //            break;
-    //        }
-
-
-    //    }
-
-    //    // 4단계까지 완료했거나 루프가 끝났으므로 종료
-    //    ResetAttackStack();
-    //}
-
-    //private void ResetAttackStack()
-    //{
-    //    attackStack = 0;
-    //    isAttacking = false;
-    //    currentState = PlayerState.Idle;
-    //    canStartupCancel = true;
-    //    Debug.Log("평타 공격 스택 초기화 → Idle 상태로 복귀");
-
-    //    if (animator != null)
-    //    {
-    //        animator.SetInteger("AttackStack", 0);
-    //        animator.SetBool("isAttacking", false);
-    //    }
-    //}
 
     // 특수 공격
     public void HandleSpecialAttack()
@@ -299,6 +228,8 @@ public class WhitePlayerController : ParentPlayerController
             {
 
                 nextState = WhitePlayerState.Skill;
+                animator.SetBool("Pre-Attack", true);
+                animator.SetBool("Pre-Input", true);
             }
 
         }
@@ -313,6 +244,8 @@ public class WhitePlayerController : ParentPlayerController
             {
 
                 nextState = WhitePlayerState.Ultimate;
+                animator.SetBool("Pre-Attack", true);
+                animator.SetBool("Pre-Input", true);
             }
         }
     }
@@ -325,15 +258,13 @@ public class WhitePlayerController : ParentPlayerController
     public void OnAttack1PreAttckStart()
     {
 
-        animator.SetBool("Pre-Attack", true);
+        //animator.SetBool("Pre-Attack", true);
         animator.SetBool("CancleState", true);
         Debug.Log("Attack1: 선딜 시작");
     }
 
     public void OnAttack1PreAttckEnd()
     {
-
-        animator.SetBool("Pre-Attack", false);
         animator.SetBool("CancleState", false);
         transform.position += new Vector3(MoveFront1, 0, 0);
         Debug.Log("Attack1: 선딜 종료");
@@ -354,13 +285,14 @@ public class WhitePlayerController : ParentPlayerController
 
     public void OnLastAttack1Start()
     {
-        animator.SetBool("CancleState", true);
+        animator.SetBool("FreeState", true);
         Debug.Log("Attack1 : 후딜 시작");
     }
 
     public void OnLastAttack1End()
     {
-        animator.SetBool("CancleState", false);
+        animator.SetBool("FreeState", false);
+        attackStack = 0;
         Debug.Log("Attack1: 후딜 종료");
     }
 
@@ -370,21 +302,23 @@ public class WhitePlayerController : ParentPlayerController
         animator.SetBool("FreeState", true);
         Debug.Log("Attack1: 자유상태");
     }
-    
-    public void OnAttack1AnimationEnd() {
+
+    public void OnAttack1AnimationEnd()
+    {
         attackStack = 0;
         animator.SetBool("Pre-Attack", false);
         animator.SetBool("FreeState", false);
         animator.SetBool("CancleState", false);
-        Debug.Log("Attack1: 애니메이션 종료"); }
-   
+        Debug.Log("Attack1: 애니메이션 종료");
+    }
 
-    public void OnAttack2PreAttackStart() {
 
-        animator.SetBool("Pre-Attack", true);
+    public void OnAttack2PreAttackStart()
+    {
         animator.SetBool("CancleState", true);
         transform.position += new Vector3(MoveFront2, 0, 0);
-        Debug.Log("Attack2: 선딜 시작"); }
+        Debug.Log("Attack2: 선딜 시작");
+    }
 
     public void OnAttack2PreAttckEnd()
     {
@@ -400,8 +334,9 @@ public class WhitePlayerController : ParentPlayerController
             attackCollider.enabled = true;
         Debug.Log("Attack2: 데미지 시작");
     }
-        
-    public void OnAttack2DamageEnd() {
+
+    public void OnAttack2DamageEnd()
+    {
         if (attackCollider != null)
             attackCollider.enabled = false;
         Debug.Log("Attack2: 데미지 종료");
@@ -419,16 +354,25 @@ public class WhitePlayerController : ParentPlayerController
         Debug.Log("Attack2: 후딜 종료");
     }
 
-    public void OnAttack2AllowNextInput() {
+    public void OnAttack2AllowNextInput()
+    {
         animator.SetBool("FreeState", true);
-        Debug.Log("Attack2: 자유 상태"); }
-    
-    public void OnAttack2AnimationEnd() {
+        Debug.Log("Attack2: 자유 상태");
+    }
+
+    public void OnAttack2AnimationEnd()
+    {
         attackStack = 0;
         animator.SetBool("Pre-Attack", false);
         animator.SetBool("FreeState", false);
         animator.SetBool("CancleState", false);
-        Debug.Log("Attack2: 애니메이션 종료"); }
+        Debug.Log("Attack2: 애니메이션 종료");
+    }
+
+    public void InitAttackStak()
+    {
+        attackStack = 0;
+    }
 
     // 가드/패링 처리
     public void HandleGuard()
@@ -439,43 +383,26 @@ public class WhitePlayerController : ParentPlayerController
             {
 
                 nextState = WhitePlayerState.Guard;
+                animator.SetBool("Pre-Attack", true);
+                animator.SetBool("Pre-Input", true);
+
             }
         }
 
-    }
-
-    public void HandleParry()
-    {
-        if (currentState != WhitePlayerState.Death)
-        {
-            if (nextState < WhitePlayerState.Parry)
-            {
-
-                nextState = WhitePlayerState.Parry;
-            }
-        }
-    }
-
-    public void OnCounterAttackEvent()
-    {
-        if (currentState != WhitePlayerState.Death)
-        {
-            if (nextState < WhitePlayerState.Counter)
-            {
-
-                nextState = WhitePlayerState.Counter;
-            }
-        }
     }
 
     // 피격 및 사망 처리
     public override void TakeDamage(float damage)
     {
-        int intDamage = Mathf.RoundToInt(damage);
-        // intDamage를 사용한 로직을 구현합니다.
+        if (currentState == WhitePlayerState.Guard)
+        {
+            animator.SetTrigger("parry");
+            currentState = WhitePlayerState.Parry;
+            return;
+        }
 
-        currentHealth -= intDamage;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        base.TakeDamage(damage);
+
         Debug.Log("플레이어 체력: " + currentHealth);
 
         if (currentHealth <= 0 && currentState != WhitePlayerState.Death)
@@ -488,6 +415,15 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
+    public override void DamageToMaster(float damage)
+    {
+        base.DamageToMaster(damage);
+    }
+
+    public override void UpdateHP(float hp)
+    {
+        base.UpdateHP(hp);
+    }
 
     //private IEnumerator CoHitReaction()
     //{
@@ -537,6 +473,4 @@ public class WhitePlayerController : ParentPlayerController
     {
         // 씬 전환 후 초기화 처리
     }
-
-
 }
