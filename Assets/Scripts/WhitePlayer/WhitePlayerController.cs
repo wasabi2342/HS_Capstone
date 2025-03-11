@@ -55,6 +55,8 @@ public class WhitePlayerController : ParentPlayerController
     protected override void Awake()
 
     {
+        AttackCollider = GetComponentInChildren<WhitePlayerAttackZone>();
+        
         base.Awake();
         animator = GetComponent<Animator>();
         if (animator == null)
@@ -250,129 +252,81 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
-    public float MoveFront1 = 1.0f;
-    public float MoveFront2 = 0.7f;
-    public WhitePlayerAttackZone Attack1Collider;
-    public WhitePlayerAttackZone Attack2Collider;
-    public WhitePlayerAttackZone Attack3Collider;
-    public WhitePlayerAttackZone Attack4Collider;
+   
+    public WhitePlayerAttackZone AttackCollider;
+    
     // 공격 애니메이션 이벤트용 스텁 (WhitePlayerController_AttackStack에서 호출) 
 
-    public void OnAttack1PreAttckStart()
+    public void OnAttackPreAttckStart()
     {
 
-        //animator.SetBool("Pre-Attack", true);
+        
         animator.SetBool("CancleState", true);
-        Debug.Log("Attack1: 선딜 시작");
+        Debug.Log("선딜 시작");
     }
 
-    public void OnAttack1PreAttckEnd()
+    public void OnAttackPreAttckEnd()
     {
         animator.SetBool("CancleState", false);
-        transform.position += new Vector3(MoveFront1, 0, 0);
-        Debug.Log("Attack1: 선딜 종료");
+    
+        Debug.Log("선딜 종료");
+    }
+
+    public void OnMoveFront(float value)
+    {
+        transform.Translate(new Vector3(value, 0, 0));
     }
     public void OnAttack1DamageStart()
     {
 
-        if (Attack1Collider != null)
+        if (AttackCollider != null)
         {
-            Attack1Collider.Damage = 10f;
-            Attack1Collider.EnableAttackCollider(true);
+            AttackCollider.Damage = 10f;
+            AttackCollider.EnableAttackCollider(true);
         }
         Debug.Log("Attack1: 데미지 시작");
     }
     
 
-    public void OnLastAttack1Start()
+    public void OnLastAttackStart()
     {
-        if (Attack1Collider != null)
+        if (AttackCollider != null)
         {
-            Attack1Collider.EnableAttackCollider(false);
+            AttackCollider.EnableAttackCollider(false);
         }
         animator.SetBool("FreeState", true);
-        Debug.Log("Attack1 : 후딜 시작");
+        Debug.Log("후딜 시작");
     }
 
 
 
-    public void OnAttack1AllowNextInput()
+    public void OnAttackAllowNextInput()
     {
         animator.SetBool("FreeState", false);
         animator.SetBool("FreeState", true);
-        Debug.Log("Attack1: 자유상태");
+        Debug.Log("자유상태");
     }
 
-    public void OnAttack1AnimationEnd()
+    public void OnAttackAnimationEnd()
     {
         attackStack = 0;
         animator.SetBool("Pre-Attack", false);
         animator.SetBool("FreeState", false);
         animator.SetBool("CancleState", false);
-        Debug.Log("Attack1: 애니메이션 종료");
+        Debug.Log(" 애니메이션 종료");
     }
 
-
-    public void OnAttack2PreAttackStart()
-    {
-        animator.SetBool("CancleState", true);
-        transform.position += new Vector3(MoveFront2, 0, 0);
-        Debug.Log("Attack2: 선딜 시작");
-    }
-
-    public void OnAttack2PreAttckEnd()
-    {
-
-        animator.SetBool("Pre-Attack", false);
-        animator.SetBool("CancleState", false);
-        transform.position += new Vector3(MoveFront2, 0, 0);
-        Debug.Log("Attack2: 선딜 종료");
-    }
+    
     public void OnAttack2DamageStart()
     {
-        if (Attack2Collider != null)
+        if (AttackCollider != null)
         {
-            Attack2Collider.Damage = 15f;
-            Attack2Collider.EnableAttackCollider(true);
+            AttackCollider.Damage = 15f;
+            AttackCollider.EnableAttackCollider(true);
         }
         Debug.Log("Attack2: 데미지 시작");
     }
 
-    public void OnAttack2DamageEnd()
-    {
-        if (Attack2Collider != null)
-        {
-            Attack2Collider.EnableAttackCollider(false);
-        }
-        Debug.Log("Attack2: 데미지 종료");
-    }
-
-    public void OnLastAttack2Start()
-    {
-        animator.SetBool("CancleState", true);
-        Debug.Log("Attack2 : 후딜 시작");
-    }
-
-    public void OnLastAttack2End()
-    {
-        animator.SetBool("CancleState", false);
-        Debug.Log("Attack2: 후딜 종료");
-    }
-
-    public void OnAttack2AllowNextInput()
-    {
-        animator.SetBool("FreeState", true);
-        Debug.Log("Attack2: 자유 상태");
-    }
-
-    public void OnAttack2AnimationEnd()
-    {
-        attackStack = 0;
-        animator.SetBool("Pre-Attack", false);
-        animator.SetBool("FreeState", false);
-        animator.SetBool("CancleState", false);
-        Debug.Log("Attack2: 애니메이션 종료");
-    }
 
     public void InitAttackStak()
     {

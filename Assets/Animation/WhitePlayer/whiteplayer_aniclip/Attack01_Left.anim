@@ -131,17 +131,24 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0
-    functionName: OnAttack1PreAttckStart
+    functionName: OnAttackPreAttckStart
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 0.083333336
-    functionName: OnAttack1PreAttckEnd
+    functionName: OnAttackPreAttckEnd
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.083333336
+    functionName: OnMoveFront
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: -10
     intParameter: 0
     messageOptions: 0
   - time: 0.16666667
@@ -152,21 +159,21 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 0.33333334
-    functionName: OnLastAttack1Start
+    functionName: OnLastAttackStart
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 0.5
-    functionName: OnAttack1AllowNextInput
+    functionName: OnAttackAllowNextInput
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 1.6666666
-    functionName: OnAttack1AnimationEnd
+    functionName: OnAttackAnimationEnd
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
