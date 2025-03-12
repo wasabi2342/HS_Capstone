@@ -100,6 +100,7 @@ public class WhitePlayerController : ParentPlayerController
         if (nextState < WhitePlayerState.Run)
         {
             nextState = WhitePlayerState.Run;
+            animator.SetBool("Pre-Input", true);
         }
         moveInput = input;
         isMoveInput = (Mathf.Abs(moveInput.x) > 0.01f || Mathf.Abs(moveInput.y) > 0.01f);
