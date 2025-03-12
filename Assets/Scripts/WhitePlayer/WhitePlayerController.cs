@@ -294,7 +294,7 @@ public class WhitePlayerController : ParentPlayerController
         {
             AttackCollider.EnableAttackCollider(false);
         }
-        animator.SetBool("FreeState", true);
+        animator.SetBool("CancleState", true);
         Debug.Log("후딜 시작");
     }
 
@@ -302,7 +302,6 @@ public class WhitePlayerController : ParentPlayerController
 
     public void OnAttackAllowNextInput()
     {
-        animator.SetBool("FreeState", false);
         animator.SetBool("FreeState", true);
         Debug.Log("자유상태");
     }
