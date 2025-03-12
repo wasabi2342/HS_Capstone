@@ -1,9 +1,10 @@
+using Photon.Pun;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public class WhitePlayercontroller_event : MonoBehaviour
+public class WhitePlayercontroller_event : MonoBehaviourPun
 {
     private WhitePlayerController whitePlayerController;
 
@@ -19,6 +20,9 @@ public class WhitePlayercontroller_event : MonoBehaviour
 
     private void Start()
     {
+        if (!photonView.IsMine)
+            return;
+
         InputManager.Instance.PlayerInput.actions["Move"].performed += ctx => OnMove(ctx);
         InputManager.Instance.PlayerInput.actions["Move"].canceled += ctx => OnMove(ctx);
         InputManager.Instance.PlayerInput.actions["Interaction"].performed += ctx => OnInteraction(ctx);
@@ -28,6 +32,7 @@ public class WhitePlayercontroller_event : MonoBehaviour
         InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed += ctx => OnMouse_R(ctx);
         InputManager.Instance.PlayerInput.actions["SkillAttack"].performed += ctx => OnKeyboard_Shift_L(ctx);
         InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed += ctx => OnKeyboard_R(ctx);
+
     }
     private void Awake()
     {
@@ -50,7 +55,7 @@ public class WhitePlayercontroller_event : MonoBehaviour
             }
             else
             {
-                moveInput = new Vector2(context.ReadValue<Vector2>().x , 0);
+                moveInput = new Vector2(context.ReadValue<Vector2>().x, 0);
             }
             whitePlayerController.SetMoveInput(moveInput);
             OnMoveEvent?.Invoke(context);

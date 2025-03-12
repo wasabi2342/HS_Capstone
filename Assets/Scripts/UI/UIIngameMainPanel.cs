@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public enum UIIcon
@@ -24,6 +25,7 @@ public class UIIngameMainPanel : UIBase
 
     private void Start()
     {
+        InputManager.Instance.PlayerInput.actions["OpenBlessingInfo"].performed += ctx => OpenBlessingInfoPanel(ctx);
         Init();
     }
 
@@ -33,6 +35,11 @@ public class UIIngameMainPanel : UIBase
         {
 
         }
+    }
+
+    public void OpenBlessingInfoPanel(InputAction.CallbackContext ctx)
+    {
+        UIManager.Instance.OpenPopupPanel<UISkillInfoPanel>();
     }
 
     public void UpdateIconOutline(UIIcon icon, Color color)

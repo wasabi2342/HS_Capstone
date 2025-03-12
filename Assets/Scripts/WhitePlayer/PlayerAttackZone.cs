@@ -14,6 +14,8 @@ public class WhitePlayerAttackZone : MonoBehaviour
     // SphereCollider 캐싱
     private SphereCollider sphereCollider;
 
+    public float Damage;
+
     private void Awake()
     {
         sphereCollider = GetComponent<SphereCollider>();
@@ -24,7 +26,7 @@ public class WhitePlayerAttackZone : MonoBehaviour
         }
     }
 
-    // 공격 콜라이더를 켜거나 끄는 메서드 (WhitePlayerController 등에서 호출)
+    // 공격 콜라이더를 켜거나 끄는 메서드
     public void EnableAttackCollider(bool enable)
     {
         if (sphereCollider != null)
@@ -35,13 +37,9 @@ public class WhitePlayerAttackZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        if(other.GetComponent<IDamageable>() != null)
         {
-            if (!enemiesInRange.Contains(other.gameObject))
-            {
-                enemiesInRange.Add(other.gameObject);
-                Debug.Log("[WhitePlayerAttackZone] 적 추가: " + other.gameObject.name);
-            }
+            other.GetComponent<IDamageable>().TakeDamage(Damage);
         }
     }
 
