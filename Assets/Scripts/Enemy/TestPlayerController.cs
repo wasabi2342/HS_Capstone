@@ -12,7 +12,7 @@ public class TestPlayerController : MonoBehaviour
     private void Update()
     {
         float x = Input.GetAxisRaw("Horizontal");
-        float y = Input.GetAxisRaw("Vertical");
-        movement.MoveTo(new Vector3(x,y,0));
+        float z = Input.GetAxisRaw("Vertical");
+        movement.MoveTo(new Vector3(x,0,z));
     }
 }

@@ -13,7 +13,7 @@ public class EnemySpawner : MonoBehaviour
 
     [Header("몬스터가 추적할 대상(플레이어 등)")]
     [SerializeField]
-    private Transform target;
+    private Transform player;
 
     [Header("스폰할 Plane 오브젝트(바닥)")]
     [SerializeField]
@@ -55,11 +55,11 @@ public class EnemySpawner : MonoBehaviour
             // 3) 몬스터 생성
             GameObject clone = Instantiate(enemyPrefab, spawnPos, Quaternion.identity, transform);
 
-            // 4) EnemyStateController에 순찰 경로와 타겟 할당
-            EnemyStateController controller = clone.GetComponent<EnemyStateController>();
-            if (controller != null)
+            // 4) EnemyFSM에 순찰 경로와 타겟 할당
+            EnemyFSM enemy = clone.GetComponent<EnemyFSM>();
+            if (enemy != null)
             {
-                controller.Setup(target, selectedWayPoints);
+                enemy.Setup(player, selectedWayPoints);
             }
         }
     }

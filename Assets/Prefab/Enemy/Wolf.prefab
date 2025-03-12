@@ -21,6 +21,8 @@ GameObject:
   - component: {fileID: 2239490575906896846}
   - component: {fileID: 3252309272379007435}
   - component: {fileID: 8098173556407214607}
+  - component: {fileID: 5764844275399662058}
+  - component: {fileID: 4042356980243273806}
   m_Layer: 7
   m_Name: Wolf
   m_TagString: Untagged
@@ -106,7 +108,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1765914048162278020}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79a5ab33010e09542bf64f158f825633, type: 3}
   m_Name: 
@@ -294,7 +296,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1765914048162278020}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4632038c3779d494bb634efe1245febb, type: 3}
   m_Name: 
@@ -341,7 +343,9 @@ MonoBehaviour:
           m_Value1: 7772059484163657506
         Name: PatrolPoints
         m_Value:
-        - {fileID: 2946616405457356635, guid: 838a6156744771445804ca722510623e, type: 3}
+        - {fileID: 0}
+        - {fileID: 0}
+        - {fileID: 0}
     - rid: 3652045730700067067
       type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -381,7 +385,7 @@ MonoBehaviour:
           m_Value0: 8605536285503238483
           m_Value1: 11663828418334206566
         Name: currentWeapon
-        m_Value: {fileID: 8573199937164764932}
+        m_Value: {fileID: 4042356980243273806}
 --- !u!114 &8098173556407214607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -394,6 +398,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7db4eb2700e63c49988a65883ffe46a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5764844275399662058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765914048162278020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84a8d18989a42f247b7cc5ec04da4013, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cooldowmTime: 2
+  damage: 10
+--- !u!114 &4042356980243273806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765914048162278020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8f0fa6ac2e5e73478d000251001de2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectilePrefab: {fileID: 260660037190534835, guid: 0be56e7ca8f84ea4ea7f818d2a954eaa, type: 3}
+  projectileSpawnPoint: {fileID: 4074404442851699024}
 --- !u!1 &6279863246960237712
 GameObject:
   m_ObjectHideFlags: 0
@@ -461,4 +493,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 0}
-  projectileSpawnPoint: {fileID: 0}
+  projectileSpawnPoint: {fileID: 4074404442851699024}
