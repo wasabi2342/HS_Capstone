@@ -82,7 +82,7 @@ SphereCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
@@ -524,6 +524,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9d39de0b-127b-4e68-9ecb-2590b6b6a589
     m_ActionName: 'UI/BlessingInfo[/Keyboard/tab]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: eb8b3e0a-17b1-42bc-9ae8-fa32cdeaa4d3
+    m_ActionName: 'Player/StageEnterConfirm[/Keyboard/tab]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0f144ccd-6308-4337-b2d0-3e3c9f9067f3
+    m_ActionName: Player/OpenBlessingInfo
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -657,6 +665,45 @@ MonoBehaviour:
   - Type: 3
     SynchronizeType: 1
     Name: AttackStack
+  - Type: 9
+    SynchronizeType: 1
+    Name: die
+  - Type: 9
+    SynchronizeType: 1
+    Name: hit
+  - Type: 9
+    SynchronizeType: 1
+    Name: guard
+  - Type: 9
+    SynchronizeType: 1
+    Name: parry
+  - Type: 9
+    SynchronizeType: 1
+    Name: dash
+  - Type: 9
+    SynchronizeType: 1
+    Name: ultimate
+  - Type: 9
+    SynchronizeType: 1
+    Name: basicattack
+  - Type: 9
+    SynchronizeType: 1
+    Name: skill
+  - Type: 4
+    SynchronizeType: 1
+    Name: run
+  - Type: 4
+    SynchronizeType: 1
+    Name: Pre-Attack
+  - Type: 4
+    SynchronizeType: 1
+    Name: FreeState
+  - Type: 4
+    SynchronizeType: 1
+    Name: CancleState
+  - Type: 4
+    SynchronizeType: 1
+    Name: Pre-Input
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
@@ -767,12 +814,7 @@ MonoBehaviour:
   counterDamage: 20
   attackStack: 0
   isMoveInput: 0
-  MoveFront1: 1
-  MoveFront2: 0.7
-  Attack1Collider: {fileID: 0}
-  Attack2Collider: {fileID: 0}
-  Attack3Collider: {fileID: 0}
-  Attack4Collider: {fileID: 0}
+  AttackCollider: {fileID: 0}
 --- !u!114 &5133387043596687802
 MonoBehaviour:
   m_ObjectHideFlags: 0
