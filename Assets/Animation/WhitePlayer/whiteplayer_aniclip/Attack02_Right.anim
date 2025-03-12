@@ -22,52 +22,52 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: 21300000, guid: 1fe29fc86cc4e654ab2976df49315779, type: 3}
-    - time: 0.083333336
+    - time: 0.1
       value: {fileID: 21300000, guid: a245281c7e24e38478a45307307d48ac, type: 3}
-    - time: 0.16666667
+    - time: 0.2
       value: {fileID: 21300000, guid: a045ed70f9f11cd4fa1bcc95953178cf, type: 3}
-    - time: 0.25
+    - time: 0.3
       value: {fileID: 21300000, guid: 5450b0e77eb394e439e7766b8191a15d, type: 3}
-    - time: 0.33333334
+    - time: 0.4
       value: {fileID: 21300000, guid: fa4a9da34d160e7468fa8f841995b9ac, type: 3}
-    - time: 0.41666666
-      value: {fileID: 21300000, guid: fd4ede46e82e9074dac94d2974cab0b7, type: 3}
     - time: 0.5
+      value: {fileID: 21300000, guid: fd4ede46e82e9074dac94d2974cab0b7, type: 3}
+    - time: 0.6
       value: {fileID: 21300000, guid: 7c88e224d89e2a34ba4d006d91211fa4, type: 3}
-    - time: 0.5833333
+    - time: 0.7
       value: {fileID: 21300000, guid: c976c3450e7042247839f25a15c30d65, type: 3}
-    - time: 0.6666667
+    - time: 0.8
       value: {fileID: 21300000, guid: cd70e541b364cc84181fb5f2eba1beca, type: 3}
-    - time: 0.75
+    - time: 0.9
       value: {fileID: 21300000, guid: 56b372a95e29cb940b5deae81de4c828, type: 3}
-    - time: 0.8333333
-      value: {fileID: 21300000, guid: 66d0a913ef664764594578429a4e4b54, type: 3}
-    - time: 0.9166667
-      value: {fileID: 21300000, guid: 4e4290acd0e4ab545977f3cf84153d0a, type: 3}
     - time: 1
+      value: {fileID: 21300000, guid: 66d0a913ef664764594578429a4e4b54, type: 3}
+    - time: 1.1
+      value: {fileID: 21300000, guid: 4e4290acd0e4ab545977f3cf84153d0a, type: 3}
+    - time: 1.2
       value: {fileID: 21300000, guid: daa141a6b9eabff46957dbc35280306f, type: 3}
-    - time: 1.0833334
+    - time: 1.3
       value: {fileID: 21300000, guid: eb38c9a8cd0a9774a889a6191ca603b5, type: 3}
-    - time: 1.1666666
+    - time: 1.4
       value: {fileID: 21300000, guid: 9ac1185b89f6099449be9554623b9119, type: 3}
-    - time: 1.25
-      value: {fileID: 21300000, guid: 39488da4157598a4891f0442c1177635, type: 3}
-    - time: 1.3333334
-      value: {fileID: 21300000, guid: bd68fef6d959dad4391325d011c0efda, type: 3}
-    - time: 1.4166666
-      value: {fileID: 21300000, guid: 15493cd148a43c643b98d4a05e3de036, type: 3}
     - time: 1.5
+      value: {fileID: 21300000, guid: 39488da4157598a4891f0442c1177635, type: 3}
+    - time: 1.6
+      value: {fileID: 21300000, guid: bd68fef6d959dad4391325d011c0efda, type: 3}
+    - time: 1.7
+      value: {fileID: 21300000, guid: 15493cd148a43c643b98d4a05e3de036, type: 3}
+    - time: 1.8
       value: {fileID: 21300000, guid: 92c569e2ecf535547a1b187969bc5a82, type: 3}
-    - time: 1.5833334
+    - time: 1.9
       value: {fileID: 21300000, guid: 65db09760016f064e8917d8605373d1e, type: 3}
-    - time: 1.6666666
+    - time: 2
       value: {fileID: 21300000, guid: c7beb9bfe0f85fd4cb4541cd32e493ac, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
     script: {fileID: 0}
     flags: 2
-  m_SampleRate: 12
+  m_SampleRate: 10
   m_WrapMode: 0
   m_Bounds:
     m_Center: {x: 0, y: 0, z: 0}
@@ -110,7 +110,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 1.75
+    m_StopTime: 2.1
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -131,55 +131,55 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0
+    functionName: OnMoveFront
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0.7
+    intParameter: 0
+    messageOptions: 0
+  - time: 0
     functionName: OnAttackPreAttckStart
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0
+  - time: 0.1
     functionName: OnMoveFront
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0.7
     intParameter: 0
     messageOptions: 0
-  - time: 0.083333336
+  - time: 0.2
     functionName: OnAttackPreAttckEnd
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.083333336
-    functionName: OnMoveFront
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0.7
-    intParameter: 0
-    messageOptions: 0
-  - time: 0.16666667
+  - time: 0.2
     functionName: OnAttack2DamageStart
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.33333334
+  - time: 0.4
     functionName: OnLastAttackStart
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.5
+  - time: 0.6
     functionName: OnAttackAllowNextInput
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 1.6666666
+  - time: 2
     functionName: OnAttackAnimationEnd
     data: 
     objectReferenceParameter: {fileID: 0}
