@@ -287,7 +287,9 @@ public class WhitePlayerController : ParentPlayerController
         }
         Debug.Log("Attack1: 데미지 시작");
     }
-    
+
+
+   
 
     public void OnLastAttackStart()
     {
@@ -325,6 +327,63 @@ public class WhitePlayerController : ParentPlayerController
             AttackCollider.EnableAttackCollider(true);
         }
         Debug.Log("Attack2: 데미지 시작");
+    }
+
+    public void OnAttack3DamageStart()
+    {
+        if (AttackCollider != null)
+        {
+            AttackCollider.Damage = 20f;
+            AttackCollider.EnableAttackCollider(true);
+        }
+        Debug.Log("Attack3: 데미지 시작");
+    }
+
+    public void OnCollider3Delete()
+    {
+        if (AttackCollider != null)
+        {
+            AttackCollider.EnableAttackCollider(false);
+
+            Debug.Log("Attack3: 첫번째 콜라이더 제거");
+        }
+
+        if (AttackCollider != null)
+        {
+            AttackCollider.Damage = 20f;
+
+            AttackCollider.EnableAttackCollider(true);
+        }
+        Debug.Log("Attack3: 두번째 콜라이더 생성");
+    }
+
+
+    public void OnAttack4DamageStart()
+    {
+        if (AttackCollider != null)
+        {
+            AttackCollider.Damage = 25f;
+            AttackCollider.EnableAttackCollider(true);
+        }
+        Debug.Log("Attack4: 데미지 시작");
+    }
+
+    public void OnCollider4Delete()
+    {
+        if (AttackCollider != null)
+        {
+            AttackCollider.EnableAttackCollider(false);
+
+            Debug.Log("Attack4: 첫번째 콜라이더 제거");
+        }
+
+        if (AttackCollider != null)
+        {
+            AttackCollider.Damage = 25f;
+
+            AttackCollider.EnableAttackCollider(true);
+        }
+        Debug.Log("Attack4: 두번째 콜라이더 생성");
     }
 
 
