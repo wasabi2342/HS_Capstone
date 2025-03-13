@@ -52,6 +52,12 @@ public class WhitePlayerController : ParentPlayerController
 
     public int attackStack = 0;
 
+    // 스킬 쿨타임
+    private float shiftCoolDown = 3f; // 캐릭터의 능력치, 쿨타임 등 캐릭터 정보를 가진 scriptableobject 또는 구조체, 클래스 중 1개를 만들어 Start에서 능력치 연결 해줘야함
+                                      // 추후에 로그라이크 강화 요소 또한 불러와야 함
+    // 스킬 사용 가능 여부
+    private bool isShiftReady = true;
+
     protected override void Awake()
 
     {
@@ -227,9 +233,8 @@ public class WhitePlayerController : ParentPlayerController
     {
         if (currentState != WhitePlayerState.Death)
         {
-            if (nextState < WhitePlayerState.Skill)
+            if (isShiftReady && nextState < WhitePlayerState.Skill)
             {
-
                 nextState = WhitePlayerState.Skill;
                 animator.SetBool("Pre-Attack", true);
                 animator.SetBool("Pre-Input", true);
@@ -261,6 +266,13 @@ public class WhitePlayerController : ParentPlayerController
     public WhitePlayerAttackZone AttackCollider;
 
     // 공격 애니메이션 이벤트용 스텁 (WhitePlayerController_AttackStack에서 호출) 
+
+    public IEnumerator CoStartSkillCoolDown() // 이벤트 클립으로 쿨타임 체크
+    {
+        isShiftReady = false;
+        yield return new WaitForSeconds(shiftCoolDown);
+        isShiftReady = true;
+    }
 
     public void OnAttackPreAttckStart()
     {

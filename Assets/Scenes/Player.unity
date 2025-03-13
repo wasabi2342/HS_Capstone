@@ -1239,32 +1239,6 @@ MonoBehaviour:
   OnDashCooldownUpdate:
     m_PersistentCalls:
       m_Calls: []
---- !u!1 &2099778464 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1018905123020567762, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
-  m_PrefabInstance: {fileID: 2100699780}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &2099778469
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2099778464}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Size: {x: 6, y: 2, z: 0.5}
-  m_Center: {x: 3, y: 0, z: 0}
 --- !u!1001 &2100699780
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1273,14 +1247,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 613748843307250419, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
-      propertyPath: m_ApplyRootMotion
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2714852837274069670, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.7
-      objectReference: {fileID: 0}
     - target: {fileID: 2714852837274069670, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1321,10 +1287,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3893625609994687788, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
-      propertyPath: m_SortingOrder
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4131734313779836671, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
       propertyPath: m_Name
       value: Player
@@ -1333,25 +1295,10 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 8789968268913942805, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
-      propertyPath: attackRange
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8789968268913942805, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
-      propertyPath: skillCollider
-      value: 
-      objectReference: {fileID: 2099778469}
-    - target: {fileID: 8789968268913942805, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
-      propertyPath: enemiesInRange.Array.size
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1018905123020567762, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2099778469}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
 --- !u!4 &2100699782 stripped
 Transform:
