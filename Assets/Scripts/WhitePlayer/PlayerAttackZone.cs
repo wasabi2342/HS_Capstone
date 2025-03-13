@@ -14,6 +14,9 @@ public class WhitePlayerAttackZone : MonoBehaviour
     // SphereCollider Ä³½Ì
     private SphereCollider sphereCollider;
 
+    [SerializeField]
+    private BoxCollider skillCollider;
+
     public float Damage;
 
     private void Awake()
@@ -35,9 +38,30 @@ public class WhitePlayerAttackZone : MonoBehaviour
         }
     }
 
+    public void EnableSkillAttackCollider(bool enable, bool isRight = true)
+    {
+        if (enable)
+        {
+            if (isRight)
+            {
+                skillCollider.center = new Vector3(3, 0, 0);
+            }
+            else
+            {
+                skillCollider.center = new Vector3(-3, 0, 0);
+            }
+        }
+
+        if (skillCollider != null)
+        {
+            skillCollider.enabled = enable;
+        }
+    }
+
+
     private void OnTriggerEnter(Collider other)
     {
-        if(other.GetComponent<IDamageable>() != null)
+        if (other.GetComponent<IDamageable>() != null)
         {
             other.GetComponent<IDamageable>().TakeDamage(Damage);
         }

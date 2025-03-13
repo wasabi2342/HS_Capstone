@@ -56,7 +56,7 @@ public class WhitePlayerController : ParentPlayerController
 
     {
         AttackCollider = GetComponentInChildren<WhitePlayerAttackZone>();
-        
+
         base.Awake();
         animator = GetComponent<Animator>();
         if (animator == null)
@@ -215,7 +215,7 @@ public class WhitePlayerController : ParentPlayerController
             {
                 nextState = WhitePlayerState.BasicAttack;
             }
-            if(currentState == WhitePlayerState.BasicAttack)
+            if (currentState == WhitePlayerState.BasicAttack)
             {
                 animator.SetBool("Pre-Input", true);
             }
@@ -233,6 +233,8 @@ public class WhitePlayerController : ParentPlayerController
                 nextState = WhitePlayerState.Skill;
                 animator.SetBool("Pre-Attack", true);
                 animator.SetBool("Pre-Input", true);
+                Vector3 mousePos = GetMouseWorldPosition();
+                animator.SetBool("Right", mousePos.x > transform.position.x ? true : false);
             }
 
         }
@@ -249,19 +251,21 @@ public class WhitePlayerController : ParentPlayerController
                 nextState = WhitePlayerState.Ultimate;
                 animator.SetBool("Pre-Attack", true);
                 animator.SetBool("Pre-Input", true);
+                Vector3 mousePos = GetMouseWorldPosition();
+                animator.SetBool("Right", mousePos.x > transform.position.x ? true : false);
             }
         }
     }
 
-   
+
     public WhitePlayerAttackZone AttackCollider;
-    
+
     // 공격 애니메이션 이벤트용 스텁 (WhitePlayerController_AttackStack에서 호출) 
 
     public void OnAttackPreAttckStart()
     {
 
-        
+
         animator.SetBool("CancleState", true);
         Debug.Log("선딜 시작");
     }
@@ -269,14 +273,29 @@ public class WhitePlayerController : ParentPlayerController
     public void OnAttackPreAttckEnd()
     {
         animator.SetBool("CancleState", false);
-    
+
         Debug.Log("선딜 종료");
     }
 
     public void OnMoveFront(float value)
     {
-        transform.Translate(new Vector3(value, 0, 0));
+        transform.Translate((GetMouseWorldPosition() - transform.position).normalized * value);
     }
+
+    private Vector3 GetMouseWorldPosition()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane groundPlane = new Plane(Vector3.up, new Vector3(0, transform.position.y, 0));
+
+        if (groundPlane.Raycast(ray, out float enter))
+        {
+            Vector3 hitPoint = ray.GetPoint(enter);
+            return new Vector3(hitPoint.x, transform.position.y, hitPoint.z);
+        }
+
+        return Vector3.zero;
+    }
+
     public void OnAttack1DamageStart()
     {
 
@@ -288,8 +307,23 @@ public class WhitePlayerController : ParentPlayerController
         Debug.Log("Attack1: 데미지 시작");
     }
 
+    public void OnSkillCollider()
+    {
+        if (AttackCollider != null)
+        {
+            AttackCollider.Damage = 10f; // 공격력의 1.7배로 변경 해야함
+            AttackCollider.EnableSkillAttackCollider(true, animator.GetBool("Right"));
+        }
+    }
 
-   
+    public void OffSkillCollider()
+    {
+        if (AttackCollider != null)
+        {
+            AttackCollider.EnableSkillAttackCollider(false);
+        }
+    }
+
 
     public void OnLastAttackStart()
     {
@@ -318,7 +352,7 @@ public class WhitePlayerController : ParentPlayerController
         Debug.Log(" 애니메이션 종료");
     }
 
-    
+
     public void OnAttack2DamageStart()
     {
         if (AttackCollider != null)
