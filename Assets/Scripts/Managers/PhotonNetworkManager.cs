@@ -146,6 +146,10 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             UIManager.Instance.ClosePeekUI();
             readyPlayers.Clear();
         }
+        if (RoomManager.Instance.players.ContainsKey(otherPlayer.UserId))
+        {
+            RoomManager.Instance.players.Remove(otherPlayer.UserId);
+        }
     }
 
     public void SetNickname(string nickname)
@@ -153,18 +157,18 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.NickName = nickname;
     }
 
-    public void AddPlayer(int actorNumber, int viewID)
+    public void AddPlayer(string userID, int viewID)
     {
-        photonView.RPC("UpdatePlayerDic", RpcTarget.OthersBuffered, actorNumber, viewID);
+        photonView.RPC("UpdatePlayerDic", RpcTarget.OthersBuffered, userID, viewID);
     }
 
     [PunRPC]
-    public void UpdatePlayerDic(int actorNumber, int viewID)
+    public void UpdatePlayerDic(string userID, int viewID)
     {
         PhotonView targetView = PhotonView.Find(viewID);
         if (targetView != null)
         {
-            RoomManager.Instance.players[actorNumber] = targetView.gameObject;
+            RoomManager.Instance.players[userID] = targetView.gameObject;
         }
     }
 
@@ -172,9 +176,9 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
         foreach (var player in RoomManager.Instance.players)
         {
-            int actorNumber = player.Key;
+            string userID = player.Key;
             int viewID = player.Value.GetComponent<PhotonView>().ViewID;
-            photonView.RPC("UpdatePlayerDic", newPlayer, actorNumber, viewID);
+            photonView.RPC("UpdatePlayerDic", newPlayer, userID, viewID);
         }
     }
 }
