@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 [RequireComponent(typeof(SphereCollider))]
 public class WhitePlayerAttackZone : MonoBehaviour
@@ -17,11 +18,14 @@ public class WhitePlayerAttackZone : MonoBehaviour
     [SerializeField]
     private BoxCollider skillCollider;
 
+    private Animator animator;
+
     public float Damage;
 
     private void Awake()
     {
         sphereCollider = GetComponent<SphereCollider>();
+        animator = GetComponentInParent<Animator>();
         if (sphereCollider != null)
         {
             sphereCollider.isTrigger = true;
@@ -58,12 +62,20 @@ public class WhitePlayerAttackZone : MonoBehaviour
         }
     }
 
+    private IEnumerator PauseForSeconds(float seconds)
+    {
+        animator.speed = 0; 
+        yield return new WaitForSeconds(seconds); 
+        animator.speed = 1; 
+    }
+
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<IDamageable>() != null)
         {
             other.GetComponent<IDamageable>().TakeDamage(Damage);
+            StartCoroutine(PauseForSeconds(0.13f));
         }
     }
 
