@@ -38,34 +38,34 @@ AnimationClip:
       value: {fileID: 21300000, guid: 336822735312ddd47a58492f3d2549d4, type: 3}
     - time: 0.8
       value: {fileID: 21300000, guid: 39091a9369bf51c42b56774d23181bb5, type: 3}
-    - time: 0.9
-      value: {fileID: 21300000, guid: e2cf41bc3a65d744d94e3f9bd79f378f, type: 3}
-    - time: 1
-      value: {fileID: 21300000, guid: 8ae7178816910374b9bb3e125b2ae5c3, type: 3}
-    - time: 1.1
-      value: {fileID: 21300000, guid: eb9fbb4462be56041b2abe9295214a00, type: 3}
     - time: 1.2
-      value: {fileID: 21300000, guid: 5a1960cdd42f40a4289887b823d12a6f, type: 3}
+      value: {fileID: 21300000, guid: e2cf41bc3a65d744d94e3f9bd79f378f, type: 3}
     - time: 1.3
-      value: {fileID: 21300000, guid: 0939614ea8ffa2845aa9d7d0678352fb, type: 3}
+      value: {fileID: 21300000, guid: 8ae7178816910374b9bb3e125b2ae5c3, type: 3}
     - time: 1.4
-      value: {fileID: 21300000, guid: 76b2cc2593f45dc46b6bf89759368ec7, type: 3}
+      value: {fileID: 21300000, guid: eb9fbb4462be56041b2abe9295214a00, type: 3}
     - time: 1.5
-      value: {fileID: 21300000, guid: 62449381c34fd664e9ca37d134099906, type: 3}
+      value: {fileID: 21300000, guid: 5a1960cdd42f40a4289887b823d12a6f, type: 3}
     - time: 1.6
-      value: {fileID: 21300000, guid: 2c94f1506e17198469e764352d1f5e3c, type: 3}
+      value: {fileID: 21300000, guid: 0939614ea8ffa2845aa9d7d0678352fb, type: 3}
     - time: 1.7
-      value: {fileID: 21300000, guid: 7ef68572f5b923b4f9387411d0ed72c6, type: 3}
+      value: {fileID: 21300000, guid: 76b2cc2593f45dc46b6bf89759368ec7, type: 3}
     - time: 1.8
-      value: {fileID: 21300000, guid: a24195d0ca768804aa0753f93081ad42, type: 3}
+      value: {fileID: 21300000, guid: 62449381c34fd664e9ca37d134099906, type: 3}
     - time: 1.9
-      value: {fileID: 21300000, guid: c53c34428e269e548a158020f2a5584c, type: 3}
+      value: {fileID: 21300000, guid: 2c94f1506e17198469e764352d1f5e3c, type: 3}
     - time: 2
-      value: {fileID: 21300000, guid: 6f535c3619752c5468bc9bb5c58547a9, type: 3}
+      value: {fileID: 21300000, guid: 7ef68572f5b923b4f9387411d0ed72c6, type: 3}
     - time: 2.1
-      value: {fileID: 21300000, guid: ab83cf981ae6259438e9c412f85c18c5, type: 3}
+      value: {fileID: 21300000, guid: a24195d0ca768804aa0753f93081ad42, type: 3}
     - time: 2.2
-      value: {fileID: 21300000, guid: a2c540ea8cc7a59418bd1c918c824935, type: 3}
+      value: {fileID: 21300000, guid: c53c34428e269e548a158020f2a5584c, type: 3}
+    - time: 2.3
+      value: {fileID: 21300000, guid: 6f535c3619752c5468bc9bb5c58547a9, type: 3}
+    - time: 2.4
+      value: {fileID: 21300000, guid: ab83cf981ae6259438e9c412f85c18c5, type: 3}
+    - time: 2.5
+      value: {fileID: 21300000, guid: 8427fa93da0003641b5a949aa268a1ad, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -110,18 +110,18 @@ AnimationClip:
     - {fileID: 21300000, guid: c53c34428e269e548a158020f2a5584c, type: 3}
     - {fileID: 21300000, guid: 6f535c3619752c5468bc9bb5c58547a9, type: 3}
     - {fileID: 21300000, guid: ab83cf981ae6259438e9c412f85c18c5, type: 3}
-    - {fileID: 21300000, guid: a2c540ea8cc7a59418bd1c918c824935, type: 3}
+    - {fileID: 21300000, guid: 8427fa93da0003641b5a949aa268a1ad, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 2.3
+    m_StopTime: 2.6
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
     m_HasAdditiveReferencePose: 0
-    m_LoopTime: 1
+    m_LoopTime: 0
     m_LoopBlend: 0
     m_LoopBlendOrientation: 0
     m_LoopBlendPositionY: 0
@@ -138,6 +138,48 @@ AnimationClip:
   m_Events:
   - time: 0
     functionName: InitAttackStak
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0
+    functionName: CoStartUltimateCoolDown
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.6
+    functionName: OnMoveFront
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0.7
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.8
+    functionName: CreateUltimateEffect
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.8
+    functionName: UltimateMove
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 18
+    intParameter: 0
+    messageOptions: 0
+  - time: 1.8
+    functionName: OnAttackAllowNextInput
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 2.3
+    functionName: GetUltimateBonus
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

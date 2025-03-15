@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 3843436792146973078}
   - component: {fileID: 8789968268913942805}
   - component: {fileID: 3371492236228461120}
+  - component: {fileID: 7734979025447837112}
   m_Layer: 9
   m_Name: PlayerAttackZone
   m_TagString: Untagged
@@ -98,9 +99,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5f84eac89d2c334fb13ff0f4c6b9ca8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 0.7
-  enemiesInRange:
-  - {fileID: 6377923139903049726, guid: 0d83cc24c0b5b7147a09b4664b3db599, type: 3}
+  attackRange: 2
+  enemiesInRange: []
+  skillCollider: {fileID: 7734979025447837112}
   Damage: 0
 --- !u!54 &3371492236228461120
 Rigidbody:
@@ -129,6 +130,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &7734979025447837112
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1018905123020567762}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Size: {x: 6, y: 2, z: 0.5}
+  m_Center: {x: 3, y: 0, z: 0}
 --- !u!1 &1618922647488193223
 GameObject:
   m_ObjectHideFlags: 0
@@ -356,7 +378,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 2, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.5, y: 0.7, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2649936402368327885}
@@ -378,7 +400,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 175e04317e7765247b28523daf1e9dac, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0

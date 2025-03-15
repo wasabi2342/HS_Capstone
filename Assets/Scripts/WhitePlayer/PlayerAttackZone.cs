@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 [RequireComponent(typeof(SphereCollider))]
 public class WhitePlayerAttackZone : MonoBehaviour
@@ -14,11 +15,20 @@ public class WhitePlayerAttackZone : MonoBehaviour
     // SphereCollider Ä³½Ì
     private SphereCollider sphereCollider;
 
+    [SerializeField]
+    private BoxCollider skillCollider;
+
+    private Animator animator;
+
     public float Damage;
+
+    [SerializeField]
+    private float hitlagTime = 0.13f;
 
     private void Awake()
     {
         sphereCollider = GetComponent<SphereCollider>();
+        animator = GetComponentInParent<Animator>();
         if (sphereCollider != null)
         {
             sphereCollider.isTrigger = true;
@@ -35,11 +45,44 @@ public class WhitePlayerAttackZone : MonoBehaviour
         }
     }
 
+    public void EnableSkillAttackCollider(bool enable, bool isRight = true)
+    {
+        if (enable)
+        {
+            if (isRight)
+            {
+                skillCollider.center = new Vector3(3, 0, 0);
+            }
+            else
+            {
+                skillCollider.center = new Vector3(-3, 0, 0);
+            }
+        }
+
+        if (skillCollider != null)
+        {
+            skillCollider.enabled = enable;
+        }
+    }
+
+    private IEnumerator PauseForSeconds()
+    {
+        animator.speed = 0; 
+        yield return new WaitForSeconds(hitlagTime); 
+        animator.speed = 1; 
+    }
+
+    public void StartHitlag()
+    {
+        StartCoroutine(PauseForSeconds());
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        if(other.GetComponent<IDamageable>() != null)
+        if (other.GetComponent<IDamageable>() != null)
         {
             other.GetComponent<IDamageable>().TakeDamage(Damage);
+            StartHitlag();
         }
     }
 
