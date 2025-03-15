@@ -121,7 +121,7 @@ public class WhitePlayerController : ParentPlayerController
         isMoveInput = (Mathf.Abs(moveInput.x) > 0.01f || Mathf.Abs(moveInput.y) > 0.01f);
     }
 
-    // === 이동 처리 ===
+    // 이동 처리
     private void HandleMovement()
     {
         if (currentState == WhitePlayerState.Death) return;
@@ -149,7 +149,7 @@ public class WhitePlayerController : ParentPlayerController
         {
             animator.SetBool("run", isMoving);
             animator.SetFloat("moveX", h);
-            animator.SetFloat("moveY", v);
+            //animator.SetFloat("moveY", v);
         }
     }
 
@@ -179,7 +179,7 @@ public class WhitePlayerController : ParentPlayerController
         return idx;
     }
 
-    // === 대쉬 처리 ===
+    // 대쉬 처리
     private void CheckDashInput()
     {
         if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
@@ -225,15 +225,31 @@ public class WhitePlayerController : ParentPlayerController
             {
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-                animator.SetTrigger("basicattack");
                 currentState = WhitePlayerState.Counter;
             }
             else if (nextState < WhitePlayerState.BasicAttack)
             {
+
+                Vector3 mousePos = GetMouseWorldPosition();
+                animator.SetBool("Right", mousePos.x > transform.position.x);
                 nextState = WhitePlayerState.BasicAttack;
             }
+
+            if (attackStack >= 4)
+            {
+                animator.SetBool("Pre-Attack", false);
+                animator.SetBool("Pre-Input", false);
+                currentState = WhitePlayerState.Idle;
+                attackStack = 0;
+                Debug.Log("공격 스택 4 도달: 콤보 종료 및 초기화");
+                return;
+            }
+
             if (currentState == WhitePlayerState.BasicAttack)
             {
+
+                Vector3 mousePos = GetMouseWorldPosition();
+                animator.SetBool("Right", mousePos.x > transform.position.x);
                 animator.SetBool("Pre-Input", true);
             }
         }
