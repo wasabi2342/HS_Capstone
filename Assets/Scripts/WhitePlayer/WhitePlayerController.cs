@@ -225,7 +225,9 @@ public class WhitePlayerController : ParentPlayerController
             {
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
+                animator.SetTrigger("basicattack");
                 currentState = WhitePlayerState.Counter;
+                return;
             }
             else if (nextState < WhitePlayerState.BasicAttack)
             {
