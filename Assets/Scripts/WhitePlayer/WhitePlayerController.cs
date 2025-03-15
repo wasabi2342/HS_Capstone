@@ -4,6 +4,7 @@ using System.Collections;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
 using System;
+using Photon.Pun;
 
 
 public enum WhitePlayerState { Idle, Run, BasicAttack, Hit, Dash, Skill, Ultimate, Guard, Parry, Counter, Death }
@@ -54,9 +55,17 @@ public class WhitePlayerController : ParentPlayerController
 
     // 스킬 쿨타임
     private float shiftCoolDown = 3f; // 캐릭터의 능력치, 쿨타임 등 캐릭터 정보를 가진 scriptableobject 또는 구조체, 클래스 중 1개를 만들어 Start에서 능력치 연결 해줘야함
-                                      // 추후에 로그라이크 강화 요소 또한 불러와야 함
+    private float ultimateCoolDown = 30f; // 추후에 로그라이크 강화 요소 또한 불러와야 함
+    private float guardCoolDown = 4f;
+
     // 스킬 사용 가능 여부
     private bool isShiftReady = true;
+    private bool isUltimateReady = true;
+    private bool isGuardReady = true;
+
+    public event Action<float> ShiftCoolDownUI;
+    public event Action<float> UltimateCoolDownUI;
+    public event Action<float> GuardCoolDownUI;
 
     protected override void Awake()
 
@@ -214,6 +223,8 @@ public class WhitePlayerController : ParentPlayerController
         {
             if (currentState == WhitePlayerState.Parry)
             {
+                Vector3 mousePos = GetMouseWorldPosition();
+                animator.SetBool("Right", mousePos.x > transform.position.x);
                 animator.SetTrigger("basicattack");
                 currentState = WhitePlayerState.Counter;
             }
@@ -239,7 +250,7 @@ public class WhitePlayerController : ParentPlayerController
                 animator.SetBool("Pre-Attack", true);
                 animator.SetBool("Pre-Input", true);
                 Vector3 mousePos = GetMouseWorldPosition();
-                animator.SetBool("Right", mousePos.x > transform.position.x ? true : false);
+                animator.SetBool("Right", mousePos.x > transform.position.x);
             }
 
         }
@@ -250,14 +261,14 @@ public class WhitePlayerController : ParentPlayerController
     {
         if (currentState != WhitePlayerState.Death)
         {
-            if (nextState < WhitePlayerState.Ultimate)
+            if (isUltimateReady && nextState < WhitePlayerState.Ultimate)
             {
 
                 nextState = WhitePlayerState.Ultimate;
                 animator.SetBool("Pre-Attack", true);
                 animator.SetBool("Pre-Input", true);
                 Vector3 mousePos = GetMouseWorldPosition();
-                animator.SetBool("Right", mousePos.x > transform.position.x ? true : false);
+                animator.SetBool("Right", mousePos.x > transform.position.x);
             }
         }
     }
@@ -270,8 +281,25 @@ public class WhitePlayerController : ParentPlayerController
     public IEnumerator CoStartSkillCoolDown() // 이벤트 클립으로 쿨타임 체크
     {
         isShiftReady = false;
+        ShiftCoolDownUI?.Invoke(shiftCoolDown);
         yield return new WaitForSeconds(shiftCoolDown);
         isShiftReady = true;
+    }
+
+    public IEnumerator CoStartUltimateCoolDown() // 이벤트 클립으로 쿨타임 체크
+    {
+        isUltimateReady = false;
+        UltimateCoolDownUI?.Invoke(ultimateCoolDown);
+        yield return new WaitForSeconds(ultimateCoolDown);
+        isUltimateReady = true;
+    }
+
+    public IEnumerator CoStartGuardCoolDown() // 이벤트 클립으로 쿨타임 체크
+    {
+        isGuardReady = false;
+        GuardCoolDownUI?.Invoke(guardCoolDown);
+        yield return new WaitForSeconds(guardCoolDown);
+        isGuardReady = true;
     }
 
     public void OnAttackPreAttckStart()
@@ -347,7 +375,45 @@ public class WhitePlayerController : ParentPlayerController
         Debug.Log("후딜 시작");
     }
 
+    public void CreateUltimateEffect()
+    {
+        if (animator.GetBool("Right"))
+        {
+            if (PhotonNetwork.InRoom)
+            {
+                SkillEffect skillEffect = PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right", transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
+                skillEffect.Init(1.7f, AttackCollider.StartHitlag);
+            }
+            else
+            {
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right"), transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity);
+                skillEffect.Init(1.7f, AttackCollider.StartHitlag);
+            }
+        }
+        else
+        {
+            if (PhotonNetwork.InRoom)
+            {
+                SkillEffect skillEffect = PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left", transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
+                skillEffect.Init(1.7f, AttackCollider.StartHitlag);
+            }
+            else
+            {
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left"), transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity);
+                skillEffect.Init(1.7f, AttackCollider.StartHitlag);
+            }
+        }
+    }
 
+    public void GetUltimateBonus()
+    {
+        Debug.Log("궁극기 납도 버프");
+    }
+
+    public void UltimateMove(float distance)
+    {
+        transform.position += new Vector3(distance, 0, 0);
+    }
 
     public void OnAttackAllowNextInput()
     {
@@ -443,25 +509,36 @@ public class WhitePlayerController : ParentPlayerController
     {
         if (currentState != WhitePlayerState.Death)
         {
-            if (nextState < WhitePlayerState.Guard)
+            if (isGuardReady && nextState < WhitePlayerState.Guard)
             {
 
                 nextState = WhitePlayerState.Guard;
                 animator.SetBool("Pre-Attack", true);
                 animator.SetBool("Pre-Input", true);
-
+                Vector3 mousePos = GetMouseWorldPosition();
+                animator.SetBool("Right", mousePos.x > transform.position.x);
             }
         }
-
     }
 
     // 피격 및 사망 처리
     public override void TakeDamage(float damage)
     {
-        if (currentState == WhitePlayerState.Guard)
+        if (currentState == WhitePlayerState.Death)
+        {
+            return;
+        }
+        else if (currentState == WhitePlayerState.Ultimate)
+        {
+            return;
+        }
+        else if (currentState == WhitePlayerState.Guard)
         {
             animator.SetTrigger("parry");
             currentState = WhitePlayerState.Parry;
+            isGuardReady = true;
+            GuardCoolDownUI?.Invoke(0);
+            StopCoroutine("CoStartGuardCoolDown");
             return;
         }
 
@@ -475,6 +552,14 @@ public class WhitePlayerController : ParentPlayerController
         }
         else
         {
+            if(currentState == WhitePlayerState.Skill)
+            {
+                return;
+            }
+            else
+            {
+                animator.SetTrigger("hit");
+            }
             //StartCoroutine(CoHitReaction());
         }
     }

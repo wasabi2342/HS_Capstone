@@ -58,6 +58,7 @@ public class WhitePlayer_Idle : StateMachineBehaviour
     {
         whitePlayerController.nextState = WhitePlayerState.Idle;
         animator.SetBool("Pre-Attack", false);
+        animator.SetBool("Pre-Input", false);
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

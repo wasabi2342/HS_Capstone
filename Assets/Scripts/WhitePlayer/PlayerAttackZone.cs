@@ -22,6 +22,9 @@ public class WhitePlayerAttackZone : MonoBehaviour
 
     public float Damage;
 
+    [SerializeField]
+    private float hitlagTime = 0.13f;
+
     private void Awake()
     {
         sphereCollider = GetComponent<SphereCollider>();
@@ -62,20 +65,24 @@ public class WhitePlayerAttackZone : MonoBehaviour
         }
     }
 
-    private IEnumerator PauseForSeconds(float seconds)
+    private IEnumerator PauseForSeconds()
     {
         animator.speed = 0; 
-        yield return new WaitForSeconds(seconds); 
+        yield return new WaitForSeconds(hitlagTime); 
         animator.speed = 1; 
     }
 
+    public void StartHitlag()
+    {
+        StartCoroutine(PauseForSeconds());
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<IDamageable>() != null)
         {
             other.GetComponent<IDamageable>().TakeDamage(Damage);
-            StartCoroutine(PauseForSeconds(0.13f));
+            StartHitlag();
         }
     }
 
