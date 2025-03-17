@@ -40,12 +40,22 @@ public class EnemySpawner : MonoBehaviour
         }
         Bounds planeBounds = planeRenderer.bounds;
 
-        // enemyCount만큼 반복하여 Plane 영역 내 임의 위치에 몬스터 스폰
+        // 80% 영역 내에서 몬스터 스폰
+        Vector3 minBound = planeBounds.min;
+        Vector3 maxBound = planeBounds.max;
+        Vector3 size = planeBounds.size;
+
+        float minX = minBound.x + size.x * 0.1f;
+        float maxX = maxBound.x - size.x * 0.1f;
+        float minZ = minBound.z + size.z * 0.1f;
+        float maxZ = maxBound.z - size.z * 0.1f;
+
+        // enemyCount만큼 반복하여 Plane 영역 내 몬스터 스폰
         for (int i = 0; i < enemyCount; i++)
         {
-            // 1) Plane 영역에서 랜덤 위치 뽑기 (x, z)
-            float randX = Random.Range(planeBounds.min.x, planeBounds.max.x);
-            float randZ = Random.Range(planeBounds.min.z, planeBounds.max.z);
+            // 1) 중앙 80% 영역에서 랜덤 위치 선택 (x, z)
+            float randX = Random.Range(minX, maxX);
+            float randZ = Random.Range(minZ, maxZ);
             Vector3 spawnPos = new Vector3(randX, planeBounds.min.y, randZ);
 
             // 2) WayPointData 중 하나를 임의 선택
@@ -55,11 +65,11 @@ public class EnemySpawner : MonoBehaviour
             // 3) 몬스터 생성
             GameObject clone = Instantiate(enemyPrefab, spawnPos, Quaternion.identity, transform);
 
-            // 4) EnemyFSM에 순찰 경로와 타겟 할당
-            EnemyFSM enemy = clone.GetComponent<EnemyFSM>();
-            if (enemy != null)
+            // 4) EnemyStateController에 순찰 경로와 플레이어 할당
+            EnemyFSM fsm = clone.GetComponent<EnemyFSM>();
+            if (fsm != null)
             {
-                enemy.Setup(player, selectedWayPoints);
+                fsm.Setup(player, selectedWayPoints);
             }
         }
     }
