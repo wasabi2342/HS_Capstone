@@ -53,20 +53,6 @@ public class WhitePlayerController : ParentPlayerController
 
     public int attackStack = 0;
 
-    // 스킬 쿨타임
-    private float shiftCoolDown = 3f; // 캐릭터의 능력치, 쿨타임 등 캐릭터 정보를 가진 scriptableobject 또는 구조체, 클래스 중 1개를 만들어 Start에서 능력치 연결 해줘야함
-    private float ultimateCoolDown = 30f; // 추후에 로그라이크 강화 요소 또한 불러와야 함
-    private float guardCoolDown = 4f;
-
-    // 스킬 사용 가능 여부
-    private bool isShiftReady = true;
-    private bool isUltimateReady = true;
-    private bool isGuardReady = true;
-
-    public event Action<float> ShiftCoolDownUI;
-    public event Action<float> UltimateCoolDownUI;
-    public event Action<float> GuardCoolDownUI;
-
     protected override void Awake()
 
     {
@@ -299,7 +285,7 @@ public class WhitePlayerController : ParentPlayerController
     public IEnumerator CoStartSkillCoolDown() // 이벤트 클립으로 쿨타임 체크
     {
         isShiftReady = false;
-        ShiftCoolDownUI?.Invoke(shiftCoolDown);
+        ShiftCoolDownUpdate?.Invoke(shiftCoolDown);
         yield return new WaitForSeconds(shiftCoolDown);
         isShiftReady = true;
     }
@@ -307,17 +293,17 @@ public class WhitePlayerController : ParentPlayerController
     public IEnumerator CoStartUltimateCoolDown() // 이벤트 클립으로 쿨타임 체크
     {
         isUltimateReady = false;
-        UltimateCoolDownUI?.Invoke(ultimateCoolDown);
+        UltimateCoolDownUpdate?.Invoke(ultimateCoolDown);
         yield return new WaitForSeconds(ultimateCoolDown);
         isUltimateReady = true;
     }
 
     public IEnumerator CoStartGuardCoolDown() // 이벤트 클립으로 쿨타임 체크
     {
-        isGuardReady = false;
-        GuardCoolDownUI?.Invoke(guardCoolDown);
+        isMouseRightSkillReady = false;
+        MouseRightSkillCoolDownUpdate?.Invoke(guardCoolDown);
         yield return new WaitForSeconds(guardCoolDown);
-        isGuardReady = true;
+        isMouseRightSkillReady = true;
     }
 
     public void OnAttackPreAttckStart()
@@ -527,7 +513,7 @@ public class WhitePlayerController : ParentPlayerController
     {
         if (currentState != WhitePlayerState.Death)
         {
-            if (isGuardReady && nextState < WhitePlayerState.Guard)
+            if (isMouseRightSkillReady && nextState < WhitePlayerState.Guard)
             {
 
                 nextState = WhitePlayerState.Guard;
@@ -554,8 +540,8 @@ public class WhitePlayerController : ParentPlayerController
         {
             animator.SetTrigger("parry");
             currentState = WhitePlayerState.Parry;
-            isGuardReady = true;
-            GuardCoolDownUI?.Invoke(0);
+            isMouseRightSkillReady = true;
+            MouseRightSkillCoolDownUpdate?.Invoke(0);
             StopCoroutine("CoStartGuardCoolDown");
             return;
         }
