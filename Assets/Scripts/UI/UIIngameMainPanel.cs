@@ -65,6 +65,11 @@ public class UIIngameMainPanel : UIBase
                 if (playerController != null) // 쿨타임 이벤트도 연결 하기
                 {
                     playerController.OnHealthChanged.AddListener(UpdateHPImage);
+                    playerController.ShiftCoolDownUpdate.AddListener(uISkillIcons[(int)UIIcon.shift].StartUpdateSkillCooldown);
+                    playerController.UltimateCoolDownUpdate.AddListener(uISkillIcons[(int)UIIcon.r].StartUpdateSkillCooldown);
+                    playerController.MouseRightSkillCoolDownUpdate.AddListener(uISkillIcons[(int)UIIcon.mouseR].StartUpdateSkillCooldown);
+                    playerController.OnDashCooldownUpdate.AddListener(uISkillIcons[(int)UIIcon.space].StartUpdateSkillCooldown);
+                    //playerController
                 }
             }
         }
@@ -87,6 +92,10 @@ public class UIIngameMainPanel : UIBase
         if (playerController != null)
         {
             playerController.OnHealthChanged.RemoveListener(UpdateHPImage);
+            playerController.ShiftCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.shift].StartUpdateSkillCooldown);
+            playerController.UltimateCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.r].StartUpdateSkillCooldown);
+            playerController.MouseRightSkillCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.mouseR].StartUpdateSkillCooldown);
+            playerController.OnDashCooldownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.space].StartUpdateSkillCooldown);
         }
     }
 

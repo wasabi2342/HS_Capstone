@@ -21,12 +21,24 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     [Header("Cooldown Settings")]
     // 공격/대쉬 쿨타임 (임의 값)
-    public float attackCooldown = 1f;
-    public float dashCooldown = 1f;
+    protected float attackCooldown = 1f;
+    protected float dashCooldown = 1f;
+    protected float shiftCoolDown = 3f; // 캐릭터의 능력치, 쿨타임 등 캐릭터 정보를 가진 scriptableobject 또는 구조체, 클래스 중 1개를 만들어 Start에서 능력치 연결 해줘야함
+    protected float ultimateCoolDown = 30f; // 추후에 로그라이크 강화 요소 또한 불러와야 함
+    protected float guardCoolDown = 4f;
+
 
     // 공격/대쉬 쿨타임 UI 갱신 이벤트 (0~1의 진행률 전달)
     public UnityEvent<float> OnAttackCooldownUpdate;
     public UnityEvent<float> OnDashCooldownUpdate;
+    public UnityEvent<float> ShiftCoolDownUpdate;
+    public UnityEvent<float> UltimateCoolDownUpdate;
+    public UnityEvent<float> MouseRightSkillCoolDownUpdate;
+
+    // 스킬 사용 가능 여부
+    protected bool isShiftReady = true;
+    protected bool isUltimateReady = true;
+    protected bool isMouseRightSkillReady = true;
 
     #endregion
 
