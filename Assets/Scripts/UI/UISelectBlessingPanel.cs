@@ -7,11 +7,15 @@ public class UISelectBlessingPanel : UIBase
 {
     [SerializeField]
     private List<Button> buttons = new List<Button>();
+    [SerializeField]
+    private Button selectButton;
 
     private bool[] isFlipped;
 
 
-    Dictionary<Skills, (Blessings, int)> newBlessings = new Dictionary<Skills, (Blessings, int)>();
+    private Dictionary<Skills, (Blessings, int)> newBlessings = new Dictionary<Skills, (Blessings, int)>();
+
+    private KeyValuePair<Skills, (Blessings, int)> selectedBlessing;
 
     void Start()
     {
@@ -20,7 +24,7 @@ public class UISelectBlessingPanel : UIBase
 
     private void PickUpBlessing()
     {
-        var dic = RoomManager.Instance.ReturnLocalPlayer().GetComponent<PlayerBlessing>().playerBlessingDic;
+        var dic = RoomManager.Instance.ReturnLocalPlayer().GetComponent<PlayerBlessing>().ReturnBlessingDic();
 
         while (newBlessings.Count < 3)
         {
@@ -60,7 +64,7 @@ public class UISelectBlessingPanel : UIBase
         int index = 0;
         foreach (var pair in newBlessings)
         {
-            buttons[index].GetComponent<UISelectBlessingButton>().Init(pair.Key, pair.Value.Item1, pair.Value.Item2);
+            buttons[index].GetComponent<UISelectBlessingButton>().Init(pair);
             index++;
         }
         for (int i = 0; i < buttons.Count; i++)
@@ -70,7 +74,19 @@ public class UISelectBlessingPanel : UIBase
             {
                 if (isFlipped[index2])
                 {
-
+                    for (int j = 0; j < buttons.Count; j++)
+                    {
+                        if (index2 == j)
+                        {
+                            UISelectBlessingButton button = buttons[j].GetComponent<UISelectBlessingButton>();
+                            button.OutlineEnabled(true);
+                            selectedBlessing = button.ReturnBlessing();
+                        }
+                        else
+                        {
+                            buttons[j].GetComponent<UISelectBlessingButton>().OutlineEnabled(false);
+                        }
+                    }
                 }
                 else
                 {
@@ -88,10 +104,16 @@ public class UISelectBlessingPanel : UIBase
                 }
             });
         }
+
+        selectButton.onClick.AddListener(SelectBleesing);
     }
 
-    private void InitButton(int index)
+    private void SelectBleesing()
     {
-        buttons[index].GetComponent<UISelectBlessingButton>().Init();
+        if (selectedBlessing.Value.Item2 != 0)
+        {
+            RoomManager.Instance.ReturnLocalPlayer().GetComponent<PlayerBlessing>().UpdateBlessing(selectedBlessing);
+            UIManager.Instance.ClosePeekUI();
+        }
     }
 }
