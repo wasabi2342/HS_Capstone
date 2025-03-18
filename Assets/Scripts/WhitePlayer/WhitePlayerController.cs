@@ -7,7 +7,7 @@ using System;
 using Photon.Pun;
 
 
-public enum WhitePlayerState { Idle, Run, BasicAttack, Hit, Dash, Skill, Ultimate, Guard, Parry, Counter, Death }
+public enum WhitePlayerState { Idle, Run, BasicAttack, Hit, Dash, Skill, Ultimate, Guard, Parry, Counter, Stun, Revive, Death }
 
 public class WhitePlayerController : ParentPlayerController
 {
@@ -550,9 +550,12 @@ public class WhitePlayerController : ParentPlayerController
 
         Debug.Log("플레이어 체력: " + currentHealth);
 
-        if (currentHealth <= 0 && currentState != WhitePlayerState.Death)
+        if (currentHealth <= 0)
         {
-            Die();
+            if(currentState != WhitePlayerState.Stun)
+            {
+                EnterStunState();
+            }
         }
         else
         {
@@ -590,7 +593,55 @@ public class WhitePlayerController : ParentPlayerController
     //        currentState = WhitePlayerState.Idle;
     //}
 
-    private void Die()
+
+    // 기절
+    private Coroutine stunCoroutine;
+    private void EnterStunState()
+    {
+        currentState = WhitePlayerState.Stun;
+        Debug.Log("플레이어 기절");
+        animator.SetTrigger("stun");
+
+        // 기절 상태 30초 동안의 코루틴 
+        if(stunCoroutine != null)
+        {
+            StopCoroutine(stunCoroutine);
+        }
+        stunCoroutine = StartCoroutine(CoStunDuration());
+    }
+
+    private IEnumerator CoStunDuration()
+    {
+        float stunDuration = 5f; // 빨리 보기위해 5초로 해둠, 나중에 30초로 조정하면 됩니다요.
+        float elapsed = 0f;
+        while (elapsed < stunDuration)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        TransitionToDeath();
+    }
+
+    // 부활
+    public void Revive()
+    {
+        // 만약 기절 상태라면 코루틴을 중지하고 상태를 Idle로 전환
+        if (currentState == WhitePlayerState.Stun)
+        {
+            if (stunCoroutine != null)
+            {
+                StopCoroutine(stunCoroutine);
+                stunCoroutine = null;
+            }
+            currentState = WhitePlayerState.Idle;
+            animator.SetTrigger("revive");
+            Debug.Log("플레이어 부활");
+        }
+    }
+
+    // 사망 상태로 전환
+    private void TransitionToDeath()
     {
         currentState = WhitePlayerState.Death;
         Debug.Log("플레이어 사망");
