@@ -17,6 +17,8 @@ public class WhitePlayerAttackZone : MonoBehaviour
 
     [SerializeField]
     private BoxCollider skillCollider;
+    [SerializeField]
+    private BoxCollider counterCollider;
 
     private Animator animator;
 
@@ -62,6 +64,26 @@ public class WhitePlayerAttackZone : MonoBehaviour
         if (skillCollider != null)
         {
             skillCollider.enabled = enable;
+        }
+    }
+
+    public void EnableCounterAttackCollider(bool enable, bool isRight = true)
+    {
+        if (enable)
+        {
+            if (isRight)
+            {
+                counterCollider.center = new Vector3(3.5f, 0, 0);
+            }
+            else
+            {
+                counterCollider.center = new Vector3(-3.5f, 0, 0);
+            }
+        }
+
+        if (counterCollider != null)
+        {
+            counterCollider.enabled = enable;
         }
     }
 

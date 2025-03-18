@@ -368,6 +368,23 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
+    public void OnCounterCollider()
+    {
+        if (AttackCollider != null)
+        {
+            AttackCollider.Damage = 10f; // 공격력 * 공격속도로 변경 해야함
+            AttackCollider.EnableCounterAttackCollider(true, animator.GetBool("Right"));
+        }
+    }
+
+    public void OffCounterCollider()
+    {
+        if (AttackCollider != null)
+        {
+            AttackCollider.Damage = 10f; // 공격력 * 공격속도로 변경 해야함
+            AttackCollider.EnableCounterAttackCollider(true, animator.GetBool("Right"));
+        }
+    }
 
     public void OnLastAttackStart()
     {
@@ -532,17 +549,17 @@ public class WhitePlayerController : ParentPlayerController
         {
             return;
         }
-        else if (currentState == WhitePlayerState.Ultimate)
+        if (isInvincible)
         {
-            return;
-        }
-        else if (currentState == WhitePlayerState.Guard)
-        {
-            animator.SetTrigger("parry");
-            currentState = WhitePlayerState.Parry;
-            isMouseRightSkillReady = true;
-            MouseRightSkillCoolDownUpdate?.Invoke(0);
-            StopCoroutine("CoStartGuardCoolDown");
+            if(currentState == WhitePlayerState.Guard)
+            {
+                animator.SetTrigger("parry");
+                currentState = WhitePlayerState.Parry;
+                isMouseRightSkillReady = true;
+                MouseRightSkillCoolDownUpdate?.Invoke(0);
+                StopCoroutine("CoStartGuardCoolDown");
+                return;
+            }
             return;
         }
 
@@ -559,7 +576,7 @@ public class WhitePlayerController : ParentPlayerController
         }
         else
         {
-            if(currentState == WhitePlayerState.Skill)
+            if(isSuperArmor)
             {
                 return;
             }
@@ -676,5 +693,25 @@ public class WhitePlayerController : ParentPlayerController
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // 씬 전환 후 초기화 처리
+    }
+
+    public override void EnterInvincibleState()
+    {
+        base.EnterInvincibleState();
+    }
+
+    public override void ExitInvincibleState()
+    {
+        base.ExitInvincibleState();
+    }
+
+    public override void EnterSuperArmorState()
+    {
+        base.EnterSuperArmorState();
+    }
+
+    public override void ExitSuperArmorState()
+    {
+        base.ExitSuperArmorState();
     }
 }

@@ -40,6 +40,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     protected bool isUltimateReady = true;
     protected bool isMouseRightSkillReady = true;
 
+    protected bool isInvincible = false; // 무적 상태 체크용
+    protected bool isSuperArmor = false; // 슈퍼아머 상태 체크용
     #endregion
 
     #region Unity Lifecycle
@@ -122,6 +124,26 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     }
 
     #endregion
+
+    public virtual void EnterInvincibleState()
+    {
+        isInvincible = true;
+    }
+
+    public virtual void ExitInvincibleState()
+    {
+        isInvincible = false;
+    }
+
+    public virtual void EnterSuperArmorState()
+    {
+        isSuperArmor = true;
+    }
+
+    public virtual void ExitSuperArmorState()
+    {
+        isSuperArmor = true;
+    }
 
     #region Cooldown Handling (UI Update)
 
