@@ -1,11 +1,7 @@
 using Photon.Pun;
-using Photon.Realtime;
 using System.Collections.Generic;
-using System.Linq;
 using Unity.Cinemachine;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class RoomManager : MonoBehaviour
 {
