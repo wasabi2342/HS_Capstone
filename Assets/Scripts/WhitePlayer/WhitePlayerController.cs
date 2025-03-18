@@ -630,7 +630,7 @@ public class WhitePlayerController : ParentPlayerController
 
     private IEnumerator CoStunDuration()
     {
-        float stunDuration = 5f; // 빨리 보기위해 5초로 해둠, 나중에 30초로 조정하면 됩니다요.
+        float stunDuration = 30f; // 빨리 보기위해 5초로 해둠, 나중에 30초로 조정하면 됩니다요.
         float elapsed = 0f;
         while (elapsed < stunDuration)
         {
