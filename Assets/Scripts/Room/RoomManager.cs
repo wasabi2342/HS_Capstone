@@ -22,7 +22,7 @@ public class RoomManager : MonoBehaviour
 
     public BasePlayerController localPlayer;
 
-    public Dictionary<int, GameObject> players = new Dictionary<int, GameObject>();
+    public Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
 
     private void Awake()
     {
@@ -36,7 +36,7 @@ public class RoomManager : MonoBehaviour
     private void Start()
     {
         //UIManager.Instance.OpenPanel<UIIngameMainPanel>();
-        CreateCharacter(playerInRoom, Vector3.zero, Quaternion.Euler(90, 0, 0), true);
+        CreateCharacter(playerInRoom, new Vector3(0, 2, 0), Quaternion.identity, true);
     }
 
     public void CreateCharacter(GameObject prefab, Vector3 pos, Quaternion quaternion, bool isInVillage)
@@ -45,44 +45,30 @@ public class RoomManager : MonoBehaviour
         if (PhotonNetwork.InRoom)
         {
             playerInstance = PhotonNetwork.Instantiate("Prefab/" + prefab.name, pos, quaternion);
-            //BasePlayerController playerController = playerInstance.GetComponent<BasePlayerController>();
-            players[PhotonNetwork.LocalPlayer.ActorNumber] = playerInstance;
-            PhotonNetworkManager.Instance.AddPlayer(PhotonNetwork.LocalPlayer.ActorNumber, playerInstance.GetComponent<PhotonView>().ViewID);
+            players[PhotonNetwork.LocalPlayer.UserId] = playerInstance;
+            PhotonNetworkManager.Instance.AddPlayer(PhotonNetwork.LocalPlayer.UserId, playerInstance.GetComponent<PhotonView>().ViewID);
             playerInstance.GetComponent<WhitePlayercontroller_event>().isInVillage = isInVillage; // 플레이어의 공통 스크립트로 변경 해야함
 
-            //photonView.RPC("AddPlayerInDictionary", RpcTarget.OthersBuffered, PhotonNetwork.LocalPlayer.ActorNumber, playerInstance.GetComponent<PhotonView>().ViewID);
         }
         else
         {
             playerInstance = Instantiate(prefab, pos, quaternion);
-            players[0] = playerInstance;
+            players["Local"] = playerInstance;
         }
 
         cinemachineCamera.Follow = playerInstance.transform;
         cinemachineCamera.LookAt = playerInstance.transform;
-
-        //localPlayer = playerInstance.GetComponent<BasePlayerController>();
-        //localPlayer.InitBlessing();
-        //
-        //
-        //UIBase peekUI = UIManager.Instance.ReturnPeekUI();
-        //if (peekUI is UIIngameMainPanel uIIngameMainPanel)
-        //{
-        //    localPlayer.updateUIAction += uIIngameMainPanel.UpdateUI;
-        //    localPlayer.updateUIOutlineAction += uIIngameMainPanel.UpdateIconOutline;
-        //}
-
     }
 
     public GameObject ReturnLocalPlayer()
     {
         if (!PhotonNetwork.InRoom)
         {
-            return players[0];
+            return players["Local"];
         }
         else
         {
-            return players[PhotonNetwork.LocalPlayer.ActorNumber];
+            return players[PhotonNetwork.LocalPlayer.UserId];
         }
     }
 

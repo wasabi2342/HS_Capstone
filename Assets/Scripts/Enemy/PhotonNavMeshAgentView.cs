@@ -35,4 +35,8 @@ public class PhotonNavMeshAgentView : MonoBehaviourPun, IPunObservable
             networkRotation = (Quaternion)stream.ReceiveNext();
         }
     }
+    public void SetDestination(Vector3 position)
+    {
+        agent.SetDestination(position);
+    }
 }
