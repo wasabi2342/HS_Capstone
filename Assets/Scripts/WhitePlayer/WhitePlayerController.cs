@@ -587,12 +587,13 @@ public class WhitePlayerController : ParentPlayerController
             //StartCoroutine(CoHitReaction());
         }
     }
-
+    [PunRPC]
     public override void DamageToMaster(float damage)
     {
         base.DamageToMaster(damage);
     }
-
+    
+    [PunRPC]
     public override void UpdateHP(float hp)
     {
         base.UpdateHP(hp);
