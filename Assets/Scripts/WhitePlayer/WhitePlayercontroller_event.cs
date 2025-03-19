@@ -49,14 +49,9 @@ public class WhitePlayercontroller_event : MonoBehaviourPun
         if (context.performed)
         {
             Vector2 moveInput;
-            if (!isInVillage)
-            {
-                moveInput = context.ReadValue<Vector2>();
-            }
-            else
-            {
-                moveInput = new Vector2(context.ReadValue<Vector2>().x, 0);
-            }
+
+            moveInput = context.ReadValue<Vector2>();
+
             whitePlayerController.SetMoveInput(moveInput);
             OnMoveEvent?.Invoke(context);
         }

@@ -88,7 +88,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             }
         }
         if (PhotonNetwork.InRoom)
-            photonView.RPC("UpdateReadyPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer.UserId);
+            photonView.RPC("UpdateReadyPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber);
     }
 
     private Coroutine stageEnterCoroutine;

@@ -57,6 +57,7 @@ public class RoomManager : MonoBehaviour
             players["Local"] = playerInstance;
         }
 
+        DontDestroyOnLoad(playerInstance);
         cinemachineCamera.Follow = playerInstance.transform;
         cinemachineCamera.LookAt = playerInstance.transform;
     }
