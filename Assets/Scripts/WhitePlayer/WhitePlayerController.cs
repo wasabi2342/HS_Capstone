@@ -17,11 +17,9 @@ public class WhitePlayerController : ParentPlayerController
     public float speedVertical = 5f;
 
     [Header("대쉬 설정")]
-    public float dashDuration = 0.2f;
     public float dashDistance = 2f;
     public float dashDoubleClickThreshold = 0.3f;
     private float lastDashClickTime = -Mathf.Infinity;
-    private bool isDashing = false;
 
     [Header("중심점 설정")]
     [Tooltip("기본 CenterPoint (애니메이션 이벤트 등에서 사용)")]
@@ -79,7 +77,7 @@ public class WhitePlayerController : ParentPlayerController
             return;
 
         UpdateCenterPoint();
-        CheckDashInput();
+        //HandleDash();
         HandleMovement();
         // 공격/스킬, 가드 등은 별도 스크립트에서 호출
     }
@@ -171,39 +169,26 @@ public class WhitePlayerController : ParentPlayerController
     }
 
     // 대쉬 처리
-    private void CheckDashInput()
+
+    public void HandleDash()
     {
-        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            if (Time.time - lastDashClickTime <= dashDoubleClickThreshold)
-            {
-                Vector3 dashDir = new Vector3(moveInput.x, 0, moveInput.y);
-                if (dashDir == Vector3.zero)
-                    dashDir = transform.forward;
-                StartCoroutine(DoDash(dashDir));
-                lastDashClickTime = -Mathf.Infinity;
-            }
-            else
-            {
-                lastDashClickTime = Time.time;
-            }
-        }
+        if (currentState == WhitePlayerState.Death || currentState == WhitePlayerState.Dash)
+            return;
+
+        currentState = WhitePlayerState.Dash;
+        animator.ResetTrigger("run");
+
+        animator.SetTrigger("dash");
+        Vector3 dashDir = new Vector3(moveInput.x, 0, 0);
+        StartCoroutine(DoDash(dashDir));
     }
 
     private IEnumerator DoDash(Vector3 dashDir)
     {
-        isDashing = true;
-        float elapsed = 0f;
         Vector3 startPos = transform.position;
         Vector3 targetPos = startPos + dashDir.normalized * dashDistance;
-        while (elapsed < dashDuration)
-        {
-            transform.position = Vector3.Lerp(startPos, targetPos, elapsed / dashDuration);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
+        yield return null;
         transform.position = targetPos;
-        isDashing = false;
     }
 
 

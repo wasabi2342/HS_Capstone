@@ -25,6 +25,8 @@ public class WhitePlayercontroller_event : MonoBehaviourPun
 
         InputManager.Instance.PlayerInput.actions["Move"].performed += ctx => OnMove(ctx);
         InputManager.Instance.PlayerInput.actions["Move"].canceled += ctx => OnMove(ctx);
+        InputManager.Instance.PlayerInput.actions["Dash"].performed += ctx => OnKeyboard_Spacebar(ctx);
+        InputManager.Instance.PlayerInput.actions["Dash"].canceled += ctx => OnKeyboard_Spacebar(ctx);
         InputManager.Instance.PlayerInput.actions["Interaction"].performed += ctx => OnInteraction(ctx);
         InputManager.Instance.PlayerInput.actions["Interaction"].canceled += ctx => OnInteraction(ctx);
         InputManager.Instance.PlayerInput.actions["Interaction"].started += ctx => OnInteraction(ctx);
@@ -108,6 +110,16 @@ public class WhitePlayercontroller_event : MonoBehaviourPun
         if (context.performed && !isInVillage)
         {
             whitePlayerController.HandleUltimateAttack();
+            OnKeyboardREvent?.Invoke();
+        }
+    }
+
+    // Space¹Ù (È¸ÇÇ)
+    public void OnKeyboard_Spacebar(InputAction.CallbackContext context)
+    {
+        if (context.performed && !isInVillage)
+        {
+            whitePlayerController.HandleDash();
             OnKeyboardREvent?.Invoke();
         }
     }
