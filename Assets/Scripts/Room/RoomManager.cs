@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class RoomManager : MonoBehaviour
 {
@@ -31,6 +32,7 @@ public class RoomManager : MonoBehaviour
             Instance = this;
         else
             Destroy(gameObject);
+        DontDestroyOnLoad(gameObject);
         DontDestroyOnLoad(cinemachineCamera);
     }
 
@@ -38,6 +40,16 @@ public class RoomManager : MonoBehaviour
     {
         //UIManager.Instance.OpenPanel<UIIngameMainPanel>();
         CreateCharacter(playerInRoom, new Vector3(0, 2, 0), Quaternion.identity, true);
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     public void CreateCharacter(GameObject prefab, Vector3 pos, Quaternion quaternion, bool isInVillage)
@@ -148,5 +160,14 @@ public class RoomManager : MonoBehaviour
         else
             currentIndex = 0; // 기본적으로 첫 번째 플레이어를 바라보도록
     }
-
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 로드되는 씬에 따라 행동 추가
+        if (scene.name.StartsWith("Stage"))
+        {
+            UIManager.Instance.CloseAllUI();
+            UIManager.Instance.OpenPanel<UIIngameMainPanel>();
+            ReturnLocalPlayer().GetComponent<WhitePlayercontroller_event>().isInVillage = false;
+        }
+    }
 }

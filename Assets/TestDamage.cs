@@ -21,7 +21,14 @@ public class TestDamage : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("피해 충돌 함 ");
-        other.GetComponent<IDamageable>().TakeDamage(10);
+        if (other.gameObject.layer == LayerMask.NameToLayer("Damagable"))
+        {
+            IDamageable damageable = other.GetComponent<IDamageable>();
+            if (damageable != null)
+            {
+                Debug.Log("피해 충돌 함 ");
+                damageable.TakeDamage(10);
+            }
+        }
     }
 }

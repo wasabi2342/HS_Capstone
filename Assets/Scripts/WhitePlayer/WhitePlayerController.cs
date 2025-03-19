@@ -107,6 +107,11 @@ public class WhitePlayerController : ParentPlayerController
                 nextState = WhitePlayerState.Run;
                 animator.SetBool("Pre-Input", true);
             }
+            else if(nextState > WhitePlayerState.Run)
+            {
+                animator.SetBool("run", false);
+                return;
+            }
         }
         else
         {
