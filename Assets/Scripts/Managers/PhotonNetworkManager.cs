@@ -84,7 +84,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             }
             else
             {
-                SceneManager.LoadScene("StageTest1");
+                SceneManager.LoadScene("SampleScene");
             }
         }
         if (PhotonNetwork.InRoom)
@@ -113,7 +113,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
 
-            PhotonNetwork.LoadLevel("StageTest1");
+            PhotonNetwork.LoadLevel("SampleScene");
             PhotonNetwork.CurrentRoom.IsOpen = false;
 
         }
@@ -133,8 +133,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             Debug.Log("모두 준비 완료");
             StopCoroutine(stageEnterCoroutine);
             UIManager.Instance.ClosePeekUI();
+            PhotonNetwork.LoadLevel("SampleScene");
             PhotonNetwork.CurrentRoom.IsOpen = false;
-            PhotonNetwork.LoadLevel("StageTest1");
         }
     }
 
