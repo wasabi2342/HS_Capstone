@@ -19,6 +19,7 @@ public class WhitePlayer_Idle : StateMachineBehaviour
         animator.SetBool("Pre-Input", false);
         animator.SetBool("CancleState", false);
         animator.SetBool("FreeState", false);
+        animator.SetBool("run", false);
 
     }
 
@@ -35,6 +36,7 @@ public class WhitePlayer_Idle : StateMachineBehaviour
             case WhitePlayerState.Idle:
                 break;
             case WhitePlayerState.Run:
+                animator.SetBool("run", true);
                 whitePlayerController.currentState = WhitePlayerState.Run;
                 break;
             case WhitePlayerState.BasicAttack:
@@ -73,7 +75,7 @@ public class WhitePlayer_Idle : StateMachineBehaviour
             return;
 
         whitePlayerController.nextState = WhitePlayerState.Idle;
-        animator.SetBool("Pre-Attack", false);
+        animator.SetBool("Pre-Attack", false); 
         animator.SetBool("Pre-Input", false);
     }
 

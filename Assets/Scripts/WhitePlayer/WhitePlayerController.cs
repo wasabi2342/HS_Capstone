@@ -82,7 +82,25 @@ public class WhitePlayerController : ParentPlayerController
         CheckDashInput();
         HandleMovement();
         // 공격/스킬, 가드 등은 별도 스크립트에서 호출
-        if (isMoveInput)
+    }
+
+    // 입력 처리 관련
+    // WhitePlayercontroller_event.cs에서 호출하여 이동 입력을 설정
+    public void SetMoveInput(Vector2 input)
+    {
+        moveInput = input;
+    }
+
+    // 이동 처리
+    private void HandleMovement()
+    {
+        if (currentState == WhitePlayerState.Death) return;
+
+        float h = moveInput.x;
+        float v = moveInput.y;
+        bool isMoving = (Mathf.Abs(h) > 0.01f || Mathf.Abs(v) > 0.01f);
+        
+        if (isMoving)
         {
             if (nextState < WhitePlayerState.Run)
             {
@@ -90,39 +108,27 @@ public class WhitePlayerController : ParentPlayerController
                 animator.SetBool("Pre-Input", true);
             }
         }
-    }
-
-    public bool isMoveInput;
-
-    // 입력 처리 관련
-    // WhitePlayercontroller_event.cs에서 호출하여 이동 입력을 설정
-    public void SetMoveInput(Vector2 input)
-    {
-        if (nextState < WhitePlayerState.Run)
+        else
         {
-            nextState = WhitePlayerState.Run;
-            animator.SetBool("Pre-Input", true);
-        }
-        moveInput = input;
-        isMoveInput = (Mathf.Abs(moveInput.x) > 0.01f || Mathf.Abs(moveInput.y) > 0.01f);
-    }
-
-    // 이동 처리
-    private void HandleMovement()
-    {
-        if (currentState == WhitePlayerState.Death) return;
-        if (nextState != WhitePlayerState.Idle && nextState != WhitePlayerState.Run)
-        {
+            if (nextState == WhitePlayerState.Run)
+            {
+                nextState = WhitePlayerState.Idle;
+            }
             animator.SetBool("run", false);
             return;
+
         }
+
+        //if (nextState != WhitePlayerState.Run)
+        //{
+        //    animator.SetBool("run", false);
+        //    return;
+        //}
+
         if (currentState != WhitePlayerState.Run)
             return;
 
-        float h = moveInput.x;
-        float v = moveInput.y;
-        bool isMoving = (Mathf.Abs(h) > 0.01f || Mathf.Abs(v) > 0.01f);
-        currentState = isMoving ? WhitePlayerState.Run : WhitePlayerState.Idle;
+        //currentState = isMoving ? WhitePlayerState.Run : WhitePlayerState.Idle;
 
         if (isMoving)
         {
@@ -133,7 +139,6 @@ public class WhitePlayerController : ParentPlayerController
 
         if (animator != null)
         {
-            animator.SetBool("run", isMoving);
             animator.SetFloat("moveX", h);
             //animator.SetFloat("moveY", v);
         }
@@ -583,6 +588,7 @@ public class WhitePlayerController : ParentPlayerController
             else
             {
                 animator.SetTrigger("hit");
+                currentState = WhitePlayerState.Hit;
             }
             //StartCoroutine(CoHitReaction());
         }
