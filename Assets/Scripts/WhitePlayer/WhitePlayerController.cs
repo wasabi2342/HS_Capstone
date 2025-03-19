@@ -7,7 +7,7 @@ using System;
 using Photon.Pun;
 
 
-public enum WhitePlayerState { Idle, Run, BasicAttack, Hit, Dash, Skill, Ultimate, Guard, Parry, Counter, Death }
+public enum WhitePlayerState { Idle, Run, BasicAttack, Hit, Dash, Skill, Ultimate, Guard, Parry, Counter, Stun, Revive, Death }
 
 public class WhitePlayerController : ParentPlayerController
 {
@@ -82,7 +82,25 @@ public class WhitePlayerController : ParentPlayerController
         CheckDashInput();
         HandleMovement();
         // 공격/스킬, 가드 등은 별도 스크립트에서 호출
-        if (isMoveInput)
+    }
+
+    // 입력 처리 관련
+    // WhitePlayercontroller_event.cs에서 호출하여 이동 입력을 설정
+    public void SetMoveInput(Vector2 input)
+    {
+        moveInput = input;
+    }
+
+    // 이동 처리
+    private void HandleMovement()
+    {
+        if (currentState == WhitePlayerState.Death) return;
+
+        float h = moveInput.x;
+        float v = moveInput.y;
+        bool isMoving = (Mathf.Abs(h) > 0.01f || Mathf.Abs(v) > 0.01f);
+        
+        if (isMoving)
         {
             if (nextState < WhitePlayerState.Run)
             {
@@ -90,39 +108,27 @@ public class WhitePlayerController : ParentPlayerController
                 animator.SetBool("Pre-Input", true);
             }
         }
-    }
-
-    public bool isMoveInput;
-
-    // 입력 처리 관련
-    // WhitePlayercontroller_event.cs에서 호출하여 이동 입력을 설정
-    public void SetMoveInput(Vector2 input)
-    {
-        if (nextState < WhitePlayerState.Run)
+        else
         {
-            nextState = WhitePlayerState.Run;
-            animator.SetBool("Pre-Input", true);
-        }
-        moveInput = input;
-        isMoveInput = (Mathf.Abs(moveInput.x) > 0.01f || Mathf.Abs(moveInput.y) > 0.01f);
-    }
-
-    // 이동 처리
-    private void HandleMovement()
-    {
-        if (currentState == WhitePlayerState.Death) return;
-        if (nextState != WhitePlayerState.Idle && nextState != WhitePlayerState.Run)
-        {
+            if (nextState == WhitePlayerState.Run)
+            {
+                nextState = WhitePlayerState.Idle;
+            }
             animator.SetBool("run", false);
             return;
+
         }
+
+        //if (nextState != WhitePlayerState.Run)
+        //{
+        //    animator.SetBool("run", false);
+        //    return;
+        //}
+
         if (currentState != WhitePlayerState.Run)
             return;
 
-        float h = moveInput.x;
-        float v = moveInput.y;
-        bool isMoving = (Mathf.Abs(h) > 0.01f || Mathf.Abs(v) > 0.01f);
-        currentState = isMoving ? WhitePlayerState.Run : WhitePlayerState.Idle;
+        //currentState = isMoving ? WhitePlayerState.Run : WhitePlayerState.Idle;
 
         if (isMoving)
         {
@@ -133,7 +139,6 @@ public class WhitePlayerController : ParentPlayerController
 
         if (animator != null)
         {
-            animator.SetBool("run", isMoving);
             animator.SetFloat("moveX", h);
             //animator.SetFloat("moveY", v);
         }
@@ -368,6 +373,23 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
+    public void OnCounterCollider()
+    {
+        if (AttackCollider != null)
+        {
+            AttackCollider.Damage = 10f; // 공격력 * 공격속도로 변경 해야함
+            AttackCollider.EnableCounterAttackCollider(true, animator.GetBool("Right"));
+        }
+    }
+
+    public void OffCounterCollider()
+    {
+        if (AttackCollider != null)
+        {
+            AttackCollider.Damage = 10f; // 공격력 * 공격속도로 변경 해야함
+            AttackCollider.EnableCounterAttackCollider(true, animator.GetBool("Right"));
+        }
+    }
 
     public void OnLastAttackStart()
     {
@@ -532,17 +554,17 @@ public class WhitePlayerController : ParentPlayerController
         {
             return;
         }
-        else if (currentState == WhitePlayerState.Ultimate)
+        if (isInvincible)
         {
-            return;
-        }
-        else if (currentState == WhitePlayerState.Guard)
-        {
-            animator.SetTrigger("parry");
-            currentState = WhitePlayerState.Parry;
-            isMouseRightSkillReady = true;
-            MouseRightSkillCoolDownUpdate?.Invoke(0);
-            StopCoroutine("CoStartGuardCoolDown");
+            if(currentState == WhitePlayerState.Guard)
+            {
+                animator.SetTrigger("parry");
+                currentState = WhitePlayerState.Parry;
+                isMouseRightSkillReady = true;
+                MouseRightSkillCoolDownUpdate?.Invoke(0);
+                StopCoroutine("CoStartGuardCoolDown");
+                return;
+            }
             return;
         }
 
@@ -550,29 +572,34 @@ public class WhitePlayerController : ParentPlayerController
 
         Debug.Log("플레이어 체력: " + currentHealth);
 
-        if (currentHealth <= 0 && currentState != WhitePlayerState.Death)
+        if (currentHealth <= 0)
         {
-            Die();
+            if(currentState != WhitePlayerState.Stun)
+            {
+                EnterStunState();
+            }
         }
         else
         {
-            if(currentState == WhitePlayerState.Skill)
+            if(isSuperArmor)
             {
                 return;
             }
             else
             {
                 animator.SetTrigger("hit");
+                currentState = WhitePlayerState.Hit;
             }
             //StartCoroutine(CoHitReaction());
         }
     }
-
+    [PunRPC]
     public override void DamageToMaster(float damage)
     {
         base.DamageToMaster(damage);
     }
-
+    
+    [PunRPC]
     public override void UpdateHP(float hp)
     {
         base.UpdateHP(hp);
@@ -590,7 +617,55 @@ public class WhitePlayerController : ParentPlayerController
     //        currentState = WhitePlayerState.Idle;
     //}
 
-    private void Die()
+
+    // 기절
+    private Coroutine stunCoroutine;
+    private void EnterStunState()
+    {
+        currentState = WhitePlayerState.Stun;
+        Debug.Log("플레이어 기절");
+        animator.SetTrigger("stun");
+
+        // 기절 상태 30초 동안의 코루틴 
+        if(stunCoroutine != null)
+        {
+            StopCoroutine(stunCoroutine);
+        }
+        stunCoroutine = StartCoroutine(CoStunDuration());
+    }
+
+    private IEnumerator CoStunDuration()
+    {
+        float stunDuration = 30f; // 빨리 보기위해 5초로 해둠, 나중에 30초로 조정하면 됩니다요.
+        float elapsed = 0f;
+        while (elapsed < stunDuration)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        TransitionToDeath();
+    }
+
+    // 부활
+    public void Revive()
+    {
+        // 만약 기절 상태라면 코루틴을 중지하고 상태를 Idle로 전환
+        if (currentState == WhitePlayerState.Stun)
+        {
+            if (stunCoroutine != null)
+            {
+                StopCoroutine(stunCoroutine);
+                stunCoroutine = null;
+            }
+            currentState = WhitePlayerState.Idle;
+            animator.SetTrigger("revive");
+            Debug.Log("플레이어 부활");
+        }
+    }
+
+    // 사망 상태로 전환
+    private void TransitionToDeath()
     {
         currentState = WhitePlayerState.Death;
         Debug.Log("플레이어 사망");
@@ -625,5 +700,25 @@ public class WhitePlayerController : ParentPlayerController
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // 씬 전환 후 초기화 처리
+    }
+
+    public override void EnterInvincibleState()
+    {
+        base.EnterInvincibleState();
+    }
+
+    public override void ExitInvincibleState()
+    {
+        base.ExitInvincibleState();
+    }
+
+    public override void EnterSuperArmorState()
+    {
+        base.EnterSuperArmorState();
+    }
+
+    public override void ExitSuperArmorState()
+    {
+        base.ExitSuperArmorState();
     }
 }

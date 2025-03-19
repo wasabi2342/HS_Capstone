@@ -62,4 +62,3 @@ public class WhitePlayerInteractionZone : MonoBehaviour
         interactables.Clear();
     }
 }
-

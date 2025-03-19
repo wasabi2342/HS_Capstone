@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 8789968268913942805}
   - component: {fileID: 3371492236228461120}
   - component: {fileID: 7734979025447837112}
+  - component: {fileID: 5276840307889972543}
   m_Layer: 9
   m_Name: PlayerAttackZone
   m_TagString: Untagged
@@ -102,6 +103,7 @@ MonoBehaviour:
   attackRange: 2
   enemiesInRange: []
   skillCollider: {fileID: 7734979025447837112}
+  counterCollider: {fileID: 5276840307889972543}
   Damage: 0
   hitlagTime: 0.13
 --- !u!54 &3371492236228461120
@@ -152,6 +154,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 6, y: 2, z: 0.5}
   m_Center: {x: 3, y: 0, z: 0}
+--- !u!65 &5276840307889972543
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1018905123020567762}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Size: {x: 7, y: 5, z: 0.5}
+  m_Center: {x: 3.5, y: 0, z: 0}
 --- !u!1 &1618922647488193223
 GameObject:
   m_ObjectHideFlags: 0
@@ -257,6 +280,7 @@ GameObject:
   - component: {fileID: 3179301021841967162}
   - component: {fileID: 2622170152874933506}
   - component: {fileID: 3889950944366596644}
+  - component: {fileID: 3046473687648648452}
   m_Layer: 8
   m_Name: PlayerInteractionZone
   m_TagString: Player
@@ -341,6 +365,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &3046473687648648452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4071847176344043317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9943ca12d63f1844eb366666fe29b63a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4131734313779836671
 GameObject:
   m_ObjectHideFlags: 0
@@ -562,6 +598,18 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 1
     Name: Pre-Input
+  - Type: 1
+    SynchronizeType: 0
+    Name: MouseX
+  - Type: 4
+    SynchronizeType: 0
+    Name: Right
+  - Type: 9
+    SynchronizeType: 1
+    Name: stun
+  - Type: 9
+    SynchronizeType: 1
+    Name: revive
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
@@ -615,15 +663,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  currentHealth: 0
   OnHealthChanged:
     m_PersistentCalls:
       m_Calls: []
-  attackCooldown: 1
-  dashCooldown: 1
   OnAttackCooldownUpdate:
     m_PersistentCalls:
       m_Calls: []
   OnDashCooldownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  ShiftCoolDownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  UltimateCoolDownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  MouseRightSkillCoolDownUpdate:
     m_PersistentCalls:
       m_Calls: []
   speedHorizontal: 5
