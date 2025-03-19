@@ -51,6 +51,13 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         currentHealth = maxHealth;
         // 시작 시 체력 UI 업데이트
         OnHealthChanged?.Invoke(currentHealth / maxHealth);
+        
+        DontDestroyOnLoad(gameObject);
+        
+        if (PhotonNetwork.IsConnected && photonView.ViewID == 0)
+        {
+            PhotonNetwork.Destroy(gameObject);
+        }
     }
 
     #endregion

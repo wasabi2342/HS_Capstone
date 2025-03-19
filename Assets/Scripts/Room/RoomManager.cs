@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class RoomManager : MonoBehaviour
 {
@@ -17,8 +18,6 @@ public class RoomManager : MonoBehaviour
 
     public bool isEnteringStage;
 
-    public BasePlayerController localPlayer;
-
     public Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
 
     // 카메라 전환에서 사용
@@ -28,10 +27,24 @@ public class RoomManager : MonoBehaviour
     private void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+        }
         else
+        {
             Destroy(gameObject);
+        }
         DontDestroyOnLoad(cinemachineCamera);
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void Start()
@@ -56,7 +69,7 @@ public class RoomManager : MonoBehaviour
             playerInstance = Instantiate(prefab, pos, quaternion);
             players["Local"] = playerInstance;
         }
-
+        DontDestroyOnLoad(playerInstance);
         cinemachineCamera.Follow = playerInstance.transform;
         cinemachineCamera.LookAt = playerInstance.transform;
     }
@@ -147,5 +160,13 @@ public class RoomManager : MonoBehaviour
         else
             currentIndex = 0; // 기본적으로 첫 번째 플레이어를 바라보도록
     }
-
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name.StartsWith("Stage"))
+        {
+            UIManager.Instance.CloseAllUI();
+            UIManager.Instance.OpenPanel<UIIngameMainPanel>();
+            ReturnLocalPlayer().GetComponent<WhitePlayercontroller_event>().isInVillage = false;
+        }
+    }
 }
