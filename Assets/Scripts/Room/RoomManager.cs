@@ -1,5 +1,6 @@
 using Photon.Pun;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -19,6 +20,10 @@ public class RoomManager : MonoBehaviour
     public BasePlayerController localPlayer;
 
     public Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
+
+    // 카메라 전환에서 사용
+    private List<GameObject> sortedPlayers;
+    private int currentIndex = 0;
 
     private void Awake()
     {
@@ -113,4 +118,34 @@ public class RoomManager : MonoBehaviour
     {
         return playerInRestrictedArea.ContainsValue(true);
     }
+
+    public void SwitchCameraToNextPlayer()
+    {
+        if (sortedPlayers.Count == 0) return;
+
+        // 다음 플레이어로 이동 (마지막이면 0번으로 돌아감)
+        currentIndex = (currentIndex + 1) % sortedPlayers.Count;
+
+        // 카메라 변경
+        cinemachineCamera.Follow = sortedPlayers[currentIndex].transform;
+        cinemachineCamera.LookAt = sortedPlayers[currentIndex].transform;
+    }
+
+    public void UpdateSortedPlayers()
+    {
+        sortedPlayers = players.OrderBy(p => p.Key == PhotonNetwork.LocalPlayer.UserId ? 0 : 1)
+                               .Select(p => p.Value)
+                               .ToList();
+
+        // 현재 따라가고 있는 플레이어가 리스트에서 몇 번째인지 찾기
+        GameObject currentTarget = cinemachineCamera.Follow?.gameObject;
+        int newIndex = sortedPlayers.FindIndex(p => p == currentTarget);
+
+        // 유효한 값이면 currentIndex 갱신
+        if (newIndex != -1)
+            currentIndex = newIndex;
+        else
+            currentIndex = 0; // 기본적으로 첫 번째 플레이어를 바라보도록
+    }
+
 }

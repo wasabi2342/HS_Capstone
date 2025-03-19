@@ -140,8 +140,11 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
-        StopCoroutine(stageEnterCoroutine);
-        if(UIManager.Instance.ReturnPeekUI() as UIStageReadyPanel)
+        if (stageEnterCoroutine != null)
+        {
+            StopCoroutine(stageEnterCoroutine);
+        }
+        if (UIManager.Instance.ReturnPeekUI() as UIStageReadyPanel)
         {
             UIManager.Instance.ClosePeekUI();
             readyPlayers.Clear();
@@ -149,6 +152,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         if (RoomManager.Instance.players.ContainsKey(otherPlayer.UserId))
         {
             RoomManager.Instance.players.Remove(otherPlayer.UserId);
+            RoomManager.Instance.UpdateSortedPlayers();
         }
     }
 
@@ -169,6 +173,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         if (targetView != null)
         {
             RoomManager.Instance.players[userID] = targetView.gameObject;
+            RoomManager.Instance.UpdateSortedPlayers();
         }
     }
 
