@@ -101,13 +101,18 @@ public class WhitePlayerAttackZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.transform.parent == transform.parent)
+        {
+            return; // 같은 부모를 공유하는 경우 공격하지 않음
+        }
+
         other.transform.parent.GetComponentInChildren<IDamageable>().TakeDamage(Damage);
 
-        if (other.GetComponent<IDamageable>() != null)
-        {
-            other.GetComponent<IDamageable>().TakeDamage(Damage);
-            StartHitlag();
-        }
+        //if (other.GetComponent<IDamageable>() != null)
+        //{
+        //    other.GetComponent<IDamageable>().TakeDamage(Damage);
+        //    StartHitlag();
+        //}
     }
 
     private void OnTriggerExit(Collider other)
