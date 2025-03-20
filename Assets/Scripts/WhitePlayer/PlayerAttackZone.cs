@@ -89,9 +89,9 @@ public class WhitePlayerAttackZone : MonoBehaviour
 
     private IEnumerator PauseForSeconds()
     {
-        animator.speed = 0; 
-        yield return new WaitForSeconds(hitlagTime); 
-        animator.speed = 1; 
+        animator.speed = 0;
+        yield return new WaitForSeconds(hitlagTime);
+        animator.speed = 1;
     }
 
     public void StartHitlag()
@@ -101,6 +101,8 @@ public class WhitePlayerAttackZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        other.transform.parent.GetComponentInChildren<IDamageable>().TakeDamage(Damage);
+
         if (other.GetComponent<IDamageable>() != null)
         {
             other.GetComponent<IDamageable>().TakeDamage(Damage);
