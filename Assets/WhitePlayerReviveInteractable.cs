@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,7 +19,7 @@ public class WhitePlayerReviveInteractable : MonoBehaviour, IInteractable
             if (whitePlayer.currentState == WhitePlayerState.Stun)
             {
                 // 체력을 20으로 회복
-                whitePlayer.currentHealth = 20;
+                whitePlayer.photonView.RPC("UpdateHP", RpcTarget.All, 20);
                 // Revive() 메서드 호출
                 whitePlayer.Revive();
                 Debug.Log("플레이어 부활 상호작용");
