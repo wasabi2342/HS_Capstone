@@ -1,39 +1,47 @@
 using UnityEngine;
 using UnityEngine.AI;
+using Photon.Pun;
 
-public class MonsterAnimationController : MonoBehaviour
+public class MonsterAnimationController : MonoBehaviourPunCallbacks, IDamageable
 {
     private Animator animator;
     private NavMeshAgent agent;
     private float lastDirection = 1f;
     private bool isAttacking = false;
-    private bool isDead = false; // 사망 여부 체크
-    private bool isHit = false; // 피격 여부 체크
+    private bool isDead = false;
+    private bool isHit = false;
     private float velocityMagnitude;
     private WeaponBase currentWeapon;
-    private float health = 100f; // 몬스터 체력
+    private int health;
+
+    [SerializeField] private EnemyStatus enemyStatus;
 
     void Start()
     {
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         currentWeapon = GetComponent<WeaponBase>();
+
+        if (enemyStatus == null)
+        {
+            Debug.LogError("EnemyStatus가 할당되지 않았습니다!");
+            return;
+        }
+
+        health = enemyStatus.hp;
     }
 
     void Update()
     {
-        if (isDead) return; // 사망 상태에서는 아무 동작도 하지 않음
+        if (isDead) return;
 
-        // 이동 속도 가져오기 (NavMeshAgent는 velocity.x 값이 항상 0일 수 있음)
         velocityMagnitude = agent.velocity.magnitude;
 
-        // 방향 업데이트 (속도가 0이 아닐 때만 갱신)
         if (velocityMagnitude > 0.1f)
         {
             lastDirection = Mathf.Sign(agent.velocity.x);
         }
 
-        // 애니메이터 파라미터 업데이트
         animator.SetFloat("velocityX", velocityMagnitude);
         animator.SetFloat("lastDirection", lastDirection);
         animator.SetBool("isMoving", velocityMagnitude > 0.1f);
@@ -49,8 +57,7 @@ public class MonsterAnimationController : MonoBehaviour
         isAttacking = true;
         animator.SetBool("isAttacking", true);
 
-        // 공격 애니메이션이 끝나면 다시 이동 가능하게 설정
-        Invoke(nameof(ResetAttack), 1.0f); // 공격 애니메이션 길이에 맞게 조정
+        Invoke(nameof(ResetAttack), 1.0f);
     }
 
     private void ResetAttack()
@@ -59,27 +66,42 @@ public class MonsterAnimationController : MonoBehaviour
         animator.SetBool("isAttacking", false);
     }
 
-    public void TakeDamage(float damage)
+    [PunRPC]
+    public void DamageToMaster(float damage)
     {
-        if (isDead) return; // 이미 죽은 상태라면 무시
+        health -= (int)damage;
+        Debug.Log($"{enemyStatus.name} 체력 감소: {health} HP 남음");
 
-        health -= damage;
         if (health <= 0)
         {
             Die();
         }
-        else
+    }
+
+    [PunRPC]
+    public void UpdateHP(float damage)
+    {
+        health -= (int)damage;
+        if (health <= 0)
         {
-            HitReaction();
+            Die();
+        }
+    }
+
+    public void TakeDamage(float damage)
+    {
+        if (photonView.IsMine)
+        {
+            photonView.RPC(nameof(DamageToMaster), RpcTarget.All, damage);
         }
     }
 
     private void HitReaction()
     {
-        if (isHit) return; // 연속 피격 방지
+        if (isHit) return;
         isHit = true;
         animator.SetBool("isHit", true);
-        Invoke(nameof(ResetHit), 0.5f); // 0.5초 후 피격 상태 해제
+        Invoke(nameof(ResetHit), 0.5f);
     }
 
     private void ResetHit()
@@ -91,7 +113,8 @@ public class MonsterAnimationController : MonoBehaviour
     private void Die()
     {
         isDead = true;
-        agent.isStopped = true; // 네비메시 이동 중지
+        agent.isStopped = true;
         animator.SetBool("isDead", true);
+        PhotonNetwork.Destroy(gameObject);
     }
 }

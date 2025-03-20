@@ -1,69 +1,85 @@
-using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using Unity.Behavior;
+using Photon.Pun;
 
-public class EnemyFSM : MonoBehaviour
+public class EnemyFSM : MonoBehaviour, IDamageable
 {
-    [SerializeField]
-    private float cooldowmTime = 2f;
-    [SerializeField]
-    private float damage = 10f;
+    [SerializeField] private EnemyStatus enemyStatus; // 몬스터의 스탯 참조
 
     private Transform player;
     private NavMeshAgent navMeshAgent;
-    private BehaviorGraphAgent behaviorAgent;
-    private WeaponBase currentWeapon;   // 현재 활성화된 무기
+    private int currentHP;
+
+    private void Start()
+    {
+        if (enemyStatus == null)
+        {
+            Debug.LogError("EnemyStatus가 할당되지 않았습니다!");
+            return;
+        }
+
+        currentHP = enemyStatus.hp; // 몬스터 체력 초기화
+        navMeshAgent = GetComponent<NavMeshAgent>();
+
+        if (navMeshAgent == null)
+        {
+            Debug.LogError("NavMeshAgent 컴포넌트가 없습니다.");
+        }
+    }
 
     public void Setup(Transform player, GameObject[] wayPoints)
     {
         this.player = player;
 
-        navMeshAgent = GetComponent<NavMeshAgent>();
-
-        if(navMeshAgent == null)
-        {
-            Debug.LogError("NavMeshAgent 컴포넌트가 없습니다.");
-        }
-        behaviorAgent = GetComponent<BehaviorGraphAgent>();
-        currentWeapon = GetComponent<WeaponBase>();
-
-        navMeshAgent.updateRotation = false;  // 자동 회전 비활성화
-        navMeshAgent.updateUpAxis = false;    // Y축 회전 비활성화
-        navMeshAgent.angularSpeed = 0f;       // 회전 속도를 0으로 설정 (완전 고정)
-
-        behaviorAgent.SetVariableValue("PatrolPoints", wayPoints.ToList());
-        behaviorAgent.SetVariableValue("player", player.gameObject);
-
-        currentWeapon.Setup(player, damage, cooldowmTime);
-    }
-    private void Update()
-    {
-        HandleRotation();
-    }
-
-    private void HandleRotation()
-    {
         if (navMeshAgent == null) return;
-        if (navMeshAgent.velocity.sqrMagnitude > 0.01f) // 이동 중일 때만 회전 체크
+
+        navMeshAgent.updateRotation = false;
+        navMeshAgent.updateUpAxis = false;
+        navMeshAgent.angularSpeed = 0f;
+
+        // 몬스터 공격력 설정 (예: 무기 클래스가 있다면 설정 가능)
+        Debug.Log($"{enemyStatus.name}의 공격력: {enemyStatus.dmg}");
+    }
+
+    // IDamageable 구현 - 네트워크 RPC를 통해 데미지 처리
+    [PunRPC]
+    public void DamageToMaster(float damage)
+    {
+        currentHP -= (int)damage;
+        Debug.Log($"{enemyStatus.name} 체력 감소: {currentHP} HP 남음");
+
+        if (currentHP <= 0)
         {
-            if (navMeshAgent.velocity.x > 0.1f) // 오른쪽 이동
-            {
-                transform.rotation = Quaternion.Euler(0, 0, 0);
-            }
-            else if (navMeshAgent.velocity.x < -0.1f) // 왼쪽 이동
-            {
-                transform.rotation = Quaternion.Euler(180, 0, 180);
-            }
+            Die();
         }
     }
-    private bool HasParameter(Animator animator, string paramName)
+
+    // 체력 업데이트 (클라이언트에서 호출)
+    [PunRPC]
+    public void UpdateHP(float damage)
     {
-        foreach (var param in animator.parameters)
+        currentHP -= (int)damage;
+        if (currentHP <= 0)
         {
-            if (param.name == paramName)
-                return true;
+            Die();
         }
-        return false;
+    }
+
+    // 직접 호출 가능한 데미지 처리
+    public void TakeDamage(float damage)
+    {
+        PhotonView photonView = GetComponent<PhotonView>();
+        if (photonView != null && photonView.IsMine)
+        {
+            photonView.RPC(nameof(DamageToMaster), RpcTarget.All, damage);
+        }
+    }
+
+    private void Die()
+    {
+        Debug.Log($"{enemyStatus.name} 사망!");
+        PhotonNetwork.Destroy(gameObject); // 네트워크 상에서 객체 제거
     }
 }
