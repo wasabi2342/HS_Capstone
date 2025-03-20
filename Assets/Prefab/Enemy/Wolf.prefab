@@ -10,15 +10,14 @@ GameObject:
   m_Component:
   - component: {fileID: 4074404442851699024}
   - component: {fileID: 8731978092605240292}
-  - component: {fileID: 4432342081626191524}
   - component: {fileID: 1419212741408520124}
+  - component: {fileID: 3252309272379007435}
   - component: {fileID: 2690218350716682373}
   - component: {fileID: 3023756367813962224}
   - component: {fileID: -3114069479874215997}
   - component: {fileID: 7533604380446736302}
   - component: {fileID: 7763377542229407887}
   - component: {fileID: 1919888365771260053}
-  - component: {fileID: 3252309272379007435}
   - component: {fileID: 8098173556407214607}
   - component: {fileID: 5764844275399662058}
   - component: {fileID: 2642528489904328881}
@@ -99,22 +98,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &4432342081626191524
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765914048162278020}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79a5ab33010e09542bf64f158f825633, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseStatus: {fileID: 11400000, guid: 585a8c2885ac13d469a69c6a0969dd97, type: 2}
-  status: {fileID: 0}
-  attackBox: {fileID: 0}
-  isDying: 0
 --- !u!195 &1419212741408520124
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -137,6 +120,90 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &3252309272379007435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765914048162278020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Graph: {fileID: -5527957971230699731, guid: 7b61b990b307ccd4eb6eb80455eceef2, type: 2}
+  m_BlackboardVariableOverridesList:
+  - rid: 3652045730700067065
+  - rid: 3652045843718733901
+  - rid: 3652045843718733900
+  - rid: 3652045843718733899
+  - rid: 3652045843718733898
+  - rid: 3652045843718733902
+  - rid: 3652045843718733903
+  m_IsInitialised: 0
+  m_IsStarted: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3652045730700067065
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 1
+          m_Value1: 0
+        Name: Self
+        m_Value: {fileID: 1765914048162278020}
+    - rid: 3652045843718733898
+      type: {class: 'BlackboardVariable`1[[System.Collections.Generic.List`1[[UnityEngine.GameObject, UnityEngine.CoreModule]], mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 3192644916056355343
+          m_Value1: 7772059484163657506
+        Name: PatrolPoints
+        m_Value:
+        - {fileID: 0}
+        - {fileID: 0}
+    - rid: 3652045843718733899
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 4162936221777424799
+          m_Value1: 2926130914712791054
+        Name: Player
+        m_Value: {fileID: 0}
+    - rid: 3652045843718733900
+      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 12921555287408927242
+          m_Value1: 2165224936542012108
+        Name: attackDistance
+        m_Value: 10
+    - rid: 3652045843718733901
+      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 12711742443843970417
+          m_Value1: 1891841489408070826
+        Name: chaseDistance
+        m_Value: 15
+    - rid: 3652045843718733902
+      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 18055911321738225334
+          m_Value1: 8376181082835048721
+        Name: fallOutDistance
+        m_Value: 20
+    - rid: 3652045843718733903
+      type: {class: 'BlackboardVariable`1[[WeaponBase, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 8605536285503238483
+          m_Value1: 11663828418334206566
+        Name: currentWeapon
+        m_Value: {fileID: 2642528489904328881}
 --- !u!136 &2690218350716682373
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -286,96 +353,11 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
-  - {fileID: 4432342081626191524}
   - {fileID: 7533604380446736302}
   - {fileID: 7763377542229407887}
-  sceneViewId: 1
+  sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &3252309272379007435
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765914048162278020}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Graph: {fileID: -5527957971230699731, guid: 7b61b990b307ccd4eb6eb80455eceef2, type: 2}
-  m_BlackboardVariableOverridesList:
-  - rid: 3652045730700067065
-  - rid: 3652045843718733901
-  - rid: 3652045843718733900
-  - rid: 3652045843718733899
-  - rid: 3652045843718733898
-  - rid: 3652045843718733902
-  - rid: 3652045843718733903
-  m_IsInitialised: 0
-  m_IsStarted: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: 3652045730700067065
-      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 1
-          m_Value1: 0
-        Name: Self
-        m_Value: {fileID: 1765914048162278020}
-    - rid: 3652045843718733898
-      type: {class: 'BlackboardVariable`1[[System.Collections.Generic.List`1[[UnityEngine.GameObject, UnityEngine.CoreModule]], mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 3192644916056355343
-          m_Value1: 7772059484163657506
-        Name: PatrolPoints
-        m_Value:
-        - {fileID: 0}
-        - {fileID: 0}
-    - rid: 3652045843718733899
-      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 4162936221777424799
-          m_Value1: 2926130914712791054
-        Name: Player
-        m_Value: {fileID: 0}
-    - rid: 3652045843718733900
-      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 12921555287408927242
-          m_Value1: 2165224936542012108
-        Name: attackDistance
-        m_Value: 10
-    - rid: 3652045843718733901
-      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 12711742443843970417
-          m_Value1: 1891841489408070826
-        Name: chaseDistance
-        m_Value: 15
-    - rid: 3652045843718733902
-      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 18055911321738225334
-          m_Value1: 8376181082835048721
-        Name: fallOutDistance
-        m_Value: 20
-    - rid: 3652045843718733903
-      type: {class: 'BlackboardVariable`1[[WeaponBase, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 8605536285503238483
-          m_Value1: 11663828418334206566
-        Name: currentWeapon
-        m_Value: {fileID: 2642528489904328881}
 --- !u!114 &8098173556407214607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -388,6 +370,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7db4eb2700e63c49988a65883ffe46a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyStatus: {fileID: 11400000, guid: 585a8c2885ac13d469a69c6a0969dd97, type: 2}
 --- !u!114 &5764844275399662058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -400,8 +383,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84a8d18989a42f247b7cc5ec04da4013, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cooldowmTime: 200
-  damage: 10
+  enemyStatus: {fileID: 11400000, guid: 585a8c2885ac13d469a69c6a0969dd97, type: 2}
 --- !u!114 &2642528489904328881
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -6,7 +6,7 @@ using Unity.Properties;
 using UnityEngine.AI;
 
 [Serializable, GeneratePropertyBag]
-[NodeDescription(name: "Wander", story: "[Self] Navigate To WnaderPosition", category: "Action", id: "83a3164f8afd5f93eda6f1125b2d14b1")]
+[NodeDescription(name: "Wander", story: "[Self] Navigate To WanderPosition", category: "Action", id: "83a3164f8afd5f93eda6f1125b2d14b1")]
 public partial class WanderAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Self;

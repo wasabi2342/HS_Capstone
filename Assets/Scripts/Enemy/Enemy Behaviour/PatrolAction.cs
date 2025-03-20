@@ -15,14 +15,15 @@ public partial class PatrolAction : Action
 
     private NavMeshAgent agent;
     private int currentIndex = 0;
-    private int direction = 1; // 1: forward, -1: backward
     private float arrivalThreshold = 1.0f;
+    private float originalSpeed; // 기존 속도 저장
+    private Vector3 patrolOffset; // 몬스터 개별 오프셋
 
     protected override Status OnStart()
     {
         if (Self.Value == null || PatrolPoints.Value == null || PatrolPoints.Value.Count < 2)
         {
-            Debug.LogWarning("PatrolAction: At least two patrol points are required.");
+            Debug.LogWarning("PatrolAction: Not enough patrol points to patrol.");
             return Status.Failure;
         }
 
@@ -33,7 +34,20 @@ public partial class PatrolAction : Action
             return Status.Failure;
         }
 
-        agent.SetDestination(PatrolPoints.Value[currentIndex].transform.position);
+        if (originalSpeed == 0)
+        {
+            originalSpeed = agent.speed; // 처음 실행 시 한 번만 저장
+        }
+
+        agent.isStopped = false;
+        agent.speed = originalSpeed;
+
+        patrolOffset = new Vector3(UnityEngine.Random.Range(-1.5f, 1.5f), 0, UnityEngine.Random.Range(-1.5f, 1.5f));
+
+        MoveToNextPatrolPoint();
+
+        Debug.Log($"PatrolAction: Starting patrol at point {currentIndex + 1}/{PatrolPoints.Value.Count}, Speed: {agent.speed}");
+
         return Status.Running;
     }
 
@@ -46,19 +60,22 @@ public partial class PatrolAction : Action
 
         if (!agent.pathPending && agent.remainingDistance < arrivalThreshold)
         {
-            // 이동 방향을 반대로 변경하여 1 <-> 2 반복
-            currentIndex += direction;
-            if (currentIndex >= PatrolPoints.Value.Count - 1 || currentIndex <= 0)
-            {
-                direction *= -1; // 방향 반전
-            }
-
-            Vector3 nextPosition = PatrolPoints.Value[currentIndex].transform.position;
-            nextPosition.y = agent.transform.position.y;
-            agent.SetDestination(nextPosition);
+            MoveToNextPatrolPoint();
         }
 
         return Status.Running;
+    }
+
+    private void MoveToNextPatrolPoint()
+    {
+        currentIndex = (currentIndex + 1) % PatrolPoints.Value.Count;
+
+        Vector3 basePosition = PatrolPoints.Value[currentIndex].transform.position;
+        Vector3 nextPosition = basePosition + patrolOffset;
+        nextPosition.y = agent.transform.position.y;
+
+        agent.SetDestination(nextPosition);
+        Debug.Log($"PatrolAction: Moving to patrol point {currentIndex + 1}/{PatrolPoints.Value.Count}, Offset: {patrolOffset}, Speed: {agent.speed}");
     }
 
     protected override void OnEnd()
@@ -66,6 +83,7 @@ public partial class PatrolAction : Action
         if (agent != null)
         {
             agent.ResetPath();
+            Debug.Log("PatrolAction: Patrol stopped.");
         }
     }
 }

@@ -27,6 +27,7 @@ public class EnemyFSM : MonoBehaviour, IDamageable
         {
             Debug.LogError("NavMeshAgent 컴포넌트가 없습니다.");
         }
+
     }
 
     public void Setup(Transform player, GameObject[] wayPoints)
