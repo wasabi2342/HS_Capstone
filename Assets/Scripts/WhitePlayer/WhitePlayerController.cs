@@ -117,16 +117,11 @@ public class WhitePlayerController : ParentPlayerController
 
         }
 
-        //if (nextState != WhitePlayerState.Run)
-        //{
-        //    animator.SetBool("run", false);
-        //    return;
-        //}
-
+       
         if (currentState != WhitePlayerState.Run)
             return;
 
-        //currentState = isMoving ? WhitePlayerState.Run : WhitePlayerState.Idle;
+       
 
         if (isMoving)
         {
@@ -590,18 +585,6 @@ public class WhitePlayerController : ParentPlayerController
         base.UpdateHP(hp);
     }
 
-    //private IEnumerator CoHitReaction()
-    //{
-    //    currentState = WhitePlayerState.Hit;
-    //    if (animator != null)
-    //        animator.SetBool("hit", true);
-    //    yield return new WaitForSeconds(0.5f);
-    //    if (animator != null)
-    //        animator.SetBool("hit", false);
-    //    if (currentState != WhitePlayerState.Death)
-    //        currentState = WhitePlayerState.Idle;
-    //}
-
 
     // 기절
     private Coroutine stunCoroutine;
@@ -660,23 +643,6 @@ public class WhitePlayerController : ParentPlayerController
             animator.SetBool("die", true);
     }
 
-    // 기타 유틸리티
-    private void FaceMouseDirection()
-    {
-        Vector2 mousePos = Mouse.current.position.ReadValue();
-        if (Camera.main == null)
-            return;
-        Ray ray = Camera.main.ScreenPointToRay(new Vector3(mousePos.x, mousePos.y, 0f));
-        Plane plane = new Plane(Vector3.up, Vector3.zero);
-        if (plane.Raycast(ray, out float distance))
-        {
-            Vector3 hitPoint = ray.GetPoint(distance);
-            Vector3 lookDir = hitPoint - transform.position;
-            lookDir.y = 0f;
-            if (lookDir.sqrMagnitude > 0.001f)
-                transform.forward = lookDir.normalized;
-        }
-    }
 
     // 씬 전환 관련
     public void UsePortal(Vector3 exitPosition)

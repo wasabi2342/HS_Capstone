@@ -11,7 +11,6 @@ public class WhitePlayerInteractionZone : MonoBehaviour
     public float interactionRange = 1.5f;
 
     // 범위 내에 있는 상호작용 가능한 오브젝트 목록 (NPC, Trap 등)
-    //public List<GameObject> interactables = new List<GameObject>();
     public List<Action<InputAction.CallbackContext>> interactables = new List<Action<InputAction.CallbackContext>>();
 
     [SerializeField]
