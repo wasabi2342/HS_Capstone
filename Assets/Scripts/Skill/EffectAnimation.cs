@@ -20,6 +20,7 @@ public class EffectAnimation : StateMachineBehaviour
     {
         if (PhotonNetwork.InRoom)
         {
+            if(animator.gameObject != null)
             PhotonNetwork.Destroy(animator.gameObject);
         }
         else
