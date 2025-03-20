@@ -129,7 +129,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 0
-  m_StoppingDistance: 0
+  m_StoppingDistance: 3
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -245,6 +245,9 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 0
     Name: isCharging
+  - Type: 4
+    SynchronizeType: 0
+    Name: isMoving
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
@@ -286,7 +289,7 @@ MonoBehaviour:
   - {fileID: 4432342081626191524}
   - {fileID: 7533604380446736302}
   - {fileID: 7763377542229407887}
-  sceneViewId: 0
+  sceneViewId: 1
   InstantiationId: 0
   isRuntimeInstantiated: 0
 --- !u!114 &3252309272379007435
