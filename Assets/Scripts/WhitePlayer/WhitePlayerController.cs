@@ -645,6 +645,8 @@ public class WhitePlayerController : ParentPlayerController
             }
             currentState = WhitePlayerState.Idle;
             animator.SetTrigger("revive");
+            // 체력을 20으로 회복
+            photonView.RPC("UpdateHP", RpcTarget.All, 20f);
             Debug.Log("플레이어 부활");
         }
     }
