@@ -2,27 +2,22 @@ using UnityEngine;
 
 public abstract class WeaponBase : MonoBehaviour
 {
-    [SerializeField]
-    protected GameObject projectilePrefab;
-    [SerializeField]
-    protected Transform projectileSpawnPoint;
-
     protected Transform target;
     protected float damage;
     private float maxCooldownTime;
     private float currentCooldownTime = 0f;
     private bool isSkillAvailable = true;
 
-    public void Setup(Transform target, float damage, float cooldowmTime)
+    public void Setup(Transform target, float damage, float cooldownTime)
     {
         this.target = target;
         this.damage = damage;
-        maxCooldownTime = cooldowmTime;
+        maxCooldownTime = cooldownTime;
     }
 
     private void Update()
     {
-        if (isSkillAvailable == false && Time.time - currentCooldownTime > maxCooldownTime)
+        if (!isSkillAvailable && Time.time - currentCooldownTime > maxCooldownTime)
         {
             isSkillAvailable = true;
         }
@@ -30,7 +25,7 @@ public abstract class WeaponBase : MonoBehaviour
 
     public void TryAttack()
     {
-        if (isSkillAvailable == true)
+        if (isSkillAvailable)
         {
             OnAttack();
             isSkillAvailable = false;

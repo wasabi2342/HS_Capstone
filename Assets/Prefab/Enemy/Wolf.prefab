@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 3252309272379007435}
   - component: {fileID: 8098173556407214607}
   - component: {fileID: 5764844275399662058}
-  - component: {fileID: 5651826035098125378}
+  - component: {fileID: 2642528489904328881}
   m_Layer: 7
   m_Name: Wolf
   m_TagString: Untagged
@@ -125,7 +125,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 1.065
-  m_Speed: 5
+  m_Speed: 2
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 0
@@ -134,7 +134,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 1.74
-  m_BaseOffset: 0.87
+  m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!136 &2690218350716682373
@@ -348,7 +348,7 @@ MonoBehaviour:
           m_Value0: 12921555287408927242
           m_Value1: 2165224936542012108
         Name: attackDistance
-        m_Value: 2
+        m_Value: 10
     - rid: 3652045843718733901
       type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -372,7 +372,7 @@ MonoBehaviour:
           m_Value0: 8605536285503238483
           m_Value1: 11663828418334206566
         Name: currentWeapon
-        m_Value: {fileID: 0}
+        m_Value: {fileID: 2642528489904328881}
 --- !u!114 &8098173556407214607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -399,7 +399,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldowmTime: 200
   damage: 10
---- !u!114 &5651826035098125378
+--- !u!114 &2642528489904328881
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -411,8 +411,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc802c9f2aba13344abb15956c57f13e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 0}
-  projectileSpawnPoint: {fileID: 0}
   chargeSpeed: 10
-  chargeDuration: 1.5
   attackDamage: 15

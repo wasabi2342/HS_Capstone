@@ -449,6 +449,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1419212741408520124, guid: 073b982f071d8c349acba9282143a647, type: 3}
+      propertyPath: m_StoppingDistance
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 1765914048162278020, guid: 073b982f071d8c349acba9282143a647, type: 3}
       propertyPath: m_Name
       value: Wolf
@@ -461,10 +465,6 @@ PrefabInstance:
       propertyPath: managedReferences[3652045843718733899].m_Value
       value: 
       objectReference: {fileID: 802584885}
-    - target: {fileID: 3252309272379007435, guid: 073b982f071d8c349acba9282143a647, type: 3}
-      propertyPath: managedReferences[3652045843718733903].m_Value
-      value: 
-      objectReference: {fileID: 932068197}
     - target: {fileID: 3252309272379007435, guid: 073b982f071d8c349acba9282143a647, type: 3}
       propertyPath: 'managedReferences[3652045843718733898].m_Value.Array.data[0]'
       value: 
@@ -513,26 +513,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5651826035098125378, guid: 073b982f071d8c349acba9282143a647, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 073b982f071d8c349acba9282143a647, type: 3}
---- !u!114 &932068197 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5651826035098125378, guid: 073b982f071d8c349acba9282143a647, type: 3}
-  m_PrefabInstance: {fileID: 932068196}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc802c9f2aba13344abb15956c57f13e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1122061585
 GameObject:
   m_ObjectHideFlags: 0

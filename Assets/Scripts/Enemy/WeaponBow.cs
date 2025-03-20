@@ -2,9 +2,15 @@ using UnityEngine;
 
 public class WeaponBow : WeaponBase
 {
+    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private Transform projectileSpawnPoint;
+
     public override void OnAttack()
     {
-        GameObject clone = GameObject.Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
-        clone.GetComponent<EnemyProjectile>().Setup(target, damage);
+        if (projectilePrefab != null && projectileSpawnPoint != null && target != null)
+        {
+            GameObject clone = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
+            clone.GetComponent<EnemyProjectile>()?.Setup(target, damage);
+        }
     }
 }

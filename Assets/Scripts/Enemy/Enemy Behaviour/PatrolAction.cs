@@ -13,10 +13,10 @@ public partial class PatrolAction : Action
     [SerializeReference] public BlackboardVariable<GameObject> Self;
     [SerializeReference] public BlackboardVariable<List<GameObject>> PatrolPoints;
 
-    private NavMeshAgent _agent;
-    private int _currentIndex = 0;
-    private int _direction = 1; // 1: forward, -1: backward
-    private float _arrivalThreshold = 1.0f;
+    private NavMeshAgent agent;
+    private int currentIndex = 0;
+    private int direction = 1; // 1: forward, -1: backward
+    private float arrivalThreshold = 1.0f;
 
     protected override Status OnStart()
     {
@@ -26,36 +26,36 @@ public partial class PatrolAction : Action
             return Status.Failure;
         }
 
-        _agent = Self.Value.GetComponent<NavMeshAgent>();
-        if (_agent == null)
+        agent = Self.Value.GetComponent<NavMeshAgent>();
+        if (agent == null)
         {
             Debug.LogWarning("PatrolAction: No NavMeshAgent found on Self.");
             return Status.Failure;
         }
 
-        _agent.SetDestination(PatrolPoints.Value[_currentIndex].transform.position);
+        agent.SetDestination(PatrolPoints.Value[currentIndex].transform.position);
         return Status.Running;
     }
 
     protected override Status OnUpdate()
     {
-        if (_agent == null || PatrolPoints.Value.Count < 2)
+        if (agent == null || PatrolPoints.Value.Count < 2)
         {
             return Status.Failure;
         }
 
-        if (!_agent.pathPending && _agent.remainingDistance < _arrivalThreshold)
+        if (!agent.pathPending && agent.remainingDistance < arrivalThreshold)
         {
             // 이동 방향을 반대로 변경하여 1 <-> 2 반복
-            _currentIndex += _direction;
-            if (_currentIndex >= PatrolPoints.Value.Count - 1 || _currentIndex <= 0)
+            currentIndex += direction;
+            if (currentIndex >= PatrolPoints.Value.Count - 1 || currentIndex <= 0)
             {
-                _direction *= -1; // 방향 반전
+                direction *= -1; // 방향 반전
             }
 
-            Vector3 nextPosition = PatrolPoints.Value[_currentIndex].transform.position;
-            nextPosition.y = _agent.transform.position.y;
-            _agent.SetDestination(nextPosition);
+            Vector3 nextPosition = PatrolPoints.Value[currentIndex].transform.position;
+            nextPosition.y = agent.transform.position.y;
+            agent.SetDestination(nextPosition);
         }
 
         return Status.Running;
@@ -63,9 +63,9 @@ public partial class PatrolAction : Action
 
     protected override void OnEnd()
     {
-        if (_agent != null)
+        if (agent != null)
         {
-            _agent.ResetPath();
+            agent.ResetPath();
         }
     }
 }
