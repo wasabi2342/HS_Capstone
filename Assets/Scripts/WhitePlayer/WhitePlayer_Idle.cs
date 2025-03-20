@@ -8,10 +8,6 @@ public class WhitePlayer_Idle : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if(photonView == null)
-            photonView = animator.GetComponent<PhotonView>();
-        if (!photonView.IsMine && PhotonNetwork.InRoom)
-            return;
         if(whitePlayerController == null)
             whitePlayerController = animator.GetComponent<WhitePlayerController>();
         whitePlayerController.currentState = WhitePlayerState.Idle;
@@ -26,11 +22,6 @@ public class WhitePlayer_Idle : StateMachineBehaviour
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (photonView == null)
-            photonView = animator.GetComponent<PhotonView>();
-        if (!photonView.IsMine && PhotonNetwork.InRoom)
-            return;
-
         switch (whitePlayerController.nextState)
         {
             case WhitePlayerState.Idle:
@@ -69,11 +60,6 @@ public class WhitePlayer_Idle : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (photonView == null)
-            photonView = animator.GetComponent<PhotonView>();
-        if (!photonView.IsMine && PhotonNetwork.InRoom)
-            return;
-
         whitePlayerController.nextState = WhitePlayerState.Idle;
         animator.SetBool("Pre-Attack", false); 
         animator.SetBool("Pre-Input", false);
