@@ -29,6 +29,7 @@ public class RoomManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(this.gameObject);
         }
         else
         {
@@ -37,15 +38,6 @@ public class RoomManager : MonoBehaviour
         DontDestroyOnLoad(cinemachineCamera);
     }
 
-    private void OnEnable()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    private void OnDisable()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
 
     private void Start()
     {
@@ -159,14 +151,5 @@ public class RoomManager : MonoBehaviour
             currentIndex = newIndex;
         else
             currentIndex = 0; // 기본적으로 첫 번째 플레이어를 바라보도록
-    }
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        if (scene.name.StartsWith("Stage"))
-        {
-            UIManager.Instance.CloseAllUI();
-            UIManager.Instance.OpenPanel<UIIngameMainPanel>();
-            ReturnLocalPlayer().GetComponent<WhitePlayercontroller_event>().isInVillage = false;
-        }
     }
 }
