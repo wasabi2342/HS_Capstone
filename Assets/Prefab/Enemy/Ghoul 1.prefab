@@ -10,12 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 2323875078829821041}
   - component: {fileID: 984508830501369522}
-  - component: {fileID: 8569333497385908832}
   - component: {fileID: 4288469560462147762}
   - component: {fileID: 895069454306754427}
   - component: {fileID: 1136859288501880741}
+  - component: {fileID: -8102488063831938661}
   m_Layer: 7
-  m_Name: Ghoul
+  m_Name: Ghoul 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 2.828, y: 2.828, z: 2.828}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -91,22 +91,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &8569333497385908832
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8935750520539247117}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79a5ab33010e09542bf64f158f825633, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseStatus: {fileID: 11400000, guid: 95c1f28374649404aacbc36b18792acf, type: 2}
-  status: {fileID: 0}
-  attackBox: {fileID: 0}
-  isDying: 0
 --- !u!195 &4288469560462147762
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -179,3 +163,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &-8102488063831938661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8935750520539247117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18daacf0f7fb13b4fb2581914100d7ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectRange: 10
+  attackRange: 2
+  wanderSpeed: 2
+  chaseSpeed: 4
+  spawnArea: {fileID: 0}
