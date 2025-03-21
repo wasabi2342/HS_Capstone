@@ -390,13 +390,13 @@ GameObject:
   - component: {fileID: 3893625609994687788}
   - component: {fileID: 7687062139411390392}
   - component: {fileID: 4953368423216620942}
-  - component: {fileID: 5970755759370503948}
   - component: {fileID: 7018926861384928313}
   - component: {fileID: 6226823664876207181}
   - component: {fileID: 941759357708422702}
   - component: {fileID: 5133387043596687802}
+  - component: {fileID: 5970755759370503948}
   m_Layer: 6
-  m_Name: Player
+  m_Name: WhitePlayer
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -433,7 +433,7 @@ Animator:
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 175e04317e7765247b28523daf1e9dac, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 1
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
@@ -538,6 +538,110 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
+--- !u!114 &7018926861384928313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4131734313779836671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d8823c45fd13d84ab0a0b1f4d928547, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnMouseLEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnMouseREvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnKeyboardShiftLEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnKeyboardREvent:
+    m_PersistentCalls:
+      m_Calls: []
+  isInVillage: 0
+--- !u!114 &6226823664876207181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4131734313779836671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63fe2f8107ab0ab4fba634f100f0a63e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &941759357708422702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4131734313779836671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd43531ef40c2541acf07c612282993, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAttackCooldownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDashCooldownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  ShiftCoolDownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  UltimateCoolDownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  MouseRightSkillCoolDownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  AttackStackUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  characterBaseStats: {fileID: 11400000, guid: 8e61c6e3c7f7f404a853e9d167ed7379, type: 2}
+  attackStack: 0
+  dashDistance: 2
+  dashDoubleClickThreshold: 0.3
+  centerPoint: {fileID: 2649936402368327885}
+  centerPointOffsetDistance: 0.5
+  centerPoints:
+  - {fileID: 1330702589638773871}
+  - {fileID: 6389345504270291820}
+  - {fileID: 1142754326731836901}
+  - {fileID: 5109228140562016688}
+  - {fileID: 1333132904043162585}
+  - {fileID: 8230584595030747881}
+  - {fileID: 1194036335750457889}
+  - {fileID: 739063013299719982}
+  currentState: 0
+  nextState: 0
+  guardDuration: 2
+  parryDuration: 2
+  counterDamage: 20
+  AttackCollider: {fileID: 0}
+--- !u!114 &5133387043596687802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4131734313779836671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4625d83469617ee4b9e44541e9041064, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerController: {fileID: 0}
 --- !u!114 &5970755759370503948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -611,111 +715,8 @@ MonoBehaviour:
     SynchronizeType: 2
     Name: revive
   m_SynchronizeLayers:
-  - SynchronizeType: 0
+  - SynchronizeType: 2
     LayerIndex: 0
---- !u!114 &7018926861384928313
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4131734313779836671}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d8823c45fd13d84ab0a0b1f4d928547, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnMouseLEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnMouseREvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnKeyboardShiftLEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnKeyboardREvent:
-    m_PersistentCalls:
-      m_Calls: []
-  isInVillage: 0
---- !u!114 &6226823664876207181
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4131734313779836671}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63fe2f8107ab0ab4fba634f100f0a63e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &941759357708422702
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4131734313779836671}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bd43531ef40c2541acf07c612282993, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 0
-  OnHealthChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  OnAttackCooldownUpdate:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDashCooldownUpdate:
-    m_PersistentCalls:
-      m_Calls: []
-  ShiftCoolDownUpdate:
-    m_PersistentCalls:
-      m_Calls: []
-  UltimateCoolDownUpdate:
-    m_PersistentCalls:
-      m_Calls: []
-  MouseRightSkillCoolDownUpdate:
-    m_PersistentCalls:
-      m_Calls: []
-  speedHorizontal: 5
-  speedVertical: 5
-  dashDistance: 2
-  dashDoubleClickThreshold: 0.3
-  centerPoint: {fileID: 2649936402368327885}
-  centerPointOffsetDistance: 0.5
-  centerPoints:
-  - {fileID: 1330702589638773871}
-  - {fileID: 6389345504270291820}
-  - {fileID: 1142754326731836901}
-  - {fileID: 5109228140562016688}
-  - {fileID: 1333132904043162585}
-  - {fileID: 8230584595030747881}
-  - {fileID: 1194036335750457889}
-  - {fileID: 739063013299719982}
-  currentState: 0
-  nextState: 0
-  guardDuration: 2
-  parryDuration: 2
-  counterDamage: 20
-  attackStack: 0
-  AttackCollider: {fileID: 0}
---- !u!114 &5133387043596687802
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4131734313779836671}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4625d83469617ee4b9e44541e9041064, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4855534633877809112
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,4 +10,9 @@ public class CharacterStats : ScriptableObject
     public float moveSpeed;
     public float cooldownReductionPercent;
     public float abilityPower;
+    public float mouseLeftCooldown;
+    public float mouseRightCooldown;
+    public float shiftCooldown;
+    public float spaceCooldown;
+    public float ultimateCooldown;
 }

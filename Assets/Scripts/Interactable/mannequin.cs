@@ -76,7 +76,7 @@ public class Mannequin : MonoBehaviour, IInteractable
         else if (ctx.performed)
         {
             CancelGaugeCoroutine(true);
-            RoomManager.Instance.CreateCharacter(characterPrefab, transform.position, Quaternion.identity, true);
+            RoomManager.Instance.CreateCharacter(characterPrefab.name, transform.position, Quaternion.identity, true);
             if (PhotonNetwork.InRoom)
             {
                 PhotonNetwork.Destroy(player);

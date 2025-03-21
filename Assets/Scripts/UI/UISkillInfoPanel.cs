@@ -31,13 +31,13 @@ public class UISkillInfoPanel : UIBase
         var blessings = RoomManager.Instance.ReturnLocalPlayer().GetComponentInChildren<PlayerBlessing>().ReturnBlessingDic();
         for (int i = 0; i < (int)Skills.Max; i++)
         {
-            if (blessings[(Skills)i].Item2 == 0)
+            if (blessings[(Skills)i].level == 0)
             {
                 dataSlots[i].Init("가호 없음", ((Skills)i).ToString());
             }
             else
             {
-                dataSlots[i].Init(blessings[(Skills)i].Item1.ToString() + blessings[(Skills)i].Item2 + "레벨", ((Skills)i).ToString());
+                dataSlots[i].Init(blessings[(Skills)i].blessing.ToString() + blessings[(Skills)i].level + "레벨", ((Skills)i).ToString());
             }
         }
     }

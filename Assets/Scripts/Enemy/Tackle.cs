@@ -8,7 +8,7 @@ public class Tackle : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            other.GetComponent<PlayerController>().TakeDamage(1);
+            other.GetComponent<ParentPlayerController>().TakeDamage(1);
             Debug.Log("[충돌] 플레이어와 충돌했습니다.");
         }
     }

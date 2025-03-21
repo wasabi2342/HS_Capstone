@@ -10,12 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d5c9ad3503b8e24aaa099ae3efe3a9c, type: 3}
-  m_Name: C1
+  m_Name: WhitePlayer
   m_EditorClassIdentifier: 
-  characterName: Player
-  maxHP: 0
-  attackPower: 0
-  attackSpeed: 0
-  moveSpeed: 0
+  characterName: WhitePlayer
+  maxHP: 100
+  attackPower: 10
+  attackSpeed: 1
+  moveSpeed: 10
   cooldownReductionPercent: 0
-  abilityPower: 0
+  abilityPower: 5
+  mouseLeftCooldown: 0.1
+  mouseRightCooldown: 4
+  shiftCooldown: 3
+  spaceCooldown: 0.5
+  ultimateCooldown: 30

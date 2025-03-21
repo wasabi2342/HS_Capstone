@@ -1,9 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using Photon.Pun;
 
 [RequireComponent(typeof(SphereCollider))]
-public class WhitePlayerAttackZone : MonoBehaviour
+public class WhitePlayerAttackZone : MonoBehaviourPun
 {
     [Header("공격 범위 설정")]
     [Tooltip("이 영역의 반지름이 플레이어의 공격 범위입니다.")]
@@ -101,22 +102,31 @@ public class WhitePlayerAttackZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
         if (other.transform.parent == transform.parent)
         {
             return; // 같은 부모를 공유하는 경우 공격하지 않음
         }
 
-        other.transform.parent.GetComponentInChildren<IDamageable>().TakeDamage(Damage);
+        //other.transform.parent.GetComponentInChildren<IDamageable>().TakeDamage(Damage); 플레이어 때리기
 
-        //if (other.GetComponent<IDamageable>() != null)
-        //{
-        //    other.GetComponent<IDamageable>().TakeDamage(Damage);
-        //    StartHitlag();
-        //}
+        if (other.GetComponent<IDamageable>() != null)
+        {
+            other.GetComponent<IDamageable>().TakeDamage(Damage);
+            StartHitlag();
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
         if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
             if (enemiesInRange.Contains(other.gameObject))
