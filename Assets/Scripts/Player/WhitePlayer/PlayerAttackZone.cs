@@ -26,7 +26,7 @@ public class WhitePlayerAttackZone : MonoBehaviourPun
     public float Damage;
 
     [SerializeField]
-    private float hitlagTime = 0.13f;
+    private float hitlagTime = 0.117f;
 
     private void Awake()
     {
