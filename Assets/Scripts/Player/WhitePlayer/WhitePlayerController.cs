@@ -189,6 +189,12 @@ public class WhitePlayerController : ParentPlayerController
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "dash", true);
         }
         Vector3 dashDir = new Vector3(moveInput.x, 0, 0);
+
+        if (dashDir == Vector3.zero)
+        {
+            dashDir = Vector3.right;
+        }
+   
         StartCoroutine(DoDash(dashDir));
     }
 
