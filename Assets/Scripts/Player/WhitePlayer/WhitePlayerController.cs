@@ -659,13 +659,20 @@ public class WhitePlayerController : ParentPlayerController
                 stunCoroutine = null;
             }
             currentState = WhitePlayerState.Idle;
-            animator.SetTrigger("revive");
+            animator.SetBool("revive", true);
             //photonView.RPC("PlayAnimation", RpcTarget.All, "revive");
 
             // 체력을 20으로 회복
             photonView.RPC("UpdateHP", RpcTarget.All, 20f);
             Debug.Log("플레이어 부활");
         }
+    }
+
+    // 부활 애니메이션 false값
+
+    public void EndReviveAnimation()
+    {
+        animator.SetBool("revive", false);
     }
 
     // 사망 상태로 전환
