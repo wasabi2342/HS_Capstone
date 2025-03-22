@@ -4,7 +4,7 @@ using Photon.Pun;
 [RequireComponent(typeof(Collider))]
 public class MonsterAttackCollider : MonoBehaviourPun
 {
-    // 부모 객체에서 EnemyAI를 찾아 enemyStatus를 통해 공격 데미지를 가져온다.
+    // 부모 객체의 EnemyAI 컴포넌트에서 enemyStatus의 damage 값을 사용합니다.
     private EnemyAI enemyAI;
 
     private void Awake()
@@ -18,15 +18,16 @@ public class MonsterAttackCollider : MonoBehaviourPun
 
     private void OnTriggerEnter(Collider other)
     {
+        // 충돌한 객체가 Player 태그인 경우
         if (other.CompareTag("Player"))
         {
-            PhotonView targetView = other.GetComponent<PhotonView>();
-            if (targetView != null && enemyAI != null)
+            PhotonView targetPV = other.GetComponent<PhotonView>();
+            if (targetPV != null && enemyAI != null)
             {
-                // enemyStatus에서 데미지 값을 가져옴 (enemyStatus에 damage 필드가 있다고 가정)
+                // EnemyStatus에 정의된 damage 값을 사용합니다.
                 float damage = enemyAI.status.damage;
-                // 플레이어에게 Master Client가 데미지를 적용하도록 RPC 호출
-                targetView.RPC("DamageToMaster", RpcTarget.MasterClient, damage);
+                // 플레이어 측의 IDamageable 인터페이스를 구현한 DamageToMaster RPC를 호출합니다.
+                targetPV.RPC("DamageToMaster", RpcTarget.MasterClient, damage);
             }
         }
     }
