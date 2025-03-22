@@ -24,6 +24,10 @@ public class WhitePlayer_Idle : StateMachineBehaviour
     {
         if (whitePlayerController == null)
             whitePlayerController = animator.GetComponent<WhitePlayerController>();
+        if(photonView == null)
+            photonView = animator.GetComponent<PhotonView>();
+        if(!photonView.IsMine)
+            return;
         switch (whitePlayerController.nextState)
         {
             case WhitePlayerState.Idle:
@@ -36,8 +40,10 @@ public class WhitePlayer_Idle : StateMachineBehaviour
                 whitePlayerController.attackStack++;
                 Debug.Log(whitePlayerController.attackStack);
                 animator.SetInteger("AttackStack", whitePlayerController.attackStack);
+                whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
                 whitePlayerController.AttackStackUpdate?.Invoke(whitePlayerController.attackStack);
                 animator.SetBool("basicattack",true);
+                whitePlayerController.SetBoolParameter("basicattack", true);
                 whitePlayerController.currentState = WhitePlayerState.BasicAttack;
                 break;
             case WhitePlayerState.Guard:

@@ -26,8 +26,6 @@ public class PlayerRunTimeData
         this.abilityPower = abilityPower;
         this.currentHealth = maxtHealth;
         blessingInfo = new BlessingInfo[(int)Skills.Max];
-
-        LoadFromJsonFile();
     }
 
     public void SaveToJsonFile()
@@ -38,7 +36,7 @@ public class PlayerRunTimeData
         Debug.Log($"PlayerRunTimeData ภ๚ภๅตส: {filePath}");
     }
 
-    private void LoadFromJsonFile()
+    public void LoadFromJsonFile()
     {
         if (File.Exists(filePath))
         {

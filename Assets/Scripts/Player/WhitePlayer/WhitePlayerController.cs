@@ -96,6 +96,7 @@ public class WhitePlayerController : ParentPlayerController
             {
                 nextState = WhitePlayerState.Run;
                 animator.SetBool("Pre-Input", true);
+                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
             }
             else if (nextState > WhitePlayerState.Run)
             {
@@ -210,6 +211,7 @@ public class WhitePlayerController : ParentPlayerController
             {
                 animator.SetBool("Pre-Attack", false);
                 animator.SetBool("Pre-Input", false);
+                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", false);
                 currentState = WhitePlayerState.Idle;
                 attackStack = 0;
                 AttackStackUpdate?.Invoke(attackStack);
@@ -223,6 +225,7 @@ public class WhitePlayerController : ParentPlayerController
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
                 animator.SetBool("Pre-Input", true);
+                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
             }
         }
     }
@@ -237,6 +240,7 @@ public class WhitePlayerController : ParentPlayerController
                 nextState = WhitePlayerState.Skill;
                 animator.SetBool("Pre-Attack", true);
                 animator.SetBool("Pre-Input", true);
+                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
             }
@@ -255,6 +259,7 @@ public class WhitePlayerController : ParentPlayerController
                 nextState = WhitePlayerState.Ultimate;
                 animator.SetBool("Pre-Attack", true);
                 animator.SetBool("Pre-Input", true);
+                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
             }
@@ -548,6 +553,7 @@ public class WhitePlayerController : ParentPlayerController
                 nextState = WhitePlayerState.Guard;
                 animator.SetBool("Pre-Attack", true);
                 animator.SetBool("Pre-Input", true);
+                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
             }
@@ -614,6 +620,7 @@ public class WhitePlayerController : ParentPlayerController
     public override void UpdateHP(float hp)
     {
         base.UpdateHP(hp);
+        Debug.Log(photonView.ViewID + "플레이어 체력: " + runTimeData.currentHealth);
     }
 
 
@@ -706,5 +713,27 @@ public class WhitePlayerController : ParentPlayerController
     void PlayAnimation(string triggerName)
     {
         animator.SetTrigger(triggerName);
+    }
+
+    [PunRPC]
+    public void SyncBoolParameter(string parameter, bool value)
+    {
+        animator.SetBool(parameter, value);
+    }
+
+    public void SetBoolParameter(string parameter, bool value)
+    {
+        photonView.RPC("SyncBoolParameter", RpcTarget.Others, parameter, value);
+    }
+
+    [PunRPC]
+    public void SyncIntParameter(string parameter, int value)
+    {
+        animator.SetInteger(parameter, value);
+    }
+
+    public void SetIntParameter(string parameter, int value)
+    {
+        photonView.RPC("SyncIntParameter", RpcTarget.Others, parameter, value);
     }
 }
