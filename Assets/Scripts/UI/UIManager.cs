@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -14,6 +15,15 @@ public class UIManager : MonoBehaviour
         else
             Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
+    }
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     void Start()
@@ -103,5 +113,15 @@ public class UIManager : MonoBehaviour
             return uiStack.Peek();
         else 
             return null;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name.StartsWith("Stage"))
+        {
+            UIManager.Instance.CloseAllUI();
+            UIManager.Instance.OpenPanel<UIIngameMainPanel>();
+            //ReturnLocalPlayer().GetComponent<WhitePlayercontroller_event>().isInVillage = false;
+        }
     }
 }

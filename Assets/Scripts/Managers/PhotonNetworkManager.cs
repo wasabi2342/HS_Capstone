@@ -26,6 +26,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         DontDestroyOnLoad(gameObject);
 
         PhotonNetwork.AutomaticallySyncScene = true;
+        PhotonNetwork.SendRate = 60;
+        PhotonNetwork.SerializationRate = 60;
     }
 
     public override void OnConnectedToMaster()
@@ -84,11 +86,12 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             }
             else
             {
-                SceneManager.LoadScene("SampleScene");
+                RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
+                SceneManager.LoadScene("StageTest1");
             }
         }
         if (PhotonNetwork.InRoom)
-            photonView.RPC("UpdateReadyPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer.UserId);
+            photonView.RPC("UpdateReadyPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer.ActorNumber);
     }
 
     private Coroutine stageEnterCoroutine;
@@ -113,8 +116,9 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
 
-            PhotonNetwork.LoadLevel("SampleScene");
             PhotonNetwork.CurrentRoom.IsOpen = false;
+            RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
+            PhotonNetwork.LoadLevel("StageTest1");
 
         }
     }
@@ -133,18 +137,28 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             Debug.Log("모두 준비 완료");
             StopCoroutine(stageEnterCoroutine);
             UIManager.Instance.ClosePeekUI();
-            PhotonNetwork.LoadLevel("SampleScene");
+            RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
+
             PhotonNetwork.CurrentRoom.IsOpen = false;
+            PhotonNetwork.LoadLevel("StageTest1");
         }
     }
 
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
-        StopCoroutine(stageEnterCoroutine);
-        if(UIManager.Instance.ReturnPeekUI() as UIStageReadyPanel)
+        if (stageEnterCoroutine != null)
+        {
+            StopCoroutine(stageEnterCoroutine);
+        }
+        if (UIManager.Instance.ReturnPeekUI() as UIStageReadyPanel)
         {
             UIManager.Instance.ClosePeekUI();
             readyPlayers.Clear();
+        }
+        if (RoomManager.Instance.players.ContainsKey(otherPlayer.ActorNumber))
+        {
+            RoomManager.Instance.players.Remove(otherPlayer.ActorNumber);
+            RoomManager.Instance.UpdateSortedPlayers();
         }
     }
 
@@ -153,18 +167,19 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.NickName = nickname;
     }
 
-    public void AddPlayer(int actorNumber, int viewID)
+    public void AddPlayer(int actNum, int viewID)
     {
-        photonView.RPC("UpdatePlayerDic", RpcTarget.OthersBuffered, actorNumber, viewID);
+        photonView.RPC("UpdatePlayerDic", RpcTarget.Others, actNum, viewID);
     }
 
     [PunRPC]
-    public void UpdatePlayerDic(int actorNumber, int viewID)
+    public void UpdatePlayerDic(int actNum, int viewID)
     {
         PhotonView targetView = PhotonView.Find(viewID);
         if (targetView != null)
         {
-            RoomManager.Instance.players[actorNumber] = targetView.gameObject;
+            RoomManager.Instance.AddPlayerDic(actNum, targetView.gameObject);
+            RoomManager.Instance.UpdateSortedPlayers();
         }
     }
 
@@ -172,9 +187,9 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
         foreach (var player in RoomManager.Instance.players)
         {
-            int actorNumber = player.Key;
+            int actNum = player.Key;
             int viewID = player.Value.GetComponent<PhotonView>().ViewID;
-            photonView.RPC("UpdatePlayerDic", newPlayer, actorNumber, viewID);
+            photonView.RPC("UpdatePlayerDic", newPlayer, actNum, viewID);
         }
     }
 }

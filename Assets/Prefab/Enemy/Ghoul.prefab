@@ -1,73 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3539147146408446123
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3280556164714800457}
-  - component: {fileID: 204803967394142974}
-  - component: {fileID: 5382065641122460419}
-  m_Layer: 7
-  m_Name: AttackBox
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3280556164714800457
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3539147146408446123}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2323875078829821041}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &204803967394142974
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3539147146408446123}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10edecc112a75b545a4a0a7075a5cc8d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!136 &5382065641122460419
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3539147146408446123}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2.5
-  m_Direction: 1
-  m_Center: {x: 0.6, y: 0, z: 0}
 --- !u!1 &8935750520539247117
 GameObject:
   m_ObjectHideFlags: 0
@@ -78,9 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2323875078829821041}
   - component: {fileID: 984508830501369522}
-  - component: {fileID: 1199259497515293961}
   - component: {fileID: 8569333497385908832}
-  - component: {fileID: 6096364926050336214}
   - component: {fileID: 4288469560462147762}
   - component: {fileID: 895069454306754427}
   - component: {fileID: 1136859288501880741}
@@ -103,8 +33,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 1
-  m_Children:
-  - {fileID: 3280556164714800457}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &984508830501369522
@@ -162,25 +91,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1199259497515293961
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8935750520539247117}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 799840f89d12d524c81c0d04c0cd1c47, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseStatus: {fileID: 11400000, guid: 95c1f28374649404aacbc36b18792acf, type: 2}
-  status: {fileID: 0}
-  isReturningToPatrol: 0
-  isChasing: 0
-  isPatrolling: 1
-  patrolArea: {fileID: 0}
-  chaseRange: {fileID: 0}
 --- !u!114 &8569333497385908832
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,25 +105,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseStatus: {fileID: 11400000, guid: 95c1f28374649404aacbc36b18792acf, type: 2}
   status: {fileID: 0}
-  attackBox: {fileID: 3539147146408446123}
-  isChasing: 0
-  isReturning: 0
+  attackBox: {fileID: 0}
   isDying: 0
---- !u!114 &6096364926050336214
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8935750520539247117}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9a2d1a1e954dea489eaf69ff3ec57c7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  status: {fileID: 11400000, guid: 95c1f28374649404aacbc36b18792acf, type: 2}
-  attackBox: {fileID: 3539147146408446123}
 --- !u!195 &4288469560462147762
 NavMeshAgent:
   m_ObjectHideFlags: 0

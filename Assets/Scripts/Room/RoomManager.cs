@@ -1,77 +1,82 @@
 using Photon.Pun;
-using Photon.Realtime;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Cinemachine;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
+using UnityEngine.SceneManagement;
 
 public class RoomManager : MonoBehaviour
 {
     [SerializeField]
-    private GameObject playerInRoom;
+    private GameObject defaultPlayer;
     [SerializeField]
     private CinemachineCamera cinemachineCamera;
-
+    [SerializeField]
+    private bool isInVillage;
     public static RoomManager Instance { get; private set; }
 
     private Dictionary<int, bool> playerInRestrictedArea = new Dictionary<int, bool>();
 
     public bool isEnteringStage;
 
-    public BasePlayerController localPlayer;
-
     public Dictionary<int, GameObject> players = new Dictionary<int, GameObject>();
+
+    // 카메라 전환에서 사용
+    private List<GameObject> sortedPlayers;
+    private int currentIndex = 0;
+
+    public event Action UIUpdate;
 
     private void Awake()
     {
         if (Instance == null)
-            Instance = this;
-        else
-            Destroy(gameObject);
-        DontDestroyOnLoad(cinemachineCamera);
-    }
-
-    private void Start()
-    {
-        //UIManager.Instance.OpenPanel<UIIngameMainPanel>();
-        CreateCharacter(playerInRoom, Vector3.zero, Quaternion.Euler(90, 0, 0), true);
-    }
-
-    public void CreateCharacter(GameObject prefab, Vector3 pos, Quaternion quaternion, bool isInVillage)
-    {
-        GameObject playerInstance;
-        if (PhotonNetwork.InRoom)
         {
-            playerInstance = PhotonNetwork.Instantiate("Prefab/" + prefab.name, pos, quaternion);
-            //BasePlayerController playerController = playerInstance.GetComponent<BasePlayerController>();
-            players[PhotonNetwork.LocalPlayer.ActorNumber] = playerInstance;
-            PhotonNetworkManager.Instance.AddPlayer(PhotonNetwork.LocalPlayer.ActorNumber, playerInstance.GetComponent<PhotonView>().ViewID);
-            playerInstance.GetComponent<WhitePlayercontroller_event>().isInVillage = isInVillage; // 플레이어의 공통 스크립트로 변경 해야함
-
-            //photonView.RPC("AddPlayerInDictionary", RpcTarget.OthersBuffered, PhotonNetwork.LocalPlayer.ActorNumber, playerInstance.GetComponent<PhotonView>().ViewID);
+            Instance = this;
         }
         else
         {
-            playerInstance = Instantiate(prefab, pos, quaternion);
+            Destroy(gameObject);
+        }
+
+        players = new Dictionary<int, GameObject>();
+    }
+
+
+    private void Start()
+    {
+        if (PhotonNetwork.IsConnected && PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.UserId + "CharacterName"] != null)
+        {
+            Debug.Log(PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.UserId + "CharacterName"].ToString());
+            CreateCharacter(PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.UserId + "CharacterName"].ToString(), new Vector3(0, 2, 0), Quaternion.identity, isInVillage);
+        }
+        else
+        {
+            CreateCharacter(defaultPlayer.name, new Vector3(0, 2, 0), Quaternion.identity, isInVillage);
+        }
+    }
+
+    public void CreateCharacter(string playerPrefabName, Vector3 pos, Quaternion quaternion, bool isInVillage)
+    {
+        GameObject playerInstance;
+
+        if (PhotonNetwork.IsConnected)
+        {
+            playerInstance = PhotonNetwork.Instantiate("Prefab/" + playerPrefabName, pos, quaternion);
+            players[PhotonNetwork.LocalPlayer.ActorNumber] = playerInstance;
+            PhotonNetworkManager.Instance.AddPlayer(PhotonNetwork.LocalPlayer.ActorNumber, playerInstance.GetComponent<PhotonView>().ViewID);
+            playerInstance.GetComponent<WhitePlayercontroller_event>().isInVillage = isInVillage; // 플레이어의 공통 스크립트로 변경 해야함
+            PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.UserId + "CharacterName"] = playerPrefabName;
+
+        }
+        else
+        {
+            playerInstance = Instantiate(Resources.Load<ParentPlayerController>(playerPrefabName), pos, quaternion).gameObject;
             players[0] = playerInstance;
         }
 
         cinemachineCamera.Follow = playerInstance.transform;
         cinemachineCamera.LookAt = playerInstance.transform;
-
-        //localPlayer = playerInstance.GetComponent<BasePlayerController>();
-        //localPlayer.InitBlessing();
-        //
-        //
-        //UIBase peekUI = UIManager.Instance.ReturnPeekUI();
-        //if (peekUI is UIIngameMainPanel uIIngameMainPanel)
-        //{
-        //    localPlayer.updateUIAction += uIIngameMainPanel.UpdateUI;
-        //    localPlayer.updateUIOutlineAction += uIIngameMainPanel.UpdateIconOutline;
-        //}
-
     }
 
     public GameObject ReturnLocalPlayer()
@@ -130,5 +135,40 @@ public class RoomManager : MonoBehaviour
     public bool IsPlayerInRestrictedArea()
     {
         return playerInRestrictedArea.ContainsValue(true);
+    }
+
+    public void SwitchCameraToNextPlayer()
+    {
+        if (sortedPlayers.Count == 0) return;
+
+        // 다음 플레이어로 이동 (마지막이면 0번으로 돌아감)
+        currentIndex = (currentIndex + 1) % sortedPlayers.Count;
+
+        // 카메라 변경
+        cinemachineCamera.Follow = sortedPlayers[currentIndex].transform;
+        cinemachineCamera.LookAt = sortedPlayers[currentIndex].transform;
+    }
+
+    public void UpdateSortedPlayers()
+    {
+        sortedPlayers = players.OrderBy(p => p.Key == PhotonNetwork.LocalPlayer.ActorNumber ? 0 : 1)
+                               .Select(p => p.Value)
+                               .ToList();
+
+        // 현재 따라가고 있는 플레이어가 리스트에서 몇 번째인지 찾기
+        GameObject currentTarget = cinemachineCamera.Follow?.gameObject;
+        int newIndex = sortedPlayers.FindIndex(p => p == currentTarget);
+
+        // 유효한 값이면 currentIndex 갱신
+        if (newIndex != -1)
+            currentIndex = newIndex;
+        else
+            currentIndex = 0; // 기본적으로 첫 번째 플레이어를 바라보도록
+    }
+
+    public void AddPlayerDic(int actNum, GameObject player)
+    {
+        players[actNum] = player;
+        UIUpdate?.Invoke();
     }
 }

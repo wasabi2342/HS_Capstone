@@ -15,7 +15,7 @@ public class TestDamage : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(2);
-            Destroy(Instantiate(bullet), 5f);
+            Destroy(Instantiate(bullet, transform.position + Vector3.up, Quaternion.identity), 5f);
         }
     }
 
