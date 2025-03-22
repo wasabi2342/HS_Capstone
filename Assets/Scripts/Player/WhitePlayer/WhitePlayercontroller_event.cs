@@ -123,4 +123,22 @@ public class WhitePlayercontroller_event : MonoBehaviourPun
             OnKeyboardREvent?.Invoke();
         }
     }
+
+    private void OnDisable()
+    {
+        if (!photonView.IsMine)
+            return;
+
+        InputManager.Instance.PlayerInput.actions["Move"].performed -= ctx => OnMove(ctx);
+        InputManager.Instance.PlayerInput.actions["Move"].canceled -= ctx => OnMove(ctx);
+        InputManager.Instance.PlayerInput.actions["Dash"].performed -= ctx => OnKeyboard_Spacebar(ctx);
+        InputManager.Instance.PlayerInput.actions["Dash"].canceled -= ctx => OnKeyboard_Spacebar(ctx);
+        InputManager.Instance.PlayerInput.actions["Interaction"].performed -= ctx => OnInteraction(ctx);
+        InputManager.Instance.PlayerInput.actions["Interaction"].canceled -= ctx => OnInteraction(ctx);
+        InputManager.Instance.PlayerInput.actions["Interaction"].started -= ctx => OnInteraction(ctx);
+        InputManager.Instance.PlayerInput.actions["BasicAttack"].performed -= ctx => OnMouse_L(ctx);
+        InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed -= ctx => OnMouse_R(ctx);
+        InputManager.Instance.PlayerInput.actions["SkillAttack"].performed -= ctx => OnKeyboard_Shift_L(ctx);
+        InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed -= ctx => OnKeyboard_R(ctx);
+    }
 }
