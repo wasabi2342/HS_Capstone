@@ -169,7 +169,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
     public void AddPlayer(int actNum, int viewID)
     {
-        photonView.RPC("UpdatePlayerDic", RpcTarget.OthersBuffered, actNum, viewID);
+        //photonView.RPC("UpdatePlayerDic", RpcTarget.Others, actNum, viewID);
     }
 
     [PunRPC]
