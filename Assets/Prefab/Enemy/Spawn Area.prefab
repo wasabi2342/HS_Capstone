@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6100380925176714188}
   - component: {fileID: 354713180897578502}
+  - component: {fileID: 5024353823131340920}
   m_Layer: 0
   m_Name: MonsterSpawner
   m_TagString: Untagged
@@ -48,6 +49,28 @@ MonoBehaviour:
   - {fileID: 1765914048162278020, guid: 630c590a38597bc4b85149294fc24728, type: 3}
   spawnArea: {fileID: 361567240500105004}
   spawnCount: 6
+--- !u!114 &5024353823131340920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3165763720005886762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &7606943349099758749
 GameObject:
   m_ObjectHideFlags: 0
