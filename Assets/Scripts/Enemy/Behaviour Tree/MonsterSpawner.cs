@@ -7,7 +7,20 @@ public class MonsterSpawner : MonoBehaviourPun
 {
     public GameObject[] monsterPrefabs;  // 네트워크로 생성할 몬스터 프리팹들
     public SpawnArea spawnArea;          // 스폰 영역 (미리 배치된 SpawnArea 내의 MonsterSpawner에 연결)
-    public int spawnCount = 3;           // 스폰 반복 횟수
+    public int spawnCount;           // 스폰 반복 횟수
+
+    private void Awake()
+    {
+
+        if (spawnArea == null)
+        {
+            GameObject spawnAreaInstance = PhotonNetwork.Instantiate("SpawnArea", Vector3.zero, Quaternion.identity);
+            spawnArea = spawnAreaInstance.GetComponent<SpawnArea>();
+
+            // MonsterSpawner(이 스크립트가 붙은 객체)를 생성된 SpawnArea의 자식으로 재배치
+            transform.SetParent(spawnAreaInstance.transform);
+        }
+    }
 
     private void Start()
     {
@@ -46,16 +59,14 @@ public class MonsterSpawner : MonoBehaviourPun
     {
         PhotonView monsterPV = PhotonView.Find(monsterViewID);
         PhotonView spawnerPV = PhotonView.Find(spawnerViewID);
-        if (monsterPV != null)
+        if (monsterPV != null && spawnerPV != null)
         {
-            if (spawnerPV != null)
-            {
-                // 부모가 올바르게 찾아지면 설정
-                monsterPV.gameObject.transform.SetParent(spawnerPV.gameObject.transform);
-            }
+            // 다른 클라이언트에서도 MonsterSpawner 하위로 부모 설정
+            monsterPV.gameObject.transform.SetParent(spawnerPV.gameObject.transform);
         }
     }
 }
+
 
 
 
