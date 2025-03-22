@@ -755,7 +755,7 @@ public class WhitePlayerController : ParentPlayerController
                 StopCoroutine(stunCoroutine);
                 stunCoroutine = null;
             }
-            currentState = WhitePlayerState.Idle;
+            //currentState = WhitePlayerState.Idle;
             animator.SetBool("revive", true);
             if (PhotonNetwork.IsConnected)
             {
