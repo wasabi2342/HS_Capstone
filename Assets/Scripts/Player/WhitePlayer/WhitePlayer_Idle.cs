@@ -47,15 +47,18 @@ public class WhitePlayer_Idle : StateMachineBehaviour
                 whitePlayerController.currentState = WhitePlayerState.BasicAttack;
                 break;
             case WhitePlayerState.Guard:
-                animator.SetTrigger("guard");
+                animator.SetBool("guard", true);
+                whitePlayerController.SetBoolParameter("guard", true);
                 whitePlayerController.currentState = WhitePlayerState.Guard;
                 break;
             case WhitePlayerState.Skill:
-                animator.SetTrigger("skill");
+                animator.SetBool("skill", true);
+                whitePlayerController.SetBoolParameter("skill", true);
                 whitePlayerController.currentState = WhitePlayerState.Skill;
                 break;
             case WhitePlayerState.Ultimate:
-                animator.SetTrigger("ultimate");
+                animator.SetBool("ultimate", true);
+                whitePlayerController.SetBoolParameter("ultimate", true);
                 whitePlayerController.currentState = WhitePlayerState.Ultimate;
                 break;
             case WhitePlayerState.Dash:

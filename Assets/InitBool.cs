@@ -30,16 +30,15 @@ public class InitBool : StateMachineBehaviour
         {
             photonView = animator.GetComponent<PhotonView>();
         }
-        if (!photonView.IsMine)
-        {
-            return;
-        }
         if (whitePlayerController == null)
         {
             whitePlayerController = animator.GetComponent<WhitePlayerController>();
         }
         animator.SetBool(parameter, boolValue);
-        whitePlayerController.SetBoolParameter(parameter, boolValue);
+        if (photonView.IsMine)
+        {
+            whitePlayerController.SetBoolParameter(parameter, boolValue);
+        }
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
