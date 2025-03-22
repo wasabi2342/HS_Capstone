@@ -21,7 +21,7 @@ public class MonsterAttackCollider : MonoBehaviourPun
         Debug.Log("늑대가 니 샛길 공격함");
 
         // 충돌한 오브젝트가 IDamageable 인터페이스를 구현하고 있으면 데미지 적용
-        IDamageable damageable = other.GetComponent<IDamageable>();
+        IDamageable damageable = other.GetComponentInParent<IDamageable>();
         if (damageable != null)
         {
             // enemyAI.status.damage 값을 사용하여 데미지 전달
