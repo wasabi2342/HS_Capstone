@@ -190,6 +190,10 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     protected virtual void OnApplicationQuit()
     {
+        if (!photonView.IsMine) // 내 데이터만 삭제 하도록
+        {
+            return;
+        }
         Debug.Log("게임 종료됨!");
         runTimeData.DeleteRunTimeData();
     }
