@@ -697,6 +697,11 @@ public class WhitePlayerController : ParentPlayerController
         base.ExitSuperArmorState();
     }
 
+    public void AnimatorSetBoolFalse(string parameter)
+    {
+        animator.SetBool(parameter, false);
+    }
+
     [PunRPC]
     void PlayAnimation(string triggerName)
     {

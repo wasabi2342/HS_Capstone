@@ -27,7 +27,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
         PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.SendRate = 60; 
-        PhotonNetwork.SerializationRate = 30;
+        PhotonNetwork.SerializationRate = 60;
     }
 
     public override void OnConnectedToMaster()

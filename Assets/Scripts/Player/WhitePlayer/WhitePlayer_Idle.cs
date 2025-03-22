@@ -37,7 +37,7 @@ public class WhitePlayer_Idle : StateMachineBehaviour
                 Debug.Log(whitePlayerController.attackStack);
                 animator.SetInteger("AttackStack", whitePlayerController.attackStack);
                 whitePlayerController.AttackStackUpdate?.Invoke(whitePlayerController.attackStack);
-                animator.SetTrigger("basicattack");
+                animator.SetBool("basicattack",true);
                 whitePlayerController.currentState = WhitePlayerState.BasicAttack;
                 break;
             case WhitePlayerState.Guard:
