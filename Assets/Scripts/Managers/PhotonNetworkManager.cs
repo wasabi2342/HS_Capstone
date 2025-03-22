@@ -26,7 +26,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         DontDestroyOnLoad(gameObject);
 
         PhotonNetwork.AutomaticallySyncScene = true;
-        PhotonNetwork.SendRate = 60; 
+        PhotonNetwork.SendRate = 60;
         PhotonNetwork.SerializationRate = 60;
     }
 
@@ -178,7 +178,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         PhotonView targetView = PhotonView.Find(viewID);
         if (targetView != null)
         {
-            RoomManager.Instance.players[userID] = targetView.gameObject;
+            RoomManager.Instance.AddPlayerDic(userID, targetView.gameObject);
             RoomManager.Instance.UpdateSortedPlayers();
         }
     }

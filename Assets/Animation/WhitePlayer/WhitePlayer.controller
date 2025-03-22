@@ -105,7 +105,8 @@ AnimatorState:
   m_Transitions:
   - {fileID: 6425128509402687389}
   - {fileID: -6887289979077802099}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 4434925769913835444}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -915,10 +916,7 @@ AnimatorStateMachine:
     m_Position: {x: -450, y: 90, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2056604326440023097}
-    m_Position: {x: -200, y: 90, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: 7778831121956330896}
-    m_Position: {x: -165, y: 155, z: 0}
+    m_Position: {x: -190, y: 90, z: 0}
   m_ChildStateMachines:
   - serializedVersion: 1
     m_StateMachine: {fileID: 4636449728955071613}
@@ -1660,6 +1658,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parameter: skill
   boolValue: 0
+--- !u!114 &-317324120099883007
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b84d6eb0190d3d409d23edd2ca933fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parameter: stun
+  boolValue: 0
 --- !u!1101 &-262705195503556505
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1697,24 +1709,6 @@ AnimatorController:
   m_Name: WhitePlayer
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: die
-    m_Type: 9
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: hit
-    m_Type: 9
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: dash
-    m_Type: 9
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
   - m_Name: moveX
     m_Type: 1
     m_DefaultFloat: 0
@@ -1769,12 +1763,6 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: stun
-    m_Type: 9
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
   - m_Name: basicattack
     m_Type: 4
     m_DefaultFloat: 0
@@ -1806,6 +1794,30 @@ AnimatorController:
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
   - m_Name: guard
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: die
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: stun
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: hit
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: dash
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -2286,7 +2298,8 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 5804696038253781598}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 4701756402571267817}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -2453,7 +2466,8 @@ AnimatorState:
   m_Transitions:
   - {fileID: -5710479227825251081}
   - {fileID: 3686324998278192398}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: -317324120099883007}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -2697,6 +2711,20 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &4434925769913835444
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b84d6eb0190d3d409d23edd2ca933fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parameter: hit
+  boolValue: 0
 --- !u!114 &4490751802758029808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2754,6 +2782,20 @@ AnimatorStateMachine:
   m_ExitPosition: {x: 800, y: 120, z: 0}
   m_ParentStateMachinePosition: {x: 790, y: 10, z: 0}
   m_DefaultState: {fileID: 781824486790173061}
+--- !u!114 &4701756402571267817
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b84d6eb0190d3d409d23edd2ca933fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parameter: dash
+  boolValue: 0
 --- !u!1101 &5212737532967115742
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -3045,32 +3087,6 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
---- !u!1102 &7778831121956330896
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Guard
-  m_Speed: 1
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours: []
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 954b8c9d7679ac5418167e7b061f1ad3, type: 2}
-  m_Tag: 
-  m_SpeedParameter: 
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
 --- !u!1101 &7863017987800949807
 AnimatorStateTransition:
   m_ObjectHideFlags: 1

@@ -1,4 +1,5 @@
 using Photon.Pun;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Cinemachine;
@@ -25,6 +26,8 @@ public class RoomManager : MonoBehaviour
     private List<GameObject> sortedPlayers;
     private int currentIndex = 0;
 
+    public event Action UIUpdate;
+
     private void Awake()
     {
         if (Instance == null)
@@ -35,6 +38,8 @@ public class RoomManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        players = new Dictionary<string, GameObject>();
     }
 
 
@@ -159,5 +164,11 @@ public class RoomManager : MonoBehaviour
             currentIndex = newIndex;
         else
             currentIndex = 0; // 기본적으로 첫 번째 플레이어를 바라보도록
+    }
+
+    public void AddPlayerDic(string userID, GameObject player)
+    {
+        players[userID] = player;
+        UIUpdate?.Invoke();
     }
 }

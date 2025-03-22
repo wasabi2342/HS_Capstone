@@ -183,7 +183,11 @@ public class WhitePlayerController : ParentPlayerController
         currentState = WhitePlayerState.Dash;
         animator.ResetTrigger("run");
 
-        animator.SetTrigger("dash");
+        animator.SetBool("dash", true);
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "dash", true);
+        }
         Vector3 dashDir = new Vector3(moveInput.x, 0, 0);
         StartCoroutine(DoDash(dashDir));
     }
@@ -639,7 +643,11 @@ public class WhitePlayerController : ParentPlayerController
         {
             if (currentState == WhitePlayerState.Guard)
             {
-                animator.SetTrigger("parry");
+                animator.SetBool("parry", true);
+                if (PhotonNetwork.IsConnected)
+                {
+                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "parry", true);
+                }
                 //photonView.RPC("PlayAnimation", RpcTarget.All, "parry");
 
                 currentState = WhitePlayerState.Parry;
@@ -672,7 +680,11 @@ public class WhitePlayerController : ParentPlayerController
             {
                 //photonView.RPC("PlayAnimation", RpcTarget.All, "hit");
 
-                animator.SetTrigger("hit");
+                animator.SetBool("hit", true);
+                if (PhotonNetwork.IsConnected)
+                {
+                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "hit", true);
+                }
                 currentState = WhitePlayerState.Hit;
             }
             //StartCoroutine(CoHitReaction());
@@ -698,7 +710,11 @@ public class WhitePlayerController : ParentPlayerController
     {
         currentState = WhitePlayerState.Stun;
         Debug.Log("플레이어 기절");
-        animator.SetTrigger("stun");
+        animator.SetBool("stun", true);
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "stun", true);
+        }
         //photonView.RPC("PlayAnimation", RpcTarget.All, "stun");
 
         // 기절 상태 30초 동안의 코루틴 
@@ -734,7 +750,11 @@ public class WhitePlayerController : ParentPlayerController
                 stunCoroutine = null;
             }
             currentState = WhitePlayerState.Idle;
-            animator.SetTrigger("revive");
+            animator.SetBool("revive", true);
+            if (PhotonNetwork.IsConnected)
+            {
+                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "revive", true);
+            }
             //photonView.RPC("PlayAnimation", RpcTarget.All, "revive");
 
             // 체력을 20으로 회복
