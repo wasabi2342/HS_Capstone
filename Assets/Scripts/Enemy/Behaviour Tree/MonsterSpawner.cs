@@ -5,26 +5,29 @@ using Photon.Pun;
 
 public class MonsterSpawner : MonoBehaviourPun
 {
-    public GameObject[] monsterPrefabs;  // 네트워크로 생성할 몬스터 프리팹들
-    public SpawnArea spawnArea;          // 스폰 영역 (미리 배치된 SpawnArea 내의 MonsterSpawner에 연결)
-    public int spawnCount;           // 스폰 반복 횟수
+    [Header("몬스터 프리팹 (Resources 폴더 내에 있어야 함)")]
+    public GameObject[] monsterPrefabs;
+    [Header("SpawnArea 참조 (미지정 시 부모에서 자동 할당)")]
+    public SpawnArea spawnArea;
+    [Header("스폰 설정")]
+    public int spawnCount = 3;  // 스폰 반복 횟수
 
     private void Awake()
     {
-
+        // 만약 Inspector에 할당되어 있지 않다면, MonsterSpawner의 부모에서 SpawnArea 컴포넌트를 자동으로 할당
         if (spawnArea == null)
         {
-            GameObject spawnAreaInstance = PhotonNetwork.Instantiate("SpawnArea", Vector3.zero, Quaternion.identity);
-            spawnArea = spawnAreaInstance.GetComponent<SpawnArea>();
-
-            // MonsterSpawner(이 스크립트가 붙은 객체)를 생성된 SpawnArea의 자식으로 재배치
-            transform.SetParent(spawnAreaInstance.transform);
+            spawnArea = GetComponentInParent<SpawnArea>();
+            if (spawnArea == null)
+            {
+                Debug.LogError("MonsterSpawner: SpawnArea를 찾을 수 없습니다.");
+            }
         }
     }
 
     private void Start()
     {
-        // 마스터 클라이언트만 몬스터를 스폰
+        // 마스터 클라이언트에서만 몬스터 스폰
         if (PhotonNetwork.IsMasterClient)
         {
             SpawnMonsters();
@@ -33,6 +36,7 @@ public class MonsterSpawner : MonoBehaviourPun
 
     public void SpawnMonsters()
     {
+        // spawnCount만큼 반복
         for (int i = 0; i < spawnCount; i++)
         {
             foreach (var prefab in monsterPrefabs)
@@ -40,32 +44,33 @@ public class MonsterSpawner : MonoBehaviourPun
                 // SpawnArea 내에서 랜덤한 스폰 위치 결정
                 Vector3 spawnPoint = spawnArea.GetRandomPointInsideArea();
 
-                // 네트워크 객체로 몬스터 생성 (Resources 폴더 내에 해당 프리팹이 있어야 함)
+                // 네트워크 객체로 몬스터 생성 (prefab.name은 Resources 폴더 내 프리팹 이름과 일치해야 함)
                 GameObject monster = PhotonNetwork.Instantiate(prefab.name, spawnPoint, Quaternion.identity);
 
-                // Master Client에서는 MonsterSpawner의 자식으로 부모 설정
-                monster.transform.SetParent(this.transform);
+                // Master Client에서는 SpawnArea의 자식으로 부모 설정
+                monster.transform.SetParent(spawnArea.transform);
 
-                // 다른 클라이언트에도 부모 설정을 동기화하기 위한 RPC 호출
+                // 다른 클라이언트에서도 동일한 부모 관계를 갖도록 RPC 호출
                 int monsterViewID = monster.GetComponent<PhotonView>().ViewID;
-                int spawnerViewID = this.photonView.ViewID;
-                photonView.RPC("RPC_SetParent", RpcTarget.OthersBuffered, monsterViewID, spawnerViewID);
+                int parentViewID = spawnArea.photonView.ViewID;
+                photonView.RPC("RPC_SetParent", RpcTarget.OthersBuffered, monsterViewID, parentViewID);
             }
         }
     }
 
+    // RPC: 다른 클라이언트에서 몬스터의 부모를 SpawnArea로 재설정
     [PunRPC]
-    void RPC_SetParent(int monsterViewID, int spawnerViewID)
+    void RPC_SetParent(int monsterViewID, int parentViewID)
     {
         PhotonView monsterPV = PhotonView.Find(monsterViewID);
-        PhotonView spawnerPV = PhotonView.Find(spawnerViewID);
-        if (monsterPV != null && spawnerPV != null)
+        PhotonView parentPV = PhotonView.Find(parentViewID);
+        if (monsterPV != null && parentPV != null)
         {
-            // 다른 클라이언트에서도 MonsterSpawner 하위로 부모 설정
-            monsterPV.gameObject.transform.SetParent(spawnerPV.gameObject.transform);
+            monsterPV.gameObject.transform.SetParent(parentPV.gameObject.transform);
         }
     }
 }
+
 
 
 

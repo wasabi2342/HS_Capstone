@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.AI;
+using Photon.Pun;
 
-public class SpawnArea : MonoBehaviour
+public class SpawnArea : MonoBehaviourPun
 {
     public float radius = 10f; // 배회할 수 있는 반경
 
