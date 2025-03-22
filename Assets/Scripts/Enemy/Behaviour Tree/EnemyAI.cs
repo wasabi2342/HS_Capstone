@@ -389,7 +389,7 @@ public class EnemyAI : MonoBehaviourPun
                 isAttackAnimationPlaying = false;
                 attackAnimTime = 0f;
                 if (!string.IsNullOrEmpty(prevAnimBeforeAttack))
-                    animator.Play(prevAnimBeforeAttack);
+                    PlayMoveAnim(prevAnimBeforeAttack);
             }
             return;
         }
@@ -412,9 +412,22 @@ public class EnemyAI : MonoBehaviourPun
         }
     }
 
+    // 애니메이션 재생과 동시에 모든 클라이언트에 동기화 RPC 호출
     void PlayMoveAnim(string animName)
     {
         if (currentMoveAnim == animName) return;
+
+        // 로컬에서 애니메이션 재생
+        animator.Play(animName);
+        currentMoveAnim = animName;
+        // Master Client가 재생한 명령을 다른 클라이언트로 전달
+        photonView.RPC("RPC_PlayAnimation", RpcTarget.Others, animName);
+    }
+
+    // RPC 메서드: 다른 클라이언트에서 애니메이션 재생
+    [PunRPC]
+    public void RPC_PlayAnimation(string animName)
+    {
         animator.Play(animName);
         currentMoveAnim = animName;
     }
@@ -464,7 +477,9 @@ public class EnemyAI : MonoBehaviourPun
             prevAnimBeforeAttack = currentMoveAnim;
             float targetX = targetPlayer.position.x;
             float selfX = transform.position.x;
-            animator.Play(targetX >= selfX ? "Attack_Right" : "Attack_Left");
+            string attackAnim = targetX >= selfX ? "Attack_Right" : "Attack_Left";
+            // 공격 애니메이션 재생 시 RPC를 통해 동기화
+            PlayMoveAnim(attackAnim);
 
             // 공격은 Master Client 기준으로 실행
             attackStrategy.Attack(targetPlayer);
@@ -614,3 +629,4 @@ public class EnemyAI : MonoBehaviourPun
         }
     }
 }
+

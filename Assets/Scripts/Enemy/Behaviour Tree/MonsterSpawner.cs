@@ -2,6 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using Photon.Pun;
 
 public class MonsterSpawner : MonoBehaviourPun
@@ -18,7 +21,6 @@ public class MonsterSpawner : MonoBehaviourPun
             SpawnMonsters();
         }
     }
-
     public void SpawnMonsters()
     {
         // spawnCount만큼 반복
@@ -27,19 +29,34 @@ public class MonsterSpawner : MonoBehaviourPun
             // monsterPrefabs에 등록된 각 몬스터를 순회하면서 생성
             foreach (var prefab in monsterPrefabs)
             {
-                // 랜덤 스폰 지점
                 Vector3 spawnPoint = spawnArea.GetRandomPointInsideArea();
 
                 // 네트워크 객체로 생성
-                // (prefab.name이 PhotonNetwork의 리소스 풀에서 인식 가능한 이름이어야 함)
+                // (prefab.name은 PhotonNetwork의 리소스 풀에서 인식 가능한 이름이어야 함)
                 GameObject monster = PhotonNetwork.Instantiate(prefab.name, spawnPoint, Quaternion.identity);
-
-                // MonsterSpawner 오브젝트 하위로 이동시켜 하이어라키에서 구조를 정리
                 monster.transform.SetParent(this.transform);
+
+                // 다른 클라이언트에도 부모 설정을 동기화하기 위한 RPC 호출
+                int monsterViewID = monster.GetComponent<PhotonView>().ViewID;
+                int parentViewID = this.photonView.ViewID;
+                photonView.RPC("RPC_SetParent", RpcTarget.OthersBuffered, monsterViewID, parentViewID);
             }
         }
     }
+
+    [PunRPC]
+    void RPC_SetParent(int monsterViewID, int parentViewID)
+    {
+        PhotonView monsterPV = PhotonView.Find(monsterViewID);
+        PhotonView parentPV = PhotonView.Find(parentViewID);
+        if (monsterPV != null && parentPV != null)
+        {
+            // 다른 클라이언트에서도 MonsterSpawner 하위로 부모 설정
+            monsterPV.gameObject.transform.SetParent(parentPV.gameObject.transform);
+        }
+    }
 }
+
 
 /*
 using UnityEngine;
