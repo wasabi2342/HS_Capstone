@@ -1,4 +1,4 @@
-﻿/*
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -40,8 +40,8 @@ public class MonsterSpawner : MonoBehaviourPun
         }
     }
 }
-*/
 
+/*
 using UnityEngine;
 
 public class MonsterSpawner : MonoBehaviour
@@ -70,4 +70,4 @@ public class MonsterSpawner : MonoBehaviour
     }
 
 }
-
+*/
