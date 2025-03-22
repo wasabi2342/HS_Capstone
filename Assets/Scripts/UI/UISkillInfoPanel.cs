@@ -1,15 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Blessing
-{
-    none,
-    파이몬,
-    푸르푸르,
-    마르바스,
-    아스타로트,
-    바사고
-}
 
 public enum InputKey
 {
