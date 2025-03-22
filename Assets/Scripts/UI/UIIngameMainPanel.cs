@@ -58,7 +58,7 @@ public class UIIngameMainPanel : UIBase
                     playerController.OnHealthChanged.RemoveAllListeners();
                     playerController.OnHealthChanged.AddListener(content.UpdateHPImage);
                 }
-                contentPairs.Add(keyValuePair.Key, content);
+                contentPairs[keyValuePair.Key] = content;
             }
             // UI 연결 추가하기
             else
