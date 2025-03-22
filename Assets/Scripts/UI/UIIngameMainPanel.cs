@@ -69,6 +69,7 @@ public class UIIngameMainPanel : UIBase
                     playerController.UltimateCoolDownUpdate.AddListener(uISkillIcons[(int)UIIcon.r].StartUpdateSkillCooldown);
                     playerController.MouseRightSkillCoolDownUpdate.AddListener(uISkillIcons[(int)UIIcon.mouseR].StartUpdateSkillCooldown);
                     playerController.OnDashCooldownUpdate.AddListener(uISkillIcons[(int)UIIcon.space].StartUpdateSkillCooldown);
+                    playerController.AttackStackUpdate.AddListener(UpdateMouseLeftStack);
                     //playerController
                 }
             }
@@ -96,6 +97,8 @@ public class UIIngameMainPanel : UIBase
             playerController.UltimateCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.r].StartUpdateSkillCooldown);
             playerController.MouseRightSkillCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.mouseR].StartUpdateSkillCooldown);
             playerController.OnDashCooldownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.space].StartUpdateSkillCooldown);
+            playerController.AttackStackUpdate.RemoveListener(UpdateMouseLeftStack);
+
         }
     }
 
@@ -137,6 +140,11 @@ public class UIIngameMainPanel : UIBase
         {
             uISkillIcons[(int)icon].StartUpdateSkillCooldown(value);
         }
+    }
+
+    public void UpdateMouseLeftStack(float stack)
+    {
+        mouseLStackText.text = ((int)stack).ToString();
     }
 
     private void UpdateHPImage(float fillAmount)

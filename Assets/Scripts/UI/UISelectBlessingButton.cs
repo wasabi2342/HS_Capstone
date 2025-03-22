@@ -15,13 +15,13 @@ public class UISelectBlessingButton : UIBase
 
     private string[] skills = { "평타", "특수기", "대쉬", "스킬", "궁극기" };
 
-    private KeyValuePair<Skills, (Blessings, int)> thisBlessing;
+    private KeyValuePair<Skills, BlessingInfo> thisBlessing;
 
-    public void Init(KeyValuePair<Skills, (Blessings, int)> newBlessing)
+    public void Init(KeyValuePair<Skills, BlessingInfo> newBlessing)
     {
         thisBlessing = newBlessing;
 
-        if (newBlessing.Value.Item2 > 1)
+        if (newBlessing.Value.level > 1)
         {
             headerText.text = "업그레이드";
         }
@@ -31,7 +31,7 @@ public class UISelectBlessingButton : UIBase
         }
         // icon.sprite = 아이콘 스프라이트 받아오기
 
-        infoText.text = $"기능 : {newBlessing.Key}\n가호 : {newBlessing.Value.Item1}설명 추가 해야함";
+        infoText.text = $"기능 : {newBlessing.Key}\n가호 : {newBlessing.Value.blessing}설명 추가 해야함";
     }
     
     public void SetEnabled()
@@ -46,7 +46,7 @@ public class UISelectBlessingButton : UIBase
         outline.enabled = value;
     }
 
-    public KeyValuePair<Skills, (Blessings, int)> ReturnBlessing()
+    public KeyValuePair<Skills, BlessingInfo> ReturnBlessing()
     {
         return thisBlessing;
     }

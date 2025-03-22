@@ -26,6 +26,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         DontDestroyOnLoad(gameObject);
 
         PhotonNetwork.AutomaticallySyncScene = true;
+        PhotonNetwork.SendRate = 60; 
+        PhotonNetwork.SerializationRate = 60;
     }
 
     public override void OnConnectedToMaster()
@@ -84,6 +86,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             }
             else
             {
+                RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
                 SceneManager.LoadScene("StageTest1");
             }
         }
@@ -113,8 +116,9 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
 
-            PhotonNetwork.LoadLevel("StageTest1");
             PhotonNetwork.CurrentRoom.IsOpen = false;
+            RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
+            PhotonNetwork.LoadLevel("StageTest1");
 
         }
     }
@@ -133,8 +137,10 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             Debug.Log("모두 준비 완료");
             StopCoroutine(stageEnterCoroutine);
             UIManager.Instance.ClosePeekUI();
-            PhotonNetwork.LoadLevel("StageTest1");
+            RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
+
             PhotonNetwork.CurrentRoom.IsOpen = false;
+            PhotonNetwork.LoadLevel("StageTest1");
         }
     }
 

@@ -13,9 +13,9 @@ public class UISelectBlessingPanel : UIBase
     private bool[] isFlipped;
 
 
-    private Dictionary<Skills, (Blessings, int)> newBlessings = new Dictionary<Skills, (Blessings, int)>();
+    private Dictionary<Skills, BlessingInfo> newBlessings = new Dictionary<Skills, BlessingInfo>();
 
-    private KeyValuePair<Skills, (Blessings, int)> selectedBlessing;
+    private KeyValuePair<Skills, BlessingInfo> selectedBlessing;
 
     void Start()
     {
@@ -38,19 +38,20 @@ public class UISelectBlessingPanel : UIBase
 
             if (dic.ContainsKey(skill))
             {
-                var newBlessingPair = (dic[skill].Item1, dic[skill].Item2 + 1);
-                if (!newBlessings.ContainsValue(newBlessingPair))
+                BlessingInfo newBlessing = dic[skill];
+                newBlessing.level++;
+                if (!newBlessings.ContainsValue(newBlessing))
                 {
-                    newBlessings[skill] = newBlessingPair;
+                    newBlessings[skill] = newBlessing;
                 }
             }
             else
             {
-                int randomBlessing = Random.Range(0, (int)Blessings.Max);
-                var newBlessingPair = ((Blessings)randomBlessing, 1);
-                if (!newBlessings.ContainsValue(newBlessingPair))
+                int randomBlessing = Random.Range(1, (int)Blessings.Max);
+                BlessingInfo newBlessing = new((Blessings)randomBlessing, 1);
+                if (!newBlessings.ContainsValue(newBlessing))
                 {
-                    newBlessings[skill] = newBlessingPair;
+                    newBlessings[skill] = newBlessing;
                 }
             }
         }
@@ -110,7 +111,7 @@ public class UISelectBlessingPanel : UIBase
 
     private void SelectBleesing()
     {
-        if (selectedBlessing.Value.Item2 != 0)
+        if (selectedBlessing.Value.level != 0)
         {
             RoomManager.Instance.ReturnLocalPlayer().GetComponent<PlayerBlessing>().UpdateBlessing(selectedBlessing);
             UIManager.Instance.ClosePeekUI();

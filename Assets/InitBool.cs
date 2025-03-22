@@ -1,8 +1,11 @@
-using Photon.Pun;
 using UnityEngine;
 
-public class EffectAnimation : StateMachineBehaviour
+public class InitBool : StateMachineBehaviour
 {
+    [SerializeField]
+    private string parameter;
+    [SerializeField]
+    private bool boolValue;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     //{
@@ -18,17 +21,7 @@ public class EffectAnimation : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (PhotonNetwork.IsConnected)
-        {
-            if (animator.gameObject != null && animator.GetComponent<PhotonView>().IsMine)
-            {
-                PhotonNetwork.Destroy(animator.gameObject);
-            }
-        }
-        else
-        {
-            Destroy(animator.gameObject);
-        }
+        animator.SetBool(parameter, boolValue);
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

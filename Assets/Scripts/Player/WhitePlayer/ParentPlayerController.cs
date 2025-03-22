@@ -2,21 +2,10 @@ using System.Collections;
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.Events;
-using System;
+using System.Collections.Generic;
 
 public class ParentPlayerController : MonoBehaviourPun, IDamageable
 {
-    #region Health Settings
-
-    [Header("Health Settings")]
-    public float maxHealth = 100f;
-    public float currentHealth;
-
-    // 체력 UI 업데이트 -> 체력바 갱신, 인자로 0~1의 정규화된 값을 전송
-    public UnityEvent<float> OnHealthChanged;
-
-    #endregion
-
     #region Cooldown UI Events
 
     [Header("Cooldown Settings")]
@@ -25,39 +14,54 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     protected float dashCooldown = 1f;
     protected float shiftCoolDown = 3f; // 캐릭터의 능력치, 쿨타임 등 캐릭터 정보를 가진 scriptableobject 또는 구조체, 클래스 중 1개를 만들어 Start에서 능력치 연결 해줘야함
     protected float ultimateCoolDown = 30f; // 추후에 로그라이크 강화 요소 또한 불러와야 함
-    protected float guardCoolDown = 4f;
+    protected float mouseRightCoolDown = 4f;
 
-
+    // 체력 UI 업데이트 -> 체력바 갱신, 인자로 0~1의 정규화된 값을 전송
+    public UnityEvent<float> OnHealthChanged;
     // 공격/대쉬 쿨타임 UI 갱신 이벤트 (0~1의 진행률 전달)
     public UnityEvent<float> OnAttackCooldownUpdate;
     public UnityEvent<float> OnDashCooldownUpdate;
     public UnityEvent<float> ShiftCoolDownUpdate;
     public UnityEvent<float> UltimateCoolDownUpdate;
     public UnityEvent<float> MouseRightSkillCoolDownUpdate;
+    public UnityEvent<float> AttackStackUpdate;
 
     // 스킬 사용 가능 여부
     protected bool isShiftReady = true;
     protected bool isUltimateReady = true;
     protected bool isMouseRightSkillReady = true;
+    protected bool isDashReady = true;
 
     protected bool isInvincible = false; // 무적 상태 체크용
     protected bool isSuperArmor = false; // 슈퍼아머 상태 체크용
     #endregion
 
+    [SerializeField]
+    protected CharacterStats characterBaseStats;
+    protected PlayerRunTimeData runTimeData;
+
+    public int attackStack = 0;
+
     #region Unity Lifecycle
 
     protected virtual void Awake()
     {
-        currentHealth = maxHealth;
-        // 시작 시 체력 UI 업데이트
-        OnHealthChanged?.Invoke(currentHealth / maxHealth);
-        
-        DontDestroyOnLoad(gameObject);
-        
-        if (PhotonNetwork.IsConnected && photonView.ViewID == 0)
+        if (!photonView.IsMine)
         {
-            PhotonNetwork.Destroy(gameObject);
+            return;
         }
+        runTimeData = new PlayerRunTimeData(characterBaseStats.attackPower, characterBaseStats.attackSpeed, characterBaseStats.moveSpeed, characterBaseStats.cooldownReductionPercent, characterBaseStats.abilityPower, characterBaseStats.maxHP);
+
+        attackCooldown = characterBaseStats.mouseLeftCooldown;
+        dashCooldown = characterBaseStats.spaceCooldown;
+        shiftCoolDown = characterBaseStats.shiftCooldown;
+        ultimateCoolDown = characterBaseStats.ultimateCooldown;
+        mouseRightCoolDown = characterBaseStats.mouseRightCooldown;
+
+        runTimeData.currentHealth = characterBaseStats.maxHP;
+        // 시작 시 체력 UI 업데이트
+        OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
+       
     }
 
     #endregion
@@ -77,14 +81,14 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
             if (PhotonNetwork.IsMasterClient)
             {
                 // Master Client는 직접 체력 계산
-                currentHealth -= damage;
-                currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+                runTimeData.currentHealth -= damage;
+                runTimeData.currentHealth = Mathf.Clamp(runTimeData.currentHealth, 0, characterBaseStats.maxHP);
 
                 // 체력바 UI 업데이트
-                OnHealthChanged?.Invoke(currentHealth / maxHealth);
+                OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
 
                 // 모든 클라이언트에 체력 동기화
-                photonView.RPC("UpdateHP", RpcTarget.Others, currentHealth);
+                photonView.RPC("UpdateHP", RpcTarget.Others, runTimeData.currentHealth);
             }
             else
             {
@@ -96,11 +100,11 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         else
         {
             // Master Client는 직접 체력 계산
-            currentHealth -= damage;
-            currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+            runTimeData.currentHealth -= damage;
+            runTimeData.currentHealth = Mathf.Clamp(runTimeData.currentHealth, 0, characterBaseStats.maxHP);
 
             // 체력바 UI 업데이트
-            OnHealthChanged?.Invoke(currentHealth / maxHealth);
+            OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
         }
     }
 
@@ -112,44 +116,82 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         if (!PhotonNetwork.IsMasterClient)
             return;
 
-        currentHealth -= damage;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        runTimeData.currentHealth -= damage;
+        runTimeData.currentHealth = Mathf.Clamp(runTimeData.currentHealth, 0, characterBaseStats.maxHP);
 
         // 체력바 UI 업데이트
-        OnHealthChanged?.Invoke(currentHealth / maxHealth);
+        OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
 
         // 모든 클라이언트에 체력 동기화
-        photonView.RPC("UpdateHP", RpcTarget.Others, currentHealth);
+        photonView.RPC("UpdateHP", RpcTarget.Others, runTimeData.currentHealth);
     }
 
     [PunRPC]
     public virtual void UpdateHP(float hp)
     {
-        currentHealth = hp;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        OnHealthChanged?.Invoke(currentHealth / maxHealth);
+        runTimeData.currentHealth = hp;
+        runTimeData.currentHealth = Mathf.Clamp(runTimeData.currentHealth, 0, characterBaseStats.maxHP);
+        OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
     }
 
     #endregion
-
+    /// <summary>
+    /// 무적상태 시작
+    /// </summary>
     public virtual void EnterInvincibleState()
     {
         isInvincible = true;
     }
 
+    /// <summary>
+    /// 무적상태 종료
+    /// </summary>
     public virtual void ExitInvincibleState()
     {
         isInvincible = false;
     }
 
+    /// <summary>
+    /// 슈퍼아머상태 시작
+    /// </summary>
     public virtual void EnterSuperArmorState()
     {
         isSuperArmor = true;
     }
 
+    /// <summary>
+    /// 슈퍼아머 상태 종료
+    /// </summary>
     public virtual void ExitSuperArmorState()
     {
         isSuperArmor = true;
+    }
+
+    /// <summary>
+    /// 런타임데이터 json으로 저장
+    /// </summary>
+    public virtual void SaveRunTimeData()
+    {
+        runTimeData.SaveToJsonFile();
+    }
+
+    public virtual void UpdateBlessingRunTimeData(Dictionary<Skills, BlessingInfo> playerBlessingDic)
+    {
+        foreach(var data in playerBlessingDic)
+        {
+            runTimeData.blessingInfo[(int)data.Key] = data.Value;
+        }
+    }
+
+    public virtual BlessingInfo[] ReturnBlessingRunTimeData()
+    {
+        return runTimeData.blessingInfo;
+    }
+
+    protected virtual void OnApplicationQuit()
+    {
+        Debug.Log("게임 종료됨!");
+        runTimeData.DeleteRunTimeData();
     }
 
     #region Cooldown Handling (UI Update)

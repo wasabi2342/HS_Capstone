@@ -8,10 +8,11 @@ using UnityEngine.SceneManagement;
 public class RoomManager : MonoBehaviour
 {
     [SerializeField]
-    private GameObject playerInRoom;
+    private GameObject defaultPlayer;
     [SerializeField]
     private CinemachineCamera cinemachineCamera;
-
+    [SerializeField]
+    private bool isInVillage;
     public static RoomManager Instance { get; private set; }
 
     private Dictionary<int, bool> playerInRestrictedArea = new Dictionary<int, bool>();
@@ -34,33 +35,41 @@ public class RoomManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        DontDestroyOnLoad(cinemachineCamera);
     }
 
 
     private void Start()
     {
-        //UIManager.Instance.OpenPanel<UIIngameMainPanel>();
-        CreateCharacter(playerInRoom, new Vector3(0, 2, 0), Quaternion.identity, true);
+        if (PhotonNetwork.IsConnected && PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.UserId + "CharacterName"] != null)
+        {
+            Debug.Log(PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.UserId + "CharacterName"].ToString());
+            CreateCharacter(PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.UserId + "CharacterName"].ToString(), new Vector3(0, 2, 0), Quaternion.identity, isInVillage);
+        }
+        else
+        {
+            CreateCharacter(defaultPlayer.name, new Vector3(0, 2, 0), Quaternion.identity, isInVillage);
+        }
     }
 
-    public void CreateCharacter(GameObject prefab, Vector3 pos, Quaternion quaternion, bool isInVillage)
+    public void CreateCharacter(string playerPrefabName, Vector3 pos, Quaternion quaternion, bool isInVillage)
     {
         GameObject playerInstance;
-        if (PhotonNetwork.InRoom)
+
+        if (PhotonNetwork.IsConnected)
         {
-            playerInstance = PhotonNetwork.Instantiate("Prefab/" + prefab.name, pos, quaternion);
+            playerInstance = PhotonNetwork.Instantiate("Prefab/" + playerPrefabName, pos, quaternion);
             players[PhotonNetwork.LocalPlayer.UserId] = playerInstance;
             PhotonNetworkManager.Instance.AddPlayer(PhotonNetwork.LocalPlayer.UserId, playerInstance.GetComponent<PhotonView>().ViewID);
             playerInstance.GetComponent<WhitePlayercontroller_event>().isInVillage = isInVillage; // 플레이어의 공통 스크립트로 변경 해야함
+            PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.UserId + "CharacterName"] = playerPrefabName;
 
         }
         else
         {
-            playerInstance = Instantiate(prefab, pos, quaternion);
+            playerInstance = Instantiate(Resources.Load<ParentPlayerController>(playerPrefabName), pos, quaternion).gameObject;
             players["Local"] = playerInstance;
         }
-        DontDestroyOnLoad(playerInstance);
+
         cinemachineCamera.Follow = playerInstance.transform;
         cinemachineCamera.LookAt = playerInstance.transform;
     }
