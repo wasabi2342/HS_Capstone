@@ -20,7 +20,7 @@ public class RoomManager : MonoBehaviour
 
     public bool isEnteringStage;
 
-    public Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
+    public Dictionary<int, GameObject> players = new Dictionary<int, GameObject>();
 
     // 카메라 전환에서 사용
     private List<GameObject> sortedPlayers;
@@ -39,7 +39,7 @@ public class RoomManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        players = new Dictionary<string, GameObject>();
+        players = new Dictionary<int, GameObject>();
     }
 
 
@@ -63,8 +63,8 @@ public class RoomManager : MonoBehaviour
         if (PhotonNetwork.IsConnected)
         {
             playerInstance = PhotonNetwork.Instantiate("Prefab/" + playerPrefabName, pos, quaternion);
-            players[PhotonNetwork.LocalPlayer.UserId] = playerInstance;
-            PhotonNetworkManager.Instance.AddPlayer(PhotonNetwork.LocalPlayer.UserId, playerInstance.GetComponent<PhotonView>().ViewID);
+            players[PhotonNetwork.LocalPlayer.ActorNumber] = playerInstance;
+            PhotonNetworkManager.Instance.AddPlayer(PhotonNetwork.LocalPlayer.ActorNumber, playerInstance.GetComponent<PhotonView>().ViewID);
             playerInstance.GetComponent<WhitePlayercontroller_event>().isInVillage = isInVillage; // 플레이어의 공통 스크립트로 변경 해야함
             PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.UserId + "CharacterName"] = playerPrefabName;
 
@@ -72,7 +72,7 @@ public class RoomManager : MonoBehaviour
         else
         {
             playerInstance = Instantiate(Resources.Load<ParentPlayerController>(playerPrefabName), pos, quaternion).gameObject;
-            players["Local"] = playerInstance;
+            players[0] = playerInstance;
         }
 
         cinemachineCamera.Follow = playerInstance.transform;
@@ -83,11 +83,11 @@ public class RoomManager : MonoBehaviour
     {
         if (!PhotonNetwork.InRoom)
         {
-            return players["Local"];
+            return players[0];
         }
         else
         {
-            return players[PhotonNetwork.LocalPlayer.UserId];
+            return players[PhotonNetwork.LocalPlayer.ActorNumber];
         }
     }
 
@@ -151,7 +151,7 @@ public class RoomManager : MonoBehaviour
 
     public void UpdateSortedPlayers()
     {
-        sortedPlayers = players.OrderBy(p => p.Key == PhotonNetwork.LocalPlayer.UserId ? 0 : 1)
+        sortedPlayers = players.OrderBy(p => p.Key == PhotonNetwork.LocalPlayer.ActorNumber ? 0 : 1)
                                .Select(p => p.Value)
                                .ToList();
 
@@ -166,9 +166,9 @@ public class RoomManager : MonoBehaviour
             currentIndex = 0; // 기본적으로 첫 번째 플레이어를 바라보도록
     }
 
-    public void AddPlayerDic(string userID, GameObject player)
+    public void AddPlayerDic(int actNum, GameObject player)
     {
-        players[userID] = player;
+        players[actNum] = player;
         UIUpdate?.Invoke();
     }
 }

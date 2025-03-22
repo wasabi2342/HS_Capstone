@@ -29,7 +29,7 @@ public class UIIngameMainPanel : UIBase
     [SerializeField]
     private UIPartyHPContent partyHPContent;
 
-    private Dictionary<string, UIPartyHPContent> contentPairs = new Dictionary<string, UIPartyHPContent>();
+    private Dictionary<int, UIPartyHPContent> contentPairs = new Dictionary<int, UIPartyHPContent>();
 
     private void Start()
     {
@@ -47,10 +47,10 @@ public class UIIngameMainPanel : UIBase
 
         foreach (var keyValuePair in RoomManager.Instance.players)
         {
-            if (keyValuePair.Key != PhotonNetwork.LocalPlayer.UserId)
+            if (keyValuePair.Key != PhotonNetwork.LocalPlayer.ActorNumber)
             {
                 UIPartyHPContent content = Instantiate(partyHPContent, partyHPParent);
-                content.Init(GetNicknameByUserId(keyValuePair.Key));
+                content.Init(GetNicknameByActNum(keyValuePair.Key));
                 // UI 연결 추가하기
                 ParentPlayerController playerController = keyValuePair.Value.GetComponent<ParentPlayerController>();
                 if (playerController != null)
@@ -97,7 +97,7 @@ public class UIIngameMainPanel : UIBase
             }
         }
 
-        playerController = RoomManager.Instance.players[PhotonNetwork.LocalPlayer.UserId].GetComponent<ParentPlayerController>();
+        playerController = RoomManager.Instance.players[PhotonNetwork.LocalPlayer.ActorNumber].GetComponent<ParentPlayerController>();
         if (playerController != null)
         {
             playerController.OnHealthChanged.RemoveListener(UpdateHPImage);
@@ -110,11 +110,11 @@ public class UIIngameMainPanel : UIBase
         }
     }
 
-    public string GetNicknameByUserId(string userId)
+    public string GetNicknameByActNum(int actNum)
     {
         foreach (Player player in PhotonNetwork.PlayerList)
         {
-            if (player.UserId == userId)
+            if (player.ActorNumber == actNum)
             {
                 return player.NickName;
             }
