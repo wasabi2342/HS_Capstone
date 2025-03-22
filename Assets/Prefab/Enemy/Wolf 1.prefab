@@ -198,7 +198,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1765914048162278020}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
   m_Name: 
@@ -216,7 +216,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1765914048162278020}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
@@ -232,7 +232,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1765914048162278020}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
   m_Name: 
@@ -242,7 +242,7 @@ MonoBehaviour:
   prefixField: -1
   Synchronization: 3
   OwnershipTransfer: 0
-  observableSearch: 2
+  observableSearch: 0
   ObservedComponents:
   - {fileID: 7533604380446736302}
   - {fileID: 7763377542229407887}
@@ -261,14 +261,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18daacf0f7fb13b4fb2581914100d7ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectRange: 15
-  attackRange: 5
-  wanderSpeed: 3
-  chaseSpeed: 5
+  status: {fileID: 11400000, guid: 585a8c2885ac13d469a69c6a0969dd97, type: 2}
   spawnArea: {fileID: 0}
   animator: {fileID: 0}
-  attackCooldown: 2
-  attackAnimDuration: 0.7
 --- !u!114 &6080484080865822958
 MonoBehaviour:
   m_ObjectHideFlags: 0

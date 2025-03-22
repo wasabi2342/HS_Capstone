@@ -6,20 +6,21 @@ using UnityEngine;
 public class EnemyStatus : ScriptableObject
 {
     [Header("Info")]
-    public int id; //몬스터 ID
-    public enum Type
-    {
-        NORMAL,
-        ELITE,
-        BOSS
-    }
-    public Type type; //몬스터 타입
-    public new string name; //이름
-    public int dmg; //데미지
-    public int hp; //체력
-    public float speed; //속력
+    public int id;
+    public enum Type { NORMAL, ELITE, BOSS }
+    public Type type;
+    public new string name;
+    public float damage;
+    public float hp;
 
     [Header("Attack")]
-    public float waitCool; //공격 준비 시간
-    public float attackCool; //쿨타임
+    public float waitCool;        // 공격 준비 시간
+    public float attackCool;      // 공격 쿨타임
+    public float attackRange;     // 공격 거리
+    public float animDuration;    // 공격 애니메이션 길이
+
+    [Header("AI Settings")]
+    public float detectRange = 10f;     // 플레이어 탐지 거리
+    public float wanderSpeed = 2f;      // 배회 속도
+    public float chaseSpeed = 5f;       // 추적 속도
 }
