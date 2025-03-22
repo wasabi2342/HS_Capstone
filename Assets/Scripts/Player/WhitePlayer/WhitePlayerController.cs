@@ -641,7 +641,7 @@ public class WhitePlayerController : ParentPlayerController
     // 피격 및 사망 처리
     public override void TakeDamage(float damage)
     {
-        if (currentState == WhitePlayerState.Death)
+        if (currentState == WhitePlayerState.Death || currentState == WhitePlayerState.Stun)
         {
             return;
         }
