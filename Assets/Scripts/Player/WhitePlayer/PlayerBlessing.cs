@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 public enum Skills { Mouse_L, Mouse_R, Space, Shift_L, R, Max }
-public enum Blessings { Crocell, Gremory, Paymon, Max }
+public enum Blessings { None, Crocell, Gremory, Paymon, Max }
 
 [Serializable]
 public class BlessingInfo
@@ -23,7 +23,7 @@ public class PlayerBlessing : MonoBehaviourPun
 {
     [SerializeField]
     private ParentPlayerController playerController;
-    
+
     private Dictionary<Skills, BlessingInfo> playerBlessingDic = new Dictionary<Skills, BlessingInfo>();
 
     private void Awake()
@@ -39,7 +39,7 @@ public class PlayerBlessing : MonoBehaviourPun
         }
 
         BlessingInfo[] blessings = playerController.ReturnBlessingRunTimeData();
-        for(int i = 0; i < blessings.Length; i++)
+        for (int i = 0; i < blessings.Length; i++)
         {
             playerBlessingDic[(Skills)i] = blessings[i];
         }
@@ -55,8 +55,66 @@ public class PlayerBlessing : MonoBehaviourPun
         playerBlessingDic[data.Key] = data.Value;
         playerController.UpdateBlessingRunTimeData(playerBlessingDic);
         // 갱신된 가호에 맞게 스킬 변경 코드 추가 해야함
+        switch (data.Key)
+        {
+            case Skills.Mouse_L:
+                switch (data.Value.blessing)
+                {
+                    case Blessings.Crocell:
+                        break;
+                    case Blessings.Gremory:
+                        break;
+                    case Blessings.Paymon:
+                        break;
+                }
+                break;
+            case Skills.Mouse_R:
+                switch (data.Value.blessing)
+                {
+                    case Blessings.Crocell:
+                        break;
+                    case Blessings.Gremory:
+                        break;
+                    case Blessings.Paymon:
+                        break;
+                }
+                break;
+            case Skills.Space:
+                switch (data.Value.blessing)
+                {
+                    case Blessings.Crocell:
+                        break;
+                    case Blessings.Gremory:
+                        break;
+                    case Blessings.Paymon:
+                        break;
+                }
+                break;
+            case Skills.Shift_L:
+                switch (data.Value.blessing)
+                {
+                    case Blessings.Crocell:
+                        break;
+                    case Blessings.Gremory:
+                        break;
+                    case Blessings.Paymon:
+                        break;
+                }
+                break;
+            case Skills.R:
+                switch (data.Value.blessing)
+                {
+                    case Blessings.Crocell:
+                        break;
+                    case Blessings.Gremory:
+                        break;
+                    case Blessings.Paymon:
+                        break;
+                }
+                break;
+        }
     }
-    
+
     public Dictionary<Skills, BlessingInfo> ReturnBlessingDic()
     {
         return playerBlessingDic;
