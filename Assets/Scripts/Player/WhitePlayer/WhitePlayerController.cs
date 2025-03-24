@@ -26,11 +26,18 @@ public class WhitePlayerController : ParentPlayerController
     public Transform[] centerPoints = new Transform[8];
     private int currentDirectionIndex = 0;
 
-    // 죽음, 기절 관련 ui, 체력바 ui
+    // 죽음, 기절 화면, 기절 바 
 
     private Image stunOverlay;
     private Image stunSlider;
     private Image hpBar;
+
+    // 부활 홀드 F키
+
+    [SerializeField] private GameObject reviveUIPrefab;     
+    private GameObject reviveUIInstance;   
+    private Image reviveProgressPanel; // 패널
+    private Image reviveProgressBar;  // 진행도 바
 
 
     // 이동 입력 및 상태
@@ -79,6 +86,38 @@ public class WhitePlayerController : ParentPlayerController
             stunOverlay.enabled = false;
             stunSlider.enabled = false;
             hpBar.enabled = true;
+        }
+
+        if (photonView.IsMine && reviveUIPrefab != null)
+        {
+            // 1) 부모 Canvas를 찾음 (예: "UIIngameMainPanel")
+            GameObject canvasObj = GameObject.Find("UIIngameMainPanel");
+            Transform parent = canvasObj ? canvasObj.transform : null;
+
+            // 2) 프리팹 Instantiate
+            reviveUIInstance = Instantiate(reviveUIPrefab, parent);
+
+            // 3) 자식 오브젝트 찾아서 연결
+            //    - ReviveProgressPanel
+            //    - ReviveProgressBar
+            Transform panelTransform = reviveUIInstance.transform.Find("ReviveProgressPanel");
+            if (panelTransform != null)
+            {
+                reviveProgressPanel = panelTransform.GetComponent<Image>();
+                // ReviveProgressBar를 패널 자식으로 가정
+                Transform barTransform = panelTransform.Find("ReviveProgressBar");
+                if (barTransform != null)
+                {
+                    reviveProgressBar = barTransform.GetComponent<Image>();
+                }
+            }
+
+            // 혹은 reviveUIInstance 안에 바로 ReviveProgressPanel, ReviveProgressBar가 있다면
+            // Find("ReviveProgressPanel").GetComponent<Image>(); 로 찾으시면 됩니다.
+
+            // 4) UI 초기 비활성화
+            if (reviveProgressPanel != null)
+                reviveProgressPanel.gameObject.SetActive(false);
         }
     }
 
@@ -797,6 +836,7 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
+    // 부활
 
     public void Revive()
     {
@@ -828,6 +868,24 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
+
+    // 부활 ui
+
+    public void ShowReviveUI(bool show)
+    {
+        if (reviveProgressPanel != null)
+        {
+            reviveProgressPanel.gameObject.SetActive(show);
+        }
+    }
+
+    public void UpdateReviveProgress(float ratio)
+    {
+        if (reviveProgressBar != null)
+        {
+            reviveProgressBar.fillAmount = ratio;
+        }
+    }
 
 
 
