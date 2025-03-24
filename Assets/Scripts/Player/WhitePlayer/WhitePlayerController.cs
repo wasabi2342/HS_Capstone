@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
 using Photon.Pun;
+using UnityEngine.UI;
+
 
 
 public enum WhitePlayerState { Idle, Run, BasicAttack, Hit, Dash, Skill, Ultimate, Guard, Parry, Counter, Stun, Revive, Death }
@@ -25,7 +27,10 @@ public class WhitePlayerController : ParentPlayerController
     public Transform[] centerPoints = new Transform[8];
     private int currentDirectionIndex = 0;
 
+    // 죽음, 기절 관련 ui
 
+    [SerializeField] private GameObject stunOverlay; // 화면 반투명 이미지
+    [SerializeField] private Slider stunSlider;      // 기절 시간 바
 
 
     // 이동 입력 및 상태
@@ -638,6 +643,8 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
+
+
     // 피격 및 사망 처리
     public override void TakeDamage(float damage)
     {
@@ -733,21 +740,40 @@ public class WhitePlayerController : ParentPlayerController
 
     private IEnumerator CoStunDuration()
     {
-        float stunDuration = 30f; // 빨리 보기위해 5초로 해둠, 나중에 30초로 조정하면 됩니다요.
+        float stunDuration = 30f;
         float elapsed = 0f;
+
+        if (photonView.IsMine)
+        {
+            stunOverlay.SetActive(true);
+            stunSlider.gameObject.SetActive(true);
+            stunSlider.value = 1f;
+        }
+
         while (elapsed < stunDuration)
         {
             elapsed += Time.deltaTime;
+
+            if (photonView.IsMine)
+            {
+                stunSlider.value = 1 - (elapsed / stunDuration);
+            }
+
             yield return null;
+        }
+
+        if (photonView.IsMine)
+        {
+            stunSlider.gameObject.SetActive(false);
+            stunOverlay.SetActive(false);
         }
 
         TransitionToDeath();
     }
 
-    // 부활
+
     public void Revive()
     {
-        // 만약 기절 상태라면 코루틴을 중지하고 상태를 Idle로 전환
         if (currentState == WhitePlayerState.Stun)
         {
             if (stunCoroutine != null)
@@ -755,19 +781,24 @@ public class WhitePlayerController : ParentPlayerController
                 StopCoroutine(stunCoroutine);
                 stunCoroutine = null;
             }
-            //currentState = WhitePlayerState.Idle;
+
+            if (photonView.IsMine)
+            {
+                stunSlider.gameObject.SetActive(false);
+                stunOverlay.SetActive(false);
+            }
+
             animator.SetBool("revive", true);
             if (PhotonNetwork.IsConnected)
             {
                 photonView.RPC("SyncBoolParameter", RpcTarget.Others, "revive", true);
             }
-            //photonView.RPC("PlayAnimation", RpcTarget.All, "revive");
 
-            // 체력을 20으로 회복
             photonView.RPC("UpdateHP", RpcTarget.All, 20f);
             Debug.Log("플레이어 부활");
         }
     }
+
 
     // 사망 상태로 전환
     private void TransitionToDeath()
