@@ -36,9 +36,9 @@ public class UISelectBlessingPanel : UIBase
                 continue;
             }
 
-            if (dic.ContainsKey(skill))
+            if (dic[skill].level != 0)
             {
-                BlessingInfo newBlessing = dic[skill];
+                BlessingInfo newBlessing = new BlessingInfo(dic[skill].blessing, dic[skill].level);
                 newBlessing.level++;
                 if (!newBlessings.ContainsValue(newBlessing))
                 {
@@ -114,6 +114,7 @@ public class UISelectBlessingPanel : UIBase
         if (selectedBlessing.Value.level != 0)
         {
             RoomManager.Instance.ReturnLocalPlayer().GetComponent<PlayerBlessing>().UpdateBlessing(selectedBlessing);
+            InputManager.Instance.ChangeDefaultMap("Player");
             UIManager.Instance.ClosePeekUI();
         }
     }
