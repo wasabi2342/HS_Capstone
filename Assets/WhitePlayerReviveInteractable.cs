@@ -5,16 +5,26 @@ using UnityEngine.InputSystem;
 
 public class WhitePlayerReviveInteractable : MonoBehaviourPun, IInteractable
 {
-    // 부활 대상 감지를 위한 변수들
+    // 자신의 WhitePlayerController (이 스크립트가 같은 오브젝트 또는 부모에 있다고 가정)
+    private WhitePlayerController whitePlayer;
+
+    // 부활 대상 정보
     private bool isInReviveRange = false;
     private WhitePlayerController stunnedPlayer;
     private Coroutine reviveCoroutine;
 
-    // 트리거 진입: 기절한 플레이어 감지
+    private void Awake()
+    {
+        whitePlayer = GetComponentInParent<WhitePlayerController>();
+    }
+
+    // 트리거 진입
     private void OnTriggerEnter(Collider other)
     {
+        // 내가 소유한 캐릭터가 아니면 리턴
         if (!photonView.IsMine) return;
 
+        // Interactable 레이어 충돌 시
         if (other.gameObject.layer == LayerMask.NameToLayer("Interactable"))
         {
             WhitePlayerController otherPlayer = other.GetComponentInParent<WhitePlayerController>();
@@ -23,14 +33,14 @@ public class WhitePlayerReviveInteractable : MonoBehaviourPun, IInteractable
                 isInReviveRange = true;
                 stunnedPlayer = otherPlayer;
 
-                // 기절한 플레이어의 부활 캔버스와 게이지 표시
+                // 상대(기절자)의 Canvas와 Gauge 표시
                 stunnedPlayer.reviveCanvas.gameObject.SetActive(true);
                 stunnedPlayer.reviveGauge.fillAmount = 0;
             }
         }
     }
 
-    // 트리거 이탈: 범위에서 벗어나면 취소
+    // 트리거 이탈
     private void OnTriggerExit(Collider other)
     {
         if (!photonView.IsMine) return;
@@ -41,6 +51,7 @@ public class WhitePlayerReviveInteractable : MonoBehaviourPun, IInteractable
             if (otherPlayer != null && stunnedPlayer == otherPlayer)
             {
                 isInReviveRange = false;
+
                 stunnedPlayer.reviveCanvas.gameObject.SetActive(false);
                 stunnedPlayer.reviveGauge.fillAmount = 0;
                 stunnedPlayer = null;
@@ -54,29 +65,30 @@ public class WhitePlayerReviveInteractable : MonoBehaviourPun, IInteractable
         }
     }
 
-    // IInteractable 인터페이스 구현: F키 등 입력 이벤트 처리
+    // F키 등 상호작용 입력 (IInteractable 인터페이스)
     public void OnInteract(InputAction.CallbackContext ctx)
     {
         if (!photonView.IsMine) return;
-        if (!isInReviveRange || stunnedPlayer == null) return;
 
-        // 입력 상태에 따라 처리:
-        if (ctx.started && reviveCoroutine == null)
+        // 기절 중인 상대가 범위 안에 있다면
+        if (isInReviveRange && stunnedPlayer != null)
         {
-            // F키 눌림 시작 시 부활 게이지 채우기 코루틴 시작
-            reviveCoroutine = StartCoroutine(ReviveGaugeRoutine());
+            // F키 누르기 시작
+            if (ctx.started && reviveCoroutine == null)
+            {
+                reviveCoroutine = StartCoroutine(ReviveGaugeRoutine());
+            }
+            // F키 누르기 해제
+            else if (ctx.canceled && reviveCoroutine != null)
+            {
+                StopCoroutine(reviveCoroutine);
+                reviveCoroutine = null;
+                stunnedPlayer.reviveGauge.fillAmount = 0;
+            }
         }
-        else if (ctx.canceled && reviveCoroutine != null)
-        {
-            // F키에서 손을 뗐을 때 코루틴 취소
-            StopCoroutine(reviveCoroutine);
-            reviveCoroutine = null;
-            stunnedPlayer.reviveGauge.fillAmount = 0;
-        }
-        // 만약 ctx.performed 를 별도로 처리할 필요가 있다면 여기에 추가 가능
     }
 
-    // 부활 게이지를 채우는 코루틴
+    // 실제 부활 게이지를 채우는 코루틴
     private IEnumerator ReviveGaugeRoutine()
     {
         float timer = 0f;
@@ -84,7 +96,7 @@ public class WhitePlayerReviveInteractable : MonoBehaviourPun, IInteractable
 
         while (timer < 3f)
         {
-            // 범위에서 벗어나거나 상태가 변경되면 취소
+            // 중간에 기절이 풀리거나(Death 등), 범위에서 벗어나면 취소
             if (!isInReviveRange || stunnedPlayer == null || stunnedPlayer.currentState != WhitePlayerState.Stun)
             {
                 stunnedPlayer.reviveGauge.fillAmount = 0;
@@ -96,12 +108,13 @@ public class WhitePlayerReviveInteractable : MonoBehaviourPun, IInteractable
             yield return null;
         }
 
-        // 3초간 유지 성공 시 부활 RPC 호출
+        // 3초간 유지 성공 -> 부활 RPC 호출
         if (stunnedPlayer != null && stunnedPlayer.currentState == WhitePlayerState.Stun)
         {
             stunnedPlayer.photonView.RPC("ReviveRPC", RpcTarget.MasterClient);
             stunnedPlayer.reviveCanvas.gameObject.SetActive(false);
         }
+
         reviveCoroutine = null;
     }
 }
