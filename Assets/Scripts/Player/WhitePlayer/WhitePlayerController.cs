@@ -728,6 +728,16 @@ public class WhitePlayerController : ParentPlayerController
     {
         base.UpdateHP(hp);
         Debug.Log(photonView.ViewID + "플레이어 체력: " + runTimeData.currentHealth);
+
+        runTimeData.currentHealth = hp;
+
+        if (photonView.IsMine)
+        {
+            hpBar.enabled = true;
+            hpBar.fillAmount = runTimeData.currentHealth / maxHealth;
+        }
+
+        Debug.Log(photonView.ViewID + " 플레이어 체력 업데이트됨: " + runTimeData.currentHealth);
     }
 
 
@@ -805,10 +815,7 @@ public class WhitePlayerController : ParentPlayerController
             {
                 stunSlider.enabled = false;
                 stunOverlay.enabled = false;
-                hpBar.enabled = true;
-
-                runTimeData.currentHealth = 20f;
-                hpBar.fillAmount = runTimeData.currentHealth / maxHealth;
+                hpBar.enabled = true; 
             }
 
             animator.SetBool("revive", true);
@@ -817,10 +824,11 @@ public class WhitePlayerController : ParentPlayerController
                 photonView.RPC("SyncBoolParameter", RpcTarget.Others, "revive", true);
             }
 
-            photonView.RPC("UpdateHP", RpcTarget.All, runTimeData.currentHealth);
+            photonView.RPC("UpdateHP", RpcTarget.All, 20f); // 여기서 체력 업데이트
             Debug.Log("플레이어 부활");
         }
     }
+
 
 
 
