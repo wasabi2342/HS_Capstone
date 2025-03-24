@@ -787,6 +787,7 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
+    private float maxHealth = 100f;
 
     public void Revive()
     {
@@ -798,18 +799,16 @@ public class WhitePlayerController : ParentPlayerController
                 stunCoroutine = null;
             }
 
-            currentState = WhitePlayerState.Idle; 
+            currentState = WhitePlayerState.Idle;
 
             if (photonView.IsMine)
             {
                 stunSlider.enabled = false;
                 stunOverlay.enabled = false;
-                hpBar.enabled = true; // 체력바 활성화
+                hpBar.enabled = true;
 
-                runTimeData.currentHealth = 20f; // 명시적으로 체력 설정 
-
-                // fillAmount 갱신
-                hpBar.fillAmount = runTimeData.currentHealth / 100f;
+                runTimeData.currentHealth = 20f;
+                hpBar.fillAmount = runTimeData.currentHealth / maxHealth;
             }
 
             animator.SetBool("revive", true);
