@@ -2,8 +2,6 @@ using UnityEngine;
 using System.Collections;
 using Photon.Pun;
 using UnityEngine.UI;
-using static System.Net.Mime.MediaTypeNames;
-using System.Diagnostics;
 
 
 
@@ -31,8 +29,8 @@ public class WhitePlayerController : ParentPlayerController
 
     // 죽음, 기절 관련 ui
 
-    [SerializeField] private Image stunOverlay; // 기절 화면
-    [SerializeField] private Image stunSlider;  // 기절 시간 바
+    [SerializeField] private GameObject stunOverlay; // 화면 반투명 이미지
+    [SerializeField] private Slider stunSlider;      // 기절 시간 바
 
 
     // 이동 입력 및 상태
@@ -747,9 +745,9 @@ public class WhitePlayerController : ParentPlayerController
 
         if (photonView.IsMine)
         {
-            stunOverlay.enabled = true;
-            stunSlider.enabled = true;
-            stunSlider.fillAmount = 1f;
+            stunOverlay.SetActive(true);
+            stunSlider.gameObject.SetActive(true);
+            stunSlider.value = 1f;
         }
 
         while (elapsed < stunDuration)
@@ -758,7 +756,7 @@ public class WhitePlayerController : ParentPlayerController
 
             if (photonView.IsMine)
             {
-                stunSlider.fillAmount = 1 - (elapsed / stunDuration);
+                stunSlider.value = 1 - (elapsed / stunDuration);
             }
 
             yield return null;
@@ -766,13 +764,12 @@ public class WhitePlayerController : ParentPlayerController
 
         if (photonView.IsMine)
         {
-            stunSlider.enabled = false;
-            stunOverlay.enabled = false;
+            stunSlider.gameObject.SetActive(false);
+            stunOverlay.SetActive(false);
         }
 
         TransitionToDeath();
     }
-
 
 
     public void Revive()
@@ -787,8 +784,8 @@ public class WhitePlayerController : ParentPlayerController
 
             if (photonView.IsMine)
             {
-                stunSlider.enabled = false;
-                stunOverlay.enabled = false;
+                stunSlider.gameObject.SetActive(false);
+                stunOverlay.SetActive(false);
             }
 
             animator.SetBool("revive", true);
@@ -801,7 +798,6 @@ public class WhitePlayerController : ParentPlayerController
             Debug.Log("플레이어 부활");
         }
     }
-
 
 
     // 사망 상태로 전환
