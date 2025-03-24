@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using Photon.Pun;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 
 public enum WhitePlayerState { Idle, Run, BasicAttack, Hit, Dash, Skill, Ultimate, Guard, Parry, Counter, Stun, Revive, Death }
@@ -30,8 +31,11 @@ public class WhitePlayerController : ParentPlayerController
     private Image hpBar;
 
     [Header("부활 UI 설정")]
-    public Canvas reviveCanvas;   // 부활 진행 캔버스 (기절 중인 본인에게 표시)
-    public Image reviveGauge;     // 부활 게이지 
+    public Canvas reviveCanvas;  // 부활 진행 캔버스
+    public Image reviveGauge;    // 부활 게이지 (Image - fillAmount 사용)
+    private Coroutine reviveCoroutine;
+    private bool isInReviveRange = false;
+    private WhitePlayerController stunnedPlayer;  // 기절 플레이어 참조
 
 
     // 이동 입력 및 상태
@@ -70,7 +74,6 @@ public class WhitePlayerController : ParentPlayerController
 
         if (photonView.IsMine)
         {
-            // 기절/체력 UI
             stunOverlay = GameObject.Find("StunOverlay").GetComponent<Image>();
             stunSlider = GameObject.Find("StunTimeBar").GetComponent<Image>();
             hpBar = GameObject.Find("HPImage").GetComponent<Image>();
@@ -78,6 +81,12 @@ public class WhitePlayerController : ParentPlayerController
             stunOverlay.enabled = false;
             stunSlider.enabled = false;
             hpBar.enabled = true;
+
+            var eventController = GetComponent<WhitePlayercontroller_event>();
+            if (eventController != null)
+            {
+                eventController.OnInteractionEvent += HandleReviveInteraction;
+            }
         }
     }
 
@@ -741,9 +750,7 @@ public class WhitePlayerController : ParentPlayerController
 
 
     // 기절
-    private float maxHealth = 100f;
     private Coroutine stunCoroutine;
-
     private void EnterStunState()
     {
         currentState = WhitePlayerState.Stun;
@@ -759,6 +766,7 @@ public class WhitePlayerController : ParentPlayerController
 
         stunCoroutine = StartCoroutine(CoStunDuration());
     }
+
 
     private IEnumerator CoStunDuration()
     {
@@ -776,15 +784,16 @@ public class WhitePlayerController : ParentPlayerController
         while (elapsed < stunDuration && currentState == WhitePlayerState.Stun)
         {
             elapsed += Time.deltaTime;
+
             if (photonView.IsMine)
             {
                 stunSlider.fillAmount = 1 - (elapsed / stunDuration);
             }
+
             yield return null;
         }
 
-        // 기절 시간이 끝나도록 부활하지 못하면 사망 처리
-        if (currentState == WhitePlayerState.Stun)
+        if (currentState == WhitePlayerState.Stun)  // 여전히 기절상태라면
         {
             TransitionToDeath();
         }
@@ -795,6 +804,8 @@ public class WhitePlayerController : ParentPlayerController
             stunOverlay.enabled = false;
         }
     }
+
+    private float maxHealth = 100f;
 
     public void Revive()
     {
@@ -810,10 +821,9 @@ public class WhitePlayerController : ParentPlayerController
 
             if (photonView.IsMine)
             {
-                // 기절 UI 끄고 체력바 다시 활성
                 stunSlider.enabled = false;
                 stunOverlay.enabled = false;
-                hpBar.enabled = true;
+                hpBar.enabled = true; 
             }
 
             animator.SetBool("revive", true);
@@ -822,18 +832,111 @@ public class WhitePlayerController : ParentPlayerController
                 photonView.RPC("SyncBoolParameter", RpcTarget.Others, "revive", true);
             }
 
-            // 부활 시 체력 회복
-            photonView.RPC("UpdateHP", RpcTarget.All, 20f);
+            photonView.RPC("UpdateHP", RpcTarget.All, 20f); // 여기서 체력 업데이트
             Debug.Log("플레이어 부활");
         }
     }
 
+    // OnTriggerEnter & Exit (PhotonView 체크 추가)
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!photonView.IsMine) return;
+
+        if (other.gameObject.layer == LayerMask.NameToLayer("Interactable"))
+        {
+            WhitePlayerController otherPlayer = other.GetComponentInParent<WhitePlayerController>();
+            if (otherPlayer != null && otherPlayer.currentState == WhitePlayerState.Stun)
+            {
+                isInReviveRange = true;
+                stunnedPlayer = otherPlayer;
+
+                stunnedPlayer.reviveCanvas.gameObject.SetActive(true);
+                stunnedPlayer.reviveGauge.fillAmount = 0;
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (!photonView.IsMine) return;
+
+        if (other.gameObject.layer == LayerMask.NameToLayer("Interactable"))
+        {
+            WhitePlayerController otherPlayer = other.GetComponentInParent<WhitePlayerController>();
+            if (otherPlayer != null && stunnedPlayer == otherPlayer)
+            {
+                isInReviveRange = false;
+
+                stunnedPlayer.reviveCanvas.gameObject.SetActive(false);
+                stunnedPlayer.reviveGauge.fillAmount = 0;
+                stunnedPlayer = null;
+
+                if (reviveCoroutine != null)
+                {
+                    StopCoroutine(reviveCoroutine);
+                    reviveCoroutine = null;
+                }
+            }
+        }
+    }
+
+    // Revive Interaction (코루틴 중복방지)
+    private void HandleReviveInteraction(InputAction.CallbackContext context)
+    {
+        if (!photonView.IsMine) return;
+
+        if (isInReviveRange && stunnedPlayer != null)
+        {
+            if (context.started && reviveCoroutine == null)
+            {
+                reviveCoroutine = StartCoroutine(ReviveGaugeRoutine());
+            }
+            else if (context.canceled && reviveCoroutine != null)
+            {
+                StopCoroutine(reviveCoroutine);
+                reviveCoroutine = null;
+                stunnedPlayer.reviveGauge.fillAmount = 0;
+            }
+        }
+    }
+
+    // Revive Gauge Coroutine (안전한 체크)
+    private IEnumerator ReviveGaugeRoutine()
+    {
+        float timer = 0f;
+        stunnedPlayer.reviveGauge.fillAmount = 0;
+
+        while (timer < 3f)
+        {
+            if (!isInReviveRange || stunnedPlayer == null || stunnedPlayer.currentState != WhitePlayerState.Stun)
+            {
+                stunnedPlayer.reviveGauge.fillAmount = 0;
+                yield break;
+            }
+
+            timer += Time.deltaTime;
+            stunnedPlayer.reviveGauge.fillAmount = timer / 3f;
+            yield return null;
+        }
+
+        if (stunnedPlayer != null && stunnedPlayer.currentState == WhitePlayerState.Stun)
+        {
+            stunnedPlayer.photonView.RPC("ReviveRPC", RpcTarget.MasterClient);
+            stunnedPlayer.reviveCanvas.gameObject.SetActive(false);
+        }
+
+        reviveCoroutine = null;
+    }
+
+    // RPC
     [PunRPC]
     public void ReviveRPC()
     {
-        // 다른 플레이어가 부활 RPC를 날리면 결국 Revive() 실행
         Revive();
     }
+
+
+
 
     private void TransitionToDeath()
     {
