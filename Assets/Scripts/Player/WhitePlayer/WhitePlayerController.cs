@@ -4,7 +4,6 @@ using Photon.Pun;
 using UnityEngine.UI;
 
 
-
 public enum WhitePlayerState { Idle, Run, BasicAttack, Hit, Dash, Skill, Ultimate, Guard, Parry, Counter, Stun, Revive, Death }
 
 public class WhitePlayerController : ParentPlayerController
@@ -799,13 +798,18 @@ public class WhitePlayerController : ParentPlayerController
                 stunCoroutine = null;
             }
 
-            currentState = WhitePlayerState.Idle; // 상태를 Idle로 변경
+            currentState = WhitePlayerState.Idle; 
 
             if (photonView.IsMine)
             {
                 stunSlider.enabled = false;
                 stunOverlay.enabled = false;
-                hpBar.enabled = true;  // 다시 살아났으니 체력바 활성화
+                hpBar.enabled = true; // 체력바 활성화
+
+                runTimeData.currentHealth = 20f; // 명시적으로 체력 설정 
+
+                // fillAmount 갱신
+                hpBar.fillAmount = runTimeData.currentHealth / 100f;
             }
 
             animator.SetBool("revive", true);
@@ -814,10 +818,11 @@ public class WhitePlayerController : ParentPlayerController
                 photonView.RPC("SyncBoolParameter", RpcTarget.Others, "revive", true);
             }
 
-            photonView.RPC("UpdateHP", RpcTarget.All, 20f);
+            photonView.RPC("UpdateHP", RpcTarget.All, runTimeData.currentHealth);
             Debug.Log("플레이어 부활");
         }
     }
+
 
 
     private void TransitionToDeath()
