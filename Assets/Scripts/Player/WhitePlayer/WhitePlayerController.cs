@@ -93,12 +93,16 @@ public class WhitePlayerController : ParentPlayerController
     private void Update()
     {
         if (currentState == WhitePlayerState.Death)
+        {
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                RoomManager.Instance.SwitchCameraToNextPlayer();
+            }
             return;
+        }
 
         UpdateCenterPoint();
-        //HandleDash();
         HandleMovement();
-        // 공격/스킬, 가드 등은 별도 스크립트에서 호출
     }
 
     // 입력 처리 관련
