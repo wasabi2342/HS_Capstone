@@ -734,7 +734,7 @@ public class WhitePlayerController : ParentPlayerController
         if (photonView.IsMine)
         {
             hpBar.enabled = true;
-            hpBar.fillAmount = runTimeData.currentHealth / maxHealth;
+            hpBar.fillAmount = runTimeData.currentHealth / characterBaseStats.maxHP;
         }
 
         Debug.Log(photonView.ViewID + " 플레이어 체력 업데이트됨: " + runTimeData.currentHealth);
@@ -797,7 +797,6 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
-    private float maxHealth = 100f;
 
     public void Revive()
     {
