@@ -78,6 +78,8 @@ public class UIIngameMainPanel : UIBase
                     playerController.OnDashCooldownUpdate.AddListener(uISkillIcons[(int)UIIcon.space].StartUpdateSkillCooldown);
                     playerController.AttackStackUpdate.RemoveAllListeners();
                     playerController.AttackStackUpdate.AddListener(UpdateMouseLeftStack);
+                    playerController.SkillOutlineUpdate.RemoveAllListeners();
+                    playerController.SkillOutlineUpdate.AddListener(UpdateIconOutline);
                     //playerController
                 }
             }
@@ -106,6 +108,7 @@ public class UIIngameMainPanel : UIBase
             playerController.MouseRightSkillCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.mouseR].StartUpdateSkillCooldown);
             playerController.OnDashCooldownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.space].StartUpdateSkillCooldown);
             playerController.AttackStackUpdate.RemoveListener(UpdateMouseLeftStack);
+            playerController.SkillOutlineUpdate.RemoveAllListeners();
 
         }
     }
@@ -125,6 +128,7 @@ public class UIIngameMainPanel : UIBase
     public void OpenBlessingInfoPanel(InputAction.CallbackContext ctx)
     {
         UIManager.Instance.OpenPopupPanel<UISkillInfoPanel>();
+        InputManager.Instance.ChangeDefaultMap("UI");
     }
 
     public void UpdateIconOutline(UIIcon icon, Color color)

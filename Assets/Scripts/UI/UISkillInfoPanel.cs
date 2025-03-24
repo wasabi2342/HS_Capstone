@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 public enum InputKey
@@ -16,7 +17,12 @@ public class UISkillInfoPanel : UIBase
 {
     [SerializeField]
     private UISkillDataSlot[] dataSlots = new UISkillDataSlot[5];
-
+    
+    private void Start()
+    {
+        Init();
+    }
+    
     public override void Init()
     {
         var blessings = RoomManager.Instance.ReturnLocalPlayer().GetComponentInChildren<PlayerBlessing>().ReturnBlessingDic();
@@ -30,6 +36,17 @@ public class UISkillInfoPanel : UIBase
             {
                 dataSlots[i].Init(blessings[(Skills)i].blessing.ToString() + blessings[(Skills)i].level + "·¹º§", ((Skills)i).ToString());
             }
+        }
+
+        InputManager.Instance.PlayerInput.actions["Tab"].performed += ctx => CloseUI(ctx);
+    }
+
+    public void CloseUI(InputAction.CallbackContext ctx)
+    {
+        if(UIManager.Instance.ReturnPeekUI() as UISkillInfoPanel)
+        {
+            UIManager.Instance.ClosePeekUI();
+            InputManager.Instance.ChangeDefaultMap("Player");
         }
     }
 }
