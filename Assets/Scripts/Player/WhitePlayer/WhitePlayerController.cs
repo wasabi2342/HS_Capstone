@@ -27,10 +27,11 @@ public class WhitePlayerController : ParentPlayerController
     public Transform[] centerPoints = new Transform[8];
     private int currentDirectionIndex = 0;
 
-    // 죽음, 기절 관련 ui
+    // 죽음, 기절 관련 ui, 체력바 ui
 
     private Image stunOverlay;
     private Image stunSlider;
+    private Image hpBar;
 
 
     // 이동 입력 및 상태
@@ -72,10 +73,13 @@ public class WhitePlayerController : ParentPlayerController
 
             stunOverlay = GameObject.Find("StunOverlay").GetComponent<Image>();
             stunSlider = GameObject.Find("StunTimeBar").GetComponent<Image>();
+            hpBar = GameObject.Find("HPImage").GetComponent<Image>();
+
 
             // 처음에 비활성화
             stunOverlay.enabled = false;
             stunSlider.enabled = false;
+            hpBar.enabled = true;
         }
     }
 
@@ -739,15 +743,13 @@ public class WhitePlayerController : ParentPlayerController
         {
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "stun", true);
         }
-        //photonView.RPC("PlayAnimation", RpcTarget.All, "stun");
 
-        // 기절 상태 30초 동안의 코루틴 
         if (stunCoroutine != null)
-        {
             StopCoroutine(stunCoroutine);
-        }
+
         stunCoroutine = StartCoroutine(CoStunDuration());
     }
+
 
     private IEnumerator CoStunDuration()
     {
@@ -759,9 +761,10 @@ public class WhitePlayerController : ParentPlayerController
             stunOverlay.enabled = true;
             stunSlider.enabled = true;
             stunSlider.fillAmount = 1f;
+            hpBar.enabled = false;  // 기절 상태에선 체력바 비활성화
         }
 
-        while (elapsed < stunDuration)
+        while (elapsed < stunDuration && currentState == WhitePlayerState.Stun)
         {
             elapsed += Time.deltaTime;
 
@@ -773,15 +776,17 @@ public class WhitePlayerController : ParentPlayerController
             yield return null;
         }
 
+        if (currentState == WhitePlayerState.Stun)  // 여전히 기절상태라면
+        {
+            TransitionToDeath();
+        }
+
         if (photonView.IsMine)
         {
             stunSlider.enabled = false;
             stunOverlay.enabled = false;
         }
-
-        TransitionToDeath();
     }
-
 
 
     public void Revive()
@@ -794,10 +799,13 @@ public class WhitePlayerController : ParentPlayerController
                 stunCoroutine = null;
             }
 
+            currentState = WhitePlayerState.Idle; // 상태를 Idle로 변경
+
             if (photonView.IsMine)
             {
                 stunSlider.enabled = false;
                 stunOverlay.enabled = false;
+                hpBar.enabled = true;  // 다시 살아났으니 체력바 활성화
             }
 
             animator.SetBool("revive", true);
@@ -812,12 +820,17 @@ public class WhitePlayerController : ParentPlayerController
     }
 
 
-
-    // 사망 상태로 전환
     private void TransitionToDeath()
     {
         currentState = WhitePlayerState.Death;
         Debug.Log("플레이어 사망");
+        if (photonView.IsMine)
+        {
+            stunSlider.enabled = false;
+            stunOverlay.enabled = false;
+            hpBar.enabled = false;  // 사망시 체력바 비활성화
+        }
+
         if (animator != null)
         {
             animator.SetBool("die", true);
@@ -827,6 +840,7 @@ public class WhitePlayerController : ParentPlayerController
             }
         }
     }
+
 
     public override void EnterInvincibleState()
     {
