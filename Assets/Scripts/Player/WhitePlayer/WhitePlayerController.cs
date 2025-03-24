@@ -94,7 +94,7 @@ public class WhitePlayerController : ParentPlayerController
     {
         if (currentState == WhitePlayerState.Death)
         {
-            if (Input.GetKeyDown(KeyCode.Tab))
+            if (Input.GetKeyDown(KeyCode.X))
             {
                 RoomManager.Instance.SwitchCameraToNextPlayer();
             }
