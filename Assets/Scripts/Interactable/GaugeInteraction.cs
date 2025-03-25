@@ -56,6 +56,8 @@ public class GaugeInteraction : MonoBehaviourPun, IInteractable
             gauge.fillAmount = timeCount / holdTime;
             yield return null;
         }
+        gauge.fillAmount = 1f;
+        OnPerformedEvent();
     }
 
     public virtual void OnInteract(InputAction.CallbackContext ctx)
@@ -68,10 +70,10 @@ public class GaugeInteraction : MonoBehaviourPun, IInteractable
         {
             OnCanceledEvent();
         }
-        else if (ctx.performed)
-        {
-            OnPerformedEvent();
-        }
+        //else if (ctx.performed)
+        //{
+        //    OnPerformedEvent();
+        //}
     }
 
     protected virtual void OnPerformedEvent()
