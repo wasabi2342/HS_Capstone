@@ -26,6 +26,14 @@ public class PlayerBlessing : MonoBehaviourPun
 
     private Dictionary<Skills, BlessingInfo> playerBlessingDic = new Dictionary<Skills, BlessingInfo>();
 
+    Dictionary<Blessings, Color> BlessingColor = new Dictionary<Blessings, Color>
+{
+    { Blessings.None, Color.clear },
+    { Blessings.Crocell, Color.blue },
+    { Blessings.Gremory, Color.magenta },
+    { Blessings.Paymon, Color.red }
+};
+
     private void Awake()
     {
         playerController = GetComponent<ParentPlayerController>();
@@ -54,6 +62,7 @@ public class PlayerBlessing : MonoBehaviourPun
     {
         playerBlessingDic[data.Key] = data.Value;
         playerController.UpdateBlessingRunTimeData(playerBlessingDic);
+        playerController.SkillOutlineUpdate.Invoke((UIIcon)data.Key, BlessingColor[data.Value.blessing]);
         // 갱신된 가호에 맞게 스킬 변경 코드 추가 해야함
         switch (data.Key)
         {
