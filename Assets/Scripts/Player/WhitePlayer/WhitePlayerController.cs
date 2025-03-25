@@ -9,7 +9,9 @@ public enum WhitePlayerState { Idle, Run, BasicAttack, Hit, Dash, Skill, Ultimat
 
 public class WhitePlayerController : ParentPlayerController
 {
+
     
+
 
     [Header("대쉬 설정")]
     public float dashDistance = 2f;
@@ -81,6 +83,8 @@ public class WhitePlayerController : ParentPlayerController
             stunOverlay.enabled = false;
             stunSlider.enabled = false;
             hpBar.enabled = true;
+
+            gaugeInteraction = GetComponentInChildren<GaugeInteraction>();
 
             var eventController = GetComponent<WhitePlayercontroller_event>();
             if (eventController != null)
@@ -754,6 +758,10 @@ public class WhitePlayerController : ParentPlayerController
 
 
     // 기절
+
+    // GaugeInteraction 클래스 참조
+    private GaugeInteraction gaugeInteraction;
+
     private Coroutine stunCoroutine;
     private void EnterStunState()
     {
@@ -841,7 +849,6 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
-    // OnTriggerEnter & Exit (PhotonView 체크 추가)
     private void OnTriggerEnter(Collider other)
     {
         if (!photonView.IsMine) return;
@@ -853,9 +860,6 @@ public class WhitePlayerController : ParentPlayerController
             {
                 isInReviveRange = true;
                 stunnedPlayer = otherPlayer;
-
-                stunnedPlayer.reviveCanvas.gameObject.SetActive(true);
-                stunnedPlayer.reviveGauge.fillAmount = 0;
             }
         }
     }
@@ -870,9 +874,6 @@ public class WhitePlayerController : ParentPlayerController
             if (otherPlayer != null && stunnedPlayer == otherPlayer)
             {
                 isInReviveRange = false;
-
-                stunnedPlayer.reviveCanvas.gameObject.SetActive(false);
-                stunnedPlayer.reviveGauge.fillAmount = 0;
                 stunnedPlayer = null;
 
                 if (reviveCoroutine != null)
@@ -880,9 +881,11 @@ public class WhitePlayerController : ParentPlayerController
                     StopCoroutine(reviveCoroutine);
                     reviveCoroutine = null;
                 }
+                gaugeInteraction.CancelGaugeCoroutine(false);
             }
         }
     }
+
 
     // Revive Interaction (코루틴 중복방지)
     private void HandleReviveInteraction(InputAction.CallbackContext context)
@@ -899,36 +902,37 @@ public class WhitePlayerController : ParentPlayerController
             {
                 StopCoroutine(reviveCoroutine);
                 reviveCoroutine = null;
-                stunnedPlayer.reviveGauge.fillAmount = 0;
+                gaugeInteraction.CancelGaugeCoroutine(false);
             }
         }
     }
 
-    // Revive Gauge Coroutine (안전한 체크)
     private IEnumerator ReviveGaugeRoutine()
     {
-        float timer = 0f;
-        stunnedPlayer.reviveGauge.fillAmount = 0;
+        gaugeInteraction.holdTime = 5f; // 명확히 5초로 설정
+        gaugeInteraction.StartGaugeCoroutine();
 
-        while (timer < 3f)
+        float timer = 0f;
+        const float reviveDuration = 5f;
+
+        while (timer < reviveDuration)
         {
             if (!isInReviveRange || stunnedPlayer == null || stunnedPlayer.currentState != WhitePlayerState.Stun)
             {
-                stunnedPlayer.reviveGauge.fillAmount = 0;
+                gaugeInteraction.CancelGaugeCoroutine(false);
                 yield break;
             }
 
             timer += Time.deltaTime;
-            stunnedPlayer.reviveGauge.fillAmount = timer / 3f;
             yield return null;
         }
 
         if (stunnedPlayer != null && stunnedPlayer.currentState == WhitePlayerState.Stun)
         {
             stunnedPlayer.photonView.RPC("ReviveRPC", RpcTarget.MasterClient);
-            stunnedPlayer.reviveCanvas.gameObject.SetActive(false);
         }
 
+        gaugeInteraction.CancelGaugeCoroutine(true);
         reviveCoroutine = null;
     }
 

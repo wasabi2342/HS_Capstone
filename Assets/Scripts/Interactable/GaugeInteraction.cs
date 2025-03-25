@@ -12,7 +12,7 @@ public class GaugeInteraction : MonoBehaviourPun, IInteractable
     [SerializeField]
     protected Canvas canvas;
     [SerializeField]
-    protected float holdTime = 1f;
+    public float holdTime = 1f;
 
     protected virtual void OnTriggerEnter(Collider other)
     {
