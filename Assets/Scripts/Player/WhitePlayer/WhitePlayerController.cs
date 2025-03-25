@@ -89,7 +89,7 @@ public class WhitePlayerController : ParentPlayerController
             var eventController = GetComponent<WhitePlayercontroller_event>();
             if (eventController != null)
             {
-                eventController.OnInteractionEvent += HandleReviveInteraction;
+                //eventController.OnInteractionEvent += HandleReviveInteraction;
             }
         }
     }
@@ -821,6 +821,11 @@ public class WhitePlayerController : ParentPlayerController
 
     public void Revive()
     {
+        if (!photonView.IsMine)
+        {
+            photonView.RPC("ReviveRPC", photonView.Owner);
+        }
+
         if (currentState == WhitePlayerState.Stun)
         {
             if (stunCoroutine != null)
@@ -850,7 +855,7 @@ public class WhitePlayerController : ParentPlayerController
     }
 
 
-
+    /*
 
     public void HandleReviveInteraction(InputAction.CallbackContext context)
     {
@@ -904,6 +909,7 @@ public class WhitePlayerController : ParentPlayerController
         reviveCoroutine = null;
     }
 
+    */
 
     // RPC
     [PunRPC]

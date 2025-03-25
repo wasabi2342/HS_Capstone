@@ -11,9 +11,40 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
         whitePlayer = GetComponentInParent<WhitePlayerController>();
     }
 
-    public void OnInteract(InputAction.CallbackContext ctx)
+    public override void OnInteract(InputAction.CallbackContext ctx)
     {
-        
-        whitePlayer.HandleReviveInteraction(ctx);
+        base.OnInteract(ctx);
+        //whitePlayer.HandleReviveInteraction(ctx);
+    }
+
+    protected override void OnTriggerEnter(Collider other)
+    {
+        if(whitePlayer.currentState != WhitePlayerState.Stun)
+        {
+            return;
+        }
+
+        base.OnTriggerEnter(other);
+    }
+
+    protected override void OnTriggerExit(Collider other)
+    {
+        base.OnTriggerExit(other);
+    }
+
+    protected override void OnPerformedEvent()
+    {
+        base.OnPerformedEvent();
+        whitePlayer.Revive();
+    }
+
+    protected override void OnCanceledEvent()
+    {
+        base.OnCanceledEvent();
+    }
+
+    protected override void OnStartedEvent()
+    {
+        base.OnStartedEvent();
     }
 }
