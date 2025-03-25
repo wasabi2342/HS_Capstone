@@ -849,42 +849,7 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (!photonView.IsMine) return;
-
-        if (other.gameObject.layer == LayerMask.NameToLayer("Interactable"))
-        {
-            WhitePlayerController otherPlayer = other.GetComponentInParent<WhitePlayerController>();
-            if (otherPlayer != null && otherPlayer.currentState == WhitePlayerState.Stun)
-            {
-                isInReviveRange = true;
-                stunnedPlayer = otherPlayer;
-            }
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (!photonView.IsMine) return;
-
-        if (other.gameObject.layer == LayerMask.NameToLayer("Interactable"))
-        {
-            WhitePlayerController otherPlayer = other.GetComponentInParent<WhitePlayerController>();
-            if (otherPlayer != null && stunnedPlayer == otherPlayer)
-            {
-                isInReviveRange = false;
-                stunnedPlayer = null;
-
-                if (reviveCoroutine != null)
-                {
-                    StopCoroutine(reviveCoroutine);
-                    reviveCoroutine = null;
-                }
-                gaugeInteraction.CancelGaugeCoroutine(false);
-            }
-        }
-    }
+   
 
 
     // Revive Interaction (코루틴 중복방지)
@@ -909,7 +874,7 @@ public class WhitePlayerController : ParentPlayerController
 
     private IEnumerator ReviveGaugeRoutine()
     {
-        gaugeInteraction.holdTime = 5f; // 명확히 5초로 설정
+        gaugeInteraction.holdTime = 5f;
         gaugeInteraction.StartGaugeCoroutine();
 
         float timer = 0f;
@@ -920,6 +885,7 @@ public class WhitePlayerController : ParentPlayerController
             if (!isInReviveRange || stunnedPlayer == null || stunnedPlayer.currentState != WhitePlayerState.Stun)
             {
                 gaugeInteraction.CancelGaugeCoroutine(false);
+                Debug.Log("부활 중단됨 (범위 이탈 또는 상태 변경)");
                 yield break;
             }
 
@@ -929,7 +895,9 @@ public class WhitePlayerController : ParentPlayerController
 
         if (stunnedPlayer != null && stunnedPlayer.currentState == WhitePlayerState.Stun)
         {
+            // 모든 클라이언트에 부활을 알림 (MasterClient에서 실행되도록 함)
             stunnedPlayer.photonView.RPC("ReviveRPC", RpcTarget.MasterClient);
+            Debug.Log("부활 RPC 호출 완료");
         }
 
         gaugeInteraction.CancelGaugeCoroutine(true);
