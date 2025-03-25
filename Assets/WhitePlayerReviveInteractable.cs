@@ -2,8 +2,9 @@ using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class WhitePlayerReviveInteractable : MonoBehaviour, IInteractable
+public class WhitePlayerReviveInteractable : GaugeInteraction
 {
+
     private WhitePlayerController whitePlayer;
 
     private void Awake()
