@@ -849,15 +849,14 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
-   
 
 
-    // Revive Interaction (코루틴 중복방지)
-    private void HandleReviveInteraction(InputAction.CallbackContext context)
+
+    public void HandleReviveInteraction(InputAction.CallbackContext context)
     {
         if (!photonView.IsMine) return;
 
-        if (isInReviveRange && stunnedPlayer != null)
+        if (isInReviveRange && stunnedPlayer != null && stunnedPlayer.currentState == WhitePlayerState.Stun)
         {
             if (context.started && reviveCoroutine == null)
             {
@@ -868,6 +867,7 @@ public class WhitePlayerController : ParentPlayerController
                 StopCoroutine(reviveCoroutine);
                 reviveCoroutine = null;
                 gaugeInteraction.CancelGaugeCoroutine(false);
+                Debug.Log("부활 시도 취소됨 (키 입력 해제)");
             }
         }
     }
@@ -886,6 +886,7 @@ public class WhitePlayerController : ParentPlayerController
             {
                 gaugeInteraction.CancelGaugeCoroutine(false);
                 Debug.Log("부활 중단됨 (범위 이탈 또는 상태 변경)");
+                reviveCoroutine = null;
                 yield break;
             }
 
@@ -895,7 +896,6 @@ public class WhitePlayerController : ParentPlayerController
 
         if (stunnedPlayer != null && stunnedPlayer.currentState == WhitePlayerState.Stun)
         {
-            // 모든 클라이언트에 부활을 알림 (MasterClient에서 실행되도록 함)
             stunnedPlayer.photonView.RPC("ReviveRPC", RpcTarget.MasterClient);
             Debug.Log("부활 RPC 호출 완료");
         }
@@ -903,6 +903,7 @@ public class WhitePlayerController : ParentPlayerController
         gaugeInteraction.CancelGaugeCoroutine(true);
         reviveCoroutine = null;
     }
+
 
     // RPC
     [PunRPC]
