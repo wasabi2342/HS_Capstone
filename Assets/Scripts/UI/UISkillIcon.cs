@@ -21,6 +21,10 @@ public class UISkillIcon : MonoBehaviour
 
     public void SetOutlineColor(Color outlineColr)
     {
+        if (!outline.enabled)
+        {
+            outline.enabled = true;
+        }
         outline.effectColor = outlineColr;
     }
 

@@ -2,7 +2,7 @@ using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class WhitePlayerReviveInteractable : MonoBehaviour, IInteractable
+public class WhitePlayerReviveInteractable : GaugeInteraction
 {
     private WhitePlayerController whitePlayer;
 
@@ -11,18 +11,40 @@ public class WhitePlayerReviveInteractable : MonoBehaviour, IInteractable
         whitePlayer = GetComponentInParent<WhitePlayerController>();
     }
 
-    public void OnInteract(InputAction.CallbackContext ctx)
+    public override void OnInteract(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        base.OnInteract(ctx);
+        //whitePlayer.HandleReviveInteraction(ctx);
+    }
+
+    protected override void OnTriggerEnter(Collider other)
+    {
+        if(whitePlayer.currentState != WhitePlayerState.Stun)
         {
-            // 기절 상태라면 부활 로직 실행
-            if (whitePlayer.currentState == WhitePlayerState.Stun)
-            {
-                // Revive() 메서드 호출
-                whitePlayer.Revive();
-                Debug.Log("플레이어 부활 상호작용");
-            }
+            return;
         }
+
+        base.OnTriggerEnter(other);
+    }
+
+    protected override void OnTriggerExit(Collider other)
+    {
+        base.OnTriggerExit(other);
+    }
+
+    protected override void OnPerformedEvent()
+    {
+        base.OnPerformedEvent();
+        whitePlayer.Revive();
+    }
+
+    protected override void OnCanceledEvent()
+    {
+        base.OnCanceledEvent();
+    }
+
+    protected override void OnStartedEvent()
+    {
+        base.OnStartedEvent();
     }
 }
-
