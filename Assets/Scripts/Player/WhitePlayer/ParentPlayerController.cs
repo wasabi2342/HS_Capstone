@@ -25,6 +25,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     public UnityEvent<float> UltimateCoolDownUpdate;
     public UnityEvent<float> MouseRightSkillCoolDownUpdate;
     public UnityEvent<float> AttackStackUpdate;
+    public UnityEvent<UIIcon, Color> SkillOutlineUpdate;
 
     // 스킬 사용 가능 여부
     protected bool isShiftReady = true;
