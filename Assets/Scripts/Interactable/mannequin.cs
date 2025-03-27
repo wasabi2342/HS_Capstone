@@ -6,85 +6,63 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class Mannequin : MonoBehaviour, IInteractable
+public class Mannequin : GaugeInteraction
 {
-    [SerializeField]
-    private Image gauge;
-    [SerializeField]
-    private Canvas canvas;
     [SerializeField]
     private GameObject characterPrefab;
 
     private GameObject player;
 
-    private void OnTriggerEnter(Collider other)
+    protected override void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") && (!PhotonNetwork.InRoom ||
             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
-            player = other.transform.root.gameObject;
-            canvas.gameObject.SetActive(true);
+            if (/*other.GetComponentInParent<ParentPlayerController>()*/ true) // 프리펩에서 이름 가져와야 함
+            {
+                player = other.transform.root.gameObject;
+                base.OnTriggerEnter(other);
+            }
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    protected override void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player") && (!PhotonNetwork.InRoom ||
             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
             player = null;
-            canvas.gameObject.SetActive(false);
+            base.OnTriggerExit(other);
         }
     }
 
-    public void StartGaugeCoroutine()
+    public override void OnInteract(InputAction.CallbackContext ctx)
     {
-        StartCoroutine(FillGauge());
+        base.OnInteract(ctx);
     }
 
-    public void CancelGaugeCoroutine(bool isComplete)
+    protected override void OnPerformedEvent()
     {
-        StopAllCoroutines();
-        gauge.fillAmount = 0;
-        if (isComplete)
+        base.OnPerformedEvent();
+        CancelGaugeCoroutine(true);
+        RoomManager.Instance.CreateCharacter(characterPrefab.name, transform.position, Quaternion.identity, true);
+        if (PhotonNetwork.InRoom)
         {
-            canvas.gameObject.SetActive(false);
+            PhotonNetwork.Destroy(player);
         }
-    }
-
-    private IEnumerator FillGauge()
-    {
-        float timeCount = 0;
-        while (timeCount < 1)
+        else
         {
-            timeCount += Time.deltaTime;
-            gauge.fillAmount = timeCount;
-            yield return null;
+            Destroy(player);
         }
     }
 
-    public void OnInteract(InputAction.CallbackContext ctx)
+    protected override void OnCanceledEvent()
     {
-        if (ctx.started)
-        {
-            StartGaugeCoroutine();
-        }
-        else if (ctx.canceled)
-        {
-            CancelGaugeCoroutine(false);
-        }
-        else if (ctx.performed)
-        {
-            CancelGaugeCoroutine(true);
-            RoomManager.Instance.CreateCharacter(characterPrefab, transform.position, Quaternion.identity, true);
-            if (PhotonNetwork.InRoom)
-            {
-                PhotonNetwork.Destroy(player);
-            }
-            else
-            {
-                Destroy(player);
-            }
-        }
+        base.OnCanceledEvent();
+    }
+
+    protected override void OnStartedEvent()
+    {
+        base.OnStartedEvent();
     }
 }

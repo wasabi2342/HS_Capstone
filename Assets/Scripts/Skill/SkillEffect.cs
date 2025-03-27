@@ -1,17 +1,18 @@
+using Photon.Pun;
 using System;
 using System.Collections;
 using UnityEngine;
 
-public class SkillEffect : MonoBehaviour
+public class SkillEffect : MonoBehaviourPun
 {
     [SerializeField]
     private Animator animator;
     [SerializeField]
     private float hitlagTime = 0.13f;
-    
+
     private float damage;
     private Action triggerEvent;
-    
+
     /// <summary>
     /// 
     /// </summary>
@@ -25,12 +26,15 @@ public class SkillEffect : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        IDamageable damageable = other.GetComponent<IDamageable>();
-        if(damageable != null && !other.CompareTag("Player"))
+        if (!PhotonNetwork.IsConnected || photonView.IsMine)
         {
-            damageable.TakeDamage(damage);
-            triggerEvent?.Invoke();
-            StartCoroutine(PauseForSeconds());
+            IDamageable damageable = other.GetComponent<IDamageable>();
+            if (damageable != null && !other.CompareTag("Player"))
+            {
+                damageable.TakeDamage(damage);
+                triggerEvent?.Invoke();
+                StartCoroutine(PauseForSeconds());
+            }
         }
     }
 

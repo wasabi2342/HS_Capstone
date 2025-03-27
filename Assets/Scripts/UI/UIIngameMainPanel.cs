@@ -29,11 +29,12 @@ public class UIIngameMainPanel : UIBase
     [SerializeField]
     private UIPartyHPContent partyHPContent;
 
-    private Dictionary<string, UIPartyHPContent> contentPairs = new Dictionary<string, UIPartyHPContent>();
+    private Dictionary<int, UIPartyHPContent> contentPairs = new Dictionary<int, UIPartyHPContent>();
 
     private void Start()
     {
         InputManager.Instance.PlayerInput.actions["OpenBlessingInfo"].performed += ctx => OpenBlessingInfoPanel(ctx);
+        RoomManager.Instance.UIUpdate += Init;
         Init();
     }
 
@@ -46,17 +47,18 @@ public class UIIngameMainPanel : UIBase
 
         foreach (var keyValuePair in RoomManager.Instance.players)
         {
-            if (keyValuePair.Key != PhotonNetwork.LocalPlayer.UserId)
+            if (keyValuePair.Key != PhotonNetwork.LocalPlayer.ActorNumber)
             {
                 UIPartyHPContent content = Instantiate(partyHPContent, partyHPParent);
-                content.Init(GetNicknameByUserId(keyValuePair.Key));
+                content.Init(GetNicknameByActNum(keyValuePair.Key));
                 // UI 연결 추가하기
                 ParentPlayerController playerController = keyValuePair.Value.GetComponent<ParentPlayerController>();
                 if (playerController != null)
                 {
+                    playerController.OnHealthChanged.RemoveAllListeners();
                     playerController.OnHealthChanged.AddListener(content.UpdateHPImage);
                 }
-                contentPairs.Add(keyValuePair.Key, content);
+                contentPairs[keyValuePair.Key] = content;
             }
             // UI 연결 추가하기
             else
@@ -64,11 +66,20 @@ public class UIIngameMainPanel : UIBase
                 ParentPlayerController playerController = keyValuePair.Value.GetComponent<ParentPlayerController>();
                 if (playerController != null) // 쿨타임 이벤트도 연결 하기
                 {
+                    playerController.OnHealthChanged.RemoveAllListeners();
                     playerController.OnHealthChanged.AddListener(UpdateHPImage);
+                    playerController.ShiftCoolDownUpdate.RemoveAllListeners();
                     playerController.ShiftCoolDownUpdate.AddListener(uISkillIcons[(int)UIIcon.shift].StartUpdateSkillCooldown);
+                    playerController.UltimateCoolDownUpdate.RemoveAllListeners();
                     playerController.UltimateCoolDownUpdate.AddListener(uISkillIcons[(int)UIIcon.r].StartUpdateSkillCooldown);
+                    playerController.MouseRightSkillCoolDownUpdate.RemoveAllListeners();
                     playerController.MouseRightSkillCoolDownUpdate.AddListener(uISkillIcons[(int)UIIcon.mouseR].StartUpdateSkillCooldown);
+                    playerController.OnDashCooldownUpdate.RemoveAllListeners();
                     playerController.OnDashCooldownUpdate.AddListener(uISkillIcons[(int)UIIcon.space].StartUpdateSkillCooldown);
+                    playerController.AttackStackUpdate.RemoveAllListeners();
+                    playerController.AttackStackUpdate.AddListener(UpdateMouseLeftStack);
+                    playerController.SkillOutlineUpdate.RemoveAllListeners();
+                    playerController.SkillOutlineUpdate.AddListener(UpdateIconOutline);
                     //playerController
                 }
             }
@@ -88,7 +99,7 @@ public class UIIngameMainPanel : UIBase
             }
         }
 
-        playerController = RoomManager.Instance.players[PhotonNetwork.LocalPlayer.UserId].GetComponent<ParentPlayerController>();
+        playerController = RoomManager.Instance.players[PhotonNetwork.LocalPlayer.ActorNumber].GetComponent<ParentPlayerController>();
         if (playerController != null)
         {
             playerController.OnHealthChanged.RemoveListener(UpdateHPImage);
@@ -96,14 +107,17 @@ public class UIIngameMainPanel : UIBase
             playerController.UltimateCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.r].StartUpdateSkillCooldown);
             playerController.MouseRightSkillCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.mouseR].StartUpdateSkillCooldown);
             playerController.OnDashCooldownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.space].StartUpdateSkillCooldown);
+            playerController.AttackStackUpdate.RemoveListener(UpdateMouseLeftStack);
+            playerController.SkillOutlineUpdate.RemoveAllListeners();
+
         }
     }
 
-    public string GetNicknameByUserId(string userId)
+    public string GetNicknameByActNum(int actNum)
     {
         foreach (Player player in PhotonNetwork.PlayerList)
         {
-            if (player.UserId == userId)
+            if (player.ActorNumber == actNum)
             {
                 return player.NickName;
             }
@@ -114,6 +128,7 @@ public class UIIngameMainPanel : UIBase
     public void OpenBlessingInfoPanel(InputAction.CallbackContext ctx)
     {
         UIManager.Instance.OpenPopupPanel<UISkillInfoPanel>();
+        InputManager.Instance.ChangeDefaultMap("UI");
     }
 
     public void UpdateIconOutline(UIIcon icon, Color color)
@@ -137,6 +152,11 @@ public class UIIngameMainPanel : UIBase
         {
             uISkillIcons[(int)icon].StartUpdateSkillCooldown(value);
         }
+    }
+
+    public void UpdateMouseLeftStack(float stack)
+    {
+        mouseLStackText.text = ((int)stack).ToString();
     }
 
     private void UpdateHPImage(float fillAmount)

@@ -1228,15 +1228,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  currentHealth: 0
   OnHealthChanged:
     m_PersistentCalls:
       m_Calls: []
-  attackCooldown: 1
-  dashCooldown: 1
   OnAttackCooldownUpdate:
     m_PersistentCalls:
       m_Calls: []
   OnDashCooldownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  ShiftCoolDownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  UltimateCoolDownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  MouseRightSkillCoolDownUpdate:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1001 &2100699780
@@ -1295,7 +1303,8 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4296492677884495864, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

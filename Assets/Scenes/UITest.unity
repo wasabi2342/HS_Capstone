@@ -322,8 +322,8 @@ GameObject:
   m_Component:
   - component: {fileID: 405125986}
   - component: {fileID: 405125985}
-  - component: {fileID: 405125984}
   - component: {fileID: 405125983}
+  - component: {fileID: 405125987}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -375,14 +375,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!81 &405125984
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 405125982}
-  m_Enabled: 1
 --- !u!20 &405125985
 Camera:
   m_ObjectHideFlags: 0
@@ -449,6 +441,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &405125987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 405125982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86c6556701af9e04380698b89f691b6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nonRigidbodyVelocity: 0
+  attenuationObject: {fileID: 0}
 --- !u!1 &737500712
 GameObject:
   m_ObjectHideFlags: 0
@@ -610,8 +616,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1637676949}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -708,6 +714,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: eb8b3e0a-17b1-42bc-9ae8-fa32cdeaa4d3
     m_ActionName: 'Player/StageEnterConfirm[/Keyboard/tab]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0f144ccd-6308-4337-b2d0-3e3c9f9067f3
+    m_ActionName: 'Player/OpenBlessingInfo[/Keyboard/tab]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

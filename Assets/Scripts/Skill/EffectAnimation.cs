@@ -18,9 +18,12 @@ public class EffectAnimation : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (PhotonNetwork.InRoom)
+        if (PhotonNetwork.IsConnected)
         {
-            PhotonNetwork.Destroy(animator.gameObject);
+            if (animator.gameObject != null && animator.GetComponent<PhotonView>().IsMine)
+            {
+                PhotonNetwork.Destroy(animator.gameObject);
+            }
         }
         else
         {
