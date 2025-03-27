@@ -11,7 +11,9 @@ public class RoomManager : MonoBehaviour
     [SerializeField]
     private GameObject defaultPlayer;
     [SerializeField]
-    private CinemachineCamera cinemachineCamera;
+    private CinemachineCamera playerCinemachineCamera;
+    [SerializeField]
+    private CinemachineCamera backgroundCinemachineCamera;
     [SerializeField]
     private bool isInVillage;
     public static RoomManager Instance { get; private set; }
@@ -75,8 +77,10 @@ public class RoomManager : MonoBehaviour
             players[0] = playerInstance;
         }
 
-        cinemachineCamera.Follow = playerInstance.transform;
-        cinemachineCamera.LookAt = playerInstance.transform;
+        playerCinemachineCamera.Follow = playerInstance.transform;
+        playerCinemachineCamera.LookAt = playerInstance.transform;
+        backgroundCinemachineCamera.Follow = playerInstance.transform;
+        backgroundCinemachineCamera.LookAt = playerInstance.transform;
     }
 
     public GameObject ReturnLocalPlayer()
@@ -145,8 +149,10 @@ public class RoomManager : MonoBehaviour
         currentIndex = (currentIndex + 1) % sortedPlayers.Count;
 
         // 카메라 변경
-        cinemachineCamera.Follow = sortedPlayers[currentIndex].transform;
-        cinemachineCamera.LookAt = sortedPlayers[currentIndex].transform;
+        playerCinemachineCamera.Follow = sortedPlayers[currentIndex].transform;
+        playerCinemachineCamera.LookAt = sortedPlayers[currentIndex].transform;
+        backgroundCinemachineCamera.Follow = sortedPlayers[currentIndex].transform;
+        backgroundCinemachineCamera.LookAt = sortedPlayers[currentIndex].transform;
     }
 
     public void UpdateSortedPlayers()
@@ -156,7 +162,7 @@ public class RoomManager : MonoBehaviour
                                .ToList();
 
         // 현재 따라가고 있는 플레이어가 리스트에서 몇 번째인지 찾기
-        GameObject currentTarget = cinemachineCamera.Follow?.gameObject;
+        GameObject currentTarget = playerCinemachineCamera.Follow?.gameObject;
         int newIndex = sortedPlayers.FindIndex(p => p == currentTarget);
 
         // 유효한 값이면 currentIndex 갱신
