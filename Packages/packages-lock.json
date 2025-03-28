@@ -1,5 +1,20 @@
 {
   "dependencies": {
+    "com.starphaselab.core": {
+      "version": "file:com.starphaselab.core",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "com.starphaselab.rngneeds": {
+      "version": "file:com.starphaselab.rngneeds",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.collections": "1.2.4",
+        "com.starphaselab.core": "0.1.2"
+      }
+    },
     "com.unity.2d.animation": {
       "version": "10.1.4",
       "depth": 1,
