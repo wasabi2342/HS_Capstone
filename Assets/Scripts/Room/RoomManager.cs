@@ -28,7 +28,7 @@ public class RoomManager : MonoBehaviour
     private List<GameObject> sortedPlayers;
     private int currentIndex = 0;
 
-    public event Action UIUpdate;
+    public event Action<int, GameObject> UIUpdate;
 
     private void Awake()
     {
@@ -175,6 +175,6 @@ public class RoomManager : MonoBehaviour
     {
         players[actNum] = player;
         UpdateSortedPlayers();
-        UIUpdate?.Invoke();
+        UIUpdate?.Invoke(actNum, player);
     }
 }
