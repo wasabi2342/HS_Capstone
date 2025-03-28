@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-4515746232765314876
+--- !u!114 &-1224222109085226436
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 7
+  version: 9
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
@@ -20,18 +20,24 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: CloudDataWriterMat
-  m_Shader: {fileID: -6465566751694194690, guid: b2b80765f648b894c9005e850697b621, type: 3}
+  m_Name: outline
+  m_Shader: {fileID: 4800000, guid: 62505ee61d20098489c6f861ed25cce1, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _OUTLINEENABLED_ON
+  - _OUTLINEMODE_SOLID
+  - _OUTLINEPOSITION_INSIDE_UNDER_SPRITE
+  - _OUTLINESHAPE_CONTOUR
+  - _TILEMODE_STRETCH
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - MOTIONVECTORS
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -57,6 +63,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FrameTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -94,21 +104,17 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
+    - _AlphaThreshold: 0
     - _AlphaToMask: 0
+    - _Angle: 45
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
-    - _CameraXRot: 32.500015
-    - _CameraXRotCos: 0.94088024
-    - _CameraYRotCos: 0.707107
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
-    - _CloudCoverage: 0.6
-    - _CloudScale: 0.025
-    - _CloudStep: 1
-    - _CloudStrength: 12.12
-    - _CloudVerticalSpeed: 0.001
+    - _ConnectedAlpha: 0
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
@@ -116,55 +122,37 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
-    - _FarPlane: 60
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
-    - _NearPlane: 0
     - _OcclusionStrength: 1
-    - _Offset: 0
+    - _OutlineEnabled: 1
+    - _OutlineMode: 0
+    - _OutlinePosition: 0
+    - _OutlineShape: 0
     - _Parallax: 0.005
-    - _PlaneLengthWorldUnits: 60
-    - _PlaneWidthWorldUnits: 28.556204
-    - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _ScreenHeight: 10
-    - _ScreenWidth: 18.497108
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
-    - _SunAngleRadX: 1.5707963
     - _Surface: 0
-    - _TextureSize: 768
+    - _Thickness: 10
+    - _TileMode: 0
+    - _Weight: 0.5
     - _WorkflowMode: 1
-    - _WorldSize: 10
     - _ZWrite: 1
-    - _clipping: 0
-    - _pixelInTextLen: 0.1
     m_Colors:
-    - _AnchorMid: {r: 4.588889, g: -14.76675, b: 11.521911, a: 0}
-    - _AnchorOrigo: {r: -4.6521854, g: 8.8916235, b: 1.7332611, a: 0}
-    - _AnchorPosition: {r: 13.126203, g: 21.220379, b: -23.203003, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _CameraForward: {r: -0.6653024, g: -0.3387393, b: 0.66530323, a: 0}
-    - _CameraForwardXZ: {r: 0, g: 0, b: 0, a: 0}
-    - _CameraPos: {r: 4.588889, g: 9.981991, b: -13.226827, a: 0}
-    - _CameraRight: {r: 0.70710737, g: -0.0000004917383, b: 0.70710623, a: 0}
-    - _CameraRotation: {r: 0, g: 0, b: 0, a: 0}
-    - _CameraUp: {r: -0.23952432, g: 0.9408803, b: 0.23952541, a: 0}
-    - _CloudMovement: {r: -0.25, g: 0.25, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _PlaneForward: {r: -0, g: 0.7071069, b: -0.70710677, a: 0}
-    - _PlaneRight: {r: -0.5785892, g: 0.57672983, b: 0.57672983, a: 0}
+    - _GradientOutline1: {r: 1, g: 1, b: 1, a: 1}
+    - _GradientOutline2: {r: 0, g: 0, b: 0, a: 1}
+    - _ImageOutline: {r: 1, g: 1, b: 1, a: 1}
+    - _SolidOutline: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _SurfaceColor: {r: 0, g: 0, b: 0, a: 0}
-    - _offsetVec: {r: 0, g: 0, b: 0, a: 0}
-    - _scaleVec: {r: 1, g: 1, b: 0, a: 0}
-    - _sunAngle: {r: -0.8384301, g: -0.5013598, b: 0.2137132, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
