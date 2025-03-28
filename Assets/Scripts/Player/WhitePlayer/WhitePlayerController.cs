@@ -76,13 +76,13 @@ public class WhitePlayerController : ParentPlayerController
 
         if (photonView.IsMine)
         {
-            //stunOverlay = GameObject.Find("StunOverlay").GetComponent<Image>();
-            //stunSlider = GameObject.Find("StunTimeBar").GetComponent<Image>();
-            //hpBar = GameObject.Find("HPImage").GetComponent<Image>();
+            stunOverlay = GameObject.Find("StunOverlay").GetComponent<Image>();
+            stunSlider = GameObject.Find("StunTimeBar").GetComponent<Image>();
+            hpBar = GameObject.Find("HPImage").GetComponent<Image>();
 
-            //stunOverlay.enabled = false;
-            //stunSlider.enabled = false;
-            //hpBar.enabled = true;
+            stunOverlay.enabled = false;
+            stunSlider.enabled = false;
+            hpBar.enabled = true;
 
             gaugeInteraction = GetComponentInChildren<GaugeInteraction>();
 
