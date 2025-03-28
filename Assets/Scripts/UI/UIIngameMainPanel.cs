@@ -47,6 +47,7 @@ public class UIIngameMainPanel : UIBase
 
         foreach (var keyValuePair in RoomManager.Instance.players)
         {
+            Debug.Log("RoomManager.Instance.players.Count : " + RoomManager.Instance.players.Count);
             if (keyValuePair.Key != PhotonNetwork.LocalPlayer.ActorNumber)
             {
                 UIPartyHPContent content = Instantiate(partyHPContent, partyHPParent);

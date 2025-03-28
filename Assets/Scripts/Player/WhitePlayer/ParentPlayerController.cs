@@ -62,6 +62,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         runTimeData.currentHealth = characterBaseStats.maxHP;
         // 시작 시 체력 UI 업데이트
         OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
+
+        RoomManager.Instance.AddPlayerDic(photonView.Owner.ActorNumber, gameObject);
     }
 
     #endregion

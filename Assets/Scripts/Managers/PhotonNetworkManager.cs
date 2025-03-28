@@ -169,7 +169,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
     public void AddPlayer(int actNum, int viewID)
     {
-        photonView.RPC("UpdatePlayerDic", RpcTarget.Others, actNum, viewID);
+        //photonView.RPC("UpdatePlayerDic", RpcTarget.Others, actNum, viewID);
     }
 
     [PunRPC]
@@ -178,8 +178,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         PhotonView targetView = PhotonView.Find(viewID);
         if (targetView != null)
         {
-            RoomManager.Instance.AddPlayerDic(actNum, targetView.gameObject);
-            RoomManager.Instance.UpdateSortedPlayers();
+            //RoomManager.Instance.AddPlayerDic(actNum, targetView.gameObject);
+            //RoomManager.Instance.UpdateSortedPlayers();
         }
     }
 
