@@ -28,7 +28,7 @@ public class RoomManager : MonoBehaviour
     private List<GameObject> sortedPlayers;
     private int currentIndex = 0;
 
-    public event Action UIUpdate;
+    public event Action<int, GameObject> UIUpdate;
 
     private void Awake()
     {
@@ -66,10 +66,9 @@ public class RoomManager : MonoBehaviour
         {
             playerInstance = PhotonNetwork.Instantiate("Prefab/" + playerPrefabName, pos, quaternion);
             players[PhotonNetwork.LocalPlayer.ActorNumber] = playerInstance;
-            PhotonNetworkManager.Instance.AddPlayer(PhotonNetwork.LocalPlayer.ActorNumber, playerInstance.GetComponent<PhotonView>().ViewID);
+            //PhotonNetworkManager.Instance.AddPlayer(PhotonNetwork.LocalPlayer.ActorNumber, playerInstance.GetComponent<PhotonView>().ViewID);
             playerInstance.GetComponent<WhitePlayercontroller_event>().isInVillage = isInVillage; // 플레이어의 공통 스크립트로 변경 해야함
             PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.UserId + "CharacterName"] = playerPrefabName;
-
         }
         else
         {
@@ -175,6 +174,7 @@ public class RoomManager : MonoBehaviour
     public void AddPlayerDic(int actNum, GameObject player)
     {
         players[actNum] = player;
-        UIUpdate?.Invoke();
+        UpdateSortedPlayers();
+        UIUpdate?.Invoke(actNum, player);
     }
 }
