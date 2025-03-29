@@ -26,15 +26,14 @@ public class WhitePlayerController : ParentPlayerController
     public Transform[] centerPoints = new Transform[8];
     private int currentDirectionIndex = 0;
 
-    // 죽음, 기절 관련 ui, 체력바 ui
-
-    private Image stunOverlay;
-    private Image stunSlider;
-    private Image hpBar;
-
     [Header("부활 UI 설정")]
     public Canvas reviveCanvas;  // 부활 진행 캔버스
     public Image reviveGauge;    // 부활 게이지 (Image - fillAmount 사용)
+    public Image stunOverlay;    // 기절 시 표시할 Overlay
+    public Image stunSlider;     // 기절 시간 
+    public Image hpBar;          // HP 바 
+
+
     private Coroutine reviveCoroutine;
     private bool isInReviveRange = false;
     private WhitePlayerController stunnedPlayer;  // 기절 플레이어 참조
@@ -74,15 +73,13 @@ public class WhitePlayerController : ParentPlayerController
     {
         currentState = WhitePlayerState.Idle;
 
+        // 로컬 플레이어만 UI 상태를 직접 제어
         if (photonView.IsMine)
         {
-            stunOverlay = GameObject.Find("StunOverlay").GetComponent<Image>();
-            stunSlider = GameObject.Find("StunTimeBar").GetComponent<Image>();
-            hpBar = GameObject.Find("HPImage").GetComponent<Image>();
-
-            stunOverlay.enabled = false;
-            stunSlider.enabled = false;
-            hpBar.enabled = true;
+            // Inspector에서 할당한 참조가 null이 아닌지 체크 후 사용
+            if (stunOverlay != null) stunOverlay.enabled = false;
+            if (stunSlider != null) stunSlider.enabled = false;
+            if (hpBar != null) hpBar.enabled = true;
 
             gaugeInteraction = GetComponentInChildren<GaugeInteraction>();
 
@@ -747,7 +744,7 @@ public class WhitePlayerController : ParentPlayerController
 
         runTimeData.currentHealth = hp;
 
-        if (photonView.IsMine)
+        if (photonView.IsMine && hpBar != null)
         {
             hpBar.enabled = true;
             hpBar.fillAmount = runTimeData.currentHealth / maxHealth;
@@ -787,17 +784,21 @@ public class WhitePlayerController : ParentPlayerController
 
         if (photonView.IsMine)
         {
-            stunOverlay.enabled = true;
-            stunSlider.enabled = true;
-            stunSlider.fillAmount = 1f;
-            hpBar.enabled = false;  // 기절 상태에선 체력바 비활성화
+            // Inspector에서 연결된 UI 사용
+            if (stunOverlay != null) stunOverlay.enabled = true;
+            if (stunSlider != null)
+            {
+                stunSlider.enabled = true;
+                stunSlider.fillAmount = 1f;
+            }
+            if (hpBar != null) hpBar.enabled = false;  // 기절 상태에선 체력바 비활성화
         }
 
         while (elapsed < stunDuration && currentState == WhitePlayerState.Stun)
         {
             elapsed += Time.deltaTime;
 
-            if (photonView.IsMine)
+            if (photonView.IsMine && stunSlider != null)
             {
                 stunSlider.fillAmount = 1 - (elapsed / stunDuration);
             }
@@ -812,8 +813,8 @@ public class WhitePlayerController : ParentPlayerController
 
         if (photonView.IsMine)
         {
-            stunSlider.enabled = false;
-            stunOverlay.enabled = false;
+            if (stunSlider != null) stunSlider.enabled = false;
+            if (stunOverlay != null) stunOverlay.enabled = false;
         }
     }
 
@@ -838,9 +839,9 @@ public class WhitePlayerController : ParentPlayerController
 
             if (photonView.IsMine)
             {
-                stunSlider.enabled = false;
-                stunOverlay.enabled = false;
-                hpBar.enabled = true; 
+                if (stunSlider != null) stunSlider.enabled = false;
+                if (stunOverlay != null) stunOverlay.enabled = false;
+                if (hpBar != null) hpBar.enabled = true;
             }
 
             animator.SetBool("revive", true);
@@ -855,61 +856,6 @@ public class WhitePlayerController : ParentPlayerController
     }
 
 
-    /*
-
-    public void HandleReviveInteraction(InputAction.CallbackContext context)
-    {
-        if (!photonView.IsMine) return;
-
-        if (isInReviveRange && stunnedPlayer != null && stunnedPlayer.currentState == WhitePlayerState.Stun)
-        {
-            if (context.started && reviveCoroutine == null)
-            {
-                reviveCoroutine = StartCoroutine(ReviveGaugeRoutine());
-            }
-            else if (context.canceled && reviveCoroutine != null)
-            {
-                StopCoroutine(reviveCoroutine);
-                reviveCoroutine = null;
-                gaugeInteraction.CancelGaugeCoroutine(false);
-                Debug.Log("부활 시도 취소됨 (키 입력 해제)");
-            }
-        }
-    }
-
-    private IEnumerator ReviveGaugeRoutine()
-    {
-        gaugeInteraction.holdTime = 5f;
-        gaugeInteraction.StartGaugeCoroutine();
-
-        float timer = 0f;
-        const float reviveDuration = 5f;
-
-        while (timer < reviveDuration)
-        {
-            if (!isInReviveRange || stunnedPlayer == null || stunnedPlayer.currentState != WhitePlayerState.Stun)
-            {
-                gaugeInteraction.CancelGaugeCoroutine(false);
-                Debug.Log("부활 중단됨 (범위 이탈 또는 상태 변경)");
-                reviveCoroutine = null;
-                yield break;
-            }
-
-            timer += Time.deltaTime;
-            yield return null;
-        }
-
-        if (stunnedPlayer != null && stunnedPlayer.currentState == WhitePlayerState.Stun)
-        {
-            stunnedPlayer.photonView.RPC("ReviveRPC", RpcTarget.MasterClient);
-            Debug.Log("부활 RPC 호출 완료");
-        }
-
-        gaugeInteraction.CancelGaugeCoroutine(true);
-        reviveCoroutine = null;
-    }
-
-    */
 
     // RPC
     [PunRPC]
@@ -927,9 +873,9 @@ public class WhitePlayerController : ParentPlayerController
         Debug.Log("플레이어 사망");
         if (photonView.IsMine)
         {
-            stunSlider.enabled = false;
-            stunOverlay.enabled = false;
-            hpBar.enabled = false;  // 사망시 체력바 비활성화
+            if (stunSlider != null) stunSlider.enabled = false;
+            if (stunOverlay != null) stunOverlay.enabled = false;
+            if (hpBar != null) hpBar.enabled = false;  // 사망 시 체력바 비활성화
         }
 
         if (animator != null)
