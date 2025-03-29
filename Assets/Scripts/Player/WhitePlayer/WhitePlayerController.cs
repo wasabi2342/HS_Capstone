@@ -71,6 +71,8 @@ public class WhitePlayerController : ParentPlayerController
 
     private void Start()
     {
+
+
         currentState = WhitePlayerState.Idle;
 
         // 로컬 플레이어만 UI 상태를 직접 제어

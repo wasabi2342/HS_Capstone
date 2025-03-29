@@ -3,9 +3,13 @@ using UnityEngine;
 using Photon.Pun;
 using UnityEngine.Events;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class ParentPlayerController : MonoBehaviourPun, IDamageable
 {
+
+    public Image hpImage;
+
     #region Cooldown UI Events
 
     [Header("Cooldown Settings")]

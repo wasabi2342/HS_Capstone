@@ -62,6 +62,7 @@ public class UIIngameMainPanel : UIBase
             playerController.AttackStackUpdate.AddListener(UpdateMouseLeftStack);
             playerController.SkillOutlineUpdate.RemoveAllListeners();
             playerController.SkillOutlineUpdate.AddListener(UpdateIconOutline);
+            playerController.hpImage = hpImage;
         }
 
         /*
