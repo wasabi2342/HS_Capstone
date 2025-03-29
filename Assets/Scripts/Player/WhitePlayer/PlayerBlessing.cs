@@ -23,7 +23,7 @@ public class PlayerBlessing : MonoBehaviourPun
 {
     [SerializeField]
     private ParentPlayerController playerController;
-
+    private Animator animator;
     private Dictionary<Skills, BlessingInfo> playerBlessingDic = new Dictionary<Skills, BlessingInfo>();
 
     Dictionary<Blessings, Color> BlessingColor = new Dictionary<Blessings, Color>
@@ -37,6 +37,7 @@ public class PlayerBlessing : MonoBehaviourPun
     private void Awake()
     {
         playerController = GetComponent<ParentPlayerController>();
+        animator = GetComponent<Animator>();
     }
 
     private void Start()
@@ -50,6 +51,25 @@ public class PlayerBlessing : MonoBehaviourPun
         for (int i = 0; i < blessings.Length; i++)
         {
             playerBlessingDic[(Skills)i] = blessings[i];
+            playerController.SkillOutlineUpdate.Invoke((UIIcon)i, BlessingColor[blessings[i].blessing]);
+            switch ((Skills)i)
+            {
+                case Skills.Mouse_L:
+                    animator.SetInteger("basicAttackBlessing", (int)blessings[i].blessing);
+                    break;
+                case Skills.Mouse_R:
+                    animator.SetInteger("mouseRightBlessing", (int)blessings[i].blessing);
+                    break;
+                case Skills.Space:
+                    animator.SetInteger("spaceBlessing", (int)blessings[i].blessing);
+                    break;
+                case Skills.Shift_L:
+                    animator.SetInteger("skillBlessing", (int)blessings[i].blessing);
+                    break;
+                case Skills.R:
+                    animator.SetInteger("ultimateBlessing", (int)blessings[i].blessing);
+                    break;
+            }
         }
     }
 
@@ -67,59 +87,19 @@ public class PlayerBlessing : MonoBehaviourPun
         switch (data.Key)
         {
             case Skills.Mouse_L:
-                switch (data.Value.blessing)
-                {
-                    case Blessings.Crocell:
-                        break;
-                    case Blessings.Gremory:
-                        break;
-                    case Blessings.Paymon:
-                        break;
-                }
+                animator.SetInteger("basicAttackBlessing", (int)data.Value.blessing);
                 break;
             case Skills.Mouse_R:
-                switch (data.Value.blessing)
-                {
-                    case Blessings.Crocell:
-                        break;
-                    case Blessings.Gremory:
-                        break;
-                    case Blessings.Paymon:
-                        break;
-                }
+                animator.SetInteger("mouseRightBlessing", (int)data.Value.blessing);
                 break;
             case Skills.Space:
-                switch (data.Value.blessing)
-                {
-                    case Blessings.Crocell:
-                        break;
-                    case Blessings.Gremory:
-                        break;
-                    case Blessings.Paymon:
-                        break;
-                }
+                animator.SetInteger("spaceBlessing", (int)data.Value.blessing);
                 break;
             case Skills.Shift_L:
-                switch (data.Value.blessing)
-                {
-                    case Blessings.Crocell:
-                        break;
-                    case Blessings.Gremory:
-                        break;
-                    case Blessings.Paymon:
-                        break;
-                }
+                animator.SetInteger("skillBlessing", (int)data.Value.blessing);
                 break;
             case Skills.R:
-                switch (data.Value.blessing)
-                {
-                    case Blessings.Crocell:
-                        break;
-                    case Blessings.Gremory:
-                        break;
-                    case Blessings.Paymon:
-                        break;
-                }
+                animator.SetInteger("ultimateBlessing", (int)data.Value.blessing);
                 break;
         }
     }
