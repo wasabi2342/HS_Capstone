@@ -8,6 +8,7 @@ using Photon.Pun;
 public class EnemyAI : MonoBehaviourPun, IDamageable
 {
     public EnemyStatus status;  // EnemyStatus에 공격 데미지, 속도, 범위, 체력 등이 정의되어 있음
+    public static int ActiveMonsterCount = 0;
 
     [SerializeField] private SpawnArea spawnArea;
     private Transform targetPlayer;
@@ -43,6 +44,8 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         agent.updateRotation = false;
         agent.angularSpeed = 500f;
         agent.stoppingDistance = 0.1f;
+        ActiveMonsterCount++;
+        Debug.Log("EnemyAI Awake: " + gameObject.name + " ActiveMonsterCount: " + ActiveMonsterCount);
 
         if (spawnArea == null)
         {
@@ -103,8 +106,9 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         }
         else
         {
-            PlayMoveAnim("Idle");
+            PlayMoveAnim(lastMoveX >= 0f ? "Right_Idle" : "Left_Idle");
         }
+
     }
 
     // 애니메이션 재생 및 RPC 동기화
@@ -326,8 +330,9 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         if (!PhotonNetwork.IsMasterClient || isDead)
             return;
 
-        // 피격 시 Hit 애니메이션 재생
-        photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Hit");
+        string hitAnim = lastMoveX >= 0 ? "Right_Hit" : "Left_Hit";
+        photonView.RPC("RPC_PlayAnimation", RpcTarget.All, hitAnim);
+
 
         currentHP -= damage;
         Debug.Log($"{gameObject.name} took {damage} damage, current HP: {currentHP}");
@@ -352,12 +357,22 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
             return;
 
         isDead = true;
-        Debug.Log($"{gameObject.name} died.");
-        // Death 애니메이션 재생
-        photonView.RPC("RPC_PlayAnimation", RpcTarget.All, "Death");
+
+        // Master Client에서만 카운터를 감소시키도록 함 (중복 감소 방지)
+        if (PhotonNetwork.IsMasterClient)
+        {
+            ActiveMonsterCount = Mathf.Max(ActiveMonsterCount - 1, 0);
+            Debug.Log($"{gameObject.name} died. Updated ActiveMonsterCount: {ActiveMonsterCount}");
+        }
+
+        // 사망 애니메이션 실행
+        string deathAnim = lastMoveX >= 0 ? "Right_Death" : "Left_Death";
+        photonView.RPC("RPC_PlayAnimation", RpcTarget.All, deathAnim);
+
         // Death 애니메이션이 끝난 후 Destroy를 호출하기 위해 코루틴 실행
         StartCoroutine(DelayedDestroy());
     }
+
 
     IEnumerator DelayedDestroy()
     {

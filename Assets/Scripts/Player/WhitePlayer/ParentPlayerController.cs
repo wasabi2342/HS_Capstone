@@ -48,11 +48,19 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     protected virtual void Awake()
     {
         runTimeData = new PlayerRunTimeData(characterBaseStats.attackPower, characterBaseStats.attackSpeed, characterBaseStats.moveSpeed, characterBaseStats.cooldownReductionPercent, characterBaseStats.abilityPower, characterBaseStats.maxHP);
-        if (photonView.IsMine)
+        if (PhotonNetwork.IsConnected)
         {
-            runTimeData.LoadFromJsonFile();
-            photonView.RPC("UpdateHP", RpcTarget.Others, runTimeData.currentHealth);
+            if (photonView.IsMine)
+            {
+                runTimeData.LoadFromJsonFile();
+                photonView.RPC("UpdateHP", RpcTarget.Others, runTimeData.currentHealth);
+            }
+            else
+            {
+                RoomManager.Instance.AddPlayerDic(photonView.Owner.ActorNumber, gameObject);
+            }
         }
+
         attackCooldown = characterBaseStats.mouseLeftCooldown;
         dashCooldown = characterBaseStats.spaceCooldown;
         shiftCoolDown = characterBaseStats.shiftCooldown;
