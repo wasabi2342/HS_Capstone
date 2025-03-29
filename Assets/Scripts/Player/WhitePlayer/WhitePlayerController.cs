@@ -740,12 +740,12 @@ public class WhitePlayerController : ParentPlayerController
         base.UpdateHP(hp);
         Debug.Log(photonView.ViewID + "플레이어 체력: " + runTimeData.currentHealth);
 
-        runTimeData.currentHealth = hp;
-
-        if (photonView.IsMine)
+        if (runTimeData.currentHealth <= 0)
         {
-            hpBar.enabled = true;
-            hpBar.fillAmount = runTimeData.currentHealth / maxHealth;
+            if (currentState != WhitePlayerState.Stun)
+            {
+                currentState = WhitePlayerState.Stun;
+            }
         }
 
         Debug.Log(photonView.ViewID + " 플레이어 체력 업데이트됨: " + runTimeData.currentHealth);
