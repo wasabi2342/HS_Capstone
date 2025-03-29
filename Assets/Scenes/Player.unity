@@ -1227,8 +1227,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cf0ed9262a700b48872536560d44dae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 0
+  stunOverlay: {fileID: 0}
+  stunSlider: {fileID: 0}
+  hpBar: {fileID: 0}
   OnHealthChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1247,6 +1248,14 @@ MonoBehaviour:
   MouseRightSkillCoolDownUpdate:
     m_PersistentCalls:
       m_Calls: []
+  AttackStackUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  SkillOutlineUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  characterBaseStats: {fileID: 0}
+  attackStack: 0
 --- !u!1001 &2100699780
 PrefabInstance:
   m_ObjectHideFlags: 0
