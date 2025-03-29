@@ -3,9 +3,17 @@ using UnityEngine;
 using Photon.Pun;
 using UnityEngine.Events;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class ParentPlayerController : MonoBehaviourPun, IDamageable
 {
+
+    // 죽음, 기절 관련 ui, 체력바 ui
+
+    public Image stunOverlay;
+    public Image stunSlider;
+    public Image hpBar;
+
     #region Cooldown UI Events
 
     [Header("Cooldown Settings")]

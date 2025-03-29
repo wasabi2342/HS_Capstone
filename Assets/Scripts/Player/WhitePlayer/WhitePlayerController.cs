@@ -26,11 +26,6 @@ public class WhitePlayerController : ParentPlayerController
     public Transform[] centerPoints = new Transform[8];
     private int currentDirectionIndex = 0;
 
-    // 죽음, 기절 관련 ui, 체력바 ui
-
-    private Image stunOverlay;
-    private Image stunSlider;
-    private Image hpBar;
 
     [Header("부활 UI 설정")]
     public Canvas reviveCanvas;  // 부활 진행 캔버스
@@ -76,20 +71,20 @@ public class WhitePlayerController : ParentPlayerController
 
         if (photonView.IsMine)
         {
-            stunOverlay = GameObject.Find("StunOverlay").GetComponent<Image>();
-            stunSlider = GameObject.Find("StunTimeBar").GetComponent<Image>();
-            hpBar = GameObject.Find("HPImage").GetComponent<Image>();
-
-            stunOverlay.enabled = false;
-            stunSlider.enabled = false;
-            hpBar.enabled = true;
-
-            gaugeInteraction = GetComponentInChildren<GaugeInteraction>();
-
-            var eventController = GetComponent<WhitePlayercontroller_event>();
-            if (eventController != null)
+            if (photonView.IsMine)
             {
-                //eventController.OnInteractionEvent += HandleReviveInteraction;
+                
+                if (stunOverlay != null) stunOverlay.enabled = false;
+                if (stunSlider != null) stunSlider.enabled = false;
+                if (hpBar != null) hpBar.enabled = true;
+
+                gaugeInteraction = GetComponentInChildren<GaugeInteraction>();
+
+                var eventController = GetComponent<WhitePlayercontroller_event>();
+                if (eventController != null)
+                {
+                    //eventController.OnInteractionEvent += HandleReviveInteraction;
+                }
             }
         }
     }
