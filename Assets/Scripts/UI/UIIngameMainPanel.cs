@@ -38,6 +38,10 @@ public class UIIngameMainPanel : UIBase
         Init();
     }
 
+
+    [SerializeField] private Image stunOverlay;
+    [SerializeField] private Image stunSlider;
+
     public override void Init() // 선택된 캐릭터 정보를 받아와 이미지 갱신
     {
         foreach (var icon in uISkillIcons)
@@ -62,6 +66,10 @@ public class UIIngameMainPanel : UIBase
             playerController.AttackStackUpdate.AddListener(UpdateMouseLeftStack);
             playerController.SkillOutlineUpdate.RemoveAllListeners();
             playerController.SkillOutlineUpdate.AddListener(UpdateIconOutline);
+            playerController.hpBar = hpImage;
+            playerController.stunOverlay = stunOverlay;
+            playerController.stunSlider = stunSlider;
+
         }
 
         /*
