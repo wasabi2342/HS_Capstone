@@ -1,82 +1,95 @@
-//using UnityEngine;
+using UnityEngine;
 
-//public class WhitePlayerController_AttackStack : MonoBehaviour
-//{
-//    private WhitePlayerController whitePlayerController;
+public class WhitePlayerController_AttackStack : MonoBehaviour
+{
+    private WhitePlayerController playerController;
 
-//    private void Awake()
-//    {
-//        whitePlayerController = GetComponent<WhitePlayerController>();
-//        if (whitePlayerController == null)
-//        {
-//            Debug.LogError("WhitePlayerController ������Ʈ�� �����ϴ�!");
-//        }
-//    }
+    private void Awake()
+    {
+        playerController = GetComponent<WhitePlayerController>();
+    }
 
-//    // Attack_1 ���� �ִϸ��̼� �̺�Ʈ �Լ���
-//    public void OnAttack1StartupEnd()
-//    {
-//        //whitePlayerController.OnAttack1StartupEnd();
-//    }
+    // 이 함수는 애니메이션 이벤트에서 호출됩니다.
+    public void AdvanceAttack()
+    {
+        if (playerController != null)
+        {
+            playerController.AdvanceAttackCombo();
+        }
+    }
 
-//    public void OnAttack1DamageStart()
-//    {
-//        whitePlayerController.OnAttack1DamageStart();
-//    }
+    // Attack_1 애니메이션 이벤트 함수들
+    public void OnAttack1StartupEnd()
+    {
+        // 필요한 경우 구현
+    }
 
-//    public void OnAttack1DamageEnd()
-//    {
-//        whitePlayerController.OnAttack1DamageEnd();
-//    }
+    public void OnAttack1DamageStart()
+    {
+        if (playerController != null)
+            playerController.OnAttack1DamageStart();
+    }
 
-//    public void OnAttack1AllowNextInput()
-//    {
-//        whitePlayerController.OnAttack1AllowNextInput();
-//    }
+    public void OnAttack1DamageEnd()
+    {
+        if (playerController != null)
+            playerController.OnAttack1DamageEnd();
+    }
 
-//    public void OnAttack1RecoveryEnd()
-//    {
-//        //whitePlayerController.OnAttack1RecoveryEnd();
-//    }
+    public void OnAttack1AllowNextInput()
+    {
+        if (playerController != null)
+            playerController.OnAttack1AllowNextInput();
+    }
 
-//    public void OnAttack1AnimationEnd()
-//    {
-//        whitePlayerController.OnAttack1AnimationEnd();
-//    }
+    public void OnAttack1RecoveryEnd()
+    {
+        // 필요한 경우 구현
+    }
 
-//    // Attack_2 ���� �ִϸ��̼� �̺�Ʈ �Լ���
-//    public void OnAttack2StartupFrame1End()
-//    {
-//        //whitePlayerController.OnAttack2StartupFrame1End();
-//    }
+    public void OnAttack1AnimationEnd()
+    {
+        if (playerController != null)
+            playerController.OnAttack1AnimationEnd();
+    }
 
-//    public void OnAttack2StartupFrame2End()
-//    {
-//        //whitePlayerController.OnAttack2StartupFrame2End();
-//    }
+    // Attack_2 애니메이션 이벤트 함수들
+    public void OnAttack2StartupFrame1End()
+    {
+        // 필요한 경우 구현
+    }
 
-//    public void OnAttack2DamageStart()
-//    {
-//        whitePlayerController.OnAttack2DamageStart();
-//    }
+    public void OnAttack2StartupFrame2End()
+    {
+        // 필요한 경우 구현
+    }
 
-//    public void OnAttack2DamageEnd()
-//    {
-//        whitePlayerController.OnAttack2DamageEnd();
-//    }
+    public void OnAttack2DamageStart()
+    {
+        if (playerController != null)
+            playerController.OnAttack2DamageStart();
+    }
 
-//    public void OnAttack2AllowNextInput()
-//    {
-//        whitePlayerController.OnAttack2AllowNextInput();
-//    }
+    public void OnAttack2DamageEnd()
+    {
+        if (playerController != null)
+            playerController.OnAttack2DamageEnd();
+    }
 
-//    public void OnAttack2RecoveryEnd()
-//    {
-//        //whitePlayerController.OnAttack2RecoveryEnd();
-//    }
+    public void OnAttack2AllowNextInput()
+    {
+        if (playerController != null)
+            playerController.OnAttack2AllowNextInput();
+    }
 
-//    public void OnAttack2AnimationEnd()
-//    {
-//        whitePlayerController.OnAttack2AnimationEnd();
-//    }
-//}
+    public void OnAttack2RecoveryEnd()
+    {
+        // 필요한 경우 구현
+    }
+
+    public void OnAttack2AnimationEnd()
+    {
+        if (playerController != null)
+            playerController.OnAttack2AnimationEnd();
+    }
+}

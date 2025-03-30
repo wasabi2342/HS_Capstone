@@ -4,70 +4,68 @@ using Photon.Pun;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
-
 public enum WhitePlayerState { Idle, Run, BasicAttack, Hit, Dash, Skill, Ultimate, Guard, Parry, Counter, Stun, Revive, Death }
 
 public class WhitePlayerController : ParentPlayerController
 {
-
-    
-
-
-    [Header("´ë½¬ ¼³Á¤")]
+    [Header("ï¿½ë½¬ ï¿½ï¿½ï¿½ï¿½")]
     public float dashDistance = 2f;
     public float dashDoubleClickThreshold = 0.3f;
-    //private float lastDashClickTime = -Mathf.Infinity;
 
-    [Header("Áß½ÉÁ¡ ¼³Á¤")]
-    [Tooltip("±âº» CenterPoint (¾Ö´Ï¸ŞÀÌ¼Ç ÀÌº¥Æ® µî¿¡¼­ »ç¿ë)")]
+    [Header("ï¿½ß½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
+    [Tooltip("ï¿½âº» CenterPoint (ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½Ìºï¿½Æ® ï¿½î¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½)")]
     public Transform centerPoint;
     public float centerPointOffsetDistance = 0.5f;
-    [Tooltip("8¹æÇâ CenterPoint ¹è¿­ (¼ø¼­: 0=À§, 1=¿ì»ó, 2=¿À¸¥ÂÊ, 3=¿ìÇÏ, 4=¾Æ·¡, 5=ÁÂÇÏ, 6=¿ŞÂÊ, 7=ÁÂ»ó)")]
+    [Tooltip("8ï¿½ï¿½ï¿½ï¿½ CenterPoint ï¿½è¿­ (ï¿½ï¿½ï¿½ï¿½: 0=ï¿½ï¿½, 1=ï¿½ï¿½ï¿½, 2=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, 3=ï¿½ï¿½ï¿½ï¿½, 4=ï¿½Æ·ï¿½, 5=ï¿½ï¿½ï¿½ï¿½, 6=ï¿½ï¿½ï¿½ï¿½, 7=ï¿½Â»ï¿½)")]
     public Transform[] centerPoints = new Transform[8];
     private int currentDirectionIndex = 0;
-
-    // Á×À½, ±âÀı °ü·Ã ui, Ã¼·Â¹Ù ui
 
     private Image stunOverlay;
     private Image stunSlider;
     private Image hpBar;
 
-    [Header("ºÎÈ° UI ¼³Á¤")]
-    public Canvas reviveCanvas;  // ºÎÈ° ÁøÇà Äµ¹ö½º
-    public Image reviveGauge;    // ºÎÈ° °ÔÀÌÁö (Image - fillAmount »ç¿ë)
+    [Header("ï¿½ï¿½È° UI ï¿½ï¿½ï¿½ï¿½")]
+    public Canvas reviveCanvas;
+    public Image reviveGauge;
     private Coroutine reviveCoroutine;
     private bool isInReviveRange = false;
-    private WhitePlayerController stunnedPlayer;  // ±âÀı ÇÃ·¹ÀÌ¾î ÂüÁ¶
+    private WhitePlayerController stunnedPlayer;
 
-
-    // ÀÌµ¿ ÀÔ·Â ¹× »óÅÂ
-    private Vector2 moveInput;
     public WhitePlayerState currentState = WhitePlayerState.Idle;
     public WhitePlayerState nextState = WhitePlayerState.Idle;
 
-    [Header("¿ìÅ¬¸¯ °¡µå/ÆĞ¸µ ¼³Á¤")]
+    [Header("ï¿½ï¿½Å¬ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½/ï¿½Ğ¸ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     public float guardDuration = 2f;
     public float parryDuration = 2f;
-    //private bool isGuarding = false;
-    //private bool isParrying = false;
 
-    [Header("Counter (¹ßµµ) ¼³Á¤")]
+    [Header("Counter (ï¿½ßµï¿½) ï¿½ï¿½ï¿½ï¿½")]
     public int counterDamage = 20;
 
-    // ÂüÁ¶ ÄÄÆ÷³ÍÆ® 
-    private Animator animator;
+    private AttackManager attackManager;
+    [HideInInspector]
+    public Animator animator;
+    [HideInInspector]
+    public Vector2 moveInput;
+
+    public WhitePlayerAttackZone AttackCollider;
+
+    private GaugeInteraction gaugeInteraction;
+
+    private Coroutine stunCoroutine;
+
+    private float maxHealth = 100f;
 
     protected override void Awake()
-
     {
         AttackCollider = GetComponentInChildren<WhitePlayerAttackZone>();
-
         base.Awake();
         animator = GetComponent<Animator>();
         if (animator == null)
         {
-            Debug.LogError("Animator ÄÄÆ÷³ÍÆ®¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù! (WhitePlayerController)");
+            Debug.LogError("Animator ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½! (WhitePlayerController)");
         }
+
+        attackManager = gameObject.AddComponent<AttackManager>();
     }
 
     private void Start()
@@ -76,14 +74,30 @@ public class WhitePlayerController : ParentPlayerController
 
         if (photonView.IsMine)
         {
-            stunOverlay = GameObject.Find("StunOverlay").GetComponent<Image>();
-            stunSlider = GameObject.Find("StunTimeBar").GetComponent<Image>();
-            hpBar = GameObject.Find("HPImage").GetComponent<Image>();
+            // UI ìš”ì†Œë¥¼ ì°¾ì„ ë•Œ null ì²´í¬ ì¶”ê°€
+            GameObject stunOverlayObj = GameObject.Find("StunOverlay");
+            if (stunOverlayObj != null)
+                stunOverlay = stunOverlayObj.GetComponent<Image>();
+            
+            GameObject stunSliderObj = GameObject.Find("StunTimeBar");
+            if (stunSliderObj != null)
+                stunSlider = stunSliderObj.GetComponent<Image>();
+            
+            GameObject hpBarObj = GameObject.Find("HPImage");
+            if (hpBarObj != null)
+                hpBar = hpBarObj.GetComponent<Image>();
 
-            stunOverlay.enabled = false;
-            stunSlider.enabled = false;
-            hpBar.enabled = true;
+            // UI ì»´í¬ë„ŒíŠ¸ê°€ ì¡´ì¬í•˜ëŠ” ê²½ìš°ì—ë§Œ í™œì„±í™” ìƒíƒœ ë³€ê²½
+            if (stunOverlay != null)
+                stunOverlay.enabled = false;
+            
+            if (stunSlider != null)
+                stunSlider.enabled = false;
+            
+            if (hpBar != null)
+                hpBar.enabled = true;
 
+            // GaugeInteraction ì»´í¬ë„ŒíŠ¸ë¥¼ ì°¾ì„ ë•Œë„ null ì²´í¬ í•„ìš” ì—†ìŒ (GetComponentInChildrenëŠ” nullì„ ë°˜í™˜í•  ìˆ˜ ìˆìŒ)
             gaugeInteraction = GetComponentInChildren<GaugeInteraction>();
 
             var eventController = GetComponent<WhitePlayercontroller_event>();
@@ -92,6 +106,12 @@ public class WhitePlayerController : ParentPlayerController
                 //eventController.OnInteractionEvent += HandleReviveInteraction;
             }
         }
+
+        // attackManagerê°€ nullì´ ì•„ë‹Œì§€ í™•ì¸
+        if (attackManager != null)
+            attackManager.Initialize(this);
+        else
+            Debug.LogError("AttackManager is null! Make sure it's properly added in Awake().");
     }
 
     private void Update()
@@ -109,14 +129,11 @@ public class WhitePlayerController : ParentPlayerController
         HandleMovement();
     }
 
-    // ÀÔ·Â Ã³¸® °ü·Ã
-    // WhitePlayercontroller_event.cs¿¡¼­ È£ÃâÇÏ¿© ÀÌµ¿ ÀÔ·ÂÀ» ¼³Á¤
     public void SetMoveInput(Vector2 input)
     {
         moveInput = input;
     }
 
-    // ÀÌµ¿ Ã³¸®
     private void HandleMovement()
     {
         if (currentState == WhitePlayerState.Death) return;
@@ -158,14 +175,10 @@ public class WhitePlayerController : ParentPlayerController
                 animator.SetBool("run", false);
             }
             return;
-
         }
-
 
         if (currentState != WhitePlayerState.Run)
             return;
-
-
 
         if (isMoving)
         {
@@ -177,7 +190,6 @@ public class WhitePlayerController : ParentPlayerController
         if (animator != null)
         {
             animator.SetFloat("moveX", h);
-            //animator.SetFloat("moveY", v);
         }
     }
 
@@ -207,207 +219,85 @@ public class WhitePlayerController : ParentPlayerController
         return idx;
     }
 
-    // ´ë½¬ Ã³¸®
+    public void HandleNormalAttack()
+    {
+        if (currentState == WhitePlayerState.Parry)
+        {
+            Vector3 mousePos = GetMouseWorldPosition();
+            animator.SetBool("Right", mousePos.x > transform.position.x);
+            animator.SetBool("basicattack", true);
+            if (PhotonNetwork.IsConnected)
+            {
+                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
+            }
+            currentState = WhitePlayerState.Counter;
+
+            ResetSkillCooldown(Skills.Mouse_R);
+            return;
+        }
+
+        if (attackStack >= 4)
+        {
+            animator.SetBool("Pre-Attack", false);
+            animator.SetBool("Pre-Input", false);
+            if (PhotonNetwork.IsConnected)
+            {
+                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", false);
+                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", false);
+            }
+            currentState = WhitePlayerState.Idle;
+            attackStack = 0;
+            AttackStackUpdate?.Invoke(attackStack);
+            Debug.Log("ê³µê²© ìŠ¤íƒ 4 ë„ë‹¬: ì½¤ë³´ ì¢…ë£Œ ë° ì´ˆê¸°í™”");
+            return;
+        }
+
+        if (attackManager.ExecuteAction(Skills.Mouse_L))
+        {
+            if (currentState == WhitePlayerState.BasicAttack)
+            {
+                Vector3 mousePos = GetMouseWorldPosition();
+                animator.SetBool("Right", mousePos.x > transform.position.x);
+                animator.SetBool("Pre-Input", true);
+
+                if (PhotonNetwork.IsConnected)
+                {
+                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
+                }
+            }
+        }
+    }
 
     public void HandleDash()
     {
-        if (currentState == WhitePlayerState.Death || currentState == WhitePlayerState.Dash)
-            return;
-        if (!isDashReady)
-            return;
-        currentState = WhitePlayerState.Dash;
-        animator.ResetTrigger("run");
-
-        animator.SetBool("dash", true);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "dash", true);
-        }
-        Vector3 dashDir = new Vector3(moveInput.x, 0, 0);
-
-        if (dashDir == Vector3.zero)
-        {
-            dashDir = Vector3.right;
-        }
-
-        StartCoroutine(DoDash(dashDir));
+        attackManager.ExecuteAction(Skills.Space);
     }
 
-    private IEnumerator DoDash(Vector3 dashDir)
-    {
-        Vector3 startPos = transform.position;
-        Vector3 targetPos = startPos + dashDir.normalized * dashDistance;
-        yield return null;
-        transform.position = targetPos;
-    }
-
-
-    public void HandleNormalAttack()
-    {
-
-        if (currentState != WhitePlayerState.Death)
-        {
-            if (currentState == WhitePlayerState.Parry)
-            {
-                Vector3 mousePos = GetMouseWorldPosition();
-                animator.SetBool("Right", mousePos.x > transform.position.x);
-                animator.SetBool("basicattack", true);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
-                }
-                //photonView.RPC("PlayAnimation", RpcTarget.All, "basicattack");
-                currentState = WhitePlayerState.Counter;
-                return;
-            }
-            else if (nextState < WhitePlayerState.BasicAttack)
-            {
-
-                Vector3 mousePos = GetMouseWorldPosition();
-                animator.SetBool("Right", mousePos.x > transform.position.x);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                }
-                nextState = WhitePlayerState.BasicAttack;
-            }
-
-            if (attackStack >= 4)
-            {
-                animator.SetBool("Pre-Attack", false);
-                animator.SetBool("Pre-Input", false);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", false);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", false);
-                }
-                currentState = WhitePlayerState.Idle;
-                attackStack = 0;
-                AttackStackUpdate?.Invoke(attackStack);
-                Debug.Log("°ø°İ ½ºÅÃ 4 µµ´Ş: ÄŞº¸ Á¾·á ¹× ÃÊ±âÈ­");
-                return;
-            }
-
-            if (currentState == WhitePlayerState.BasicAttack)
-            {
-
-                Vector3 mousePos = GetMouseWorldPosition();
-                animator.SetBool("Right", mousePos.x > transform.position.x);
-                animator.SetBool("Pre-Input", true);
-
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                }
-            }
-        }
-    }
-
-    // Æ¯¼ö °ø°İ
     public void HandleSpecialAttack()
     {
-        if (currentState != WhitePlayerState.Death)
-        {
-            if (isShiftReady && nextState < WhitePlayerState.Skill)
-            {
-                nextState = WhitePlayerState.Skill;
-                animator.SetBool("Pre-Attack", true);
-                animator.SetBool("Pre-Input", true);
-                Vector3 mousePos = GetMouseWorldPosition();
-                animator.SetBool("Right", mousePos.x > transform.position.x);
-
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                }
-            }
-
-        }
+        attackManager.ExecuteAction(Skills.Shift_L);
     }
 
-    // ±Ã±Ø±â °ø°İ 
     public void HandleUltimateAttack()
     {
-        if (currentState != WhitePlayerState.Death)
-        {
-            if (isUltimateReady && nextState < WhitePlayerState.Ultimate)
-            {
-
-                nextState = WhitePlayerState.Ultimate;
-                animator.SetBool("Pre-Attack", true);
-                animator.SetBool("Pre-Input", true);
-                Vector3 mousePos = GetMouseWorldPosition();
-                animator.SetBool("Right", mousePos.x > transform.position.x);
-
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                }
-            }
-        }
+        attackManager.ExecuteAction(Skills.R);
     }
 
-
-    public WhitePlayerAttackZone AttackCollider;
-
-    // °ø°İ ¾Ö´Ï¸ŞÀÌ¼Ç ÀÌº¥Æ®¿ë ½ºÅÓ (WhitePlayerController_AttackStack¿¡¼­ È£Ãâ) 
-
-    public IEnumerator CoStartSkillCoolDown() // ÀÌº¥Æ® Å¬¸³À¸·Î ÄğÅ¸ÀÓ Ã¼Å©
+    public void HandleGuard()
     {
-        isShiftReady = false;
-        ShiftCoolDownUpdate?.Invoke(shiftCoolDown);
-        yield return new WaitForSeconds(shiftCoolDown);
-        isShiftReady = true;
+        attackManager.ExecuteAction(Skills.Mouse_R);
     }
 
-    public IEnumerator CoStartUltimateCoolDown() // ÀÌº¥Æ® Å¬¸³À¸·Î ÄğÅ¸ÀÓ Ã¼Å©
+    public void AdvanceAttackCombo()
     {
-        isUltimateReady = false;
-        UltimateCoolDownUpdate?.Invoke(ultimateCoolDown);
-        yield return new WaitForSeconds(ultimateCoolDown);
-        isUltimateReady = true;
+        attackStack++;
+        AttackStackUpdate?.Invoke(attackStack);
+        attackManager.AdvanceCombo(attackStack);
     }
 
-    public IEnumerator CoStartGuardCoolDown() // ÀÌº¥Æ® Å¬¸³À¸·Î ÄğÅ¸ÀÓ Ã¼Å©
-    {
-        isMouseRightSkillReady = false;
-        MouseRightSkillCoolDownUpdate?.Invoke(mouseRightCoolDown);
-        yield return new WaitForSeconds(mouseRightCoolDown);
-        isMouseRightSkillReady = true;
-    }
-
-    public void OnAttackPreAttckStart()
-    {
-        animator.SetBool("CancleState", true);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", true);
-        }
-        Debug.Log("¼±µô ½ÃÀÛ");
-    }
-
-    public void OnAttackPreAttckEnd()
-    {
-        animator.SetBool("CancleState", false);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
-        }
-        Debug.Log("¼±µô Á¾·á");
-    }
-
-    public void OnMoveFront(float value)
-    {
-        transform.Translate((GetMouseWorldPosition() - transform.position).normalized * value);
-    }
-
-    private Vector3 GetMouseWorldPosition()
+    public Vector3 GetMouseWorldPosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Plane groundPlane = new Plane(Vector3.up, new Vector3(0, transform.position.y, 0));
@@ -421,261 +311,14 @@ public class WhitePlayerController : ParentPlayerController
         return Vector3.zero;
     }
 
-    public void OnAttack1DamageStart()
+    public IEnumerator DoDash(Vector3 dashDir)
     {
-        if (AttackCollider != null)
-        {
-            if (photonView.IsMine)
-            {
-                AttackCollider.Damage = runTimeData.attackPower;
-            }
-            AttackCollider.EnableAttackCollider(true);
-        }
-        Debug.Log("Attack1: µ¥¹ÌÁö ½ÃÀÛ");
+        Vector3 startPos = transform.position;
+        Vector3 targetPos = startPos + dashDir.normalized * dashDistance;
+        yield return null;
+        transform.position = targetPos;
     }
 
-    public void OnSkillCollider()
-    {
-        if (AttackCollider != null)
-        {
-            if (photonView.IsMine)
-            {
-                AttackCollider.Damage = runTimeData.attackPower * 1.7f;
-            }
-            AttackCollider.EnableSkillAttackCollider(true, animator.GetBool("Right"));
-        }
-    }
-
-    public void OffSkillCollider()
-    {
-        if (AttackCollider != null)
-        {
-            AttackCollider.EnableSkillAttackCollider(false);
-        }
-    }
-
-    public void OnCounterCollider()
-    {
-        if (AttackCollider != null)
-        {
-            if (photonView.IsMine)
-            {
-                AttackCollider.Damage = runTimeData.attackPower * runTimeData.attackSpeed;
-            }
-            AttackCollider.EnableCounterAttackCollider(true, animator.GetBool("Right"));
-        }
-    }
-
-    public void OffCounterCollider()
-    {
-        if (AttackCollider != null)
-        {
-            AttackCollider.EnableCounterAttackCollider(true, animator.GetBool("Right"));
-        }
-    }
-
-    public void OnLastAttackStart()
-    {
-        if (AttackCollider != null)
-        {
-            AttackCollider.EnableAttackCollider(false);
-        }
-        animator.SetBool("CancleState", true);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", true);
-        }
-        Debug.Log("ÈÄµô ½ÃÀÛ");
-    }
-
-    public void CreateUltimateEffect()
-    {
-        if (animator.GetBool("Right"))
-        {
-            if (PhotonNetwork.IsConnected)
-            {
-                SkillEffect skillEffect = PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right", transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
-                if (photonView.IsMine)
-                {
-                    skillEffect.Init(runTimeData.attackPower * 1.7f, AttackCollider.StartHitlag);
-                }
-            }
-            else
-            {
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right"), transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity);
-                skillEffect.Init(runTimeData.attackPower * 1.7f, AttackCollider.StartHitlag);
-            }
-        }
-        else
-        {
-            if (PhotonNetwork.IsConnected)
-            {
-                SkillEffect skillEffect = PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left", transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
-                if (photonView.IsMine)
-                {
-                    skillEffect.Init(runTimeData.attackPower * 1.7f, AttackCollider.StartHitlag);
-                }
-            }
-            else
-            {
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left"), transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity);
-                skillEffect.Init(runTimeData.attackPower * 1.7f, AttackCollider.StartHitlag);
-            }
-        }
-    }
-
-    public void GetUltimateBonus()
-    {
-        Debug.Log("±Ã±Ø±â ³³µµ ¹öÇÁ");
-    }
-
-    public void UltimateMove(float distance)
-    {
-        transform.position += new Vector3(distance, 0, 0);
-    }
-
-    public void OnAttackAllowNextInput()
-    {
-        animator.SetBool("FreeState", true);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", true);
-        }
-        Debug.Log("ÀÚÀ¯»óÅÂ");
-    }
-
-    public void OnAttackAnimationEnd()
-    {
-        attackStack = 0;
-        AttackStackUpdate?.Invoke(attackStack);
-        animator.SetBool("Pre-Attack", false);
-        animator.SetBool("FreeState", false);
-        animator.SetBool("CancleState", false);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", false);
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", false);
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
-        }
-        Debug.Log(" ¾Ö´Ï¸ŞÀÌ¼Ç Á¾·á");
-    }
-
-
-    public void OnAttack2DamageStart()
-    {
-        if (AttackCollider != null)
-        {
-            if (photonView.IsMine)
-            {
-                AttackCollider.Damage = runTimeData.attackPower;
-            }
-            AttackCollider.EnableAttackCollider(true);
-        }
-        Debug.Log("Attack2: µ¥¹ÌÁö ½ÃÀÛ");
-    }
-
-    public void OnAttack3DamageStart()
-    {
-        if (AttackCollider != null)
-        {
-            if (photonView.IsMine)
-            {
-                AttackCollider.Damage = runTimeData.attackPower * 0.7f;
-            }
-            AttackCollider.EnableAttackCollider(true);
-        }
-        Debug.Log("Attack3: µ¥¹ÌÁö ½ÃÀÛ");
-    }
-
-    public void OnCollider3Delete()
-    {
-        if (AttackCollider != null)
-        {
-            AttackCollider.EnableAttackCollider(false);
-
-            Debug.Log("Attack3: Ã¹¹øÂ° Äİ¶óÀÌ´õ Á¦°Å");
-        }
-
-        if (AttackCollider != null)
-        {
-            if (photonView.IsMine)
-            {
-                AttackCollider.Damage = runTimeData.attackPower * 0.7f;
-            }
-
-            AttackCollider.EnableAttackCollider(true);
-        }
-        Debug.Log("Attack3: µÎ¹øÂ° Äİ¶óÀÌ´õ »ı¼º");
-    }
-
-
-    public void OnAttack4DamageStart()
-    {
-        if (AttackCollider != null)
-        {
-            if (photonView.IsMine)
-            {
-                AttackCollider.Damage = runTimeData.attackPower * 1.5f;
-            }
-            AttackCollider.EnableAttackCollider(true);
-        }
-        Debug.Log("Attack4: µ¥¹ÌÁö ½ÃÀÛ");
-    }
-
-    public void OnCollider4Delete()
-    {
-        if (AttackCollider != null)
-        {
-            AttackCollider.EnableAttackCollider(false);
-
-            Debug.Log("Attack4: Ã¹¹øÂ° Äİ¶óÀÌ´õ Á¦°Å");
-        }
-
-        if (AttackCollider != null)
-        {
-            if (photonView.IsMine)
-            {
-                AttackCollider.Damage = runTimeData.attackPower * 1.5f;
-            }
-
-            AttackCollider.EnableAttackCollider(true);
-        }
-        Debug.Log("Attack4: µÎ¹øÂ° Äİ¶óÀÌ´õ »ı¼º");
-    }
-
-
-    public void InitAttackStak()
-    {
-        attackStack = 0;
-        AttackStackUpdate?.Invoke(attackStack);
-    }
-
-    // °¡µå/ÆĞ¸µ Ã³¸®
-    public void HandleGuard()
-    {
-        if (currentState != WhitePlayerState.Death)
-        {
-            if (isMouseRightSkillReady && nextState < WhitePlayerState.Guard)
-            {
-
-                nextState = WhitePlayerState.Guard;
-                animator.SetBool("Pre-Attack", true);
-                animator.SetBool("Pre-Input", true);
-                Vector3 mousePos = GetMouseWorldPosition();
-                animator.SetBool("Right", mousePos.x > transform.position.x);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                }
-            }
-        }
-    }
-
-
-
-    // ÇÇ°İ ¹× »ç¸Á Ã³¸®
     public override void TakeDamage(float damage)
     {
         if (currentState == WhitePlayerState.Death || currentState == WhitePlayerState.Stun)
@@ -691,12 +334,9 @@ public class WhitePlayerController : ParentPlayerController
                 {
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "parry", true);
                 }
-                //photonView.RPC("PlayAnimation", RpcTarget.All, "parry");
 
                 currentState = WhitePlayerState.Parry;
-                isMouseRightSkillReady = true;
-                MouseRightSkillCoolDownUpdate?.Invoke(0);
-                StopCoroutine("CoStartGuardCoolDown");
+                ResetSkillCooldown(Skills.Mouse_R);
                 return;
             }
             return;
@@ -704,7 +344,7 @@ public class WhitePlayerController : ParentPlayerController
 
         base.TakeDamage(damage);
 
-        Debug.Log("ÇÃ·¹ÀÌ¾î Ã¼·Â: " + runTimeData.currentHealth);
+        Debug.Log("ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ Ã¼ï¿½ï¿½: " + runTimeData.currentHealth);
 
         if (runTimeData.currentHealth <= 0)
         {
@@ -721,8 +361,6 @@ public class WhitePlayerController : ParentPlayerController
             }
             else
             {
-                //photonView.RPC("PlayAnimation", RpcTarget.All, "hit");
-
                 animator.SetBool("hit", true);
                 if (PhotonNetwork.IsConnected)
                 {
@@ -730,9 +368,9 @@ public class WhitePlayerController : ParentPlayerController
                 }
                 currentState = WhitePlayerState.Hit;
             }
-            //StartCoroutine(CoHitReaction());
         }
     }
+
     [PunRPC]
     public override void DamageToMaster(float damage)
     {
@@ -743,30 +381,23 @@ public class WhitePlayerController : ParentPlayerController
     public override void UpdateHP(float hp)
     {
         base.UpdateHP(hp);
-        Debug.Log(photonView.ViewID + "ÇÃ·¹ÀÌ¾î Ã¼·Â: " + runTimeData.currentHealth);
+        Debug.Log(photonView.ViewID + "í”Œë ˆì´ì–´ ì²´ë ¥: " + runTimeData.currentHealth);
 
         runTimeData.currentHealth = hp;
 
-        if (photonView.IsMine)
+        if (photonView.IsMine && hpBar != null)
         {
             hpBar.enabled = true;
             hpBar.fillAmount = runTimeData.currentHealth / maxHealth;
         }
 
-        Debug.Log(photonView.ViewID + " ÇÃ·¹ÀÌ¾î Ã¼·Â ¾÷µ¥ÀÌÆ®µÊ: " + runTimeData.currentHealth);
+        Debug.Log(photonView.ViewID + " í”Œë ˆì´ì–´ ì²´ë ¥ ì—…ë°ì´íŠ¸ë¨: " + runTimeData.currentHealth);
     }
 
-
-    // ±âÀı
-
-    // GaugeInteraction Å¬·¡½º ÂüÁ¶
-    private GaugeInteraction gaugeInteraction;
-
-    private Coroutine stunCoroutine;
     private void EnterStunState()
     {
         currentState = WhitePlayerState.Stun;
-        Debug.Log("ÇÃ·¹ÀÌ¾î ±âÀı");
+        Debug.Log("ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½");
         animator.SetBool("stun", true);
         if (PhotonNetwork.IsConnected)
         {
@@ -779,7 +410,6 @@ public class WhitePlayerController : ParentPlayerController
         stunCoroutine = StartCoroutine(CoStunDuration());
     }
 
-
     private IEnumerator CoStunDuration()
     {
         float stunDuration = 30f;
@@ -787,17 +417,24 @@ public class WhitePlayerController : ParentPlayerController
 
         if (photonView.IsMine)
         {
-            stunOverlay.enabled = true;
-            stunSlider.enabled = true;
-            stunSlider.fillAmount = 1f;
-            hpBar.enabled = false;  // ±âÀı »óÅÂ¿¡¼± Ã¼·Â¹Ù ºñÈ°¼ºÈ­
+            if (stunOverlay != null)
+                stunOverlay.enabled = true;
+            
+            if (stunSlider != null)
+            {
+                stunSlider.enabled = true;
+                stunSlider.fillAmount = 1f;
+            }
+            
+            if (hpBar != null)
+                hpBar.enabled = false;
         }
 
         while (elapsed < stunDuration && currentState == WhitePlayerState.Stun)
         {
             elapsed += Time.deltaTime;
 
-            if (photonView.IsMine)
+            if (photonView.IsMine && stunSlider != null)
             {
                 stunSlider.fillAmount = 1 - (elapsed / stunDuration);
             }
@@ -805,19 +442,20 @@ public class WhitePlayerController : ParentPlayerController
             yield return null;
         }
 
-        if (currentState == WhitePlayerState.Stun)  // ¿©ÀüÈ÷ ±âÀı»óÅÂ¶ó¸é
+        if (currentState == WhitePlayerState.Stun)
         {
             TransitionToDeath();
         }
 
         if (photonView.IsMine)
         {
-            stunSlider.enabled = false;
-            stunOverlay.enabled = false;
+            if (stunSlider != null)
+                stunSlider.enabled = false;
+            
+            if (stunOverlay != null)
+                stunOverlay.enabled = false;
         }
     }
-
-    private float maxHealth = 100f;
 
     public void Revive()
     {
@@ -838,9 +476,14 @@ public class WhitePlayerController : ParentPlayerController
 
             if (photonView.IsMine)
             {
-                stunSlider.enabled = false;
-                stunOverlay.enabled = false;
-                hpBar.enabled = true; 
+                if (stunSlider != null)
+                    stunSlider.enabled = false;
+                
+                if (stunOverlay != null)
+                    stunOverlay.enabled = false;
+                
+                if (hpBar != null)
+                    hpBar.enabled = true;
             }
 
             animator.SetBool("revive", true);
@@ -849,87 +492,32 @@ public class WhitePlayerController : ParentPlayerController
                 photonView.RPC("SyncBoolParameter", RpcTarget.Others, "revive", true);
             }
 
-            photonView.RPC("UpdateHP", RpcTarget.All, 20f); // ¿©±â¼­ Ã¼·Â ¾÷µ¥ÀÌÆ®
-            Debug.Log("ÇÃ·¹ÀÌ¾î ºÎÈ°");
+            photonView.RPC("UpdateHP", RpcTarget.All, 20f);
+            Debug.Log("í”Œë ˆì´ì–´ ë¶€í™œ");
         }
     }
 
-
-    /*
-
-    public void HandleReviveInteraction(InputAction.CallbackContext context)
-    {
-        if (!photonView.IsMine) return;
-
-        if (isInReviveRange && stunnedPlayer != null && stunnedPlayer.currentState == WhitePlayerState.Stun)
-        {
-            if (context.started && reviveCoroutine == null)
-            {
-                reviveCoroutine = StartCoroutine(ReviveGaugeRoutine());
-            }
-            else if (context.canceled && reviveCoroutine != null)
-            {
-                StopCoroutine(reviveCoroutine);
-                reviveCoroutine = null;
-                gaugeInteraction.CancelGaugeCoroutine(false);
-                Debug.Log("ºÎÈ° ½Ãµµ Ãë¼ÒµÊ (Å° ÀÔ·Â ÇØÁ¦)");
-            }
-        }
-    }
-
-    private IEnumerator ReviveGaugeRoutine()
-    {
-        gaugeInteraction.holdTime = 5f;
-        gaugeInteraction.StartGaugeCoroutine();
-
-        float timer = 0f;
-        const float reviveDuration = 5f;
-
-        while (timer < reviveDuration)
-        {
-            if (!isInReviveRange || stunnedPlayer == null || stunnedPlayer.currentState != WhitePlayerState.Stun)
-            {
-                gaugeInteraction.CancelGaugeCoroutine(false);
-                Debug.Log("ºÎÈ° Áß´ÜµÊ (¹üÀ§ ÀÌÅ» ¶Ç´Â »óÅÂ º¯°æ)");
-                reviveCoroutine = null;
-                yield break;
-            }
-
-            timer += Time.deltaTime;
-            yield return null;
-        }
-
-        if (stunnedPlayer != null && stunnedPlayer.currentState == WhitePlayerState.Stun)
-        {
-            stunnedPlayer.photonView.RPC("ReviveRPC", RpcTarget.MasterClient);
-            Debug.Log("ºÎÈ° RPC È£Ãâ ¿Ï·á");
-        }
-
-        gaugeInteraction.CancelGaugeCoroutine(true);
-        reviveCoroutine = null;
-    }
-
-    */
-
-    // RPC
     [PunRPC]
     public void ReviveRPC()
     {
         Revive();
     }
 
-
-
-
     private void TransitionToDeath()
     {
         currentState = WhitePlayerState.Death;
-        Debug.Log("ÇÃ·¹ÀÌ¾î »ç¸Á");
+        Debug.Log("í”Œë ˆì´ì–´ ì‚¬ë§");
+        
         if (photonView.IsMine)
         {
-            stunSlider.enabled = false;
-            stunOverlay.enabled = false;
-            hpBar.enabled = false;  // »ç¸Á½Ã Ã¼·Â¹Ù ºñÈ°¼ºÈ­
+            if (stunSlider != null)
+                stunSlider.enabled = false;
+            
+            if (stunOverlay != null)
+                stunOverlay.enabled = false;
+            
+            if (hpBar != null)
+                hpBar.enabled = false;
         }
 
         if (animator != null)
@@ -941,7 +529,6 @@ public class WhitePlayerController : ParentPlayerController
             }
         }
     }
-
 
     public override void EnterInvincibleState()
     {
@@ -990,4 +577,208 @@ public class WhitePlayerController : ParentPlayerController
     {
         photonView.RPC("SyncIntParameter", RpcTarget.Others, parameter, value);
     }
+
+    // ì¿¨ë‹¤ìš´ ì‹œì‘ ë©”ì„œë“œ - AttackActionì—ì„œ í˜¸ì¶œ
+    public void StartCooldown(Skills skillType)
+    {
+        switch(skillType)
+        {
+            case Skills.Mouse_L:
+                StartAttackCooldown();
+                break;
+            case Skills.Mouse_R:
+                StartMouseRightCooldown();
+                break;
+            case Skills.Space:
+                StartDashCooldown();
+                break;
+            case Skills.Shift_L:
+                StartShiftCooldown();
+                break;
+            case Skills.R:
+                StartUltimateCooldown();
+                break;
+        }
+    }
+    
+    #region Animation Event Methods
+    
+    // ê¸°ë³¸ ê³µê²© ì• ë‹ˆë©”ì´ì…˜ ì´ë²¤íŠ¸ ë©”ì„œë“œ
+    public void OnAttack1DamageStart()
+    {
+        if (AttackCollider != null)
+        {
+            if (photonView.IsMine)
+            {
+                AttackCollider.Damage = runTimeData.attackPower;
+            }
+            AttackCollider.EnableAttackCollider(true);
+        }
+        Debug.Log("Attack1: ë°ë¯¸ì§€ ì‹œì‘");
+    }
+    
+    public void OnAttack1DamageEnd()
+    {
+        if (AttackCollider != null)
+        {
+            AttackCollider.EnableAttackCollider(false);
+        }
+        Debug.Log("Attack1: ë°ë¯¸ì§€ ì¢…ë£Œ");
+    }
+    
+    public void OnAttack1AllowNextInput()
+    {
+        OnAttackAllowNextInput();
+    }
+    
+    public void OnAttack1AnimationEnd()
+    {
+        OnAttackAnimationEnd();
+    }
+    
+    public void OnAttack2DamageStart()
+    {
+        if (AttackCollider != null)
+        {
+            if (photonView.IsMine)
+            {
+                AttackCollider.Damage = runTimeData.attackPower;
+            }
+            AttackCollider.EnableAttackCollider(true);
+        }
+        Debug.Log("Attack2: ë°ë¯¸ì§€ ì‹œì‘");
+    }
+    
+    public void OnAttack2DamageEnd()
+    {
+        if (AttackCollider != null)
+        {
+            AttackCollider.EnableAttackCollider(false);
+        }
+        Debug.Log("Attack2: ë°ë¯¸ì§€ ì¢…ë£Œ");
+    }
+    
+    public void OnAttack2AllowNextInput()
+    {
+        OnAttackAllowNextInput();
+    }
+    
+    public void OnAttack2AnimationEnd()
+    {
+        OnAttackAnimationEnd();
+    }
+    
+    public void OnAttack3DamageStart()
+    {
+        if (AttackCollider != null)
+        {
+            if (photonView.IsMine)
+            {
+                AttackCollider.Damage = runTimeData.attackPower * 0.7f;
+            }
+            AttackCollider.EnableAttackCollider(true);
+        }
+        Debug.Log("Attack3: ë°ë¯¸ì§€ ì‹œì‘");
+    }
+    
+    public void OnAttack4DamageStart()
+    {
+        if (AttackCollider != null)
+        {
+            if (photonView.IsMine)
+            {
+                AttackCollider.Damage = runTimeData.attackPower * 1.5f;
+            }
+            AttackCollider.EnableAttackCollider(true);
+        }
+        Debug.Log("Attack4: ë°ë¯¸ì§€ ì‹œì‘");
+    }
+    
+    // ìŠ¤í‚¬ ê´€ë ¨ ë©”ì„œë“œ
+    public void OnSkillCollider()
+    {
+        if (AttackCollider != null)
+        {
+            if (photonView.IsMine)
+            {
+                AttackCollider.Damage = runTimeData.attackPower * 1.7f;
+            }
+            AttackCollider.EnableSkillAttackCollider(true, animator.GetBool("Right"));
+        }
+    }
+    
+    public void OffSkillCollider()
+    {
+        if (AttackCollider != null)
+        {
+            AttackCollider.EnableSkillAttackCollider(false);
+        }
+    }
+    
+    // ê¶ê·¹ê¸° ì´í™íŠ¸ ë©”ì„œë“œ
+    public void CreateUltimateEffect()
+    {
+        if (animator.GetBool("Right"))
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                SkillEffect skillEffect = PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right", transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
+                if (photonView.IsMine)
+                {
+                    skillEffect.Init(runTimeData.attackPower * 1.7f, AttackCollider.StartHitlag);
+                }
+            }
+            else
+            {
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right"), transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity);
+                skillEffect.Init(runTimeData.attackPower * 1.7f, AttackCollider.StartHitlag);
+            }
+        }
+        else
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                SkillEffect skillEffect = PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left", transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
+                if (photonView.IsMine)
+                {
+                    skillEffect.Init(runTimeData.attackPower * 1.7f, AttackCollider.StartHitlag);
+                }
+            }
+            else
+            {
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left"), transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity);
+                skillEffect.Init(runTimeData.attackPower * 1.7f, AttackCollider.StartHitlag);
+            }
+        }
+    }
+    
+    // ê³µê²© ì• ë‹ˆë©”ì´ì…˜ì—ì„œ ë‹¤ìŒ ì…ë ¥ì„ í—ˆìš©í•˜ëŠ” ìƒíƒœë¡œ ì „í™˜í•˜ëŠ” ë©”ì„œë“œ
+    public void OnAttackAllowNextInput()
+    {
+        animator.SetBool("FreeState", true);
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", true);
+        }
+        Debug.Log("ë‹¤ìŒ ì…ë ¥ í—ˆìš©");
+    }
+    
+    // ê³µê²© ì• ë‹ˆë©”ì´ì…˜ ìƒíƒœ ë³€ê²½ ë©”ì„œë“œ
+    public void OnAttackAnimationEnd()
+    {
+        attackStack = 0;
+        AttackStackUpdate?.Invoke(attackStack);
+        animator.SetBool("Pre-Attack", false);
+        animator.SetBool("FreeState", false);
+        animator.SetBool("CancleState", false);
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", false);
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", false);
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
+        }
+        Debug.Log("ì• ë‹ˆë©”ì´ì…˜ ì¢…ë£Œ");
+    }
+    
+    #endregion
 }
