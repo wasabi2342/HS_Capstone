@@ -9,10 +9,6 @@ public enum WhitePlayerState { Idle, Run, BasicAttack, Hit, Dash, Skill, Ultimat
 
 public class WhitePlayerController : ParentPlayerController
 {
-
-    
-
-
     [Header("대쉬 설정")]
     public float dashDistance = 2f;
     public float dashDoubleClickThreshold = 0.3f;
@@ -26,28 +22,10 @@ public class WhitePlayerController : ParentPlayerController
     public Transform[] centerPoints = new Transform[8];
     private int currentDirectionIndex = 0;
 
-
-    [Header("부활 UI 설정")]
-    public Canvas reviveCanvas;  // 부활 진행 캔버스
-    public Image reviveGauge;    // 부활 게이지 (Image - fillAmount 사용)
-    private Coroutine reviveCoroutine;
-    private bool isInReviveRange = false;
-    private WhitePlayerController stunnedPlayer;  // 기절 플레이어 참조
-
-
     // 이동 입력 및 상태
     private Vector2 moveInput;
     public WhitePlayerState currentState = WhitePlayerState.Idle;
     public WhitePlayerState nextState = WhitePlayerState.Idle;
-
-    [Header("우클릭 가드/패링 설정")]
-    public float guardDuration = 2f;
-    public float parryDuration = 2f;
-    //private bool isGuarding = false;
-    //private bool isParrying = false;
-
-    [Header("Counter (발도) 설정")]
-    public int counterDamage = 20;
 
     // 참조 컴포넌트 
     private Animator animator;
@@ -73,7 +51,7 @@ public class WhitePlayerController : ParentPlayerController
         {
             if (photonView.IsMine)
             {
-                
+
                 if (stunOverlay != null) stunOverlay.enabled = false;
                 if (stunSlider != null) stunSlider.enabled = false;
                 if (hpBar != null) hpBar.enabled = true;
@@ -489,9 +467,9 @@ public class WhitePlayerController : ParentPlayerController
         {
             if (PhotonNetwork.IsConnected)
             {
-                SkillEffect skillEffect = PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right", transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
                 if (photonView.IsMine)
                 {
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right", transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
                     skillEffect.Init(runTimeData.attackPower * 1.7f, AttackCollider.StartHitlag);
                 }
             }
@@ -505,9 +483,9 @@ public class WhitePlayerController : ParentPlayerController
         {
             if (PhotonNetwork.IsConnected)
             {
-                SkillEffect skillEffect = PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left", transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
                 if (photonView.IsMine)
                 {
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left", transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
                     skillEffect.Init(runTimeData.attackPower * 1.7f, AttackCollider.StartHitlag);
                 }
             }
@@ -554,7 +532,6 @@ public class WhitePlayerController : ParentPlayerController
         }
         Debug.Log(" 애니메이션 종료");
     }
-
 
     public void OnAttack2DamageStart()
     {
@@ -603,7 +580,6 @@ public class WhitePlayerController : ParentPlayerController
         Debug.Log("Attack3: 두번째 콜라이더 생성");
     }
 
-
     public void OnAttack4DamageStart()
     {
         if (AttackCollider != null)
@@ -638,12 +614,45 @@ public class WhitePlayerController : ParentPlayerController
         Debug.Log("Attack4: 두번째 콜라이더 생성");
     }
 
-
     public void InitAttackStak()
     {
         attackStack = 0;
         AttackStackUpdate?.Invoke(attackStack);
     }
+
+    #region Blessing 01 Crocell
+
+    public void ShiftSkill_01_Crocell_AddShield()
+    {
+        //AddShield(DataManager.Instance.loadDatas.characterBlessingSkillDatas[(int)Characters.WhitePlayer].blessingSkillDatas[(int)Blessings.Crocell].skillDatas[(int)Skills.Shift_L].shieldAmount,
+        //    DataManager.Instance.loadDatas.characterBlessingSkillDatas[(int)Characters.WhitePlayer].blessingSkillDatas[(int)Blessings.Crocell].skillDatas[(int)Skills.Shift_L].shieldAmount);
+        AddShield(10f, 5f);
+    }
+
+    public void Guard_01_Crocell_AddShield()
+    {
+        //AddShield(runTimeData.abilityPower * 0.5f,
+        //    DataManager.Instance.loadDatas.characterBlessingSkillDatas[(int)Characters.WhitePlayer].blessingSkillDatas[(int)Blessings.Crocell].skillDatas[(int)Skills.Mouse_R].shieldAmount);
+        AddShield(runTimeData.abilityPower * 0.5f, 5f);
+    }
+
+    public void Space_01_Crocell_AddShield()
+    {
+        //AddShield(runTimeData.attackPower * 0.3f,
+        //    DataManager.Instance.loadDatas.characterBlessingSkillDatas[(int)Characters.WhitePlayer].blessingSkillDatas[(int)Blessings.Crocell].skillDatas[(int)Skills.Space].shieldAmount);
+        AddShield(runTimeData.attackPower * 0.3f, 5f);
+    }
+
+    #endregion
+
+    #region Blessing 02 Gremory
+
+    #endregion
+
+    #region Blessing 03 Paymon
+
+    #endregion
+
 
     // 가드/패링 처리
     public void HandleGuard()
@@ -667,8 +676,6 @@ public class WhitePlayerController : ParentPlayerController
             }
         }
     }
-
-
 
     // 피격 및 사망 처리
     public override void TakeDamage(float damage)
@@ -751,7 +758,6 @@ public class WhitePlayerController : ParentPlayerController
         Debug.Log(photonView.ViewID + " 플레이어 체력 업데이트됨: " + runTimeData.currentHealth);
     }
 
-
     // 기절
 
     // GaugeInteraction 클래스 참조
@@ -773,7 +779,6 @@ public class WhitePlayerController : ParentPlayerController
 
         stunCoroutine = StartCoroutine(CoStunDuration());
     }
-
 
     private IEnumerator CoStunDuration()
     {
@@ -835,7 +840,7 @@ public class WhitePlayerController : ParentPlayerController
             {
                 stunSlider.enabled = false;
                 stunOverlay.enabled = false;
-                hpBar.enabled = true; 
+                hpBar.enabled = true;
             }
 
             animator.SetBool("revive", true);
@@ -849,72 +854,12 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
-
-    /*
-
-    public void HandleReviveInteraction(InputAction.CallbackContext context)
-    {
-        if (!photonView.IsMine) return;
-
-        if (isInReviveRange && stunnedPlayer != null && stunnedPlayer.currentState == WhitePlayerState.Stun)
-        {
-            if (context.started && reviveCoroutine == null)
-            {
-                reviveCoroutine = StartCoroutine(ReviveGaugeRoutine());
-            }
-            else if (context.canceled && reviveCoroutine != null)
-            {
-                StopCoroutine(reviveCoroutine);
-                reviveCoroutine = null;
-                gaugeInteraction.CancelGaugeCoroutine(false);
-                Debug.Log("부활 시도 취소됨 (키 입력 해제)");
-            }
-        }
-    }
-
-    private IEnumerator ReviveGaugeRoutine()
-    {
-        gaugeInteraction.holdTime = 5f;
-        gaugeInteraction.StartGaugeCoroutine();
-
-        float timer = 0f;
-        const float reviveDuration = 5f;
-
-        while (timer < reviveDuration)
-        {
-            if (!isInReviveRange || stunnedPlayer == null || stunnedPlayer.currentState != WhitePlayerState.Stun)
-            {
-                gaugeInteraction.CancelGaugeCoroutine(false);
-                Debug.Log("부활 중단됨 (범위 이탈 또는 상태 변경)");
-                reviveCoroutine = null;
-                yield break;
-            }
-
-            timer += Time.deltaTime;
-            yield return null;
-        }
-
-        if (stunnedPlayer != null && stunnedPlayer.currentState == WhitePlayerState.Stun)
-        {
-            stunnedPlayer.photonView.RPC("ReviveRPC", RpcTarget.MasterClient);
-            Debug.Log("부활 RPC 호출 완료");
-        }
-
-        gaugeInteraction.CancelGaugeCoroutine(true);
-        reviveCoroutine = null;
-    }
-
-    */
-
     // RPC
     [PunRPC]
     public void ReviveRPC()
     {
         Revive();
     }
-
-
-
 
     private void TransitionToDeath()
     {
@@ -984,5 +929,15 @@ public class WhitePlayerController : ParentPlayerController
     public void SetIntParameter(string parameter, int value)
     {
         photonView.RPC("SyncIntParameter", RpcTarget.Others, parameter, value);
+    }
+
+    public override void RecoverHealth(float value)
+    {
+        base.RecoverHealth(value);
+    }
+
+    public override void AddShield(float amount, float duration)
+    {
+        base.AddShield(amount, duration);
     }
 }

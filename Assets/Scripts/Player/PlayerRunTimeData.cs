@@ -26,6 +26,10 @@ public class PlayerRunTimeData
         this.abilityPower = abilityPower;
         this.currentHealth = maxtHealth;
         blessingInfo = new BlessingInfo[(int)Skills.Max];
+        for(int i = 0 ; i < blessingInfo.Length; i++)
+        {
+            blessingInfo[i] = new BlessingInfo(Blessings.None, 0);
+        }
     }
 
     public void SaveToJsonFile()
