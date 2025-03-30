@@ -780,5 +780,93 @@ public class WhitePlayerController : ParentPlayerController
         Debug.Log("애니메이션 종료");
     }
     
+    // 공격 스택을 초기화하는 메서드 (애니메이션 이벤트에서 호출)
+    public void InitAttackStak()
+    {
+        attackStack = 0;
+        AttackStackUpdate?.Invoke(attackStack);
+        Debug.Log("공격 스택 초기화");
+    }
+    
+    // 공격 준비 상태 시작 메서드 (오타가 있지만 애니메이션 이벤트와 이름 일치를 위해 유지)
+    public void OnAttackPreAttckStart()
+    {
+        animator.SetBool("CancleState", true);
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", true);
+        }
+        Debug.Log("공격 준비 시작");
+    }
+    
+    // 공격 준비 상태 종료 메서드
+    public void OnAttackPreAttckEnd()
+    {
+        animator.SetBool("CancleState", false);
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
+        }
+        Debug.Log("공격 준비 종료");
+    }
+    
+    // 공격 시 캐릭터를 특정 방향으로 이동시키는 메서드
+    public void OnMoveFront(float value)
+    {
+        Vector3 mousePos = GetMouseWorldPosition();
+        Vector3 direction = (mousePos - transform.position).normalized;
+        transform.Translate(direction * value, Space.World);
+        Debug.Log($"전방 이동: {value}");
+    }
+    
+    // 마지막 공격 시작 처리
+    public void OnLastAttackStart()
+    {
+        Debug.Log("마지막 공격 시작");
+        // 마지막 공격 효과 또는 로직 추가
+    }
+    
+    // 공격4 콜라이더 제거
+    public void OnCollider4Delete()
+    {
+        if (AttackCollider != null)
+        {
+            AttackCollider.EnableAttackCollider(false);
+        }
+        Debug.Log("공격 4 콜라이더 비활성화");
+    }
+    
+    // 공격3 콜라이더 제거
+    public void OnCollider3Delete()
+    {
+        if (AttackCollider != null)
+        {
+            AttackCollider.EnableAttackCollider(false);
+        }
+        Debug.Log("공격 3 콜라이더 비활성화");
+    }
+    
+    // 스킬 쿨다운 시작
+    public void CoStartSkillCoolDown()
+    {
+        StartShiftCooldown();
+        Debug.Log("스킬 쿨다운 시작");
+    }
+    
+    // 궁극기 쿨다운 시작
+    public void CoStartUltimateCoolDown()
+    {
+        StartUltimateCooldown();
+        Debug.Log("궁극기 쿨다운 시작");
+    }
+    
+    // 궁극기 이동 처리
+    public void UltimateMove(float distance)
+    {
+        Vector3 direction = animator.GetBool("Right") ? Vector3.right : Vector3.left;
+        transform.Translate(direction * distance, Space.World);
+        Debug.Log($"궁극기 이동: {distance}");
+    }
+    
     #endregion
 }
