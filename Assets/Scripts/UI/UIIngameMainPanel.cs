@@ -38,7 +38,7 @@ public class UIIngameMainPanel : UIBase
         Init();
     }
 
-    public override void Init() // ¼±ÅÃµÈ Ä³¸¯ÅÍ Á¤º¸¸¦ ¹Þ¾Æ¿Í ÀÌ¹ÌÁö °»½Å
+    public override void Init() // ï¿½ï¿½ï¿½Ãµï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Æ¿ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     {
         foreach (var icon in uISkillIcons)
         {
@@ -51,7 +51,7 @@ public class UIIngameMainPanel : UIBase
             {
                 UIPartyHPContent content = Instantiate(partyHPContent, partyHPParent);
                 content.Init(GetNicknameByActNum(keyValuePair.Key));
-                // UI ¿¬°á Ãß°¡ÇÏ±â
+                // UI ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ï±ï¿½
                 ParentPlayerController playerController = keyValuePair.Value.GetComponent<ParentPlayerController>();
                 if (playerController != null)
                 {
@@ -60,11 +60,11 @@ public class UIIngameMainPanel : UIBase
                 }
                 contentPairs[keyValuePair.Key] = content;
             }
-            // UI ¿¬°á Ãß°¡ÇÏ±â
+            // UI ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ï±ï¿½
             else
             {
                 ParentPlayerController playerController = keyValuePair.Value.GetComponent<ParentPlayerController>();
-                if (playerController != null) // ÄðÅ¸ÀÓ ÀÌº¥Æ®µµ ¿¬°á ÇÏ±â
+                if (playerController != null) // ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï±ï¿½
                 {
                     playerController.OnHealthChanged.RemoveAllListeners();
                     playerController.OnHealthChanged.AddListener(UpdateHPImage);
@@ -109,7 +109,12 @@ public class UIIngameMainPanel : UIBase
             playerController.OnDashCooldownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.space].StartUpdateSkillCooldown);
             playerController.AttackStackUpdate.RemoveListener(UpdateMouseLeftStack);
             playerController.SkillOutlineUpdate.RemoveAllListeners();
+        }
 
+        // KeyNotFoundException ì˜¤ë¥˜ í•´ê²°
+        if (contentPairs.ContainsKey(-1))
+        {
+            // ê¸°ì¡´ ì½”ë“œ
         }
     }
 
