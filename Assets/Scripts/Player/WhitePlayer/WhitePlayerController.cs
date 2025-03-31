@@ -150,7 +150,7 @@ public class WhitePlayerController : ParentPlayerController
         if (animator != null)
         {
             animator.SetFloat("moveX", h);
-            //animator.SetFloat("moveY", v);
+            animator.SetFloat("moveY", v);
         }
     }
 
@@ -734,6 +734,8 @@ public class WhitePlayerController : ParentPlayerController
             }
             //StartCoroutine(CoHitReaction());
         }
+
+
     }
     [PunRPC]
     public override void DamageToMaster(float damage)
