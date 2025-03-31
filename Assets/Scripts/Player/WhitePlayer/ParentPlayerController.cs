@@ -9,11 +9,16 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     #region Cooldown UI Events
 
     [Header("Cooldown Settings")]
-    protected CooldownManager cooldownManager;
+    // °ø°İ/´ë½¬ ÄğÅ¸ÀÓ (ÀÓÀÇ °ª)
+    protected float attackCooldown = 1f;
+    protected float dashCooldown = 1f;
+    protected float shiftCoolDown = 3f; // Ä³¸¯ÅÍÀÇ ´É·ÂÄ¡, ÄğÅ¸ÀÓ µî Ä³¸¯ÅÍ Á¤º¸¸¦ °¡Áø scriptableobject ¶Ç´Â ±¸Á¶Ã¼, Å¬·¡½º Áß 1°³¸¦ ¸¸µé¾î Start¿¡¼­ ´É·ÂÄ¡ ¿¬°á ÇØÁà¾ßÇÔ
+    protected float ultimateCoolDown = 30f; // ÃßÈÄ¿¡ ·Î±×¶óÀÌÅ© °­È­ ¿ä¼Ò ¶ÇÇÑ ºÒ·¯¿Í¾ß ÇÔ
+    protected float mouseRightCoolDown = 4f;
 
-    // ì²´ë ¥ UI ì´ë²¤íŠ¸ -> ì²´ë ¥ë°” í‘œì‹œ, ì¸ìë¡œ 0~1ë¡œ ì •ê·œí™”ëœ ê°’ì„ ì „ë‹¬
+    // Ã¼·Â UI ¾÷µ¥ÀÌÆ® -> Ã¼·Â¹Ù °»½Å, ÀÎÀÚ·Î 0~1ÀÇ Á¤±ÔÈ­µÈ °ªÀ» Àü¼Û
     public UnityEvent<float> OnHealthChanged;
-    // ê³µê²©/ëŒ€ì‹œ ì¿¨íƒ€ì„ UI ê´€ë ¨ ì´ë²¤íŠ¸ (0~1ì˜ ì •ê·œí™” ê°’ë“¤)
+    // °ø°İ/´ë½¬ ÄğÅ¸ÀÓ UI °»½Å ÀÌº¥Æ® (0~1ÀÇ ÁøÇà·ü Àü´Ş)
     public UnityEvent<float> OnAttackCooldownUpdate;
     public UnityEvent<float> OnDashCooldownUpdate;
     public UnityEvent<float> ShiftCoolDownUpdate;
@@ -22,8 +27,14 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     public UnityEvent<float> AttackStackUpdate;
     public UnityEvent<UIIcon, Color> SkillOutlineUpdate;
 
-    protected bool isInvincible = false; // ë¬´ì  ìƒíƒœ ì²´í¬ìš©
-    protected bool isSuperArmor = false; // ìŠˆí¼ì•„ë¨¸ ìƒíƒœ ì²´í¬ìš©
+    // ½ºÅ³ »ç¿ë °¡´É ¿©ºÎ
+    protected bool isShiftReady = true;
+    protected bool isUltimateReady = true;
+    protected bool isMouseRightSkillReady = true;
+    protected bool isDashReady = true;
+
+    protected bool isInvincible = false; // ¹«Àû »óÅÂ Ã¼Å©¿ë
+    protected bool isSuperArmor = false; // ½´ÆÛ¾Æ¸Ó »óÅÂ Ã¼Å©¿ë
     #endregion
 
     [SerializeField]
@@ -42,60 +53,24 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
             runTimeData.LoadFromJsonFile();
             photonView.RPC("UpdateHP", RpcTarget.Others, runTimeData.currentHealth);
         }
-        
-        // ì¿¨ë‹¤ìš´ ë§¤ë‹ˆì € ì´ˆê¸°í™”
-        cooldownManager = gameObject.AddComponent<CooldownManager>();
-        cooldownManager.Initialize(characterBaseStats);
-        
-        // ì¿¨ë‹¤ìš´ ì´ë²¤íŠ¸ ì—°ê²°
-        cooldownManager.OnCooldownUpdate.AddListener(HandleCooldownUpdate);
-        cooldownManager.OnCooldownComplete.AddListener(HandleCooldownComplete);
+        attackCooldown = characterBaseStats.mouseLeftCooldown;
+        dashCooldown = characterBaseStats.spaceCooldown;
+        shiftCoolDown = characterBaseStats.shiftCooldown;
+        ultimateCoolDown = characterBaseStats.ultimateCooldown;
+        mouseRightCoolDown = characterBaseStats.mouseRightCooldown;
 
         runTimeData.currentHealth = characterBaseStats.maxHP;
-        // ì´ˆê¸° ê°’ ì²´ë ¥ UI ì—…ë°ì´íŠ¸
+        // ½ÃÀÛ ½Ã Ã¼·Â UI ¾÷µ¥ÀÌÆ®
         OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
-    }
-
-    protected virtual void OnDestroy()
-    {
-        if (cooldownManager != null)
-        {
-            cooldownManager.OnCooldownUpdate.RemoveListener(HandleCooldownUpdate);
-            cooldownManager.OnCooldownComplete.RemoveListener(HandleCooldownComplete);
-        }
-    }
-
-    protected void HandleCooldownUpdate(Skills skillType, float progress)
-    {
-        switch (skillType)
-        {
-            case Skills.Mouse_L:
-                OnAttackCooldownUpdate?.Invoke(progress);
-                break;
-            case Skills.Mouse_R:
-                MouseRightSkillCoolDownUpdate?.Invoke(progress);
-                break;
-            case Skills.Space:
-                OnDashCooldownUpdate?.Invoke(progress);
-                break;
-            case Skills.Shift_L:
-                ShiftCoolDownUpdate?.Invoke(progress);
-                break;
-            case Skills.R:
-                UltimateCoolDownUpdate?.Invoke(progress);
-                break;
-        }
-    }
-
-    protected void HandleCooldownComplete(Skills skillType)
-    {
-        Debug.Log($"Skill {skillType} cooldown completed");
     }
 
     #endregion
 
     #region Damage & Health Synchronization
 
+
+
+    // 2) Ãß°¡ ÆÄ¶ó¹ÌÅÍ useRPC¸¦ »ç¿ëÇÑ µ¥¹ÌÁö Ã³¸®
     public virtual void TakeDamage(float damage)
     {
 
@@ -105,33 +80,35 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
             if (PhotonNetwork.IsMasterClient)
             {
-                // Master Clientì—ì„œ ì²´ë ¥ ê³„ì‚°
+                // Master Client´Â Á÷Á¢ Ã¼·Â °è»ê
                 runTimeData.currentHealth -= damage;
                 runTimeData.currentHealth = Mathf.Clamp(runTimeData.currentHealth, 0, characterBaseStats.maxHP);
 
-                // ì²´ë ¥ UI ì—…ë°ì´íŠ¸
+                // Ã¼·Â¹Ù UI ¾÷µ¥ÀÌÆ®
                 OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
 
-                // ë‹¤ë¥¸ í´ë¼ì´ì–¸íŠ¸ì— ì²´ë ¥ ë™ê¸°í™”
+                // ¸ğµç Å¬¶óÀÌ¾ğÆ®¿¡ Ã¼·Â µ¿±âÈ­
                 photonView.RPC("UpdateHP", RpcTarget.Others, runTimeData.currentHealth);
             }
             else
             {
-                // Master Clientê°€ ì•„ë‹ˆë©´, ë°ë¯¸ì§€ë¥¼ Masterì— ì „ë‹¬
+                // Master Client°¡ ¾Æ´Ï¶ó¸é, ÇÇÇØ·®À» Master¿¡ Àü¼Û
                 photonView.RPC("DamageToMaster", RpcTarget.MasterClient, damage);
             }
         }
 
         else
         {
-            // Master Clientì—ì„œ ì²´ë ¥ ê³„ì‚°
+            // Master Client´Â Á÷Á¢ Ã¼·Â °è»ê
             runTimeData.currentHealth -= damage;
             runTimeData.currentHealth = Mathf.Clamp(runTimeData.currentHealth, 0, characterBaseStats.maxHP);
 
-            // ì²´ë ¥ UI ì—…ë°ì´íŠ¸
+            // Ã¼·Â¹Ù UI ¾÷µ¥ÀÌÆ®
             OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
         }
     }
+
+
 
     [PunRPC]
     public virtual void DamageToMaster(float damage)
@@ -142,10 +119,10 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         runTimeData.currentHealth -= damage;
         runTimeData.currentHealth = Mathf.Clamp(runTimeData.currentHealth, 0, characterBaseStats.maxHP);
 
-        // ì²´ë ¥ UI ì—…ë°ì´íŠ¸
+        // Ã¼·Â¹Ù UI ¾÷µ¥ÀÌÆ®
         OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
 
-        // ë‹¤ë¥¸ í´ë¼ì´ì–¸íŠ¸ì— ì²´ë ¥ ë™ê¸°í™”
+        // ¸ğµç Å¬¶óÀÌ¾ğÆ®¿¡ Ã¼·Â µ¿±âÈ­
         photonView.RPC("UpdateHP", RpcTarget.Others, runTimeData.currentHealth);
     }
 
@@ -158,9 +135,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     }
 
     #endregion
-    
     /// <summary>
-    /// ë¬´ì ìƒíƒœ ì„¤ì •
+    /// ¹«Àû»óÅÂ ½ÃÀÛ
     /// </summary>
     public virtual void EnterInvincibleState()
     {
@@ -168,7 +144,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     }
 
     /// <summary>
-    /// ë¬´ì ìƒíƒœ í•´ì œ
+    /// ¹«Àû»óÅÂ Á¾·á
     /// </summary>
     public virtual void ExitInvincibleState()
     {
@@ -176,7 +152,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     }
 
     /// <summary>
-    /// ìŠˆí¼ì•„ë¨¸ìƒíƒœ ì„¤ì •
+    /// ½´ÆÛ¾Æ¸Ó»óÅÂ ½ÃÀÛ
     /// </summary>
     public virtual void EnterSuperArmorState()
     {
@@ -184,15 +160,15 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     }
 
     /// <summary>
-    /// ìŠˆí¼ì•„ë¨¸ ìƒíƒœ í•´ì œ
+    /// ½´ÆÛ¾Æ¸Ó »óÅÂ Á¾·á
     /// </summary>
     public virtual void ExitSuperArmorState()
     {
-        isSuperArmor = false;
+        isSuperArmor = true;
     }
 
     /// <summary>
-    /// ëŸ°íƒ€ì„ë°ì´í„°ë¥¼ jsonìœ¼ë¡œ ì €ì¥
+    /// ·±Å¸ÀÓµ¥ÀÌÅÍ jsonÀ¸·Î ÀúÀå
     /// </summary>
     public virtual void SaveRunTimeData()
     {
@@ -214,49 +190,48 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     protected virtual void OnApplicationQuit()
     {
-        if (!photonView.IsMine) // ë‚´ ë°ì´í„°ë§Œ ì €ì¥ í•˜ë„ë¡
+        if (!photonView.IsMine) // ³» µ¥ÀÌÅÍ¸¸ »èÁ¦ ÇÏµµ·Ï
         {
             return;
         }
-        Debug.Log("ê²Œì„ ì¢…ë£Œë¨!");
+        Debug.Log("°ÔÀÓ Á¾·áµÊ!");
         runTimeData.DeleteRunTimeData();
     }
 
-    #region Cooldown Handling
+    #region Cooldown Handling (UI Update)
 
     public virtual void StartAttackCooldown()
     {
-        cooldownManager.StartCooldown(Skills.Mouse_L);
+        StartCoroutine(AttackCooldownCoroutine());
+    }
+
+    private IEnumerator AttackCooldownCoroutine()
+    {
+        float timer = 0f;
+        while (timer < attackCooldown)
+        {
+            OnAttackCooldownUpdate?.Invoke(timer / attackCooldown);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        OnAttackCooldownUpdate?.Invoke(1f);
     }
 
     public virtual void StartDashCooldown()
     {
-        cooldownManager.StartCooldown(Skills.Space);
+        StartCoroutine(DashCooldownCoroutine());
     }
 
-    public virtual void StartShiftCooldown()
+    private IEnumerator DashCooldownCoroutine()
     {
-        cooldownManager.StartCooldown(Skills.Shift_L);
-    }
-
-    public virtual void StartUltimateCooldown()
-    {
-        cooldownManager.StartCooldown(Skills.R);
-    }
-
-    public virtual void StartMouseRightCooldown()
-    {
-        cooldownManager.StartCooldown(Skills.Mouse_R);
-    }
-
-    public virtual bool IsSkillReady(Skills skillType)
-    {
-        return cooldownManager.IsSkillReady(skillType);
-    }
-
-    public virtual void ResetSkillCooldown(Skills skillType)
-    {
-        cooldownManager.ResetCooldown(skillType);
+        float timer = 0f;
+        while (timer < dashCooldown)
+        {
+            OnDashCooldownUpdate?.Invoke(timer / dashCooldown);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        OnDashCooldownUpdate?.Invoke(1f);
     }
 
     #endregion

@@ -41,11 +41,11 @@ public class WhitePlayercontroller_event : MonoBehaviourPun
         whitePlayerController = GetComponent<WhitePlayerController>();
         if (whitePlayerController == null)
         {
-            Debug.LogError("WhitePlayerController ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½!");
+            Debug.LogError("WhitePlayerController ÄÄÆ÷³ÍÆ®°¡ ¾ø½À´Ï´Ù!");
         }
     }
 
-    // ï¿½Ìµï¿½ (WASD)
+    // ÀÌµ¿ (WASD)
     public void OnMove(InputAction.CallbackContext context)
     {
         if (context.performed)
@@ -68,13 +68,13 @@ public class WhitePlayercontroller_event : MonoBehaviourPun
         }
     }
 
-    // ï¿½ï¿½È£ï¿½Û¿ï¿½ (FÅ°)
+    // »óÈ£ÀÛ¿ë (FÅ°)
     public void OnInteraction(InputAction.CallbackContext context)
     {
         OnInteractionEvent?.Invoke(context);
     }
 
-    // ï¿½ï¿½ï¿½ì½º ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ (ï¿½ï¿½Å¸)
+    // ¸¶¿ì½º ¿ÞÂÊ Å¬¸¯ (ÆòÅ¸)
     public void OnMouse_L(InputAction.CallbackContext context)
     {
         if (context.performed && !isInVillage)
@@ -84,7 +84,7 @@ public class WhitePlayercontroller_event : MonoBehaviourPun
         }
     }
 
-    // ï¿½ï¿½ï¿½ì½º ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½)
+    // ¸¶¿ì½º ¿À¸¥ÂÊ Å¬¸¯ (°¡µå)
     public void OnMouse_R(InputAction.CallbackContext context)
     {
         if (context.performed && !isInVillage)
@@ -94,7 +94,7 @@ public class WhitePlayercontroller_event : MonoBehaviourPun
         }
     }
 
-    // ï¿½ï¿½ Shift Å° (Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+    // ÁÂ Shift Å° (Æ¯¼ö °ø°Ý)
     public void OnKeyboard_Shift_L(InputAction.CallbackContext context)
     {
         if (context.performed && !isInVillage)
@@ -104,7 +104,7 @@ public class WhitePlayercontroller_event : MonoBehaviourPun
         }
     }
 
-    // R Å° (ï¿½Ã±Ø±ï¿½)
+    // R Å° (±Ã±Ø±â)
     public void OnKeyboard_R(InputAction.CallbackContext context)
     {
         if (context.performed && !isInVillage)
@@ -114,7 +114,7 @@ public class WhitePlayercontroller_event : MonoBehaviourPun
         }
     }
 
-    // Spaceï¿½ï¿½ (È¸ï¿½ï¿½)
+    // Space¹Ù (È¸ÇÇ)
     public void OnKeyboard_Spacebar(InputAction.CallbackContext context)
     {
         if (context.performed && !isInVillage)
@@ -126,23 +126,19 @@ public class WhitePlayercontroller_event : MonoBehaviourPun
 
     private void OnDisable()
     {
-        // PlayerInput ê°ì²´ê°€ íŒŒê´´ë˜ì—ˆëŠ”ì§€ í™•ì¸
-        if (InputManager.Instance.PlayerInput != null && InputManager.Instance.PlayerInput.actions != null)
-        {
-            if (!photonView.IsMine)
-                return;
+        if (!photonView.IsMine)
+            return;
 
-            InputManager.Instance.PlayerInput.actions["Move"].performed -= ctx => OnMove(ctx);
-            InputManager.Instance.PlayerInput.actions["Move"].canceled -= ctx => OnMove(ctx);
-            InputManager.Instance.PlayerInput.actions["Dash"].performed -= ctx => OnKeyboard_Spacebar(ctx);
-            InputManager.Instance.PlayerInput.actions["Dash"].canceled -= ctx => OnKeyboard_Spacebar(ctx);
-            InputManager.Instance.PlayerInput.actions["Interaction"].performed -= ctx => OnInteraction(ctx);
-            InputManager.Instance.PlayerInput.actions["Interaction"].canceled -= ctx => OnInteraction(ctx);
-            InputManager.Instance.PlayerInput.actions["Interaction"].started -= ctx => OnInteraction(ctx);
-            InputManager.Instance.PlayerInput.actions["BasicAttack"].performed -= ctx => OnMouse_L(ctx);
-            InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed -= ctx => OnMouse_R(ctx);
-            InputManager.Instance.PlayerInput.actions["SkillAttack"].performed -= ctx => OnKeyboard_Shift_L(ctx);
-            InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed -= ctx => OnKeyboard_R(ctx);
-        }
+        InputManager.Instance.PlayerInput.actions["Move"].performed -= ctx => OnMove(ctx);
+        InputManager.Instance.PlayerInput.actions["Move"].canceled -= ctx => OnMove(ctx);
+        InputManager.Instance.PlayerInput.actions["Dash"].performed -= ctx => OnKeyboard_Spacebar(ctx);
+        InputManager.Instance.PlayerInput.actions["Dash"].canceled -= ctx => OnKeyboard_Spacebar(ctx);
+        InputManager.Instance.PlayerInput.actions["Interaction"].performed -= ctx => OnInteraction(ctx);
+        InputManager.Instance.PlayerInput.actions["Interaction"].canceled -= ctx => OnInteraction(ctx);
+        InputManager.Instance.PlayerInput.actions["Interaction"].started -= ctx => OnInteraction(ctx);
+        InputManager.Instance.PlayerInput.actions["BasicAttack"].performed -= ctx => OnMouse_L(ctx);
+        InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed -= ctx => OnMouse_R(ctx);
+        InputManager.Instance.PlayerInput.actions["SkillAttack"].performed -= ctx => OnKeyboard_Shift_L(ctx);
+        InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed -= ctx => OnKeyboard_R(ctx);
     }
 }
