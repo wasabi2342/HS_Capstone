@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 3165763720005886762}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 44.86, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcb0513169de1904e9d56a2e8dba5d41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  monsterPrefabs:
+  - {fileID: 1765914048162278020, guid: 16156f2460b56134a9adbf291397ff06, type: 3}
   spawnArea: {fileID: 361567240500105004}
 --- !u!114 &5024353823131340920
 MonoBehaviour:
@@ -80,7 +82,7 @@ GameObject:
   - component: {fileID: 361567240500105004}
   - component: {fileID: 5423003336877936340}
   m_Layer: 0
-  m_Name: SpawnArea
+  m_Name: Zombie_SpawnArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,7 +97,7 @@ Transform:
   m_GameObject: {fileID: 7606943349099758749}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -45.25, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
