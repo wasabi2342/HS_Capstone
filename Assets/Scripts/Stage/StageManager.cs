@@ -6,18 +6,28 @@ public class StageManager : MonoBehaviourPun
 {
     [Header("Prefabs (Resources 폴더에 있어야 함)")]
     public string spawnAreaPrefabName = "SpawnArea"; // SpawnArea 프리팹 이름
+    public string doorPrefabName = "DoorPrefab";
 
     [Header("Stage Settings")]
     public StageSettings currentStageSettings; // 현재 스테이지에 해당하는 설정
     public Quaternion spawnAreaRotation = Quaternion.identity; // 기본 회전 값
 
     private List<GameObject> spawnAreaInstances = new List<GameObject>();
+    private bool isDoorSpawned = false;
 
     private void Start()
     {
         if (PhotonNetwork.IsMasterClient)
         {
             SpawnStage();
+        }
+    }
+
+   private void Update()
+    {
+        if (PhotonNetwork.IsMasterClient && AreAllMonstersCleared() && !isDoorSpawned)
+        {
+            SpawnDoor();
         }
     }
 
@@ -54,15 +64,15 @@ public class StageManager : MonoBehaviourPun
             }
         }
     }
-
+    void SpawnDoor()
+    {
+        isDoorSpawned = true;
+        // PhotonNetwork.Instantiate(문 프리팹, 위치, 각도);
+        var doorObj = PhotonNetwork.Instantiate(doorPrefabName, new Vector3(0, 0, 0), Quaternion.identity);
+        Debug.Log("Door spawned!");
+    }
     public bool AreAllMonstersCleared()
     {
-        Debug.Log("ActiveMonsterCount: " + EnemyAI.ActiveMonsterCount);
-        bool cleared = EnemyAI.ActiveMonsterCount == 0;
-        if (cleared)
-        {
-            Debug.Log("모든 몬스터가 제거되었습니다.");
-        }
-        return cleared;
+        return EnemyAI.ActiveMonsterCount <= 0;
     }
 }
