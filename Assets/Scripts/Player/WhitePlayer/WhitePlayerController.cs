@@ -497,6 +497,46 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
+    public void CreateBasicAttackEffect()
+    {
+        if (animator.GetBool("Right"))
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                if (photonView.IsMine)
+                {
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Attack{attackStack}_Right_Effect_{(int)runTimeData.blessingInfo[(int)Skills.Mouse_L].blessing}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
+                    skillEffect.transform.parent = transform;
+                    skillEffect.Init(0f/*데미지 값 중복이라 제외*/, AttackCollider.StartHitlag);
+                }
+            }
+            else
+            {
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Attack{attackStack}_Right_Effect_{(int)runTimeData.blessingInfo[(int)Skills.Mouse_L].blessing}"), transform.position, Quaternion.identity);
+                skillEffect.transform.parent = transform;
+                skillEffect.Init(0, AttackCollider.StartHitlag);
+            }
+        }
+        else
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                if (photonView.IsMine)
+                {
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Attack{attackStack}_Left_Effect_{(int)runTimeData.blessingInfo[(int)Skills.Mouse_L].blessing}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
+                    skillEffect.transform.parent = transform;
+                    skillEffect.Init(0, AttackCollider.StartHitlag);
+                }
+            }
+            else
+            {
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Attack{attackStack}_Left_Effect_{(int)runTimeData.blessingInfo[(int)Skills.Mouse_L].blessing}"), transform.position, Quaternion.identity);
+                skillEffect.transform.parent = transform;
+                skillEffect.Init(0, AttackCollider.StartHitlag);
+            }
+        }
+    }
+
     public void GetUltimateBonus()
     {
         Debug.Log("궁극기 납도 버프");
