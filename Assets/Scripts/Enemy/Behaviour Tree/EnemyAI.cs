@@ -11,6 +11,9 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     public static int ActiveMonsterCount = 0;
 
     [SerializeField] private SpawnArea spawnArea;
+    public GameObject damageTextPrefab;
+    private SpriteRenderer spriteRenderer;
+    public Animator animator;
     private Transform targetPlayer;
     private NavMeshAgent agent;
     private BehaviorTreeRunner behaviorTree;
@@ -21,7 +24,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     private float waitTimer = 0f;
     private Vector3 wanderTarget = Vector3.zero;
 
-    public Animator animator;
+    
     private float lastMoveX = 1f;
     private string currentMoveAnim = "";
     private bool canAttack = true;
@@ -41,6 +44,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         agent.updateRotation = false;
         agent.angularSpeed = 500f;
         agent.stoppingDistance = 0.1f;
@@ -338,11 +342,79 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         Debug.Log($"{gameObject.name} took {damage} damage, current HP: {currentHP}");
         photonView.RPC("UpdateHP", RpcTarget.AllBuffered, currentHP);
 
+        photonView.RPC("RPC_FlashSprite", RpcTarget.All);
+        SpawnDamageText(damage);
+        
+
         if (currentHP <= 0)
         {
             Die();
         }
     }
+    [PunRPC]
+    public void RPC_FlashSprite()
+    {
+        StartCoroutine(FlashSpriteCoroutine());
+    }
+
+    private IEnumerator FlashSpriteCoroutine()
+    {
+        if (spriteRenderer != null)
+        {
+            Color originalColor = spriteRenderer.color;
+            Color flashColor;
+            // #RRGGBBAA 형식으로 알파값(투명도)까지 지정
+            if (!ColorUtility.TryParseHtmlString("#FF000080", out flashColor))
+            {
+                // 변환 실패 시 기본 빨간색
+                flashColor = Color.red;
+            }
+
+            // 스프라이트 색상 변경
+            spriteRenderer.color = flashColor;
+            Debug.Log($"[FlashSprite] {gameObject.name} 몬스터 색상을 {flashColor}로 변경했습니다.");
+
+            // 잠시 대기
+            yield return new WaitForSeconds(0.1f);
+
+            // 원래 색상 복원
+            spriteRenderer.color = originalColor;
+        }
+    }
+
+
+
+    private void SpawnDamageText(float damage)
+    {
+        // 1) Resources 폴더에서 DamageText 프리팹 로드
+        GameObject prefab = Resources.Load<GameObject>("DamageText");
+        if (prefab == null)
+        {
+            Debug.LogWarning("DamageText 프리팹을 찾지 못했습니다. (Resources 폴더 확인)");
+            return;
+        }
+
+        // 2) 몬스터 머리 위에 배치할 위치 계산
+        Vector3 spawnPos = transform.position + new Vector3(0, 1.5f, 0);
+
+        // 3) 프리팹 인스턴스화
+        GameObject dmgText = Instantiate(prefab, spawnPos, Quaternion.identity);
+
+        // 4) TextMesh에 데미지 수치 설정 (DamageTextBehaviour.cs 참고)
+        DamageText text = dmgText.GetComponent<DamageText>();
+        if (text != null)
+        {
+            text.SetDamage(damage);
+        }
+        else
+        {
+            // TextMesh가 직결되어 있다면, 아래 직접 접근
+            TextMesh textMesh = dmgText.GetComponent<TextMesh>();
+            if (textMesh != null)
+                textMesh.text = damage.ToString();
+        }
+    }
+
 
     // 모든 클라이언트에서 체력 상태를 업데이트합니다.
     [PunRPC]
