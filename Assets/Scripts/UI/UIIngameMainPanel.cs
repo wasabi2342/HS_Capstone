@@ -1,6 +1,7 @@
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -23,7 +24,11 @@ public class UIIngameMainPanel : UIBase
     [SerializeField]
     private Image hpImage;
     [SerializeField]
+    private Image shieldImage;
+    [SerializeField]
     private Text mouseLStackText;
+    [SerializeField]
+    private TextMeshProUGUI shieldText;
     [SerializeField]
     private RectTransform partyHPParent;
     [SerializeField]
@@ -69,51 +74,9 @@ public class UIIngameMainPanel : UIBase
             playerController.hpBar = hpImage;
             playerController.stunOverlay = stunOverlay;
             playerController.stunSlider = stunSlider;
-
+            playerController.ShieldUpdate.RemoveAllListeners();
+            playerController.ShieldUpdate.AddListener(UpdateShieldImage);
         }
-
-        /*
-        foreach (var keyValuePair in RoomManager.Instance.players)
-        {
-            Debug.Log("RoomManager.Instance.players.Count : " + RoomManager.Instance.players.Count);
-            if (keyValuePair.Key != PhotonNetwork.LocalPlayer.ActorNumber)
-            {
-                UIPartyHPContent content = Instantiate(partyHPContent, partyHPParent);
-                content.Init(GetNicknameByActNum(keyValuePair.Key));
-                // UI 연결 추가하기
-                ParentPlayerController playerController = keyValuePair.Value.GetComponent<ParentPlayerController>();
-                if (playerController != null)
-                {
-                    playerController.OnHealthChanged.RemoveAllListeners();
-                    playerController.OnHealthChanged.AddListener(content.UpdateHPImage);
-                }
-                contentPairs[keyValuePair.Key] = content;
-            }
-            // UI 연결 추가하기
-            else
-            {
-                ParentPlayerController playerController = keyValuePair.Value.GetComponent<ParentPlayerController>();
-                if (playerController != null) // 쿨타임 이벤트도 연결 하기
-                {
-                    playerController.OnHealthChanged.RemoveAllListeners();
-                    playerController.OnHealthChanged.AddListener(UpdateHPImage);
-                    playerController.ShiftCoolDownUpdate.RemoveAllListeners();
-                    playerController.ShiftCoolDownUpdate.AddListener(uISkillIcons[(int)UIIcon.shift].StartUpdateSkillCooldown);
-                    playerController.UltimateCoolDownUpdate.RemoveAllListeners();
-                    playerController.UltimateCoolDownUpdate.AddListener(uISkillIcons[(int)UIIcon.r].StartUpdateSkillCooldown);
-                    playerController.MouseRightSkillCoolDownUpdate.RemoveAllListeners();
-                    playerController.MouseRightSkillCoolDownUpdate.AddListener(uISkillIcons[(int)UIIcon.mouseR].StartUpdateSkillCooldown);
-                    playerController.OnDashCooldownUpdate.RemoveAllListeners();
-                    playerController.OnDashCooldownUpdate.AddListener(uISkillIcons[(int)UIIcon.space].StartUpdateSkillCooldown);
-                    playerController.AttackStackUpdate.RemoveAllListeners();
-                    playerController.AttackStackUpdate.AddListener(UpdateMouseLeftStack);
-                    playerController.SkillOutlineUpdate.RemoveAllListeners();
-                    playerController.SkillOutlineUpdate.AddListener(UpdateIconOutline);
-                    //playerController
-                }
-            }
-        }
-        */
     }
 
     public void AddPartyPlayerHPbar(int actnum, GameObject newPlayer)
@@ -152,7 +115,6 @@ public class UIIngameMainPanel : UIBase
             playerController.OnDashCooldownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.space].StartUpdateSkillCooldown);
             playerController.AttackStackUpdate.RemoveListener(UpdateMouseLeftStack);
             playerController.SkillOutlineUpdate.RemoveAllListeners();
-
         }
     }
 
@@ -205,5 +167,10 @@ public class UIIngameMainPanel : UIBase
     private void UpdateHPImage(float fillAmount)
     {
         hpImage.fillAmount = fillAmount;
+    }
+    private void UpdateShieldImage(float shieldAmount, float maxShield)
+    {
+        shieldImage.fillAmount = shieldAmount / maxShield;
+        shieldText.text = $"{shieldAmount}/{maxShield}";
     }
 }

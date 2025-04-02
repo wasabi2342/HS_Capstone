@@ -4,6 +4,7 @@ using Photon.Pun;
 using UnityEngine.Events;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.Linq;
 
 public class ParentPlayerController : MonoBehaviourPun, IDamageable
 {
@@ -33,6 +34,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     public UnityEvent<float> UltimateCoolDownUpdate;
     public UnityEvent<float> MouseRightSkillCoolDownUpdate;
     public UnityEvent<float> AttackStackUpdate;
+    public UnityEvent<float, float> ShieldUpdate;
     public UnityEvent<UIIcon, Color> SkillOutlineUpdate;
 
     // 스킬 사용 가능 여부
@@ -48,6 +50,10 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     [SerializeField]
     protected CharacterStats characterBaseStats;
     protected PlayerRunTimeData runTimeData;
+
+    // 실드
+    protected List<Shield> shields = new List<Shield>();
+    private readonly float maxShield = 100f;
 
     public int attackStack = 0;
 
@@ -84,7 +90,46 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     #region Damage & Health Synchronization
 
+    public virtual void AddShield(float amount, float duration)
+    {
+        float totalShield = GetTotalShield(); // 현재 실드 총량
 
+        // 최대 실드를 초과하지 않도록 조정
+        if (totalShield + amount > maxShield)
+        {
+            amount = maxShield - totalShield; // 초과분 조정
+        }
+        if (amount > 0)
+        {
+            Shield newShield = new Shield(amount);
+            shields.Add(newShield); // 실드 추가
+            StartCoroutine(RemoveShieldAfterTime(newShield, duration)); // 코루틴 시작
+            Debug.Log($"실드 추가! {amount} HP 실드 생성");
+            ShieldUpdate?.Invoke(GetTotalShield(), maxShield);
+        }
+    }
+
+    protected IEnumerator RemoveShieldAfterTime(Shield amount, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        if (shields.Contains(amount)) // 만료된 실드가 아직 남아 있으면 제거
+        {
+            shields.Remove(amount);
+            ShieldUpdate?.Invoke(GetTotalShield(), maxShield);
+            Debug.Log($"실드 {amount} 시간이 지나 제거됨");
+        }
+    }
+
+    public float GetTotalShield()
+    {
+        float totalShield = 0;
+        foreach (var shield in shields)
+        {
+            totalShield += shield.amount;
+        }
+        return totalShield;
+    }
 
     // 2) 추가 파라미터 useRPC를 사용한 데미지 처리
     public virtual void TakeDamage(float damage)
@@ -96,6 +141,28 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
             if (PhotonNetwork.IsMasterClient)
             {
+                while (damage > 0 && shields.Count > 0)
+                {
+                    if (shields[0].amount > damage)
+                    {
+                        shields[0].amount -= damage;
+                        Debug.Log($"실드로 {damage} 피해 흡수! 남은 실드: {shields[0].amount}");
+                        ShieldUpdate?.Invoke(GetTotalShield(), maxShield);
+                        return;
+                    }
+                    else
+                    {
+                        damage -= shields[0].amount;
+                        Debug.Log($"실드 {shields[0]} 소진 후 파괴됨");
+                        shields.RemoveAt(0);
+                        ShieldUpdate?.Invoke(GetTotalShield(), maxShield);
+                    }
+                }
+                if (damage == 0)
+                {
+                    return;
+                }
+
                 // Master Client는 직접 체력 계산
                 runTimeData.currentHealth -= damage;
                 runTimeData.currentHealth = Mathf.Clamp(runTimeData.currentHealth, 0, characterBaseStats.maxHP);
@@ -115,6 +182,26 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
         else
         {
+            while (damage > 0 && shields.Count > 0)
+            {
+                if (shields[0].amount > damage)
+                {
+                    shields[0].amount -= damage;
+                    Debug.Log($"실드로 {damage} 피해 흡수! 남은 실드: {shields[0].amount}");
+                    return;
+                }
+                else
+                {
+                    damage -= shields[0].amount;
+                    Debug.Log($"실드 {shields[0]} 소진 후 파괴됨");
+                    shields.RemoveAt(0);
+                }
+            }
+            if (damage == 0)
+            {
+                return;
+            }
+
             // Master Client는 직접 체력 계산
             runTimeData.currentHealth -= damage;
             runTimeData.currentHealth = Mathf.Clamp(runTimeData.currentHealth, 0, characterBaseStats.maxHP);
@@ -212,6 +299,22 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         }
         Debug.Log("게임 종료됨!");
         runTimeData.DeleteRunTimeData();
+    }
+
+    /// <summary>
+    /// value만큼 체력 회복
+    /// </summary>
+    /// <param name="value"></param>
+    public virtual void RecoverHealth(float value)
+    {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+        runTimeData.currentHealth += value;
+        runTimeData.currentHealth = Mathf.Clamp(runTimeData.currentHealth, 0, characterBaseStats.maxHP);
+        OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
+        photonView.RPC("UpdateHP", RpcTarget.Others, runTimeData.currentHealth);
     }
 
     #region Cooldown Handling (UI Update)

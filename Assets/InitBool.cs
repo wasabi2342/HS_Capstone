@@ -39,6 +39,7 @@ public class InitBool : StateMachineBehaviour
         {
             whitePlayerController.SetBoolParameter(parameter, boolValue);
         }
+        animator.speed = 1.0f;
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

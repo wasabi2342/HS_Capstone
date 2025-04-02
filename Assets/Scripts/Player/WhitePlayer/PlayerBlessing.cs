@@ -23,7 +23,7 @@ public class PlayerBlessing : MonoBehaviourPun
 {
     [SerializeField]
     private ParentPlayerController playerController;
-
+    private Animator animator;
     private Dictionary<Skills, BlessingInfo> playerBlessingDic = new Dictionary<Skills, BlessingInfo>();
 
     Dictionary<Blessings, Color> BlessingColor = new Dictionary<Blessings, Color>
@@ -37,6 +37,7 @@ public class PlayerBlessing : MonoBehaviourPun
     private void Awake()
     {
         playerController = GetComponent<ParentPlayerController>();
+        animator = GetComponent<Animator>();
     }
 
     private void Start()
@@ -50,6 +51,30 @@ public class PlayerBlessing : MonoBehaviourPun
         for (int i = 0; i < blessings.Length; i++)
         {
             playerBlessingDic[(Skills)i] = blessings[i];
+            playerController.SkillOutlineUpdate?.Invoke((UIIcon)i, BlessingColor[blessings[i].blessing]);
+            switch ((Skills)i)
+            {
+                case Skills.Mouse_L:
+                    animator.SetInteger("basicAttackBlessing", (int)blessings[i].blessing);
+                    break;
+                case Skills.Mouse_R:
+                    animator.SetInteger("mouseRightBlessing", (int)blessings[i].blessing);
+                    break;
+                case Skills.Space:
+                    animator.SetInteger("spaceBlessing", (int)blessings[i].blessing);
+                    switch (blessings[i].blessing)
+                    {
+                        case Blessings.Gremory:
+                            break;
+                    }
+                    break;
+                case Skills.Shift_L:
+                    animator.SetInteger("skillBlessing", (int)blessings[i].blessing);
+                    break;
+                case Skills.R:
+                    animator.SetInteger("ultimateBlessing", (int)blessings[i].blessing);
+                    break;
+            }
         }
     }
 
@@ -62,65 +87,33 @@ public class PlayerBlessing : MonoBehaviourPun
     {
         playerBlessingDic[data.Key] = data.Value;
         playerController.UpdateBlessingRunTimeData(playerBlessingDic);
-        playerController.SkillOutlineUpdate.Invoke((UIIcon)data.Key, BlessingColor[data.Value.blessing]);
-        // 갱신된 가호에 맞게 스킬 변경 코드 추가 해야함
-        switch (data.Key)
+        if (data.Value.level == 1)
         {
-            case Skills.Mouse_L:
-                switch (data.Value.blessing)
-                {
-                    case Blessings.Crocell:
-                        break;
-                    case Blessings.Gremory:
-                        break;
-                    case Blessings.Paymon:
-                        break;
-                }
-                break;
-            case Skills.Mouse_R:
-                switch (data.Value.blessing)
-                {
-                    case Blessings.Crocell:
-                        break;
-                    case Blessings.Gremory:
-                        break;
-                    case Blessings.Paymon:
-                        break;
-                }
-                break;
-            case Skills.Space:
-                switch (data.Value.blessing)
-                {
-                    case Blessings.Crocell:
-                        break;
-                    case Blessings.Gremory:
-                        break;
-                    case Blessings.Paymon:
-                        break;
-                }
-                break;
-            case Skills.Shift_L:
-                switch (data.Value.blessing)
-                {
-                    case Blessings.Crocell:
-                        break;
-                    case Blessings.Gremory:
-                        break;
-                    case Blessings.Paymon:
-                        break;
-                }
-                break;
-            case Skills.R:
-                switch (data.Value.blessing)
-                {
-                    case Blessings.Crocell:
-                        break;
-                    case Blessings.Gremory:
-                        break;
-                    case Blessings.Paymon:
-                        break;
-                }
-                break;
+            playerController.SkillOutlineUpdate?.Invoke((UIIcon)data.Key, BlessingColor[data.Value.blessing]);
+            // 갱신된 가호에 맞게 스킬 변경 코드 추가 해야함
+            switch (data.Key)
+            {
+                case Skills.Mouse_L:
+                    animator.SetInteger("basicAttackBlessing", (int)data.Value.blessing);
+                    break;
+                case Skills.Mouse_R:
+                    animator.SetInteger("mouseRightBlessing", (int)data.Value.blessing);
+                    break;
+                case Skills.Space:
+                    animator.SetInteger("spaceBlessing", (int)data.Value.blessing);
+                    break;
+                case Skills.Shift_L:
+                    animator.SetInteger("skillBlessing", (int)data.Value.blessing);
+                    switch (data.Value.blessing)
+                    {
+                        case Blessings.Gremory:
+                            break;
+                    }
+                    break;
+                case Skills.R:
+                    animator.SetInteger("ultimateBlessing", (int)data.Value.blessing);
+                    break;
+            }
         }
     }
 
