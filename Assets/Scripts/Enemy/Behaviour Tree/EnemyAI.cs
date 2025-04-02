@@ -4,13 +4,20 @@ using UnityEngine;
 using UnityEngine.AI;
 using Photon.Pun;
 
+/// <summary>
+/// 플레이어를 추적 및 공격하는 몬스터 AI.
+/// 죽은 플레이어(WhitePlayerState.Death)는 타겟에서 제외하여 Wander 상태로 돌아가도록 수정.
+/// </summary>
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyAI : MonoBehaviourPun, IDamageable
 {
-    public EnemyStatus status;  // EnemyStatus에 공격 데미지, 속도, 범위, 체력 등이 정의되어 있음
+    public EnemyStatus status;  // EnemyStatus에 공격 데미지, 속도, 범위, 체력 등이 정의
     public static int ActiveMonsterCount = 0;
 
     [SerializeField] private SpawnArea spawnArea;
+    public GameObject damageTextPrefab;
+    private SpriteRenderer spriteRenderer;
+    public Animator animator;
     private Transform targetPlayer;
     private NavMeshAgent agent;
     private BehaviorTreeRunner behaviorTree;
@@ -21,11 +28,11 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     private float waitTimer = 0f;
     private Vector3 wanderTarget = Vector3.zero;
 
-    public Animator animator;
     private float lastMoveX = 1f;
     private string currentMoveAnim = "";
     private bool canAttack = true;
     private float cooldownTimer = 0f;
+
     private bool isAttackAnimationPlaying = false;
     private float attackAnimTime = 0f;
     private float attackAnimDuration = 0.7f; // 기본값, status.animDuration으로 덮어씀
@@ -33,18 +40,22 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
 
     // 체력 관련 변수
     private float currentHP;
-    // 사망 플래그 및 애니메이션 지속 시간
-    private bool isDead = false;
-    private float deathAnimDuration = 1.5f;
+    private bool isDead = false;             // 사망 플래그
+    private float deathAnimDuration = 1.5f;  // 사망 애니메이션 지속 시간
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
         agent.updateRotation = false;
         agent.angularSpeed = 500f;
         agent.stoppingDistance = 0.1f;
-        ActiveMonsterCount++;
+        if (PhotonNetwork.IsMasterClient)
+        {
+            ActiveMonsterCount++;
+        }
         Debug.Log("EnemyAI Awake: " + gameObject.name + " ActiveMonsterCount: " + ActiveMonsterCount);
 
         if (spawnArea == null)
@@ -55,18 +66,21 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
 
         attackStrategy = GetComponent<IMonsterAttack>();
         attackAnimDuration = status.animDuration;
+
+        // Behavior Tree 구성
         behaviorTree = new BehaviorTreeRunner(SettingBT());
 
-        // EnemyStatus에 정의된 체력을 사용하여 초기화
+        // EnemyStatus에 정의된 체력 사용
         currentHP = status.hp;
     }
 
     private void Update()
     {
-        // Master Client에서만 AI 로직 실행 및 사망 시 업데이트 중지
+        // 마스터 클라이언트만 AI 로직
         if (!PhotonNetwork.IsMasterClient || isDead)
             return;
 
+        // 공격 쿨타임 계산
         if (!canAttack)
         {
             cooldownTimer += Time.deltaTime;
@@ -77,8 +91,22 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
             }
         }
 
+        // [추가 1] targetPlayer가 죽었는지 실시간 확인 (Optional)
+        if (targetPlayer != null)
+        {
+            // WhitePlayerController (또는 유사 스크립트)에서 Death 상태 확인
+            var wpc = targetPlayer.GetComponent<WhitePlayerController>();
+            if (wpc == null || wpc.currentState == WhitePlayerState.Death)
+            {
+                // 타겟이 사망 상태이므로 추적 중단
+                targetPlayer = null;
+            }
+        }
+
+        // Behavior Tree 실행
         behaviorTree.Operate();
 
+        // 공격 애니메이션 재생 중?
         if (isAttackAnimationPlaying)
         {
             attackAnimTime += Time.deltaTime;
@@ -92,6 +120,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
             return;
         }
 
+        // 이동/Idle 애니메이션 처리
         float vx = agent.velocity.x;
         if (!Mathf.Approximately(vx, 0f))
         {
@@ -108,10 +137,11 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         {
             PlayMoveAnim(lastMoveX >= 0f ? "Right_Idle" : "Left_Idle");
         }
-
     }
 
+    // ─────────────────────────────────────────
     // 애니메이션 재생 및 RPC 동기화
+    // ─────────────────────────────────────────
     void PlayMoveAnim(string animName)
     {
         if (currentMoveAnim == animName)
@@ -129,6 +159,9 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         currentMoveAnim = animName;
     }
 
+    // ─────────────────────────────────────────
+    // Behavior Tree 구성
+    // ─────────────────────────────────────────
     INode SettingBT()
     {
         return new SelectorNode(
@@ -153,6 +186,10 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         );
     }
 
+    // ─────────────────────────────────────────
+    // [CheckEnemyWithinAttackRange]
+    // 사정거리 안에 플레이어가 있는지, 살아있는지 확인
+    // ─────────────────────────────────────────
     INode.NodeState CheckEnemyWithinAttackRange()
     {
         if (!canAttack)
@@ -160,6 +197,14 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
 
         if (targetPlayer != null)
         {
+            var wpc = targetPlayer.GetComponent<WhitePlayerController>();
+            if (wpc == null || wpc.currentState == WhitePlayerState.Death)
+            {
+                // 죽은 플레이어 무효 처리
+                targetPlayer = null;
+                return INode.NodeState.Failure;
+            }
+
             float dist = Vector3.Distance(transform.position, targetPlayer.position);
             if (dist < status.attackRange)
                 return INode.NodeState.Success;
@@ -167,10 +212,22 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         return INode.NodeState.Failure;
     }
 
+    // ─────────────────────────────────────────
+    // [DoAttack]
+    // 실제 공격 애니메이션 및 데미지 처리
+    // ─────────────────────────────────────────
     INode.NodeState DoAttack()
     {
         if (targetPlayer != null && attackStrategy != null && canAttack)
         {
+            var wpc = targetPlayer.GetComponent<WhitePlayerController>();
+            if (wpc == null || wpc.currentState == WhitePlayerState.Death)
+            {
+                targetPlayer = null;
+                return INode.NodeState.Failure;
+            }
+
+            // 공격 방향에 따른 애니메이션 선택
             prevAnimBeforeAttack = currentMoveAnim;
             float targetX = targetPlayer.position.x;
             float selfX = transform.position.x;
@@ -190,38 +247,63 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         return INode.NodeState.Failure;
     }
 
+    // ─────────────────────────────────────────
+    // [CheckDetectEnemy]
+    // 탐지 범위 내에서 살아있는 플레이어를 찾음
+    // ─────────────────────────────────────────
     INode.NodeState CheckDetectEnemy()
     {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         float minDist = status.detectRange;
         Transform nearestPlayer = null;
 
-        foreach (GameObject player in players)
+        foreach (GameObject playerObj in players)
         {
-            float dist = Vector3.Distance(transform.position, player.transform.position);
+            var wpc = playerObj.GetComponent<WhitePlayerController>();
+            if (wpc == null || wpc.currentState == WhitePlayerState.Death)
+                continue;  // 죽은 플레이어는 무시
+
+            float dist = Vector3.Distance(transform.position, playerObj.transform.position);
             if (dist < minDist)
             {
                 minDist = dist;
-                nearestPlayer = player.transform;
+                nearestPlayer = playerObj.transform;
             }
         }
+
         targetPlayer = nearestPlayer;
         return targetPlayer != null ? INode.NodeState.Success : INode.NodeState.Failure;
     }
 
+    // ─────────────────────────────────────────
+    // [MoveToEnemy]
+    // 플레이어 추격
+    // ─────────────────────────────────────────
     INode.NodeState MoveToEnemy()
     {
         if (targetPlayer != null)
         {
+            var wpc = targetPlayer.GetComponent<WhitePlayerController>();
+            if (wpc == null || wpc.currentState == WhitePlayerState.Death)
+            {
+                targetPlayer = null;
+                return INode.NodeState.Failure;
+            }
+
             Vector3 targetPos = new Vector3(targetPlayer.position.x, transform.position.y, targetPlayer.position.z);
             agent.speed = status.chaseSpeed;
             agent.isStopped = false;
             agent.SetDestination(targetPos);
+
             return INode.NodeState.Running;
         }
         return INode.NodeState.Failure;
     }
 
+    // ─────────────────────────────────────────
+    // [WanderInsideSpawnArea]
+    // 목적지에 도착하면 랜덤 위치로 배회
+    // ─────────────────────────────────────────
     INode.NodeState WanderInsideSpawnArea()
     {
         if (isWaiting)
@@ -296,12 +378,15 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
 
     private bool IsNearOtherMonsters(Vector3 pos, float minDist)
     {
+        
         foreach (var other in FindObjectsOfType<EnemyAI>())
-        {
+        {/*
             if (other != this && Vector3.Distance(other.transform.position, pos) < minDist)
                 return true;
+            */
         }
         return false;
+        
     }
 
     public void OnAttackHitEvent()
@@ -315,15 +400,11 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     // ---------------------------
     // IDamageable 인터페이스 구현
     // ---------------------------
-
-    // 플레이어나 다른 오브젝트가 이 몬스터에게 데미지를 입힐 때 호출됩니다.
-    // 이 메서드는 RPC를 통해 Master Client에서 DamageToMaster를 호출합니다.
     public void TakeDamage(float damage)
     {
         photonView.RPC("DamageToMaster", RpcTarget.MasterClient, damage);
     }
 
-    // Master Client에서 데미지 계산을 수행하는 RPC 메서드입니다.
     [PunRPC]
     public void DamageToMaster(float damage)
     {
@@ -333,10 +414,12 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         string hitAnim = lastMoveX >= 0 ? "Right_Hit" : "Left_Hit";
         photonView.RPC("RPC_PlayAnimation", RpcTarget.All, hitAnim);
 
-
         currentHP -= damage;
         Debug.Log($"{gameObject.name} took {damage} damage, current HP: {currentHP}");
         photonView.RPC("UpdateHP", RpcTarget.AllBuffered, currentHP);
+
+        photonView.RPC("RPC_FlashSprite", RpcTarget.All);
+        SpawnDamageText(damage);
 
         if (currentHP <= 0)
         {
@@ -344,7 +427,44 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         }
     }
 
-    // 모든 클라이언트에서 체력 상태를 업데이트합니다.
+    [PunRPC]
+    public void RPC_FlashSprite()
+    {
+        StartCoroutine(FlashSpriteCoroutine());
+    }
+
+    private IEnumerator FlashSpriteCoroutine()
+    {
+        if (spriteRenderer != null)
+        {
+            Color originalColor = spriteRenderer.color;
+            Color flashColor;
+            if (!ColorUtility.TryParseHtmlString("#F6CECE", out flashColor))
+            {
+                flashColor = Color.red;
+            }
+
+            spriteRenderer.color = flashColor;
+            yield return new WaitForSeconds(0.1f);
+            spriteRenderer.color = originalColor;
+        }
+    }
+
+    private void SpawnDamageText(float damage)
+    {
+        if (damageTextPrefab != null)
+        {
+            Vector3 spawnPos = transform.position + new Vector3(0, 1.5f, 0);
+            GameObject dmgText = Instantiate(damageTextPrefab, spawnPos, Quaternion.identity);
+
+            TextMesh textMesh = dmgText.GetComponent<TextMesh>();
+            if (textMesh != null)
+            {
+                textMesh.text = damage.ToString();
+            }
+        }
+    }
+
     [PunRPC]
     public void UpdateHP(float hp)
     {
@@ -357,22 +477,15 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
             return;
 
         isDead = true;
-
-        // Master Client에서만 카운터를 감소시키도록 함 (중복 감소 방지)
         if (PhotonNetwork.IsMasterClient)
         {
-            ActiveMonsterCount = Mathf.Max(ActiveMonsterCount - 1, 0);
-            Debug.Log($"{gameObject.name} died. Updated ActiveMonsterCount: {ActiveMonsterCount}");
+            ActiveMonsterCount--;
         }
-
-        // 사망 애니메이션 실행
         string deathAnim = lastMoveX >= 0 ? "Right_Death" : "Left_Death";
         photonView.RPC("RPC_PlayAnimation", RpcTarget.All, deathAnim);
 
-        // Death 애니메이션이 끝난 후 Destroy를 호출하기 위해 코루틴 실행
         StartCoroutine(DelayedDestroy());
     }
-
 
     IEnumerator DelayedDestroy()
     {
