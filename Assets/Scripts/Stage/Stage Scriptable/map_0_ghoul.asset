@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1622c721f4ae1704d8431444108cf455, type: 3}
+  m_Name: map_0_ghoul
+  m_EditorClassIdentifier: 
+  spawnAreaSettings:
+  - position: {x: -76.1, y: 0, z: -0.4541479}
+    radius: 10
+    monsterSpawnCount: 4
+    monsterPrefabNames:
+    - Wolf
+  - position: {x: -103.56, y: 0, z: -0.4541479}
+    radius: 10
+    monsterSpawnCount: 3
+    monsterPrefabNames:
+    - Zombie
+    - Wolf
