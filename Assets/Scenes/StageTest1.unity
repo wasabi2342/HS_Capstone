@@ -128,7 +128,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 86485845}
-  - component: {fileID: 86485846}
   m_Layer: 0
   m_Name: VoteManager
   m_TagString: Untagged
@@ -151,18 +150,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 487237365}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &86485846
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 86485844}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24a06521d6738ee479b05015e20f1304, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &134692293
 GameObject:
   m_ObjectHideFlags: 0
@@ -473,8 +460,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0d3c2ad546c78049a275651d386f2b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  doorSettings: {fileID: 11400000, guid: bfb12af7cf8d9664fbdc6b1f6de6bf0d, type: 2}
-  stageManager: {fileID: 487237364}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -626,7 +611,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnAreaPrefabName: SpawnArea
-  doorPrefabName: DoorPrefab
   currentStageSettings: {fileID: 11400000, guid: 8c3b1144011cf9c42ae38d9823f043f1, type: 2}
   spawnAreaRotation: {x: 0, y: 0, z: 0, w: 1}
 --- !u!4 &487237365
