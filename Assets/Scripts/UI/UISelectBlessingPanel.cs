@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,9 +14,9 @@ public class UISelectBlessingPanel : UIBase
     private bool[] isFlipped;
 
 
-    private Dictionary<Skills, BlessingInfo> newBlessings = new Dictionary<Skills, BlessingInfo>();
+    private List<SkillWithLevel> newBlessings = new List<SkillWithLevel>();
 
-    private KeyValuePair<Skills, BlessingInfo> selectedBlessing;
+    private SkillWithLevel selectedBlessing;
 
     void Start()
     {
@@ -24,34 +25,57 @@ public class UISelectBlessingPanel : UIBase
 
     private void PickUpBlessing()
     {
-        var dic = RoomManager.Instance.ReturnLocalPlayer().GetComponent<PlayerBlessing>().ReturnBlessingDic();
-
+        var arr = RoomManager.Instance.ReturnLocalPlayer().GetComponent<PlayerBlessing>().ReturnSkillWithLevel();
+        if(arr == null)
+            Debug.Log("arr ³Î");
+        for(int i =0; i < arr.Length; i++)
+        {
+            Debug.Log(arr[i]);
+        }
         while (newBlessings.Count < 3)
         {
             int randomKey = Random.Range(0, (int)Skills.Max);
-            Skills skill = (Skills)randomKey;
 
-            if (newBlessings.ContainsKey(skill))
+            bool isDuplicate = false;
+
+            for (int i = 0; i < newBlessings.Count; i++)
+            {
+                for (int j = 0; j <= i; j++)
+                {
+                    if (newBlessings[j].skillData.Bind_Key == randomKey)
+                    {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
+                if (isDuplicate)
+                {
+                    break;
+                }
+            }
+
+            if (isDuplicate)
             {
                 continue;
             }
 
-            if (dic[skill].level != 0)
+            if (arr[randomKey].skillData.Devil != 0)
             {
-                BlessingInfo newBlessing = new BlessingInfo(dic[skill].blessing, dic[skill].level);
+                SkillWithLevel newBlessing = new SkillWithLevel(arr[randomKey].skillData, arr[randomKey].level);
                 newBlessing.level++;
-                if (!newBlessings.ContainsValue(newBlessing))
+                if (!newBlessings.Contains(newBlessing))
                 {
-                    newBlessings[skill] = newBlessing;
+                    newBlessings.Add(newBlessing);
                 }
             }
             else
             {
-                int randomBlessing = Random.Range(1, (int)Blessings.Max);
-                BlessingInfo newBlessing = new((Blessings)randomBlessing, 1);
-                if (!newBlessings.ContainsValue(newBlessing))
+                //int randomBlessing = Random.Range(1, (int)Blessings.Max);
+                int randomBlessing = Random.Range(1, 2);
+                SkillWithLevel newBlessing = new SkillWithLevel(DataManager.Instance.FindSkillByBlessingKeyAndCharacter(randomKey, randomBlessing, arr[0].skillData.Character), 1);
+                if (!newBlessings.Contains(newBlessing))
                 {
-                    newBlessings[skill] = newBlessing;
+                    newBlessings.Add(newBlessing);
                 }
             }
         }
@@ -111,7 +135,7 @@ public class UISelectBlessingPanel : UIBase
 
     private void SelectBleesing()
     {
-        if (selectedBlessing.Value.level != 0)
+        if (selectedBlessing.level != 0)
         {
             RoomManager.Instance.ReturnLocalPlayer().GetComponent<PlayerBlessing>().UpdateBlessing(selectedBlessing);
             InputManager.Instance.ChangeDefaultMap("Player");

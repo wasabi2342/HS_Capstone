@@ -14,5 +14,5 @@ public class SkillData : ScriptableObject
     public float AttackDamageCoefficient; 
     public float AbilityPowerCoefficient;
     public float Cooldown;
-    public float Stack;
+    public int Stack;
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.IO;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 enum Characters
 {
@@ -29,21 +30,30 @@ public class DataManager : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
 
-        skillList = LoadSkillCsv("CSV/skills.csv");
-        effectList = LoadSpecialEffectCsv("CSV/effects.csv");
-        linkList = LoadBlessingEffectLinkCsv("CSV/blessing_effect_links.csv");
+        skillList = LoadSkillCsv("CSV/skills");
+        effectList = LoadSpecialEffectCsv("CSV/effects");
+        linkList = LoadBlessingEffectLinkCsv("CSV/blessing_effect_links");
     }
 
     private List<SkillData> LoadSkillCsv(string resourcePath)
     {
+        Debug.Log("LoadSkillCsv 호출");
+
         var list = new List<SkillData>();
         TextAsset csvFile = Resources.Load<TextAsset>(resourcePath);
-        if (csvFile == null) return list;
+        if (csvFile == null)
+        {
+            Debug.Log("파일 없음");
+            return list;
+        }
 
         var lines = csvFile.text.Split('\n');
+        Debug.Log(csvFile.text);
+
         for (int i = 1; i < lines.Length; i++)
         {
-            var values = lines[i].Trim().Split('\t');
+            var values = lines[i].Trim().Split(',');
+            Debug.Log(values);
             if (values.Length < 10) continue;
 
             var data = ScriptableObject.CreateInstance<SkillData>();
@@ -56,7 +66,7 @@ public class DataManager : MonoBehaviour
             data.AttackDamageCoefficient = float.Parse(values[6]);
             data.AbilityPowerCoefficient = float.Parse(values[7]);
             data.Cooldown = float.Parse(values[8]);
-            data.Stack = float.Parse(values[9]);
+            data.Stack = int.Parse(values[9]);
 
             list.Add(data);
         }
@@ -72,7 +82,7 @@ public class DataManager : MonoBehaviour
         var lines = csvFile.text.Split('\n');
         for (int i = 1; i < lines.Length; i++)
         {
-            var values = lines[i].Trim().Split('\t');
+            var values = lines[i].Trim().Split(',');
             if (values.Length < 3) continue;
 
             var data = ScriptableObject.CreateInstance<SpecialEffectData>();
@@ -94,7 +104,7 @@ public class DataManager : MonoBehaviour
         var lines = csvFile.text.Split('\n');
         for (int i = 1; i < lines.Length; i++)
         {
-            var values = lines[i].Trim().Split('\t');
+            var values = lines[i].Trim().Split(',');
             if (values.Length < 5) continue;
 
             var data = ScriptableObject.CreateInstance<BlessingEffectLinkData>();
@@ -108,5 +118,55 @@ public class DataManager : MonoBehaviour
         }
         return list;
     }
+
+    public SkillData FindSkillByBlessingKeyAndCharacter(int bindKey, int blessing, int character)
+    {
+        return skillList.Find(skill =>
+        skill.Devil == blessing &&
+        skill.Bind_Key == bindKey &&
+        skill.Character == character
+        );
+    }
+
+    public int FindLinkIDBySkillID(int skillID)
+    {
+        // 스킬 존재 확인
+        SkillData skill = skillList.Find(s => s.ID == skillID);
+        if (skill == null)
+        {
+            Debug.LogWarning($"Skill ID {skillID} not found.");
+            return -1;
+        }
+
+        // 스킬 ID에 연결된 특수 효과 찾기
+        BlessingEffectLinkData link = linkList.Find(l => l.Blessing_ID == skillID);
+        if (link != null)
+        {
+            return link.ID;
+        }
+
+        return -1;
+    }
+
+    public int FindSpecialEffectIDBySkillID(int skillID)
+    {
+        // 스킬 존재 확인
+        SkillData skill = skillList.Find(s => s.ID == skillID);
+        if (skill == null)
+        {
+            Debug.LogWarning($"Skill ID {skillID} not found.");
+            return -1;
+        }
+
+        // 스킬 ID에 연결된 특수 효과 찾기
+        BlessingEffectLinkData link = linkList.Find(l => l.Blessing_ID == skillID);
+        if (link != null)
+        {
+            return link.SpecialEffect_ID;
+        }
+
+        return -1;
+    }
+
 }
 

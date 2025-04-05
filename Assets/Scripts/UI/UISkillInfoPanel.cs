@@ -25,16 +25,16 @@ public class UISkillInfoPanel : UIBase
     
     public override void Init()
     {
-        var blessings = RoomManager.Instance.ReturnLocalPlayer().GetComponentInChildren<PlayerBlessing>().ReturnBlessingDic();
+        var blessings = RoomManager.Instance.ReturnLocalPlayer().GetComponentInChildren<PlayerBlessing>().ReturnSkillWithLevel();
         for (int i = 0; i < (int)Skills.Max; i++)
         {
-            if (blessings[(Skills)i].level == 0)
+            if (blessings[i].level == 0)
             {
                 dataSlots[i].Init("가호 없음", ((Skills)i).ToString());
             }
             else
             {
-                dataSlots[i].Init(blessings[(Skills)i].blessing.ToString() + blessings[(Skills)i].level + "레벨", ((Skills)i).ToString());
+                dataSlots[i].Init(blessings[i].skillData.Blessing_name + blessings[i].level + "레벨", ((Skills)i).ToString());
             }
         }
 

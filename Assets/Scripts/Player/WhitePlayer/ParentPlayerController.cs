@@ -63,8 +63,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     protected virtual void Awake()
     {
-        runTimeData = new PlayerRunTimeData(characterBaseStats.attackPower, characterBaseStats.attackSpeed, characterBaseStats.moveSpeed, 
-            characterBaseStats.cooldownReductionPercent, characterBaseStats.abilityPower, characterBaseStats.maxHP);
+        runTimeData = new PlayerRunTimeData(characterBaseStats);
+
         if (PhotonNetwork.IsConnected)
         {
             if (photonView.IsMine)
@@ -78,21 +78,23 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
             }
         }
 
-        attackCooldown = characterBaseStats.mouseLeftCooldown;
-        dashCooldown = characterBaseStats.spaceCooldown;
-        shiftCoolDown = characterBaseStats.shiftCooldown;
-        ultimateCoolDown = characterBaseStats.ultimateCooldown;
-        mouseRightCoolDown = characterBaseStats.mouseRightCooldown;
+        attackCooldown = runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Cooldown;
+        dashCooldown = runTimeData.skillWithLevel[(int)Skills.Space].skillData.Cooldown;
+        shiftCoolDown = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Cooldown;
+        ultimateCoolDown = runTimeData.skillWithLevel[(int)Skills.R].skillData.Cooldown;
+        mouseRightCoolDown = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Cooldown;
+
+        cooldownCheckers[(int)Skills.Mouse_L] = new CooldownChecker(attackCooldown, OnAttackCooldownUpdate, runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Stack);
+        cooldownCheckers[(int)Skills.Mouse_R] = new CooldownChecker(mouseRightCoolDown, MouseRightSkillCoolDownUpdate, runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Stack);
+        cooldownCheckers[(int)Skills.Space] = new CooldownChecker(dashCooldown, OnDashCooldownUpdate, runTimeData.skillWithLevel[(int)Skills.Space].skillData.Stack);
+        cooldownCheckers[(int)Skills.Shift_L] = new CooldownChecker(shiftCoolDown, ShiftCoolDownUpdate, runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Stack);
+        cooldownCheckers[(int)Skills.R] = new CooldownChecker(ultimateCoolDown, UltimateCoolDownUpdate, runTimeData.skillWithLevel[(int)Skills.R].skillData.Stack);
+
+        Debug.Log("ultimateCoolDown = " + ultimateCoolDown);
 
         runTimeData.currentHealth = characterBaseStats.maxHP;
         // 시작 시 체력 UI 업데이트
         OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
-
-        cooldownCheckers[(int)Skills.Mouse_L] = new CooldownChecker(attackCooldown, OnAttackCooldownUpdate);
-        cooldownCheckers[(int)Skills.Mouse_R] = new CooldownChecker(mouseRightCoolDown, MouseRightSkillCoolDownUpdate);
-        cooldownCheckers[(int)Skills.Space] = new CooldownChecker(dashCooldown, OnDashCooldownUpdate);
-        cooldownCheckers[(int)Skills.Shift_L] = new CooldownChecker(shiftCoolDown, ShiftCoolDownUpdate);
-        cooldownCheckers[(int)Skills.R] = new CooldownChecker(ultimateCoolDown, UltimateCoolDownUpdate);
 
         playerBlessing = GetComponent<PlayerBlessing>();
 
@@ -297,17 +299,14 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         runTimeData.SaveToJsonFile();
     }
 
-    public virtual void UpdateBlessingRunTimeData(Dictionary<Skills, BlessingInfo> playerBlessingDic)
+    public virtual void UpdateBlessingRunTimeData(SkillWithLevel newData)
     {
-        foreach (var data in playerBlessingDic)
-        {
-            runTimeData.blessingInfo[(int)data.Key] = data.Value;
-        }
+        runTimeData.skillWithLevel[newData.skillData.Bind_Key] = newData;
     }
 
-    public virtual BlessingInfo[] ReturnBlessingRunTimeData()
+    public virtual SkillWithLevel[] ReturnBlessingRunTimeData()
     {
-        return runTimeData.blessingInfo;
+        return runTimeData.skillWithLevel;
     }
 
     protected virtual void OnApplicationQuit()
