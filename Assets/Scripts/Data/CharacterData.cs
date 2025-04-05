@@ -15,4 +15,5 @@ public class CharacterStats : ScriptableObject
     public float shiftCooldown;
     public float spaceCooldown;
     public float ultimateCooldown;
+    public int[] skillDatasIndex = new int[5];
 }

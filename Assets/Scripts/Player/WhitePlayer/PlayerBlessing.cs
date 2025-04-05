@@ -26,6 +26,8 @@ public class PlayerBlessing : MonoBehaviourPun
     private Animator animator;
     private Dictionary<Skills, BlessingInfo> playerBlessingDic = new Dictionary<Skills, BlessingInfo>();
 
+    public List<BaseSpecialEffect> specialEffectList;
+
     Dictionary<Blessings, Color> BlessingColor = new Dictionary<Blessings, Color>
 {
     { Blessings.None, Color.clear },
@@ -121,4 +123,5 @@ public class PlayerBlessing : MonoBehaviourPun
     {
         return playerBlessingDic;
     }
+
 }

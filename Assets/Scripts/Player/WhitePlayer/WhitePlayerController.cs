@@ -3,6 +3,8 @@ using System.Collections;
 using Photon.Pun;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using Unity.VisualScripting;
+using System;
 
 
 public enum WhitePlayerState { Idle, Run, BasicAttack, Hit, Dash, Skill, Ultimate, Guard, Parry, Counter, Stun, Revive, Death }
@@ -27,20 +29,12 @@ public class WhitePlayerController : ParentPlayerController
     public WhitePlayerState currentState = WhitePlayerState.Idle;
     public WhitePlayerState nextState = WhitePlayerState.Idle;
 
-    // 참조 컴포넌트 
-    private Animator animator;
-
     protected override void Awake()
 
     {
-        AttackCollider = GetComponentInChildren<WhitePlayerAttackZone>();
+        //AttackCollider = GetComponentInChildren<WhitePlayerAttackZone>();
 
         base.Awake();
-        animator = GetComponent<Animator>();
-        if (animator == null)
-        {
-            Debug.LogError("Animator 컴포넌트를 찾을 수 없습니다! (WhitePlayerController)");
-        }
     }
 
     private void Start()
@@ -186,7 +180,7 @@ public class WhitePlayerController : ParentPlayerController
     {
         if (currentState == WhitePlayerState.Death || currentState == WhitePlayerState.Dash)
             return;
-        if (!isDashReady)
+        if (!cooldownCheckers[(int)Skills.Space].CanUse())
             return;
         currentState = WhitePlayerState.Dash;
         animator.ResetTrigger("run");
@@ -283,7 +277,7 @@ public class WhitePlayerController : ParentPlayerController
     {
         if (currentState != WhitePlayerState.Death)
         {
-            if (isShiftReady && nextState < WhitePlayerState.Skill)
+            if (cooldownCheckers[(int)Skills.Shift_L].CanUse() && nextState < WhitePlayerState.Skill)
             {
                 nextState = WhitePlayerState.Skill;
                 animator.SetBool("Pre-Attack", true);
@@ -307,7 +301,7 @@ public class WhitePlayerController : ParentPlayerController
     {
         if (currentState != WhitePlayerState.Death)
         {
-            if (isUltimateReady && nextState < WhitePlayerState.Ultimate)
+            if (cooldownCheckers[(int)Skills.R].CanUse() && nextState < WhitePlayerState.Ultimate)
             {
 
                 nextState = WhitePlayerState.Ultimate;
@@ -327,32 +321,33 @@ public class WhitePlayerController : ParentPlayerController
     }
 
 
-    public WhitePlayerAttackZone AttackCollider;
+    //public WhitePlayerAttackZone AttackCollider;
 
     // 공격 애니메이션 이벤트용 스텁 (WhitePlayerController_AttackStack에서 호출) 
 
-    public IEnumerator CoStartSkillCoolDown() // 이벤트 클립으로 쿨타임 체크
+    public override void StartMouseRCoolDown()
     {
-        isShiftReady = false;
-        ShiftCoolDownUpdate?.Invoke(shiftCoolDown);
-        yield return new WaitForSeconds(shiftCoolDown);
-        isShiftReady = true;
+        base.StartMouseRCoolDown();
     }
 
-    public IEnumerator CoStartUltimateCoolDown() // 이벤트 클립으로 쿨타임 체크
+    public override void StartShiftCoolDown()
     {
-        isUltimateReady = false;
-        UltimateCoolDownUpdate?.Invoke(ultimateCoolDown);
-        yield return new WaitForSeconds(ultimateCoolDown);
-        isUltimateReady = true;
+        base.StartShiftCoolDown();
     }
 
-    public IEnumerator CoStartGuardCoolDown() // 이벤트 클립으로 쿨타임 체크
+    public override void StartUltimateCoolDown()
     {
-        isMouseRightSkillReady = false;
-        MouseRightSkillCoolDownUpdate?.Invoke(mouseRightCoolDown);
-        yield return new WaitForSeconds(mouseRightCoolDown);
-        isMouseRightSkillReady = true;
+        base.StartUltimateCoolDown();
+    }
+
+    public override void StartAttackCooldown()
+    {
+        base.StartAttackCooldown();
+    }
+
+    public override void StartSpaceCooldown()
+    {
+        base.StartSpaceCooldown();
     }
 
     public void OnAttackPreAttckStart()
@@ -394,6 +389,7 @@ public class WhitePlayerController : ParentPlayerController
         return Vector3.zero;
     }
 
+    /* 공격 콜라이더 생성
     public void OnAttack1DamageStart()
     {
         if (AttackCollider != null)
@@ -443,7 +439,27 @@ public class WhitePlayerController : ParentPlayerController
     {
         if (AttackCollider != null)
         {
-            AttackCollider.EnableCounterAttackCollider(true, animator.GetBool("Right"));
+            AttackCollider.EnableCounterAttackCollider(false);
+        }
+    }
+
+    public void OnUltimateCollider()
+    {
+        if (AttackCollider != null)
+        {
+            if (photonView.IsMine)
+            {
+                AttackCollider.Damage = runTimeData.attackPower * 1.7f;
+            }
+            AttackCollider.EnableUltimateCollider(true, animator.GetBool("Right"));
+        }
+    }
+
+    public void OffUltimateCollider()
+    {
+        if (AttackCollider != null)
+        {
+            AttackCollider.EnableUltimateCollider(false);
         }
     }
 
@@ -460,6 +476,7 @@ public class WhitePlayerController : ParentPlayerController
         }
         Debug.Log("후딜 시작");
     }
+    */
 
     public void CreateUltimateEffect()
     {
@@ -470,13 +487,13 @@ public class WhitePlayerController : ParentPlayerController
                 if (photonView.IsMine)
                 {
                     SkillEffect skillEffect = PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right", transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(runTimeData.attackPower * 1.7f, AttackCollider.StartHitlag);
+                    skillEffect.Init(runTimeData.attackPower * 1.7f, StartHitlag);
                 }
             }
             else
             {
                 SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right"), transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity);
-                skillEffect.Init(runTimeData.attackPower * 1.7f, AttackCollider.StartHitlag);
+                skillEffect.Init(runTimeData.attackPower * 1.7f, StartHitlag);
             }
         }
         else
@@ -486,13 +503,13 @@ public class WhitePlayerController : ParentPlayerController
                 if (photonView.IsMine)
                 {
                     SkillEffect skillEffect = PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left", transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(runTimeData.attackPower * 1.7f, AttackCollider.StartHitlag);
+                    skillEffect.Init(runTimeData.attackPower * 1.7f, StartHitlag);
                 }
             }
             else
             {
                 SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left"), transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity);
-                skillEffect.Init(runTimeData.attackPower * 1.7f, AttackCollider.StartHitlag);
+                skillEffect.Init(runTimeData.attackPower * 1.7f, StartHitlag);
             }
         }
     }
@@ -507,14 +524,16 @@ public class WhitePlayerController : ParentPlayerController
                 {
                     SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Attack{attackStack}_Right_Effect_{(int)runTimeData.blessingInfo[(int)Skills.Mouse_L].blessing}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
                     skillEffect.transform.parent = transform;
-                    skillEffect.Init(0f/*데미지 값 중복이라 제외*/, AttackCollider.StartHitlag);
+                    BaseSpecialEffect baseSpecialEffect = playerBlessing.specialEffectList[1];
+                    baseSpecialEffect.Init(10f, 5f, this);
+                    skillEffect.Init(0f/*데미지 값 중복이라 제외*/, StartHitlag, baseSpecialEffect);
                 }
             }
             else
             {
                 SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Attack{attackStack}_Right_Effect_{(int)runTimeData.blessingInfo[(int)Skills.Mouse_L].blessing}"), transform.position, Quaternion.identity);
                 skillEffect.transform.parent = transform;
-                skillEffect.Init(0, AttackCollider.StartHitlag);
+                skillEffect.Init(0, StartHitlag);
             }
         }
         else
@@ -525,14 +544,14 @@ public class WhitePlayerController : ParentPlayerController
                 {
                     SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Attack{attackStack}_Left_Effect_{(int)runTimeData.blessingInfo[(int)Skills.Mouse_L].blessing}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
                     skillEffect.transform.parent = transform;
-                    skillEffect.Init(0, AttackCollider.StartHitlag);
+                    skillEffect.Init(0, StartHitlag);
                 }
             }
             else
             {
                 SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Attack{attackStack}_Left_Effect_{(int)runTimeData.blessingInfo[(int)Skills.Mouse_L].blessing}"), transform.position, Quaternion.identity);
                 skillEffect.transform.parent = transform;
-                skillEffect.Init(0, AttackCollider.StartHitlag);
+                skillEffect.Init(0, StartHitlag);
             }
         }
     }
@@ -572,6 +591,8 @@ public class WhitePlayerController : ParentPlayerController
         }
         Debug.Log(" 애니메이션 종료");
     }
+
+    /* 공격 콜라이더 생성
 
     public void OnAttack2DamageStart()
     {
@@ -653,6 +674,7 @@ public class WhitePlayerController : ParentPlayerController
         }
         Debug.Log("Attack4: 두번째 콜라이더 생성");
     }
+    */
 
     public void InitAttackStak()
     {
@@ -661,6 +683,16 @@ public class WhitePlayerController : ParentPlayerController
     }
 
     #region Blessing 01 Crocell
+
+    public void BasicAttack_01_Crocell(Collider other)
+    {
+        // other에서 적 슬로우 함수 가져와 호출 하기
+    }
+
+    public void Ultimate_01_Crocell(Collider other)
+    {
+        // other에서 적 속박 함수 가져와 호출 하기
+    }
 
     public void ShiftSkill_01_Crocell_AddShield()
     {
@@ -686,10 +718,47 @@ public class WhitePlayerController : ParentPlayerController
     #endregion
 
     #region Blessing 02 Gremory
+    /// <summary>
+    /// 1번만 실행 되어야함
+    /// </summary>
+    /// <param name="other"></param>
+    public void BasicAttack_02_Gremory(Collider other)
+    {
+        cooldownCheckers[(int)Skills.Shift_L].ReduceCooldown(0.5f);
+        cooldownCheckers[(int)Skills.R].ReduceCooldown(0.5f);
+    }
+
+    public void Space_02_Gremory()
+    {
+        cooldownCheckers[(int)Skills.Mouse_R].ResetCooldown(this);
+    }
 
     #endregion
 
     #region Blessing 03 Paymon
+    public void BasicAttack_03_Paymon(Collider other)
+    {
+        // other에서 적 도트데미지 주는 함수 가져와 호출하기
+        Debug.Log("BasicAttack_03_Paymon 호출");
+    }
+
+    public void Ultimate_03_Paymon(Collider other)
+    {
+        // other에서 적 도트데미지 주는 함수 가져와 호출하기
+        Debug.Log("Ultimate_03_Paymon 호출");
+    }
+    public void Space_03_Paymon()
+    {
+        // 장판 생성하기
+        if (PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/Space_FlameArea", transform.position - new Vector3(0, 2, 0), Quaternion.Euler(90, 0, 0)).GetComponent<FlameArea>().Init(10f, 1f);
+        }
+        else
+        {
+            Instantiate(Resources.Load("SkillEffect/WhitePlayer/Space_FlameArea"), transform.position - new Vector3(0, 2, 0), Quaternion.Euler(90, 0, 0)).GetComponent<FlameArea>().Init(10f, 1f);
+        }
+    }
 
     #endregion
 
@@ -699,7 +768,7 @@ public class WhitePlayerController : ParentPlayerController
     {
         if (currentState != WhitePlayerState.Death)
         {
-            if (isMouseRightSkillReady && nextState < WhitePlayerState.Guard)
+            if (cooldownCheckers[(int)Skills.Mouse_R].CanUse() && nextState < WhitePlayerState.Guard)
             {
 
                 nextState = WhitePlayerState.Guard;
@@ -736,9 +805,7 @@ public class WhitePlayerController : ParentPlayerController
                 //photonView.RPC("PlayAnimation", RpcTarget.All, "parry");
 
                 currentState = WhitePlayerState.Parry;
-                isMouseRightSkillReady = true;
-                MouseRightSkillCoolDownUpdate?.Invoke(0);
-                StopCoroutine("CoStartGuardCoolDown");
+                cooldownCheckers[(int)Skills.Mouse_R].ResetCooldown(this);
                 return;
             }
             return;
@@ -858,8 +925,6 @@ public class WhitePlayerController : ParentPlayerController
             stunOverlay.enabled = false;
         }
     }
-
-    private float maxHealth = 100f;
 
     public void Revive()
     {
