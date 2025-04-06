@@ -389,95 +389,9 @@ public class WhitePlayerController : ParentPlayerController
         return Vector3.zero;
     }
 
-    /* 공격 콜라이더 생성
-    public void OnAttack1DamageStart()
-    {
-        if (AttackCollider != null)
-        {
-            if (photonView.IsMine)
-            {
-                AttackCollider.Damage = runTimeData.attackPower;
-            }
-            AttackCollider.EnableAttackCollider(true);
-        }
-        Debug.Log("Attack1: 데미지 시작");
-    }
+    #region 스킬 이펙트 생성
 
-    public void OnSkillCollider()
-    {
-        if (AttackCollider != null)
-        {
-            if (photonView.IsMine)
-            {
-                AttackCollider.Damage = runTimeData.attackPower * 1.7f;
-            }
-            AttackCollider.EnableSkillAttackCollider(true, animator.GetBool("Right"));
-        }
-    }
-
-    public void OffSkillCollider()
-    {
-        if (AttackCollider != null)
-        {
-            AttackCollider.EnableSkillAttackCollider(false);
-        }
-    }
-
-    public void OnCounterCollider()
-    {
-        if (AttackCollider != null)
-        {
-            if (photonView.IsMine)
-            {
-                AttackCollider.Damage = runTimeData.attackPower * runTimeData.attackSpeed;
-            }
-            AttackCollider.EnableCounterAttackCollider(true, animator.GetBool("Right"));
-        }
-    }
-
-    public void OffCounterCollider()
-    {
-        if (AttackCollider != null)
-        {
-            AttackCollider.EnableCounterAttackCollider(false);
-        }
-    }
-
-    public void OnUltimateCollider()
-    {
-        if (AttackCollider != null)
-        {
-            if (photonView.IsMine)
-            {
-                AttackCollider.Damage = runTimeData.attackPower * 1.7f;
-            }
-            AttackCollider.EnableUltimateCollider(true, animator.GetBool("Right"));
-        }
-    }
-
-    public void OffUltimateCollider()
-    {
-        if (AttackCollider != null)
-        {
-            AttackCollider.EnableUltimateCollider(false);
-        }
-    }
-
-    public void OnLastAttackStart()
-    {
-        if (AttackCollider != null)
-        {
-            AttackCollider.EnableAttackCollider(false);
-        }
-        animator.SetBool("CancleState", true);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", true);
-        }
-        Debug.Log("후딜 시작");
-    }
-    */
-
+    // 궁극기 이펙트 생성
     public void CreateUltimateEffect()
     {
         if (animator.GetBool("Right"))
@@ -487,14 +401,14 @@ public class WhitePlayerController : ParentPlayerController
                 if (photonView.IsMine)
                 {
                     float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right", transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}", transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
                     skillEffect.Init(damage, StartHitlag);
                 }
             }
             else
             {
                 float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right"), transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity);
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}"), transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity);
                 skillEffect.Init(damage, StartHitlag);
             }
         }
@@ -505,19 +419,20 @@ public class WhitePlayerController : ParentPlayerController
                 if (photonView.IsMine)
                 {
                     float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left", transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}", transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
                     skillEffect.Init(damage, StartHitlag);
                 }
             }
             else
             {
                 float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>("SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left"), transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity);
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}"), transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity);
                 skillEffect.Init(damage, StartHitlag);
             }
         }
     }
 
+    // 평타 이펙트 생성
     public void CreateBasicAttackEffect()
     {
         if (animator.GetBool("Right"))
@@ -526,7 +441,8 @@ public class WhitePlayerController : ParentPlayerController
             {
                 if (photonView.IsMine)
                 {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                    float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
+                    float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * coefficient;
                     SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Attack{attackStack}_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
                     skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
                     skillEffect.transform.parent = transform;
@@ -534,7 +450,8 @@ public class WhitePlayerController : ParentPlayerController
             }
             else
             {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
+                float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) *coefficient;
                 SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Attack{attackStack}_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}"), transform.position, Quaternion.identity);
                 skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
                 skillEffect.transform.parent = transform;
@@ -546,7 +463,8 @@ public class WhitePlayerController : ParentPlayerController
             {
                 if (photonView.IsMine)
                 {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                    float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
+                    float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * coefficient;
                     SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Attack{attackStack}_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
                     skillEffect.transform.parent = transform;
                     skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
@@ -554,13 +472,171 @@ public class WhitePlayerController : ParentPlayerController
             }
             else
             {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
+                float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * coefficient;
                 SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Attack{attackStack}_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}"), transform.position, Quaternion.identity);
                 skillEffect.transform.parent = transform;
                 skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
             }
         }
     }
+
+    // 시프트 스킬 이펙트 생성
+    public void CreateShiftSkillEffect()
+    {
+        if (animator.GetBool("Right"))
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                if (photonView.IsMine)
+                {
+                    float damage = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/ShiftSkill_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
+                    skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this));
+                    skillEffect.transform.parent = transform;
+                }
+            }
+            else
+            {
+                float damage = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/ShiftSkill_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}"), transform.position, Quaternion.identity);
+                skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this));
+                skillEffect.transform.parent = transform;
+            }
+        }
+        else
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                if (photonView.IsMine)
+                {
+                    float damage = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/ShiftSkill_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
+                    skillEffect.transform.parent = transform;
+                    skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this));
+                }
+            }
+            else
+            {
+                float damage = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/ShiftSkill_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}"), transform.position, Quaternion.identity);
+                skillEffect.transform.parent = transform;
+                skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this));
+            }
+        }
+    }
+
+    // 카운터 이펙트 생성
+    public void CreateCounterSkillEffect()
+    {
+        if (animator.GetBool("Right"))
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                if (photonView.IsMine)
+                {
+                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Counter_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
+                    skillEffect.Init(damage, StartHitlag);
+                    skillEffect.transform.parent = transform;
+                }
+            }
+            else
+            {
+                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Counter_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
+                skillEffect.Init(damage, StartHitlag);
+                skillEffect.transform.parent = transform;
+            }
+        }
+        else
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                if (photonView.IsMine)
+                {
+                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Counter_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
+                    skillEffect.transform.parent = transform;
+                    skillEffect.Init(damage, StartHitlag);
+                }
+            }
+            else
+            {
+                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Counter_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
+                skillEffect.transform.parent = transform;
+                skillEffect.Init(damage, StartHitlag);
+            }
+        }
+    }
+
+    // 패링 이펙트 생성
+    public void CreateParrySkillEffect()
+    {
+        if (animator.GetBool("Right"))
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                if (photonView.IsMine)
+                {
+                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Parry_Right_Effect", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
+                    skillEffect.Init(damage, StartHitlag);
+                    skillEffect.transform.parent = transform;
+                }
+            }
+            else
+            {
+                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Parry_Right_Effect"), transform.position, Quaternion.identity);
+                skillEffect.Init(damage, StartHitlag);
+                skillEffect.transform.parent = transform;
+            }
+        }
+        else
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                if (photonView.IsMine)
+                {
+                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Parry_Left_Effect", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
+                    skillEffect.transform.parent = transform;
+                    skillEffect.Init(damage, StartHitlag);
+                }
+            }
+            else
+            {
+                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Parry_Left_Effect"), transform.position, Quaternion.identity);
+                skillEffect.transform.parent = transform;
+                skillEffect.Init(damage, StartHitlag);
+            }
+        }
+    }
+
+    // 스페이스 이펙트 컨테이너에 효과만 나타나도록
+    public void CreateSpaceSkillEffect()
+    {
+        if (PhotonNetwork.IsConnected)
+        {
+            if (photonView.IsMine)
+            {
+                SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/EffectContainer", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
+                skillEffect.transform.parent = transform;
+                skillEffect.Init(0, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Space].skillData.ID, this));
+            }
+        }
+        else
+        {
+            SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/EffectContainer"), transform.position, Quaternion.identity);
+            skillEffect.transform.parent = transform;
+            skillEffect.Init(0, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Space].skillData.ID, this));
+        }
+    }
+
+    #endregion
 
     public void GetUltimateBonus()
     {
@@ -598,176 +674,11 @@ public class WhitePlayerController : ParentPlayerController
         Debug.Log(" 애니메이션 종료");
     }
 
-    /* 공격 콜라이더 생성
-
-    public void OnAttack2DamageStart()
-    {
-        if (AttackCollider != null)
-        {
-            if (photonView.IsMine)
-            {
-                AttackCollider.Damage = runTimeData.attackPower;
-            }
-            AttackCollider.EnableAttackCollider(true);
-        }
-        Debug.Log("Attack2: 데미지 시작");
-    }
-
-    public void OnAttack3DamageStart()
-    {
-        if (AttackCollider != null)
-        {
-            if (photonView.IsMine)
-            {
-                AttackCollider.Damage = runTimeData.attackPower * 0.7f;
-            }
-            AttackCollider.EnableAttackCollider(true);
-        }
-        Debug.Log("Attack3: 데미지 시작");
-    }
-
-    public void OnCollider3Delete()
-    {
-        if (AttackCollider != null)
-        {
-            AttackCollider.EnableAttackCollider(false);
-
-            Debug.Log("Attack3: 첫번째 콜라이더 제거");
-        }
-
-        if (AttackCollider != null)
-        {
-            if (photonView.IsMine)
-            {
-                AttackCollider.Damage = runTimeData.attackPower * 0.7f;
-            }
-
-            AttackCollider.EnableAttackCollider(true);
-        }
-        Debug.Log("Attack3: 두번째 콜라이더 생성");
-    }
-
-    public void OnAttack4DamageStart()
-    {
-        if (AttackCollider != null)
-        {
-            if (photonView.IsMine)
-            {
-                AttackCollider.Damage = runTimeData.attackPower * 1.5f;
-            }
-            AttackCollider.EnableAttackCollider(true);
-        }
-        Debug.Log("Attack4: 데미지 시작");
-    }
-
-    public void OnCollider4Delete()
-    {
-        if (AttackCollider != null)
-        {
-            AttackCollider.EnableAttackCollider(false);
-
-            Debug.Log("Attack4: 첫번째 콜라이더 제거");
-        }
-
-        if (AttackCollider != null)
-        {
-            if (photonView.IsMine)
-            {
-                AttackCollider.Damage = runTimeData.attackPower * 1.5f;
-            }
-
-            AttackCollider.EnableAttackCollider(true);
-        }
-        Debug.Log("Attack4: 두번째 콜라이더 생성");
-    }
-    */
-
     public void InitAttackStak()
     {
         attackStack = 0;
         AttackStackUpdate?.Invoke(attackStack);
     }
-
-    #region Blessing 01 Crocell
-
-    public void BasicAttack_01_Crocell(Collider other)
-    {
-        // other에서 적 슬로우 함수 가져와 호출 하기
-    }
-
-    public void Ultimate_01_Crocell(Collider other)
-    {
-        // other에서 적 속박 함수 가져와 호출 하기
-    }
-
-    public void ShiftSkill_01_Crocell_AddShield()
-    {
-        //AddShield(DataManager.Instance.loadDatas.characterBlessingSkillDatas[(int)Characters.WhitePlayer].blessingSkillDatas[(int)Blessings.Crocell].skillDatas[(int)Skills.Shift_L].shieldAmount,
-        //    DataManager.Instance.loadDatas.characterBlessingSkillDatas[(int)Characters.WhitePlayer].blessingSkillDatas[(int)Blessings.Crocell].skillDatas[(int)Skills.Shift_L].shieldAmount);
-        AddShield(10f, 5f);
-    }
-
-    public void Guard_01_Crocell_AddShield()
-    {
-        //AddShield(runTimeData.abilityPower * 0.5f,
-        //    DataManager.Instance.loadDatas.characterBlessingSkillDatas[(int)Characters.WhitePlayer].blessingSkillDatas[(int)Blessings.Crocell].skillDatas[(int)Skills.Mouse_R].shieldAmount);
-        AddShield(runTimeData.abilityPower * 0.5f, 5f);
-    }
-
-    public void Space_01_Crocell_AddShield()
-    {
-        //AddShield(runTimeData.attackPower * 0.3f,
-        //    DataManager.Instance.loadDatas.characterBlessingSkillDatas[(int)Characters.WhitePlayer].blessingSkillDatas[(int)Blessings.Crocell].skillDatas[(int)Skills.Space].shieldAmount);
-        AddShield(runTimeData.attackPower * 0.3f, 5f);
-    }
-
-    #endregion
-
-    #region Blessing 02 Gremory
-    /// <summary>
-    /// 1번만 실행 되어야함
-    /// </summary>
-    /// <param name="other"></param>
-    public void BasicAttack_02_Gremory(Collider other)
-    {
-        cooldownCheckers[(int)Skills.Shift_L].ReduceCooldown(0.5f);
-        cooldownCheckers[(int)Skills.R].ReduceCooldown(0.5f);
-    }
-
-    public void Space_02_Gremory()
-    {
-        cooldownCheckers[(int)Skills.Mouse_R].ResetCooldown(this);
-    }
-
-    #endregion
-
-    #region Blessing 03 Paymon
-    public void BasicAttack_03_Paymon(Collider other)
-    {
-        // other에서 적 도트데미지 주는 함수 가져와 호출하기
-        Debug.Log("BasicAttack_03_Paymon 호출");
-    }
-
-    public void Ultimate_03_Paymon(Collider other)
-    {
-        // other에서 적 도트데미지 주는 함수 가져와 호출하기
-        Debug.Log("Ultimate_03_Paymon 호출");
-    }
-    public void Space_03_Paymon()
-    {
-        // 장판 생성하기
-        if (PhotonNetwork.IsConnected)
-        {
-            PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/Space_FlameArea", transform.position - new Vector3(0, 2, 0), Quaternion.Euler(90, 0, 0)).GetComponent<FlameArea>().Init(10f, 1f);
-        }
-        else
-        {
-            Instantiate(Resources.Load("SkillEffect/WhitePlayer/Space_FlameArea"), transform.position - new Vector3(0, 2, 0), Quaternion.Euler(90, 0, 0)).GetComponent<FlameArea>().Init(10f, 1f);
-        }
-    }
-
-    #endregion
-
 
     // 가드/패링 처리
     public void HandleGuard()
@@ -1052,5 +963,15 @@ public class WhitePlayerController : ParentPlayerController
     public override void AddShield(float amount, float duration)
     {
         base.AddShield(amount, duration);
+    }
+
+    public override void UpdateBlessingRunTimeData(SkillWithLevel newData)
+    {
+        base.UpdateBlessingRunTimeData(newData);
+
+        if (newData.level == 1 && newData.skillData.Bind_Key == (int)Skills.Mouse_R)
+        {
+            animator.SetInteger("mouseRightBlessing", newData.skillData.Devil);
+        }
     }
 }

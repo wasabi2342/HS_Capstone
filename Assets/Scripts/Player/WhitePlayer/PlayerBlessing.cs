@@ -57,30 +57,6 @@ public class PlayerBlessing : MonoBehaviourPun
         for (int i = 0; i < blessings.Length; i++)
         {
             playerController.SkillOutlineUpdate?.Invoke((UIIcon)i, BlessingColor[(Blessings)blessings[i].skillData.Devil]);
-
-            //switch ((Skills)i)
-            //{
-            //    case Skills.Mouse_L:
-            //        animator.SetInteger("basicAttackBlessing", blessings[i].skillData.Devil);
-            //        break;
-            //    case Skills.Mouse_R:
-            //        animator.SetInteger("mouseRightBlessing", blessings[i].skillData.Devil);
-            //        break;
-            //    case Skills.Space:
-            //        animator.SetInteger("spaceBlessing", blessings[i].skillData.Devil);
-            //        switch ((Blessings)blessings[i].skillData.Devil)
-            //        {
-            //            case Blessings.Gremory:
-            //                break;
-            //        }
-            //        break;
-            //    case Skills.Shift_L:
-            //        animator.SetInteger("skillBlessing", blessings[i].skillData.Devil);
-            //        break;
-            //    case Skills.R:
-            //        animator.SetInteger("ultimateBlessing", blessings[i].skillData.Devil);
-            //        break;
-            //}
         }
     }
 
@@ -91,31 +67,6 @@ public class PlayerBlessing : MonoBehaviourPun
         if (data.level == 1)
         {
             playerController.SkillOutlineUpdate?.Invoke((UIIcon)data.skillData.Bind_Key, BlessingColor[(Blessings)data.skillData.Devil]);
-
-            // 갱신된 가호에 맞게 스킬 변경 코드 추가 해야함
-            //switch ((Skills)data.skillData.Bind_Key)
-            //{
-            //    case Skills.Mouse_L:
-            //        animator.SetInteger("basicAttackBlessing", data.skillData.Devil);
-            //        break;
-            //    case Skills.Mouse_R:
-            //        animator.SetInteger("mouseRightBlessing", data.skillData.Devil);
-            //        break;
-            //    case Skills.Space:
-            //        animator.SetInteger("spaceBlessing", data.skillData.Devil);
-            //        break;
-            //    case Skills.Shift_L:
-            //        animator.SetInteger("skillBlessing", data.skillData.Devil);
-            //        switch ((Blessings)data.skillData.Devil)
-            //        {
-            //            case Blessings.Gremory:
-            //                break;
-            //        }
-            //        break;
-            //    case Skills.R:
-            //        animator.SetInteger("ultimateBlessing", data.skillData.Devil);
-            //        break;
-            //}
         }
     }
 

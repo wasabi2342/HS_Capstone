@@ -4,6 +4,7 @@ using UnityEngine;
 public class CharacterStats : ScriptableObject
 {
     public string characterName;
+    public int characterId;
     public int maxHP;
     public float attackPower;
     public float attackSpeed;

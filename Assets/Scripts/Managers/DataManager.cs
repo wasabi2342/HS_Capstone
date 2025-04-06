@@ -15,6 +15,7 @@ public class DataManager : MonoBehaviour
     public List<SkillData> skillList;
     public List<SpecialEffectData> effectList;
     public List<BlessingEffectLinkData> linkList;
+    public List<BasicAttackComboData> basicAttackComboDatas;
 
     public static DataManager Instance { get; private set; }
 
@@ -33,6 +34,7 @@ public class DataManager : MonoBehaviour
         skillList = LoadSkillCsv("CSV/skills");
         effectList = LoadSpecialEffectCsv("CSV/effects");
         linkList = LoadBlessingEffectLinkCsv("CSV/blessing_effect_links");
+        basicAttackComboDatas = LoadComboCsv("CSV/BasicAttackCombo");
     }
 
     private List<SkillData> LoadSkillCsv(string resourcePath)
@@ -119,6 +121,29 @@ public class DataManager : MonoBehaviour
         return list;
     }
 
+    private List<BasicAttackComboData> LoadComboCsv(string resourcePath)
+    {
+        var list = new List<BasicAttackComboData>();
+        TextAsset csvFile = Resources.Load<TextAsset>(resourcePath);
+        if (csvFile == null) return list;
+
+        var lines = csvFile.text.Split('\n');
+        for (int i = 1; i < lines.Length; i++)
+        {
+            var values = lines[i].Trim().Split(',');
+            if (values.Length < 4) continue;
+
+            var data = ScriptableObject.CreateInstance<BasicAttackComboData>();
+            data.ID = int.Parse(values[0]);
+            data.Character = int.Parse(values[1]);
+            data.Combo_Index = int.Parse(values[2]);
+            data.Damage = float.Parse(values[3]);
+
+            list.Add(data);
+        }
+        return list;
+    }
+
     public SkillData FindSkillByBlessingKeyAndCharacter(int bindKey, int blessing, int character)
     {
         return skillList.Find(skill =>
@@ -166,6 +191,18 @@ public class DataManager : MonoBehaviour
         }
 
         return -1;
+    }
+
+    public float FindDamageByCharacterAndComboIndex(int character, int comboIndex)
+    {
+        var combo = basicAttackComboDatas.Find(c => c.Character == character && c.Combo_Index == comboIndex);
+        if (combo != null)
+        {
+            return combo.Damage;
+        }
+
+        Debug.LogWarning($"Combo not found for Character: {character}, ComboIndex: {comboIndex}");
+        return -1f;
     }
 
 }

@@ -15,6 +15,11 @@ public class SkillEffect : MonoBehaviourPun
     private float damage;
     private Action triggerEvent;
 
+    private void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
+
     /// <summary>
     /// 
     /// </summary>
