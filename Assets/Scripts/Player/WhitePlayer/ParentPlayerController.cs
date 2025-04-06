@@ -379,4 +379,14 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     {
         StartCoroutine(PauseForSeconds());
     }
+
+    public float ReturnAttackPower()
+    {
+        return runTimeData.attackPower;
+    }
+
+    public float ReturnAbilityPower()
+    {
+        return runTimeData.abilityPower;
+    }
 }
