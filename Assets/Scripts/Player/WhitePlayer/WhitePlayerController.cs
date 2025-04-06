@@ -228,6 +228,18 @@ public class WhitePlayerController : ParentPlayerController
                 currentState = WhitePlayerState.Counter;
                 return;
             }
+            else if (currentState == WhitePlayerState.Counter && animator.GetInteger("CounterStack") > 0)
+            {
+                animator.SetBool("Counter", true);
+                Vector3 mousePos = GetMouseWorldPosition();
+                animator.SetBool("Right", mousePos.x > transform.position.x);
+                if (PhotonNetwork.IsConnected)
+                {
+                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Counter", true);
+                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                }
+                return;
+            }
             else if (nextState < WhitePlayerState.BasicAttack)
             {
 
@@ -451,7 +463,7 @@ public class WhitePlayerController : ParentPlayerController
             else
             {
                 float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
-                float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) *coefficient;
+                float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * coefficient;
                 SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Attack{attackStack}_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}"), transform.position, Quaternion.identity);
                 skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
                 skillEffect.transform.parent = transform;

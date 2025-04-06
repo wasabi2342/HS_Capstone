@@ -70,8 +70,7 @@ public class UISelectBlessingPanel : UIBase
             }
             else
             {
-                //int randomBlessing = Random.Range(1, (int)Blessings.Max);
-                int randomBlessing = Random.Range(1, 2);
+                int randomBlessing = Random.Range(1, (int)Blessings.Max);
                 SkillWithLevel newBlessing = new SkillWithLevel(DataManager.Instance.FindSkillByBlessingKeyAndCharacter(randomKey, randomBlessing, arr[0].skillData.Character), 1);
                 if (!newBlessings.Contains(newBlessing))
                 {

@@ -19,14 +19,6 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     #region Cooldown UI Events
 
-    [Header("Cooldown Settings")]
-    // 공격/대쉬 쿨타임 (임의 값)
-    protected float attackCooldown = 1f;
-    protected float dashCooldown = 1f;
-    protected float shiftCoolDown = 3f; // 캐릭터의 능력치, 쿨타임 등 캐릭터 정보를 가진 scriptableobject 또는 구조체, 클래스 중 1개를 만들어 Start에서 능력치 연결 해줘야함
-    protected float ultimateCoolDown = 30f; // 추후에 로그라이크 강화 요소 또한 불러와야 함
-    protected float mouseRightCoolDown = 4f;
-
     // 체력 UI 업데이트 -> 체력바 갱신, 인자로 0~1의 정규화된 값을 전송
     public UnityEvent<float> OnHealthChanged;
     // 공격/대쉬 쿨타임 UI 갱신 이벤트 (0~1의 진행률 전달)
@@ -78,19 +70,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
             }
         }
 
-        attackCooldown = runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Cooldown;
-        dashCooldown = runTimeData.skillWithLevel[(int)Skills.Space].skillData.Cooldown;
-        shiftCoolDown = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Cooldown;
-        ultimateCoolDown = runTimeData.skillWithLevel[(int)Skills.R].skillData.Cooldown;
-        mouseRightCoolDown = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Cooldown;
-
-        cooldownCheckers[(int)Skills.Mouse_L] = new CooldownChecker(attackCooldown, OnAttackCooldownUpdate, runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Stack);
-        cooldownCheckers[(int)Skills.Mouse_R] = new CooldownChecker(mouseRightCoolDown, MouseRightSkillCoolDownUpdate, runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Stack);
-        cooldownCheckers[(int)Skills.Space] = new CooldownChecker(dashCooldown, OnDashCooldownUpdate, runTimeData.skillWithLevel[(int)Skills.Space].skillData.Stack);
-        cooldownCheckers[(int)Skills.Shift_L] = new CooldownChecker(shiftCoolDown, ShiftCoolDownUpdate, runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Stack);
-        cooldownCheckers[(int)Skills.R] = new CooldownChecker(ultimateCoolDown, UltimateCoolDownUpdate, runTimeData.skillWithLevel[(int)Skills.R].skillData.Stack);
-
-        Debug.Log("ultimateCoolDown = " + ultimateCoolDown);
+        BindCooldown();
 
         runTimeData.currentHealth = characterBaseStats.maxHP;
         // 시작 시 체력 UI 업데이트
@@ -108,6 +88,15 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     }
 
     #endregion
+
+    public virtual void BindCooldown()
+    {
+        cooldownCheckers[(int)Skills.Mouse_L] = new CooldownChecker(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Cooldown, OnAttackCooldownUpdate, runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Stack);
+        cooldownCheckers[(int)Skills.Mouse_R] = new CooldownChecker(runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Cooldown, MouseRightSkillCoolDownUpdate, runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Stack);
+        cooldownCheckers[(int)Skills.Space] = new CooldownChecker(runTimeData.skillWithLevel[(int)Skills.Space].skillData.Cooldown, OnDashCooldownUpdate, runTimeData.skillWithLevel[(int)Skills.Space].skillData.Stack);
+        cooldownCheckers[(int)Skills.Shift_L] = new CooldownChecker(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Cooldown, ShiftCoolDownUpdate, runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Stack);
+        cooldownCheckers[(int)Skills.R] = new CooldownChecker(runTimeData.skillWithLevel[(int)Skills.R].skillData.Cooldown, UltimateCoolDownUpdate, runTimeData.skillWithLevel[(int)Skills.R].skillData.Stack);
+    }
 
     #region Damage & Health Synchronization
 
@@ -302,6 +291,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     public virtual void UpdateBlessingRunTimeData(SkillWithLevel newData)
     {
         runTimeData.skillWithLevel[newData.skillData.Bind_Key] = newData;
+        BindCooldown();
     }
 
     public virtual SkillWithLevel[] ReturnBlessingRunTimeData()
