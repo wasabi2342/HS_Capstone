@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using Photon.Pun;
+using System;
 
 [RequireComponent(typeof(SphereCollider))]
 public class WhitePlayerAttackZone : MonoBehaviourPun
@@ -20,7 +21,12 @@ public class WhitePlayerAttackZone : MonoBehaviourPun
     private BoxCollider skillCollider;
     [SerializeField]
     private BoxCollider counterCollider;
+    [SerializeField]
+    private BoxCollider ultimateCollider;
 
+    private Action<Collider> abilityAction;
+    private bool onlyOnce;
+    private bool isFirstHit;
     private Animator animator;
 
     public float Damage;
@@ -48,7 +54,7 @@ public class WhitePlayerAttackZone : MonoBehaviourPun
         }
     }
 
-    public void EnableSkillAttackCollider(bool enable, bool isRight = true)
+    public void EnableSkillAttackCollider(bool enable, bool isRight = false, bool onlyOnce = false, Action<Collider> ability = null)
     {
         if (enable)
         {
@@ -60,6 +66,13 @@ public class WhitePlayerAttackZone : MonoBehaviourPun
             {
                 skillCollider.center = new Vector3(-3, 0, 0);
             }
+            abilityAction = ability;
+            this.onlyOnce = onlyOnce;
+            isFirstHit = true;
+        }
+        else
+        {
+            abilityAction = null;
         }
 
         if (skillCollider != null)
@@ -68,7 +81,7 @@ public class WhitePlayerAttackZone : MonoBehaviourPun
         }
     }
 
-    public void EnableCounterAttackCollider(bool enable, bool isRight = true)
+    public void EnableCounterAttackCollider(bool enable, bool isRight = false, bool onlyOnce = false, Action<Collider> ability = null)
     {
         if (enable)
         {
@@ -80,11 +93,45 @@ public class WhitePlayerAttackZone : MonoBehaviourPun
             {
                 counterCollider.center = new Vector3(-3.5f, 0, 0);
             }
+            abilityAction = ability;
+            this.onlyOnce = onlyOnce;
+            isFirstHit = true;
+        }
+        else
+        {
+            abilityAction = null;
         }
 
         if (counterCollider != null)
         {
             counterCollider.enabled = enable;
+        }
+    }
+
+    public void EnableUltimateCollider(bool enable, bool isRight = false, bool onlyOnce = false, Action<Collider> ability = null)
+    {
+        if (enable)
+        {
+            if (isRight)
+            {
+                ultimateCollider.center = new Vector3(-8.5f, 0, 0);
+            }
+            else
+            {
+                ultimateCollider.center = new Vector3(8.5f, 0, 0);
+            }
+            abilityAction = ability;
+            this.onlyOnce = onlyOnce;
+            isFirstHit = true;
+        }
+        else
+        {
+            abilityAction = null;
+        }
+
+        if (ultimateCollider != null)
+        {
+            ultimateCollider.enabled = enable;
         }
     }
 
@@ -115,6 +162,11 @@ public class WhitePlayerAttackZone : MonoBehaviourPun
 
         if (other.GetComponent<IDamageable>() != null)
         {
+            if (!onlyOnce || isFirstHit)
+            {
+                abilityAction?.Invoke(other);
+                isFirstHit = false;
+            }
             other.GetComponent<IDamageable>().TakeDamage(Damage);
             StartHitlag();
         }

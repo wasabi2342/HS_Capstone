@@ -13,9 +13,13 @@ MonoBehaviour:
   m_Name: StageSetting 0-1
   m_EditorClassIdentifier: 
   spawnAreaSettings:
-  - position: {x: 0, y: 0, z: 0}
+  - position: {x: 20, y: 0, z: 0}
     radius: 10
-    monsterSpawnCount: 2
+    monsterSpawnInfos:
+    - monsterPrefabName: Wolf_FIx
+      count: 3
   - position: {x: -20, y: 0, z: 0}
-    radius: 5
-    monsterSpawnCount: 3
+    radius: 10
+    monsterSpawnInfos:
+    - monsterPrefabName: Ghoul_Fix
+      count: 5

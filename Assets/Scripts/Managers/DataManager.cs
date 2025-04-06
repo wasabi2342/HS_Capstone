@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.IO;
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 enum Characters
 {
@@ -10,12 +12,12 @@ enum Characters
 
 public class DataManager : MonoBehaviour
 {
+    public List<SkillData> skillList;
+    public List<SpecialEffectData> effectList;
+    public List<BlessingEffectLinkData> linkList;
+    public List<BasicAttackComboData> basicAttackComboDatas;
 
     public static DataManager Instance { get; private set; }
-
-    public LoadDatas loadDatas;
-
-    string savePath;
 
     private void Awake()
     {
@@ -28,76 +30,180 @@ public class DataManager : MonoBehaviour
             Destroy(this);
         }
         DontDestroyOnLoad(gameObject);
-        savePath = Path.Combine(Application.dataPath, "Resources/skillData.json"); // 나중에 경로 바꿔야함
-        LoadData();
+
+        skillList = LoadSkillCsv("CSV/skills");
+        effectList = LoadSpecialEffectCsv("CSV/effects");
+        linkList = LoadBlessingEffectLinkCsv("CSV/blessing_effect_links");
+        basicAttackComboDatas = LoadComboCsv("CSV/BasicAttackCombo");
     }
 
-    public void SaveData()
+    private List<SkillData> LoadSkillCsv(string resourcePath)
     {
-        string json = JsonUtility.ToJson(this, true);
-        File.WriteAllText(savePath, json);
-        Debug.Log($"데이터 저장 완료: {savePath}");
-    }
+        Debug.Log("LoadSkillCsv 호출");
 
-    public void LoadData()
-    {
-        if (File.Exists(savePath))
+        var list = new List<SkillData>();
+        TextAsset csvFile = Resources.Load<TextAsset>(resourcePath);
+        if (csvFile == null)
         {
-            string json = File.ReadAllText(savePath);
-            loadDatas = JsonUtility.FromJson<LoadDatas>(json);
-            Debug.Log("데이터 로드 완료");
+            Debug.Log("파일 없음");
+            return list;
         }
-        else
+
+        var lines = csvFile.text.Split('\n');
+        Debug.Log(csvFile.text);
+
+        for (int i = 1; i < lines.Length; i++)
         {
-            Debug.Log("저장된 데이터 없음, 기본 데이터 생성");
-            InitializeDefaultData();
-            SaveData();
+            var values = lines[i].Trim().Split(',');
+            Debug.Log(values);
+            if (values.Length < 10) continue;
+
+            var data = ScriptableObject.CreateInstance<SkillData>();
+            data.ID = int.Parse(values[0]);
+            data.Devil = int.Parse(values[1]);
+            data.Bind_Key = int.Parse(values[2]);
+            data.Character = int.Parse(values[3]);
+            data.Blessing_name = values[4];
+            data.Bless_Discript = values[5];
+            data.AttackDamageCoefficient = float.Parse(values[6]);
+            data.AbilityPowerCoefficient = float.Parse(values[7]);
+            data.Cooldown = float.Parse(values[8]);
+            data.Stack = int.Parse(values[9]);
+
+            list.Add(data);
         }
+        return list;
     }
 
-    private void InitializeDefaultData()
+    private List<SpecialEffectData> LoadSpecialEffectCsv(string resourcePath)
     {
-        // 배열을 생성하고 초기화
-        loadDatas = new LoadDatas
-        {
-            characterBlessingSkillDatas = new CharacterBlessingSkillData[(int)Characters.Max]
-        };
+        var list = new List<SpecialEffectData>();
+        TextAsset csvFile = Resources.Load<TextAsset>(resourcePath);
+        if (csvFile == null) return list;
 
-        // WhitePlayer에 대한 데이터 초기화
-        loadDatas.characterBlessingSkillDatas[(int)Characters.WhitePlayer] = new CharacterBlessingSkillData
+        var lines = csvFile.text.Split('\n');
+        for (int i = 1; i < lines.Length; i++)
         {
-            blessingSkillDatas = new BlessingSkillData[]
-            {
-            new BlessingSkillData
-            {
-                skillDatas = new SkillData[]
-                {
-                    new SkillData
-                    {
-                        skillName = "파이어볼",
-                        skillInfo = "불덩이를 날려 적을 공격합니다.",
-                        attackCoefficient = 1.5f,
-                        levelUpIncrease = 0.2f,
-                        attackSpeed = 1.0f,
-                        shieldAmount = 0,
-                        cooldown = 5.0f,
-                        healAmount = 0
-                    },
-                    new SkillData
-                    {
-                        skillName = "힐",
-                        skillInfo = "체력을 회복합니다.",
-                        attackCoefficient = 0,
-                        levelUpIncrease = 0.1f,
-                        attackSpeed = 0,
-                        shieldAmount = 0,
-                        cooldown = 10.0f,
-                        healAmount = 50
-                    }
-                }
-            }
-            }
-        };
+            var values = lines[i].Trim().Split(',');
+            if (values.Length < 3) continue;
+
+            var data = ScriptableObject.CreateInstance<SpecialEffectData>();
+            data.ID = int.Parse(values[0]);
+            data.EffectName = values[1];
+            data.Description = values[2];
+
+            list.Add(data);
+        }
+        return list;
     }
+
+    private List<BlessingEffectLinkData> LoadBlessingEffectLinkCsv(string resourcePath)
+    {
+        var list = new List<BlessingEffectLinkData>();
+        TextAsset csvFile = Resources.Load<TextAsset>(resourcePath);
+        if (csvFile == null) return list;
+
+        var lines = csvFile.text.Split('\n');
+        for (int i = 1; i < lines.Length; i++)
+        {
+            var values = lines[i].Trim().Split(',');
+            if (values.Length < 5) continue;
+
+            var data = ScriptableObject.CreateInstance<BlessingEffectLinkData>();
+            data.ID = int.Parse(values[0]);
+            data.Blessing_ID = int.Parse(values[1]);
+            data.SpecialEffect_ID = int.Parse(values[2]);
+            data.Value = float.Parse(values[3]);
+            data.Duration = float.Parse(values[4]);
+
+            list.Add(data);
+        }
+        return list;
+    }
+
+    private List<BasicAttackComboData> LoadComboCsv(string resourcePath)
+    {
+        var list = new List<BasicAttackComboData>();
+        TextAsset csvFile = Resources.Load<TextAsset>(resourcePath);
+        if (csvFile == null) return list;
+
+        var lines = csvFile.text.Split('\n');
+        for (int i = 1; i < lines.Length; i++)
+        {
+            var values = lines[i].Trim().Split(',');
+            if (values.Length < 4) continue;
+
+            var data = ScriptableObject.CreateInstance<BasicAttackComboData>();
+            data.ID = int.Parse(values[0]);
+            data.Character = int.Parse(values[1]);
+            data.Combo_Index = int.Parse(values[2]);
+            data.Damage = float.Parse(values[3]);
+
+            list.Add(data);
+        }
+        return list;
+    }
+
+    public SkillData FindSkillByBlessingKeyAndCharacter(int bindKey, int blessing, int character)
+    {
+        return skillList.Find(skill =>
+        skill.Devil == blessing &&
+        skill.Bind_Key == bindKey &&
+        skill.Character == character
+        );
+    }
+
+    public int FindLinkIDBySkillID(int skillID)
+    {
+        // 스킬 존재 확인
+        SkillData skill = skillList.Find(s => s.ID == skillID);
+        if (skill == null)
+        {
+            Debug.LogWarning($"Skill ID {skillID} not found.");
+            return -1;
+        }
+
+        // 스킬 ID에 연결된 특수 효과 찾기
+        BlessingEffectLinkData link = linkList.Find(l => l.Blessing_ID == skillID);
+        if (link != null)
+        {
+            return link.ID;
+        }
+
+        return -1;
+    }
+
+    public int FindSpecialEffectIDBySkillID(int skillID)
+    {
+        // 스킬 존재 확인
+        SkillData skill = skillList.Find(s => s.ID == skillID);
+        if (skill == null)
+        {
+            Debug.LogWarning($"Skill ID {skillID} not found.");
+            return -1;
+        }
+
+        // 스킬 ID에 연결된 특수 효과 찾기
+        BlessingEffectLinkData link = linkList.Find(l => l.Blessing_ID == skillID);
+        if (link != null)
+        {
+            return link.SpecialEffect_ID;
+        }
+
+        return -1;
+    }
+
+    public float FindDamageByCharacterAndComboIndex(int character, int comboIndex)
+    {
+        var combo = basicAttackComboDatas.Find(c => c.Character == character && c.Combo_Index == comboIndex);
+        if (combo != null)
+        {
+            return combo.Damage;
+        }
+
+        Debug.LogWarning($"Combo not found for Character: {character}, ComboIndex: {comboIndex}");
+        return -1f;
+    }
+
 }
 

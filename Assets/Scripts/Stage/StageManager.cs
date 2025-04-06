@@ -25,32 +25,26 @@ public class StageManager : MonoBehaviourPun
     {
         foreach (SpawnAreaSetting setting in currentStageSettings.spawnAreaSettings)
         {
-            GameObject spawnAreaInstance = PhotonNetwork.Instantiate(spawnAreaPrefabName, setting.position, spawnAreaRotation);
+            // 1) 스폰 영역 프리팹 생성
+            GameObject spawnAreaInstance = PhotonNetwork.Instantiate(
+                spawnAreaPrefabName,
+                setting.position,
+                spawnAreaRotation
+            );
             spawnAreaInstances.Add(spawnAreaInstance);
-            Debug.Log("Spawned SpawnArea: " + spawnAreaInstance.name + " at position: " + setting.position);
 
-            // SpawnArea 컴포넌트에 반경 설정
+            // 2) 반경 설정
             SpawnArea area = spawnAreaInstance.GetComponent<SpawnArea>();
             if (area != null)
             {
                 area.SetRadius(setting.radius);
-                Debug.Log("Assigned radius: " + setting.radius + " to " + spawnAreaInstance.name);
-            }
-            else
-            {
-                Debug.LogWarning("SpawnArea 컴포넌트를 찾을 수 없습니다 in " + spawnAreaInstance.name);
             }
 
-            // MonsterSpawner 컴포넌트를 자식에서 찾도록 수정
+            // 3) MonsterSpawner 찾아서 몬스터 스폰
             MonsterSpawner spawner = spawnAreaInstance.GetComponentInChildren<MonsterSpawner>();
             if (spawner != null)
             {
-                spawner.SpawnMonsters(setting.monsterSpawnCount);
-                Debug.Log("Spawned monsters using count: " + setting.monsterSpawnCount + " for " + spawnAreaInstance.name);
-            }
-            else
-            {
-                Debug.LogWarning("MonsterSpawner 컴포넌트를 찾을 수 없습니다 in " + spawnAreaInstance.name);
+                spawner.SpawnMonsters(setting.monsterSpawnInfos);
             }
         }
     }

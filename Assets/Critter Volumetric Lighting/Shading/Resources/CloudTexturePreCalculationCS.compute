@@ -1,0 +1,32 @@
+#pragma kernel CSMain
+#pragma kernel ClearKernel
+
+
+RWTexture2D<float4> _PreCalcTexture;
+RWTexture2D<float4> _CloudShadowMap;
+float _nSizeInCloudDataTex;
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    uint startY = uint(max((id.y - 0) * _nSizeInCloudDataTex, 0));
+    uint endY = uint((id.y + 1) * _nSizeInCloudDataTex) - 1;
+
+
+    float minValue = 0;
+
+    for (uint y = startY; y < endY; y++)
+    {
+        float currentValue = _CloudShadowMap[uint2(id.x, y)].r;
+        minValue = max(minValue, currentValue);
+    }
+
+    float4 finalColor = float4(minValue, minValue, minValue, 1);
+    _PreCalcTexture[id.xy] = finalColor;
+}
+
+[numthreads(8,8,1)]
+void ClearKernel (uint3 id : SV_DispatchThreadID)
+{
+    _PreCalcTexture[id.xy] = float4(0, 0, 0, 0);
+}

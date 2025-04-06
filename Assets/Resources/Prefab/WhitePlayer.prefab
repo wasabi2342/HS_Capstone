@@ -120,13 +120,14 @@ GameObject:
   - component: {fileID: 3371492236228461120}
   - component: {fileID: 7734979025447837112}
   - component: {fileID: 5276840307889972543}
+  - component: {fileID: 4945858450742704140}
   m_Layer: 9
   m_Name: PlayerAttackZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2515039576057121523
 Transform:
   m_ObjectHideFlags: 0
@@ -159,7 +160,7 @@ SphereCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
@@ -179,6 +180,7 @@ MonoBehaviour:
   enemiesInRange: []
   skillCollider: {fileID: 7734979025447837112}
   counterCollider: {fileID: 5276840307889972543}
+  ultimateCollider: {fileID: 4945858450742704140}
   Damage: 0
   hitlagTime: 0.13
 --- !u!54 &3371492236228461120
@@ -223,7 +225,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
@@ -244,12 +246,33 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 7, y: 5, z: 0.5}
   m_Center: {x: 3.5, y: 0, z: 0}
+--- !u!65 &4945858450742704140
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1018905123020567762}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Size: {x: 15, y: 2, z: 0.5}
+  m_Center: {x: 8.5, y: 0, z: 0}
 --- !u!1 &1618922647488193223
 GameObject:
   m_ObjectHideFlags: 0
@@ -741,6 +764,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bd43531ef40c2541acf07c612282993, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hitlagTime: 0.117
   stunOverlay: {fileID: 0}
   stunSlider: {fileID: 0}
   hpBar: {fileID: 0}
@@ -788,7 +812,6 @@ MonoBehaviour:
   - {fileID: 739063013299719982}
   currentState: 0
   nextState: 0
-  AttackCollider: {fileID: 0}
 --- !u!114 &5133387043596687802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -802,6 +825,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerController: {fileID: 0}
+  specialEffectList:
+  - {fileID: 11400000, guid: db055df592b882a47acd37860025a1d2, type: 2}
+  - {fileID: 11400000, guid: 4ebcd2219b1c83f4687da301da431dde, type: 2}
+  - {fileID: 11400000, guid: d8b2b805fb4c87746b45e23e6cda243e, type: 2}
+  - {fileID: 11400000, guid: 33d50184ab441234fa10ebe3577d4582, type: 2}
+  - {fileID: 11400000, guid: 214d6451a2935f043920ccd594e5737f, type: 2}
 --- !u!114 &5970755759370503948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -874,6 +903,24 @@ MonoBehaviour:
   - Type: 9
     SynchronizeType: 1
     Name: revive
+  - Type: 3
+    SynchronizeType: 0
+    Name: basicAttackBlessing
+  - Type: 3
+    SynchronizeType: 0
+    Name: skillBlessing
+  - Type: 3
+    SynchronizeType: 0
+    Name: mouseRightBlessing
+  - Type: 3
+    SynchronizeType: 0
+    Name: ultimateBlessing
+  - Type: 3
+    SynchronizeType: 0
+    Name: spaceBlessing
+  - Type: 1
+    SynchronizeType: 0
+    Name: moveY
   m_SynchronizeLayers:
   - SynchronizeType: 2
     LayerIndex: 0

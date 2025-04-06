@@ -8,6 +8,8 @@ using System.Linq;
 
 public class ParentPlayerController : MonoBehaviourPun, IDamageable
 {
+    [SerializeField]
+    protected float hitlagTime = 0.117f;
 
     // 죽음, 기절 관련 ui, 체력바 ui
 
@@ -28,20 +30,16 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     // 체력 UI 업데이트 -> 체력바 갱신, 인자로 0~1의 정규화된 값을 전송
     public UnityEvent<float> OnHealthChanged;
     // 공격/대쉬 쿨타임 UI 갱신 이벤트 (0~1의 진행률 전달)
-    public UnityEvent<float> OnAttackCooldownUpdate;
-    public UnityEvent<float> OnDashCooldownUpdate;
-    public UnityEvent<float> ShiftCoolDownUpdate;
-    public UnityEvent<float> UltimateCoolDownUpdate;
-    public UnityEvent<float> MouseRightSkillCoolDownUpdate;
+    public UnityEvent<float, float> OnAttackCooldownUpdate;
+    public UnityEvent<float, float> OnDashCooldownUpdate;
+    public UnityEvent<float, float> ShiftCoolDownUpdate;
+    public UnityEvent<float, float> UltimateCoolDownUpdate;
+    public UnityEvent<float, float> MouseRightSkillCoolDownUpdate;
     public UnityEvent<float> AttackStackUpdate;
     public UnityEvent<float, float> ShieldUpdate;
     public UnityEvent<UIIcon, Color> SkillOutlineUpdate;
 
-    // 스킬 사용 가능 여부
-    protected bool isShiftReady = true;
-    protected bool isUltimateReady = true;
-    protected bool isMouseRightSkillReady = true;
-    protected bool isDashReady = true;
+    public CooldownChecker[] cooldownCheckers = new CooldownChecker[(int)Skills.Max];
 
     protected bool isInvincible = false; // 무적 상태 체크용
     protected bool isSuperArmor = false; // 슈퍼아머 상태 체크용
@@ -55,13 +53,18 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     protected List<Shield> shields = new List<Shield>();
     private readonly float maxShield = 100f;
 
+    protected PlayerBlessing playerBlessing;
+
+    protected Animator animator;
+
     public int attackStack = 0;
 
     #region Unity Lifecycle
 
     protected virtual void Awake()
     {
-        runTimeData = new PlayerRunTimeData(characterBaseStats.attackPower, characterBaseStats.attackSpeed, characterBaseStats.moveSpeed, characterBaseStats.cooldownReductionPercent, characterBaseStats.abilityPower, characterBaseStats.maxHP);
+        runTimeData = new PlayerRunTimeData(characterBaseStats);
+
         if (PhotonNetwork.IsConnected)
         {
             if (photonView.IsMine)
@@ -75,15 +78,33 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
             }
         }
 
-        attackCooldown = characterBaseStats.mouseLeftCooldown;
-        dashCooldown = characterBaseStats.spaceCooldown;
-        shiftCoolDown = characterBaseStats.shiftCooldown;
-        ultimateCoolDown = characterBaseStats.ultimateCooldown;
-        mouseRightCoolDown = characterBaseStats.mouseRightCooldown;
+        attackCooldown = runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Cooldown;
+        dashCooldown = runTimeData.skillWithLevel[(int)Skills.Space].skillData.Cooldown;
+        shiftCoolDown = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Cooldown;
+        ultimateCoolDown = runTimeData.skillWithLevel[(int)Skills.R].skillData.Cooldown;
+        mouseRightCoolDown = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Cooldown;
+
+        cooldownCheckers[(int)Skills.Mouse_L] = new CooldownChecker(attackCooldown, OnAttackCooldownUpdate, runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Stack);
+        cooldownCheckers[(int)Skills.Mouse_R] = new CooldownChecker(mouseRightCoolDown, MouseRightSkillCoolDownUpdate, runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Stack);
+        cooldownCheckers[(int)Skills.Space] = new CooldownChecker(dashCooldown, OnDashCooldownUpdate, runTimeData.skillWithLevel[(int)Skills.Space].skillData.Stack);
+        cooldownCheckers[(int)Skills.Shift_L] = new CooldownChecker(shiftCoolDown, ShiftCoolDownUpdate, runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Stack);
+        cooldownCheckers[(int)Skills.R] = new CooldownChecker(ultimateCoolDown, UltimateCoolDownUpdate, runTimeData.skillWithLevel[(int)Skills.R].skillData.Stack);
+
+        Debug.Log("ultimateCoolDown = " + ultimateCoolDown);
 
         runTimeData.currentHealth = characterBaseStats.maxHP;
         // 시작 시 체력 UI 업데이트
         OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
+
+        playerBlessing = GetComponent<PlayerBlessing>();
+
+        animator = GetComponent<Animator>();
+        if (animator == null)
+        {
+            Debug.LogError("Animator 컴포넌트를 찾을 수 없습니다! (WhitePlayerController)");
+        }
+
+        animator.speed = runTimeData.attackSpeed;
     }
 
     #endregion
@@ -278,17 +299,14 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         runTimeData.SaveToJsonFile();
     }
 
-    public virtual void UpdateBlessingRunTimeData(Dictionary<Skills, BlessingInfo> playerBlessingDic)
+    public virtual void UpdateBlessingRunTimeData(SkillWithLevel newData)
     {
-        foreach (var data in playerBlessingDic)
-        {
-            runTimeData.blessingInfo[(int)data.Key] = data.Value;
-        }
+        runTimeData.skillWithLevel[newData.skillData.Bind_Key] = newData;
     }
 
-    public virtual BlessingInfo[] ReturnBlessingRunTimeData()
+    public virtual SkillWithLevel[] ReturnBlessingRunTimeData()
     {
-        return runTimeData.blessingInfo;
+        return runTimeData.skillWithLevel;
     }
 
     protected virtual void OnApplicationQuit()
@@ -321,37 +339,54 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     public virtual void StartAttackCooldown()
     {
-        StartCoroutine(AttackCooldownCoroutine());
+        cooldownCheckers[(int)Skills.Mouse_L].Use(this);
     }
 
-    private IEnumerator AttackCooldownCoroutine()
+    public virtual void StartSpaceCooldown()
     {
-        float timer = 0f;
-        while (timer < attackCooldown)
-        {
-            OnAttackCooldownUpdate?.Invoke(timer / attackCooldown);
-            timer += Time.deltaTime;
-            yield return null;
-        }
-        OnAttackCooldownUpdate?.Invoke(1f);
+        cooldownCheckers[(int)Skills.Space].Use(this);
     }
 
-    public virtual void StartDashCooldown()
+    public virtual void StartShiftCoolDown() // 이벤트 클립으로 쿨타임 체크
     {
-        StartCoroutine(DashCooldownCoroutine());
+        cooldownCheckers[(int)Skills.Shift_L].Use(this);
     }
 
-    private IEnumerator DashCooldownCoroutine()
+    public virtual void StartUltimateCoolDown() // 이벤트 클립으로 쿨타임 체크
     {
-        float timer = 0f;
-        while (timer < dashCooldown)
-        {
-            OnDashCooldownUpdate?.Invoke(timer / dashCooldown);
-            timer += Time.deltaTime;
-            yield return null;
-        }
-        OnDashCooldownUpdate?.Invoke(1f);
+        cooldownCheckers[(int)Skills.R].Use(this);
+    }
+
+    public virtual void StartMouseRCoolDown() // 이벤트 클립으로 쿨타임 체크
+    {
+        cooldownCheckers[(int)Skills.Mouse_R].Use(this);
     }
 
     #endregion
+
+    public virtual void BuffAttackSpeed(float value, float duration)
+    {
+        StartCoroutine(BuffAttackSpeedTimer(value, duration));
+    }
+
+    private IEnumerator BuffAttackSpeedTimer(float value, float duration)
+    {
+        animator.speed = runTimeData.attackSpeed * value;
+
+        yield return new WaitForSeconds(duration);
+
+        animator.speed = runTimeData.attackSpeed;
+    }
+
+    private IEnumerator PauseForSeconds()
+    {
+        animator.speed = 0;
+        yield return new WaitForSeconds(hitlagTime);
+        animator.speed = 1;
+    }
+
+    public void StartHitlag()
+    {
+        StartCoroutine(PauseForSeconds());
+    }
 }

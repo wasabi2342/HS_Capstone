@@ -2,14 +2,17 @@ using UnityEngine;
 using System;
 
 [Serializable]
-public class SkillData
+[CreateAssetMenu(fileName = "SkillData", menuName = "Scriptable Objects/SkillData")]
+public class SkillData : ScriptableObject
 {
-    public string skillName;
-    public string skillInfo;
-    public float attackCoefficient;
-    public float levelUpIncrease;
-    public float attackSpeed;
-    public float shieldAmount;
-    public float cooldown;
-    public float healAmount;
+    public int ID;
+    public int Devil;
+    public int Bind_Key;
+    public int Character;
+    public string Blessing_name;
+    public string Bless_Discript;
+    public float AttackDamageCoefficient; 
+    public float AbilityPowerCoefficient;
+    public float Cooldown;
+    public int Stack;
 }

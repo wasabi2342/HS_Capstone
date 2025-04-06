@@ -143,22 +143,6 @@ public class UIIngameMainPanel : UIBase
         uISkillIcons[(int)icon].SetOutlineColor(color);
     }
 
-    public void UpdateUI(UIIcon icon, float value)
-    {
-        if ((int)icon == 6)
-        {
-            mouseLStackText.text = ((int)value).ToString();
-        }
-        else if ((int)icon == 5)
-        {
-            UpdateHPImage(value);
-        }
-        else
-        {
-            uISkillIcons[(int)icon].StartUpdateSkillCooldown(value);
-        }
-    }
-
     public void UpdateMouseLeftStack(float stack)
     {
         mouseLStackText.text = ((int)stack).ToString();
