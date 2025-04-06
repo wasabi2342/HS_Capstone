@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 1734728976639821693}
   - component: {fileID: 7402582756178341343}
   - component: {fileID: 6708865084836201358}
-  m_Layer: 0
+  - component: {fileID: 6691259619962805239}
+  m_Layer: 12
   m_Name: Attack4_Left_Effect_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -79,7 +80,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: f05ddf7fb8f766346add9af7bc88d7ff, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9a8a72a6e5496cb4caf2e03ac0b072ef, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -148,3 +149,24 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!65 &6691259619962805239
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3770419539410130512}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 18, y: 8, z: 0.5}
+  m_Center: {x: 0, y: -1, z: 0}

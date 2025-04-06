@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 2605149643366253150}
   - component: {fileID: 1277968308425682945}
   - component: {fileID: 5700636601575216966}
-  m_Layer: 0
+  - component: {fileID: 7583929328829437202}
+  m_Layer: 12
   m_Name: Attack3_Right_Effect_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -148,3 +149,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 0}
   hitlagTime: 0.13
+--- !u!65 &7583929328829437202
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5316095129153568156}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 11, y: 7, z: 0.5}
+  m_Center: {x: 1.5, y: 1, z: 0}
