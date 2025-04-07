@@ -71,9 +71,10 @@ public class StageManager : MonoBehaviourPun
                     Vector3 doorSpawnPosition = spawnAreaInstances.Count > 0 ? spawnAreaInstances[0].transform.position : transform.position;
                     PhotonNetwork.Instantiate(doorPrefabName, doorSpawnPosition, Quaternion.identity);
                 }
-                else
+                if(blessingNPC != null)
                 {
-                    Debug.LogError("Resources에서 doorPrefab을 찾을 수 없습니다: " + doorPrefabName);
+                    Vector3 blessingNPCSpawnPosition = spawnAreaInstances.Count > 1 ? spawnAreaInstances[1].transform.position : transform.position;
+                    PhotonNetwork.Instantiate(blessingNPCPrefabName, blessingNPCSpawnPosition, Quaternion.identity);
                 }
             }
 
