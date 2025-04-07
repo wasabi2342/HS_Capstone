@@ -86,7 +86,10 @@ public class WhitePlayerController : ParentPlayerController
     // 이동 처리
     private void HandleMovement()
     {
-        if (currentState == WhitePlayerState.Death) return;
+        if (currentState == WhitePlayerState.Death || currentState == WhitePlayerState.Stun)
+        {
+            return;
+        }
 
         float h = moveInput.x;
         float v = moveInput.y;
