@@ -21,6 +21,7 @@ public class StageManager : MonoBehaviourPun
         if (PhotonNetwork.IsMasterClient)
         {
             SpawnStage();
+            PhotonNetwork.Instantiate(blessingNPCPrefabName, Vector3.zero, Quaternion.identity);
         }
     }
 
