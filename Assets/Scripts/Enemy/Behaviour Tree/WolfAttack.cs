@@ -25,7 +25,7 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
                              - startPos).normalized;
 
         float traveledDistance = 0f;
-        float maxChargeDistance = 5f; // 돌진 거리
+        float maxChargeDistance = 3f; // 돌진 거리
 
         // traveledDistance가 5f를 넘지 않는 동안만 이동
         while (traveledDistance < maxChargeDistance)

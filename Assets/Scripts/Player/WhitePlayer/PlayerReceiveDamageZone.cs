@@ -24,9 +24,8 @@ public class WhitePlayerReceiveDamageZone :  MonoBehaviour
             Debug.LogWarning("[WhitePlayerReceiveDamageZone] 상위에 WhitePlayerController가 없습니다!");
         }
     }
-
-    //private void OnTriggerEnter(Collider other)
-    //{
-       
-    //}
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log($"[WhitePlayerReceiveDamageZone] 충돌 발생: {other.name}, 레이어: {LayerMask.LayerToName(other.gameObject.layer)}");
+    }
 }

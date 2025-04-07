@@ -21,19 +21,19 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 21300000, guid: 37994d6d88958b14f8c54f96f8dedba9, type: 3}
+      value: {fileID: 21300000, guid: 5c9dbf7a38c9a9643996cac06bb5e70e, type: 3}
     - time: 0.1
-      value: {fileID: 21300000, guid: 77a0f70ab02f4504dbb74677187ea24e, type: 3}
+      value: {fileID: 21300000, guid: 6958f1bf158de2e4eb28ecfb9a1090a5, type: 3}
     - time: 0.2
-      value: {fileID: 21300000, guid: 5a2ce36a1288d4449bbc800aa8bcd79a, type: 3}
+      value: {fileID: 21300000, guid: bd04813689e7f0140bb1553003c9eb9c, type: 3}
     - time: 0.3
-      value: {fileID: 21300000, guid: 9bd32e35e358dcd4baf83d0be30190b4, type: 3}
+      value: {fileID: 21300000, guid: c4b1b3d8aa0910b41aba7749fd46cbb9, type: 3}
     - time: 0.4
-      value: {fileID: 21300000, guid: f303f342e09f9274c9efea12f18567a2, type: 3}
+      value: {fileID: 21300000, guid: 07a6eb0d17e13694282dedacccf79e56, type: 3}
     - time: 0.5
-      value: {fileID: 21300000, guid: cbadb8e2141cc464fa85aed51baa9b9c, type: 3}
+      value: {fileID: 21300000, guid: c8a936542c452fc428e93b175700b868, type: 3}
     - time: 0.6
-      value: {fileID: 21300000, guid: 62dbf8e0f78b2124aacf5fac960bbacf, type: 3}
+      value: {fileID: 21300000, guid: 6a0df943bdd7a1349ac1ddbd75e9c0c2, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -56,13 +56,13 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 21300000, guid: 37994d6d88958b14f8c54f96f8dedba9, type: 3}
-    - {fileID: 21300000, guid: 77a0f70ab02f4504dbb74677187ea24e, type: 3}
-    - {fileID: 21300000, guid: 5a2ce36a1288d4449bbc800aa8bcd79a, type: 3}
-    - {fileID: 21300000, guid: 9bd32e35e358dcd4baf83d0be30190b4, type: 3}
-    - {fileID: 21300000, guid: f303f342e09f9274c9efea12f18567a2, type: 3}
-    - {fileID: 21300000, guid: cbadb8e2141cc464fa85aed51baa9b9c, type: 3}
-    - {fileID: 21300000, guid: 62dbf8e0f78b2124aacf5fac960bbacf, type: 3}
+    - {fileID: 21300000, guid: 5c9dbf7a38c9a9643996cac06bb5e70e, type: 3}
+    - {fileID: 21300000, guid: 6958f1bf158de2e4eb28ecfb9a1090a5, type: 3}
+    - {fileID: 21300000, guid: bd04813689e7f0140bb1553003c9eb9c, type: 3}
+    - {fileID: 21300000, guid: c4b1b3d8aa0910b41aba7749fd46cbb9, type: 3}
+    - {fileID: 21300000, guid: 07a6eb0d17e13694282dedacccf79e56, type: 3}
+    - {fileID: 21300000, guid: c8a936542c452fc428e93b175700b868, type: 3}
+    - {fileID: 21300000, guid: 6a0df943bdd7a1349ac1ddbd75e9c0c2, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
@@ -96,7 +96,7 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 0.2
-    functionName: OnCounterCollider
+    functionName: CreateCounterSkillEffect
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
@@ -111,13 +111,6 @@ AnimationClip:
     messageOptions: 0
   - time: 0.4
     functionName: OnAttackAllowNextInput
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 0.4
-    functionName: OffCounterCollider
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

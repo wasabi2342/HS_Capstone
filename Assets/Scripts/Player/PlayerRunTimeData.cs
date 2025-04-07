@@ -13,19 +13,24 @@ public class PlayerRunTimeData
     public float cooldownReductionPercent;
     public float abilityPower;
     public float currentHealth;
-    public BlessingInfo[] blessingInfo;
+    public SkillWithLevel[] skillWithLevel;
 
     //private static readonly string filePath = Path.Combine(Application.persistentDataPath, "playerData.json");
     private static readonly string filePath = "PlayerRunTimeData.json";
-    public PlayerRunTimeData(float attackPower, float attackSpeed, float moveSpeed, float cooldownReductionPercent, float abilityPower, float maxtHealth)
+    public PlayerRunTimeData(CharacterStats characterStats)
     {
-        this.attackPower = attackPower;
-        this.attackSpeed = attackSpeed;
-        this.moveSpeed = moveSpeed;
-        this.cooldownReductionPercent = cooldownReductionPercent;
-        this.abilityPower = abilityPower;
-        this.currentHealth = maxtHealth;
-        blessingInfo = new BlessingInfo[(int)Skills.Max];
+        attackPower = characterStats.attackPower;
+        attackSpeed = characterStats.attackSpeed;
+        moveSpeed = characterStats.moveSpeed;
+        cooldownReductionPercent = characterStats.cooldownReductionPercent;
+        abilityPower = characterStats.abilityPower;
+        currentHealth = characterStats.maxHP;
+
+        skillWithLevel = new SkillWithLevel[(int)Skills.Max];
+        for(int i = 0 ; i < skillWithLevel.Length; i++)
+        {
+            skillWithLevel[i] = new SkillWithLevel(DataManager.Instance.skillList[characterStats.skillDatasIndex[i]], 0);
+        }
     }
 
     public void SaveToJsonFile()
@@ -43,13 +48,13 @@ public class PlayerRunTimeData
             string json = File.ReadAllText(filePath);
             PlayerRunTimeData loadedData = JsonUtility.FromJson<PlayerRunTimeData>(json);
 
-            this.attackPower = loadedData.attackPower;
-            this.attackSpeed = loadedData.attackSpeed;
-            this.moveSpeed = loadedData.moveSpeed;
-            this.cooldownReductionPercent = loadedData.cooldownReductionPercent;
-            this.abilityPower = loadedData.abilityPower;
-            this.currentHealth = loadedData.currentHealth;
-            blessingInfo = loadedData.blessingInfo;
+            attackPower = loadedData.attackPower;
+            attackSpeed = loadedData.attackSpeed;
+            moveSpeed = loadedData.moveSpeed;
+            cooldownReductionPercent = loadedData.cooldownReductionPercent;
+            abilityPower = loadedData.abilityPower;
+            currentHealth = loadedData.currentHealth;
+            skillWithLevel = loadedData.skillWithLevel;
 
             Debug.Log($"PlayerRunTimeData ·ÎµåµÊ: {json}");
         }
