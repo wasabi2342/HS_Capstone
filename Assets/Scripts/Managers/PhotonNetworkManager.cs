@@ -118,7 +118,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
             PhotonNetwork.CurrentRoom.IsOpen = false;
             RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
-            PhotonNetwork.LoadLevel("StageTest1");
+            PhotonNetwork.LoadLevel("Level0");
 
         }
     }
@@ -140,7 +140,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
 
             PhotonNetwork.CurrentRoom.IsOpen = false;
-            PhotonNetwork.LoadLevel("StageTest1");
+            PhotonNetwork.LoadLevel("Level0");
         }
     }
 

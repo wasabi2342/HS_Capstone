@@ -117,7 +117,7 @@ public class UIManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name.StartsWith("Stage"))
+        if (scene.name.StartsWith("Level"))
         {
             UIManager.Instance.CloseAllUI();
             UIManager.Instance.OpenPanel<UIIngameMainPanel>();
