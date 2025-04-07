@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7436950969342002009}
   - component: {fileID: 4615644684812980146}
-  - component: {fileID: 1915771013273738710}
   - component: {fileID: 2585511662667442535}
+  - component: {fileID: 6924163055187278339}
   m_Layer: 8
   m_Name: BlessingNPC
   m_TagString: Untagged
@@ -90,19 +90,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1915771013273738710
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 60929099455841533}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5350de1ef7640894d8db475cbe5bd8de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canvas: {fileID: 1858873687535273092}
 --- !u!65 &2585511662667442535
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -124,6 +111,20 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 0.99999994, z: 0.2}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6924163055187278339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 60929099455841533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5350de1ef7640894d8db475cbe5bd8de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canIneract: 1
+  canvas: {fileID: 1858873687535273092}
 --- !u!1 &715546259863070246
 GameObject:
   m_ObjectHideFlags: 0
