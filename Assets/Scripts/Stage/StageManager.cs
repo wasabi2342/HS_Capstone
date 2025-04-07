@@ -7,6 +7,7 @@ public class StageManager : MonoBehaviourPun
     [Header("Prefabs (Resources 폴더에 있어야 함)")]
     public string spawnAreaPrefabName = "SpawnArea"; // SpawnArea 프리팹 이름
     public string doorPrefabName = "doorPrefab";
+    public string blessingNPCPrefabName = "BlessingNPC"; // Blessing NPC 프리팹 이름
 
     [Header("Stage Settings")]
     public StageSettings currentStageSettings; // 현재 스테이지에 해당하는 설정
@@ -62,6 +63,8 @@ public class StageManager : MonoBehaviourPun
             {
                 // Resources 폴더에서 doorPrefab을 로드
                 GameObject doorPrefab = Resources.Load<GameObject>(doorPrefabName);
+                GameObject blessingNPC = Resources.Load<GameObject>(blessingNPCPrefabName);
+
                 if (doorPrefab != null)
                 {
                     // doorPrefab 생성 위치 설정 (예: 첫 번째 SpawnArea의 위치 또는 StageManager 위치)
@@ -73,6 +76,7 @@ public class StageManager : MonoBehaviourPun
                     Debug.LogError("Resources에서 doorPrefab을 찾을 수 없습니다: " + doorPrefabName);
                 }
             }
+
         }
         return cleared;
     }
