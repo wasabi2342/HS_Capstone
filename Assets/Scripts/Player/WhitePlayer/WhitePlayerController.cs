@@ -986,4 +986,9 @@ public class WhitePlayerController : ParentPlayerController
             animator.SetInteger("mouseRightBlessing", newData.skillData.Devil);
         }
     }
+
+    public void Guard_01_Crocell_AddShield()
+    {
+        playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID, this).ApplyEffect();
+    }
 }
