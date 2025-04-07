@@ -180,6 +180,8 @@ public class WhitePlayerController : ParentPlayerController
     {
         if (currentState == WhitePlayerState.Death || currentState == WhitePlayerState.Dash)
             return;
+        if (currentState == WhitePlayerState.Stun)
+            return;
         if (!cooldownCheckers[(int)Skills.Space].CanUse())
             return;
         currentState = WhitePlayerState.Dash;
