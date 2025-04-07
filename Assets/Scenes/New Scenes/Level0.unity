@@ -9935,6 +9935,54 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 872954663666569469, guid: b2e45dd6af1b1874582506c085ff8e5c, type: 3}
   m_PrefabInstance: {fileID: 519429185}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &524594068
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 524594070}
+  - component: {fileID: 524594069}
+  m_Layer: 0
+  m_Name: StageManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &524594069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 524594068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70fd808a638f7f6449084c4eaa83420d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnAreaPrefabName: SpawnArea
+  doorPrefabName: doorPrefab
+  currentStageSettings: {fileID: 11400000, guid: f4d22e3955ad77f498bd37054e5f1b10, type: 2}
+  spawnAreaRotation: {x: 0, y: 0, z: 0, w: 1}
+--- !u!4 &524594070
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 524594068}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &525239230
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -38532,5 +38580,4 @@ SceneRoots:
   - {fileID: 1985632119}
   - {fileID: 416482856}
   - {fileID: 1315250983}
-  - {fileID: 1555275786}
-  - {fileID: 1147880083}
+  - {fileID: 524594070}
