@@ -16,10 +16,14 @@ public class StageManager : MonoBehaviourPun
 
     private void Start()
     {
+        
         if (PhotonNetwork.IsMasterClient)
         {
             SpawnStage();
         }
+        
+        SpawnStage();
+
     }
 
     void SpawnStage()
