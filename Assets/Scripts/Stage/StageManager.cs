@@ -21,9 +21,6 @@ public class StageManager : MonoBehaviourPun
         {
             SpawnStage();
         }
-        
-        SpawnStage();
-
     }
 
     void SpawnStage()
