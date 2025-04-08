@@ -6,6 +6,8 @@ public class StageManager : MonoBehaviourPun
 {
     [Header("Prefabs (Resources 폴더에 있어야 함)")]
     public string spawnAreaPrefabName = "SpawnArea"; // SpawnArea 프리팹 이름
+    public string doorPrefabName = "doorPrefab";
+    public string blessingNPCPrefabName = "BlessingNPC"; // Blessing NPC 프리팹 이름
 
     [Header("Stage Settings")]
     public StageSettings currentStageSettings; // 현재 스테이지에 해당하는 설정
@@ -15,9 +17,11 @@ public class StageManager : MonoBehaviourPun
 
     private void Start()
     {
+        
         if (PhotonNetwork.IsMasterClient)
         {
             SpawnStage();
+            PhotonNetwork.Instantiate(blessingNPCPrefabName, Vector3.zero, Quaternion.identity);
         }
     }
 
@@ -56,6 +60,25 @@ public class StageManager : MonoBehaviourPun
         if (cleared)
         {
             Debug.Log("모든 몬스터가 제거되었습니다.");
+            if (PhotonNetwork.IsMasterClient)
+            {
+                // Resources 폴더에서 doorPrefab을 로드
+                GameObject doorPrefab = Resources.Load<GameObject>(doorPrefabName);
+                GameObject blessingNPC = Resources.Load<GameObject>(blessingNPCPrefabName);
+
+                if (doorPrefab != null)
+                {
+                    // doorPrefab 생성 위치 설정 (예: 첫 번째 SpawnArea의 위치 또는 StageManager 위치)
+                    Vector3 doorSpawnPosition = spawnAreaInstances.Count > 0 ? spawnAreaInstances[0].transform.position : transform.position;
+                    PhotonNetwork.Instantiate(doorPrefabName, doorSpawnPosition, Quaternion.identity);
+                }
+                if(blessingNPC != null)
+                {
+                    Vector3 blessingNPCSpawnPosition = spawnAreaInstances.Count > 1 ? spawnAreaInstances[1].transform.position : transform.position;
+                    PhotonNetwork.Instantiate(blessingNPCPrefabName, blessingNPCSpawnPosition, Quaternion.identity);
+                }
+            }
+
         }
         return cleared;
     }

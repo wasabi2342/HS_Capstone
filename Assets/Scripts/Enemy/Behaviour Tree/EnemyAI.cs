@@ -480,6 +480,11 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         if (PhotonNetwork.IsMasterClient)
         {
             ActiveMonsterCount--;
+            StageManager stageManager = FindObjectOfType<StageManager>();
+            if (stageManager != null)
+            {
+                stageManager.AreAllMonstersCleared();
+            }
         }
         string deathAnim = lastMoveX >= 0 ? "Right_Death" : "Left_Death";
         photonView.RPC("RPC_PlayAnimation", RpcTarget.All, deathAnim);

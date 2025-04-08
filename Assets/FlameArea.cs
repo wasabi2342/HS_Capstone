@@ -6,13 +6,10 @@ public class FlameArea : MonoBehaviourPun
 {
     [SerializeField]
     private float damage;
-    [SerializeField]
-    private float duration;
 
     public void Init(float damage, float duration)
     {
         this.damage = damage;
-        this.duration = duration;
         StartCoroutine(DestroyAfterduration(duration));
     }
 

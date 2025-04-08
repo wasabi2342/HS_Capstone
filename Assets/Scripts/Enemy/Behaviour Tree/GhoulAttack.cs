@@ -3,12 +3,11 @@
 public class GhoulAttack : MonoBehaviour, IMonsterAttack
 {
     public int damage = 10;
+    private Transform target;
+    public GameObject weaponColliderObject;
 
     public void Attack(Transform target)
     {
-        if (target != null)
-        {
-            //target.GetComponent<PlayerHealth>()?.TakeDamage(damage);
-        }
+        this.target = target;
     }
 }
