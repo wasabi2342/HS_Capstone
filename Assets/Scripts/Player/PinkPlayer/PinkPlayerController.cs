@@ -70,7 +70,7 @@ public class PinkPlayerController : ParentPlayerController
             return;
         }
 
-        UpdateCenterPoint();
+        //UpdateCenterPoint();
         HandleMovement();
     }
 
