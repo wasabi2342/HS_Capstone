@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 using Unity.VisualScripting;
 using System;
 
-public enum PinkPlayerState { Idle, Run, BasicAttack, Hit, Dash, Skill, Ultimate, Guard, Parry, Counter, Stun, Revive, Death }
+public enum PinkPlayerState { Idle, Run, tackle ,BasicAttack, Hit, Dash, Skill, Ultimate, Stun, Revive, Death }
 
 public class PinkPlayerController : ParentPlayerController
 {
