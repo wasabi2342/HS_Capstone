@@ -26,13 +26,17 @@ public class InitBool : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (photonView == null)
-        {
-            photonView = animator.GetComponent<PhotonView>();
-        }
         if (whitePlayerController == null)
         {
             whitePlayerController = animator.GetComponent<WhitePlayerController>();
+        }
+        if (!PhotonNetwork.IsConnected)
+        {
+            return;
+        }
+        if (photonView == null)
+        {
+            photonView = animator.GetComponent<PhotonView>();
         }
         animator.SetBool(parameter, boolValue);
         if (photonView.IsMine)
