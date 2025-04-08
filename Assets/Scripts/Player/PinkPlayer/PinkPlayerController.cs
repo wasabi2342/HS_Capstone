@@ -50,7 +50,7 @@ public class PinkPlayerController : ParentPlayerController
 
                 gaugeInteraction = GetComponentInChildren<GaugeInteraction>();
 
-                var eventController = GetComponent<WhitePlayercontroller_event>();
+                var eventController = GetComponent<PinkPlayercontroller_event>();
                 if (eventController != null)
                 {
                     //eventController.OnInteractionEvent += HandleReviveInteraction;
@@ -256,7 +256,7 @@ public class PinkPlayerController : ParentPlayerController
                 nextState = PinkPlayerState.BasicAttack;
             }
 
-            if (attackStack >= 4)
+            if (attackStack >= 2)
             {
                 animator.SetBool("Pre-Attack", false);
                 animator.SetBool("Pre-Input", false);
@@ -268,7 +268,7 @@ public class PinkPlayerController : ParentPlayerController
                 currentState = PinkPlayerState.Idle;
                 attackStack = 0;
                 AttackStackUpdate?.Invoke(attackStack);
-                Debug.Log("공격 스택 4 도달: 콤보 종료 및 초기화");
+                Debug.Log("공격 스택 2 도달: 콤보 종료 및 초기화");
                 return;
             }
 

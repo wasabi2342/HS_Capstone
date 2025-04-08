@@ -44,12 +44,14 @@ GameObject:
   - component: {fileID: -2038808767883732698}
   - component: {fileID: -4249423513952301344}
   - component: {fileID: -3361292900229011294}
-  - component: {fileID: 3677499788479989515}
   - component: {fileID: 6505534126556410016}
   - component: {fileID: 6750105142244718092}
-  m_Layer: 0
+  - component: {fileID: 405372577379598909}
+  - component: {fileID: 5749815652098805473}
+  - component: {fileID: 3277823158435553033}
+  m_Layer: 6
   m_Name: PinkPlayer
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -63,7 +65,7 @@ Transform:
   m_GameObject: {fileID: 673988289270443858}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: 0, z: 0}
+  m_LocalPosition: {x: 2, y: 1.96, z: 0}
   m_LocalScale: {x: 0.375, y: 0.525, z: 0.375}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -190,31 +192,6 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
---- !u!114 &3677499788479989515
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 673988289270443858}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d8823c45fd13d84ab0a0b1f4d928547, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnMouseLEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnMouseREvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnKeyboardShiftLEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnKeyboardREvent:
-    m_PersistentCalls:
-      m_Calls: []
-  isInVillage: 0
 --- !u!114 &6505534126556410016
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,10 +208,10 @@ MonoBehaviour:
   ShowParameterInspector: 1
   m_SynchronizeParameters:
   - Type: 1
-    SynchronizeType: 2
+    SynchronizeType: 0
     Name: moveX
   - Type: 4
-    SynchronizeType: 2
+    SynchronizeType: 0
     Name: run
   - Type: 3
     SynchronizeType: 0
@@ -273,19 +250,19 @@ MonoBehaviour:
     SynchronizeType: 0
     Name: guard
   - Type: 4
-    SynchronizeType: 1
+    SynchronizeType: 0
     Name: die
   - Type: 4
-    SynchronizeType: 1
+    SynchronizeType: 0
     Name: stun
   - Type: 4
-    SynchronizeType: 1
+    SynchronizeType: 0
     Name: hit
   - Type: 4
-    SynchronizeType: 1
+    SynchronizeType: 0
     Name: dash
   - Type: 4
-    SynchronizeType: 1
+    SynchronizeType: 0
     Name: revive
   - Type: 3
     SynchronizeType: 0
@@ -322,9 +299,121 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 1
-  m_Height: 5.4
+  m_Height: 4.7
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 1, y: -1, z: 0}
+--- !u!114 &405372577379598909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673988289270443858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65e73cb19d5aff74bafef167071f3dd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnMouseLEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnMouseREvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnKeyboardShiftLEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnKeyboardREvent:
+    m_PersistentCalls:
+      m_Calls: []
+  isInVillage: 0
+--- !u!54 &5749815652098805473
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673988289270443858}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &3277823158435553033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673988289270443858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb3e3b8eaf2361344a1e62b46f87a5a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitlagTime: 0.117
+  stunOverlay: {fileID: 0}
+  stunSlider: {fileID: 0}
+  hpBar: {fileID: 0}
+  OnHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAttackCooldownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDashCooldownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  ShiftCoolDownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  UltimateCoolDownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  MouseRightSkillCoolDownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  AttackStackUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  ShieldUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  SkillOutlineUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  characterBaseStats: {fileID: 11400000, guid: 61ca03da317d77c45b67a57d535d6138, type: 2}
+  attackStack: 0
+  dashDistance: 2
+  dashDoubleClickThreshold: 0.3
+  centerPoint: {fileID: 510806922216563194}
+  centerPointOffsetDistance: 0.5
+  centerPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  currentState: 0
+  nextState: 0
 --- !u!1 &751039827282177349
 GameObject:
   m_ObjectHideFlags: 0
@@ -397,9 +486,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8178083361214923458}
   - component: {fileID: 2313276523082583546}
-  - component: {fileID: 6012711460566482953}
   - component: {fileID: 310908679141205478}
-  m_Layer: 10
+  - component: {fileID: 274193251448609945}
+  m_Layer: 6
   m_Name: PlayerReceiveDamageZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -442,18 +531,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6012711460566482953
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2610835183164415192}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc4ba871e80a5a447babd2ce92e1fbc7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!54 &310908679141205478
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -481,6 +558,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &274193251448609945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2610835183164415192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6db308accc6ac1d40bd664650d40c858, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4143349790646709593
 GameObject:
   m_ObjectHideFlags: 0
@@ -522,10 +611,10 @@ GameObject:
   m_Component:
   - component: {fileID: 3196422753867012855}
   - component: {fileID: 8488355462777074406}
-  - component: {fileID: 429805874533738433}
   - component: {fileID: 8771831834693568135}
-  - component: {fileID: 3047256949499717931}
-  m_Layer: 8
+  - component: {fileID: 943743118948331931}
+  - component: {fileID: 7812206917007637787}
+  m_Layer: 6
   m_Name: PlayerInteractionZone
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -568,20 +657,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &429805874533738433
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4173719895387011869}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83a95b1f339fc14479f5bc98a8ee00af, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactionRange: 1.5
-  whitePlayercontroller_Event: {fileID: 0}
 --- !u!54 &8771831834693568135
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -609,7 +684,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &3047256949499717931
+--- !u!114 &943743118948331931
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -618,12 +693,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 4173719895387011869}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9943ca12d63f1844eb366666fe29b63a, type: 3}
+  m_Script: {fileID: 11500000, guid: 54de04f4d8e25ca4091087b838d991e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   gauge: {fileID: 3072621585813807353}
   canvas: {fileID: 3871340251392642785}
   holdTime: 5
+--- !u!114 &7812206917007637787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4173719895387011869}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28441450e10af394588107cbf4287e7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionRange: 1.5
+  pinkPlayercontroller_Event: {fileID: 0}
 --- !u!1 &4392788750090759083
 GameObject:
   m_ObjectHideFlags: 0
@@ -635,7 +724,7 @@ GameObject:
   - component: {fileID: 582929814510954504}
   - component: {fileID: 7241790258458758743}
   - component: {fileID: 3072621585813807353}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: ReviveGauge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -750,7 +839,7 @@ GameObject:
   - component: {fileID: 3871340251392642785}
   - component: {fileID: 5516608273124743082}
   - component: {fileID: 9209058701987325447}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: ReviveCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -883,7 +972,7 @@ GameObject:
   - component: {fileID: 8211891972183347218}
   - component: {fileID: 5049998482856049898}
   - component: {fileID: 8311363854902818139}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: interaction
   m_TagString: Untagged
   m_Icon: {fileID: 0}

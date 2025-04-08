@@ -4,7 +4,7 @@ using System;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(SphereCollider))]
-public class WhitePlayerInteractionZone : MonoBehaviour
+public class PinkPlayerInteractionZone : MonoBehaviour
 {
     [Header("상호작용 범위 설정")]
     [Tooltip("이 영역의 반지름이 NPC, Trap 등과 상호작용할 수 있는 범위입니다.")]
@@ -14,11 +14,11 @@ public class WhitePlayerInteractionZone : MonoBehaviour
     public List<Action<InputAction.CallbackContext>> interactables = new List<Action<InputAction.CallbackContext>>();
 
     [SerializeField]
-    private WhitePlayercontroller_event pinkPlayercontroller_Event;
+    private PinkPlayercontroller_event pinkPlayercontroller_Event;
 
     private void Awake()
     {
-        pinkPlayercontroller_Event = GetComponentInParent<WhitePlayercontroller_event>();
+        pinkPlayercontroller_Event = GetComponentInParent<PinkPlayercontroller_event>();
 
         SphereCollider col = GetComponent<SphereCollider>();
         if (col != null)
