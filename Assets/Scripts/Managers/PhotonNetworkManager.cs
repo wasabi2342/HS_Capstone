@@ -216,7 +216,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         // 모든 클라이언트에 해당 플레이어의 체크 아이콘 추가
         photonView.RPC("RPC_AddCheckMark", RpcTarget.All, actorNum, rewardIndex);
 
-        // 만약 모든 플레이어가 투표했다면 (투표수 == 전체 플레이어 수)
+        // 모든 플레이어 투표가 완료되면 시작 (마스터 클라이언트에서)
         if (PhotonNetwork.CurrentRoom.PlayerCount == rewardVotes.Count && PhotonNetwork.IsMasterClient)
         {
             Debug.Log("모든 플레이어가 투표 완료, 최종 보상 확정 카운트다운 시작");
@@ -262,7 +262,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
     /// 카운트다운 업데이트 RPC: RewardName 텍스트에 남은 초 표시
     [PunRPC]
-    public void RPC_UpdateCountdown(int seconds)
+    public void RPC_UpdateCountdown(int seconds, string unused)
     {
         if (UIRewardPanel.Instance != null && UIRewardPanel.Instance.rewardNameText != null)
         {
@@ -277,7 +277,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         int totalPlayers = PhotonNetwork.CurrentRoom.PlayerCount;
         int rewardCount = UIRewardPanel.Instance.rewardDatas.Length;
         float[] voteCounts = new float[rewardCount];
-        for (int i = 0; i < rewardCount; i++) voteCounts[i] = 0f;
+        for (int i = 0; i < rewardCount; i++)
+            voteCounts[i] = 0f;
 
         foreach (var kvp in rewardVotes)
         {
@@ -285,6 +286,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             if (index >= 0 && index < rewardCount)
                 voteCounts[index] += 1f;
         }
+
         float[] probabilities = new float[rewardCount];
         for (int i = 0; i < rewardCount; i++)
         {
@@ -304,21 +306,24 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             }
         }
 
-        string winningRewardMessage = $"당첨 보상: {UIRewardPanel.Instance.rewardDatas[winningIndex].rewardDetail}";
         Debug.Log($"최종 선택된 보상 인덱스: {winningIndex} (확률: {probabilities[winningIndex]:0.00}), 랜덤값: {r}");
-        photonView.RPC("RPC_UpdateFinalReward", RpcTarget.All, winningIndex, winningRewardMessage);
+        // 최종 결과는 winningIndex 하나만 전달합니다.
+        photonView.RPC("RPC_UpdateFinalReward", RpcTarget.All, winningIndex);
     }
 
     /// 최종 당첨 결과 업데이트: RewardName 텍스트는 지우고 Detail 텍스트에 당첨 결과를 표시
     [PunRPC]
-    public void RPC_UpdateFinalReward(int winningIndex, string rewardMessage)
+    public void RPC_UpdateFinalReward(int winningIndex)
     {
         if (UIRewardPanel.Instance != null)
         {
             if (UIRewardPanel.Instance.rewardNameText != null)
                 UIRewardPanel.Instance.rewardNameText.text = "";
-            if (UIRewardPanel.Instance.detailText != null)
-                UIRewardPanel.Instance.detailText.text = rewardMessage;
+            if (UIRewardPanel.Instance.detailText != null && UIRewardPanel.Instance.rewardDatas != null &&
+                winningIndex < UIRewardPanel.Instance.rewardDatas.Length)
+            {
+                UIRewardPanel.Instance.detailText.text = $"당첨 보상: {UIRewardPanel.Instance.rewardDatas[winningIndex].rewardDetail}";
+            }
         }
     }
 
@@ -328,12 +333,13 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         int countdown = 10;
         while (countdown > 0)
         {
-            photonView.RPC("RPC_UpdateCountdown", RpcTarget.All, countdown);
+            // RPC_UpdateCountdown에 두 개의 인수를 전달: countdown과 빈 문자열
+            photonView.RPC("RPC_UpdateCountdown", RpcTarget.All, countdown, "");
             yield return new WaitForSeconds(1f);
             countdown--;
         }
-        // 카운트다운 완료 후 텍스트 클리어
-        photonView.RPC("RPC_UpdateCountdown", RpcTarget.All, 0);
+        // 카운트다운 완료 후 텍스트 초기화
+        photonView.RPC("RPC_UpdateCountdown", RpcTarget.All, 0, "");
         // 최종 보상 확정 RPC 호출
         photonView.RPC("RPC_FinalizeRewardSelection", RpcTarget.All);
     }
