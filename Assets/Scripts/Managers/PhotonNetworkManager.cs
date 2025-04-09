@@ -187,4 +187,10 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     //        photonView.RPC("UpdatePlayerDic", newPlayer, actNum, viewID);
     //    }
     //}
+    [PunRPC]
+    public void RPC_OpenRewardUIForAll()
+    {
+        // ¡ﬂæ” UIManager∏¶ ≈Î«ÿ UIRewardPanel «¡∏Æ∆’¿ª Instantiate
+        UIManager.Instance.OpenPopupPanel<UIRewardPanel>();
+    }
 }
