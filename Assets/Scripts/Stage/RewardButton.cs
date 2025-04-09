@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class RewardButton : MonoBehaviour
 {
-    public int rewardIndex;          // 예: 0=A, 1=B 등
+    public int rewardIndex;          // 예: 0=A, 1=B, 등
     public Button unityButton;
 
     [Header("Highlight Images")]
@@ -13,11 +13,11 @@ public class RewardButton : MonoBehaviour
     public Image selectRoad;         // 초록 하이라이트 시 추가 표시 (옵션)
 
     [Header("Check Icons")]
-    public Transform checkParent;    // 체크 아이콘 생성될 부모 오브젝트
+    public Transform checkParent;    // 체크 아이콘이 생성될 부모 오브젝트
     public GameObject checkPrefab;   // 체크 아이콘 프리팹 (Inspector에 할당)
     public float checkSpacing = 20f;   // 체크 아이콘 간격
 
-    // 플레이어(actorNum)별 체크 아이콘 리스트
+    // 플레이어(actorNum)별 체크 아이콘 리스트 저장
     private Dictionary<int, List<GameObject>> playerCheckIcons = new Dictionary<int, List<GameObject>>();
 
     public bool isSelected = false;
@@ -35,7 +35,7 @@ public class RewardButton : MonoBehaviour
         if (selectRoad != null)
             selectRoad.enabled = false;
 
-        // 기존의 체크 아이콘 제거
+        // 기존의 플레이어별 체크 아이콘 모두 제거
         foreach (var kvp in playerCheckIcons)
         {
             foreach (var icon in kvp.Value)
@@ -51,11 +51,10 @@ public class RewardButton : MonoBehaviour
 
     public void OnClickButton()
     {
-        // 이미 투표 확정되었다면 무시
         if (isVoted)
             return;
 
-        // 첫 클릭: 노란 하이라이트 활성화 및 상세정보 표시
+        // 첫 클릭: 노란 하이라이트 및 상세정보 표시
         if (!isSelected && !isVoted)
         {
             UIRewardPanel.Instance.UnhighlightAllNonVoted(this);
@@ -64,7 +63,7 @@ public class RewardButton : MonoBehaviour
                 normalHighlight.enabled = true;
             UIRewardPanel.Instance.ShowDetailLocal(rewardIndex);
         }
-        // 두 번째 클릭: 투표 확정 → 초록 하이라이트 전환, 버튼들 비활성화, 투표 요청
+        // 두 번째 클릭: 투표 확정 처리
         else if (isSelected && !isVoted)
         {
             isVoted = true;
@@ -77,7 +76,7 @@ public class RewardButton : MonoBehaviour
 
             UIRewardPanel.Instance.ShowDetailLocal(rewardIndex);
 
-            // 로컬: 다른 버튼들을 비활성화
+            // 로컬: 다른 버튼들 비활성화
             foreach (var btn in UIRewardPanel.Instance.rewardButtons)
             {
                 if (btn != this && btn.unityButton != null)
@@ -101,7 +100,6 @@ public class RewardButton : MonoBehaviour
     {
         if (checkPrefab == null || checkParent == null)
             return;
-
         if (!playerCheckIcons.ContainsKey(actorNum))
             playerCheckIcons[actorNum] = new List<GameObject>();
 

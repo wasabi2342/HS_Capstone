@@ -33,28 +33,28 @@ public class UIRewardPanel : UIBase
             detailText.text = "(보상 설명)";
     }
 
-    // 보상 UI 로컬 열기 (RPC Open UI는 PhotonNetworkManager에서 처리)
+    // 로컬에서 보상 UI 활성화 (문 상호작용 등에서 호출)
     public void OpenRewardUI()
     {
         if (rewardUI != null)
             rewardUI.SetActive(true);
     }
 
-    // 로컬: 투표 요청 → 중앙 PhotonNetworkManager의 RPC 호출
+    // 투표 요청: 로컬 버튼에서 호출 → 중앙 PhotonNetworkManager로 RPC 전송
     public void RequestVote(int rewardIndex)
     {
         int actorNum = PhotonNetwork.LocalPlayer.ActorNumber;
         PhotonNetworkManager.Instance.photonView.RPC("RPC_ConfirmVote", RpcTarget.MasterClient, actorNum, rewardIndex);
     }
 
-    // 로컬: Cancel 버튼 동작 → 중앙 PhotonNetworkManager에 내 투표 취소 요청 RPC 호출
+    // Cancel 버튼 동작: 로컬 플레이어의 투표만 취소
     public void RequestCancel()
     {
         int actorNum = PhotonNetwork.LocalPlayer.ActorNumber;
         PhotonNetworkManager.Instance.photonView.RPC("RPC_RemoveMyVote", RpcTarget.MasterClient, actorNum);
     }
 
-    // [All Clients] PhotonNetworkManager의 RPC_AddCheckMark에 의해 호출됨
+    // [All Clients] PhotonNetworkManager의 RPC_AddCheckMark 호출 시, 해당 보상 버튼에 체크 아이콘 추가
     public void AddCheckMark(int rewardIndex, int actorNum)
     {
         foreach (var btn in rewardButtons)
@@ -68,8 +68,7 @@ public class UIRewardPanel : UIBase
         }
     }
 
-    // [All Clients] PhotonNetworkManager의 RPC_RemoveMyCheckIcon에 의해 호출됨
-    // 로컬 플레이어의 경우, 자신의 체크 아이콘 제거와 함께 하이라이트, 버튼 상태 초기화 수행
+    // [All Clients] PhotonNetworkManager의 RPC_RemoveMyCheckIcon 호출 시, 해당 보상 버튼에서 로컬 플레이어의 체크 아이콘 제거
     public void RemoveMyCheckIcons(int rewardIndex, int actorNum)
     {
         foreach (var btn in rewardButtons)
@@ -77,9 +76,9 @@ public class UIRewardPanel : UIBase
             if (btn.rewardIndex == rewardIndex)
             {
                 btn.RemoveCheckIcons(actorNum);
-                // 로컬 플레이어라면: 해당 버튼 상태 초기화
                 if (actorNum == PhotonNetwork.LocalPlayer.ActorNumber)
                 {
+                    // 로컬 상태 초기화: 하이라이트 및 버튼 활성화
                     btn.isVoted = false;
                     btn.isSelected = false;
                     if (btn.normalHighlight != null)
@@ -91,7 +90,7 @@ public class UIRewardPanel : UIBase
                     if (btn.unityButton != null)
                         btn.unityButton.interactable = true;
 
-                    // 다른 버튼들도 비투표 상태라면 활성화 시키기 (원하는 로직에 맞게 조정)
+                    // 다른 버튼들도 재활성화 (투표 확정되지 않은 경우)
                     foreach (var otherBtn in rewardButtons)
                     {
                         if (!otherBtn.isVoted && otherBtn.unityButton != null)
@@ -114,7 +113,7 @@ public class UIRewardPanel : UIBase
             detailText.text = rewardDatas[rewardIndex].rewardDetail;
     }
 
-    // 로컬: 아직 투표되지 않은 버튼들의 하이라이트 제거 및 인터랙션 복원
+    // 로컬: 다른 버튼들의 하이라이트 제거 및 인터랙션 복원
     public void UnhighlightAllNonVoted(RewardButton exceptButton)
     {
         foreach (var btn in rewardButtons)
@@ -128,7 +127,7 @@ public class UIRewardPanel : UIBase
         }
     }
 
-    // 전체 초기화(전체 취소) 로직은 여기서는 사용하지 않습니다.
+    // 전체 초기화 함수 (필요 시, 이 예에서는 사용하지 않음)
     public void ResetUI()
     {
         foreach (var btn in rewardButtons)
