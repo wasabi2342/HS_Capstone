@@ -16,6 +16,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     public event Action<int> OnUpdateReadyPlayer;
 
     private Dictionary<int, bool> readyPlayers = new Dictionary<int, bool>();
+    private Dictionary<int, int> rewardVotes = new Dictionary<int, int>();
+
 
     private void Awake()
     {
@@ -188,9 +190,48 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     //    }
     //}
     [PunRPC]
-    public void RPC_OpenRewardUIForAll()
+    public void RPC_OpenUI()
     {
-        // ¡ﬂæ” UIManager∏¶ ≈Î«ÿ UIRewardPanel «¡∏Æ∆’¿ª Instantiate
-        UIManager.Instance.OpenPopupPanel<UIRewardPanel>();
+        if (UIRewardPanel.Instance != null && UIRewardPanel.Instance.rewardUI != null)
+        {
+            UIRewardPanel.Instance.rewardUI.SetActive(true);
+        }
+    }
+
+    [PunRPC]
+    public void RPC_ConfirmVote(int actorNum, int rewardIndex)
+    {
+        if (rewardVotes.ContainsKey(actorNum))
+        {
+            Debug.Log($"[RPC_ConfirmVote] player {actorNum} already voted. ignoring.");
+            return;
+        }
+        rewardVotes[actorNum] = rewardIndex;
+        photonView.RPC("RPC_AddCheckMark", RpcTarget.All, rewardIndex);
+    }
+
+    [PunRPC]
+    public void RPC_AddCheckMark(int rewardIndex)
+    {
+        if (UIRewardPanel.Instance != null)
+        {
+            UIRewardPanel.Instance.AddCheckMark(rewardIndex);
+        }
+    }
+
+    [PunRPC]
+    public void RPC_CancelAllVotes()
+    {
+        rewardVotes.Clear();
+        photonView.RPC("RPC_ResetUI", RpcTarget.All);
+    }
+
+    [PunRPC]
+    public void RPC_ResetUI()
+    {
+        if (UIRewardPanel.Instance != null)
+        {
+            UIRewardPanel.Instance.ResetUI();
+        }
     }
 }

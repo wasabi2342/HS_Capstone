@@ -9,16 +9,13 @@ public class UIRewardPanel : UIBase
     public static UIRewardPanel Instance;
 
     [Header("UI References")]
-    public GameObject rewardUI;         
-    public TMP_Text rewardNameText;     // 보상 이름 (로컬)
-    public TMP_Text detailText;         // 보상 설명 (로컬)
+    public GameObject rewardUI;         // 보상 UI 패널 (Canvas의 자식 패널)
+    public TMP_Text rewardNameText;     // 보상 이름 텍스트 (로컬)
+    public TMP_Text detailText;         // 보상 설명 텍스트 (로컬)
     public RewardButton[] rewardButtons; // 보상 선택 버튼들
 
     [Header("Reward Data")]
     public RewardData[] rewardDatas;    // 보상 데이터 배열
-
-    // 마스터가 관리하는 투표 기록: <플레이어ID, 보상 인덱스>
-    private Dictionary<int, int> votes = new Dictionary<int, int>();
 
     private void Awake()
     {
@@ -27,54 +24,40 @@ public class UIRewardPanel : UIBase
 
     private void Start()
     {
-        // 각 보상 버튼 초기화
+        if (rewardUI != null)
+            rewardUI.SetActive(false);
+
         foreach (var btn in rewardButtons)
-        {
             btn.Init();
-        }
         if (rewardNameText != null)
             rewardNameText.text = "(보상 이름)";
         if (detailText != null)
             detailText.text = "(보상 설명)";
     }
 
-    // 모든 클라이언트에 보상 UI를 열도록 하는 RPC 호출 메서드
+    // 로컬에서 보상 UI 열기; 다른 클라이언트는 PhotonNetworkManager를 통해 RPC로 열림
     public void OpenRewardUI()
     {
         if (rewardUI != null)
             rewardUI.SetActive(true);
-
-        PhotonView.Get(this).RPC(nameof(RPC_OpenUI), RpcTarget.OthersBuffered);
+        PhotonNetworkManager.Instance.photonView.RPC("RPC_OpenUI", RpcTarget.OthersBuffered);
     }
 
-    [PunRPC]
-    void RPC_OpenUI()
-    {
-        if (rewardUI != null)
-            rewardUI.SetActive(true);
-    }
-
-    // 투표 요청 (RPC 통해 마스터로 전송)
+    // 투표 요청: 로컬 버튼에서 호출 → 중앙 매니저의 PhotonView를 통해 RPC 전송
     public void RequestVote(int rewardIndex)
     {
         int actorNum = PhotonNetwork.LocalPlayer.ActorNumber;
-        PhotonView.Get(this).RPC(nameof(RPC_ConfirmVote), RpcTarget.MasterClient, actorNum, rewardIndex);
+        PhotonNetworkManager.Instance.photonView.RPC("RPC_ConfirmVote", RpcTarget.MasterClient, actorNum, rewardIndex);
     }
 
-    [PunRPC]
-    void RPC_ConfirmVote(int actorNum, int rewardIndex)
+    // 투표 취소 요청: 로컬 버튼(캔슬)에서 호출
+    public void RequestCancel()
     {
-        if (votes.ContainsKey(actorNum))
-        {
-            Debug.Log($"[RPC_ConfirmVote] player {actorNum} already voted. ignoring.");
-            return;
-        }
-        votes[actorNum] = rewardIndex;
-        PhotonView.Get(this).RPC(nameof(RPC_AddCheckMark), RpcTarget.All, rewardIndex);
+        PhotonNetworkManager.Instance.photonView.RPC("RPC_CancelAllVotes", RpcTarget.MasterClient);
     }
 
-    [PunRPC]
-    void RPC_AddCheckMark(int rewardIndex)
+    // 로컬 업데이트 함수: 체크 아이콘 추가 (투표 확정 시)
+    public void AddCheckMark(int rewardIndex)
     {
         foreach (var btn in rewardButtons)
         {
@@ -87,7 +70,18 @@ public class UIRewardPanel : UIBase
         }
     }
 
-    // 보상 상세정보 로컬에서 표시
+    // 로컬 UI 초기화 (투표 취소 시)
+    public void ResetUI()
+    {
+        foreach (var btn in rewardButtons)
+            btn.Init();
+        if (rewardNameText != null)
+            rewardNameText.text = "(보상 이름)";
+        if (detailText != null)
+            detailText.text = "(보상 설명)";
+    }
+
+    // 로컬에서 보상 상세정보 표시
     public void ShowDetailLocal(int rewardIndex)
     {
         if (rewardDatas == null || rewardIndex < 0 || rewardIndex >= rewardDatas.Length)
@@ -98,7 +92,7 @@ public class UIRewardPanel : UIBase
             detailText.text = rewardDatas[rewardIndex].rewardDetail;
     }
 
-    // 아직 투표 확정되지 않은 버튼들 중, 선택된 버튼를 제외하고 하이라이트를 제거하고 버튼 기능을 활성화 (로컬)
+    // 로컬: 아직 투표 확정되지 않은 버튼들 중, 현재 선택된 버튼 이외의 버튼 하이라이트 제거 및 인터랙션 복원
     public void UnhighlightAllNonVoted(RewardButton exceptButton)
     {
         foreach (var btn in rewardButtons)
@@ -110,29 +104,5 @@ public class UIRewardPanel : UIBase
                     btn.unityButton.interactable = true;
             }
         }
-    }
-
-    // 투표 취소 요청 (마스터에게 RPC 전송 -> 모든 클라이언트에 초기 상태 복원)
-    public void RequestCancel()
-    {
-        PhotonView.Get(this).RPC(nameof(RPC_CancelAllVotes), RpcTarget.MasterClient);
-    }
-
-    [PunRPC]
-    void RPC_CancelAllVotes()
-    {
-        votes.Clear();
-        PhotonView.Get(this).RPC(nameof(RPC_ResetUI), RpcTarget.All);
-    }
-
-    [PunRPC]
-    void RPC_ResetUI()
-    {
-        // 모든 버튼 초기화 (체크 아이콘 제거 등)
-        foreach (var btn in rewardButtons)
-            btn.Init();
-
-        if (rewardNameText != null) rewardNameText.text = "(보상 이름)";
-        if (detailText != null) detailText.text = "(보상 설명)";
     }
 }
