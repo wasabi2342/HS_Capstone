@@ -17,11 +17,33 @@ public class StageManager : MonoBehaviourPun
 
     private void Start()
     {
-        
+
         if (PhotonNetwork.IsMasterClient)
         {
             SpawnStage();
             PhotonNetwork.Instantiate(blessingNPCPrefabName, Vector3.zero, Quaternion.identity);
+
+            GameObject doorPrefab = Resources.Load<GameObject>(doorPrefabName);
+            if (doorPrefab != null)
+            {
+                PhotonNetwork.Instantiate(doorPrefabName, new Vector3(10, 0, 0), Quaternion.identity);
+                Debug.Log("doorPrefab이 (0,0,0)에 생성되었습니다.");
+            }
+
+
+        }
+        if (RewardManager.Instance == null)
+        {
+            GameObject rewardCanvasPrefab = Resources.Load<GameObject>("RewardCanvas");
+            if (rewardCanvasPrefab != null)
+            {
+                Instantiate(rewardCanvasPrefab); // UI이므로 일반 Instantiate 사용 (PhotonNetwork가 필요 없을 수 있음)
+                Debug.Log("RewardCanvas가 생성되었습니다.");
+            }
+            else
+            {
+                Debug.LogError("Resources에서 RewardCanvas를 찾을 수 없습니다.");
+            }
         }
     }
 
