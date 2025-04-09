@@ -366,6 +366,8 @@ public class PinkPlayerController : ParentPlayerController
         base.StartSpaceCooldown();
     }
 
+    // 애니메이션 이벤트 함수
+
     public void OnAttackPreAttckStart()
     {
         animator.SetBool("CancleState", true);
