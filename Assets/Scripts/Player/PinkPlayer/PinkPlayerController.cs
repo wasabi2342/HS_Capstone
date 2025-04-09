@@ -256,6 +256,11 @@ public class PinkPlayerController : ParentPlayerController
                 nextState = PinkPlayerState.BasicAttack;
             }
 
+            if(attackStack == 2)
+            {
+
+            }
+
             if (attackStack >= 2)
             {
                 animator.SetBool("Pre-Attack", false);
