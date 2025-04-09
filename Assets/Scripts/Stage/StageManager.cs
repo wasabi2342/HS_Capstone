@@ -2,7 +2,7 @@ using UnityEngine;
 using Photon.Pun;
 using System.Collections.Generic;
 
-public class StageManager : MonoBehaviourPun
+public class StageManager : MonoBehaviour
 {
     public static StageManager Instance;
 
@@ -90,12 +90,6 @@ public class StageManager : MonoBehaviourPun
 
         }
         return cleared;
-    }
-    [PunRPC]
-    public void RPC_OpenRewardUIForAll()
-    {
-        // 모든 클라이언트에서 UIManager를 통해 UIRewardPanel 프리팹을 Instantiate하여 보상 UI를 엽니다.
-        UIManager.Instance.OpenPopupPanel<UIRewardPanel>();
     }
 
 }

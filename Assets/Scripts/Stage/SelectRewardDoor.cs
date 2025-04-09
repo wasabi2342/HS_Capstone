@@ -16,7 +16,8 @@ public class SelectRewardDoor : MonoBehaviourPun, IInteractable
         {
             Debug.Log("Reward Door 상호작용 시작 - RewardUI 호출");
             canInteract = false;
-            StageManager.Instance.photonView.RPC("RPC_OpenRewardUIForAll", RpcTarget.All);
+            // 자신의 PhotonView를 통해 RPC 호출: 모든 클라이언트에서 UIRewardPanel을 열도록 함.
+            photonView.RPC("RPC_OpenRewardUIForAll", RpcTarget.All);
             InputManager.Instance.ChangeDefaultMap("UI");
         }
     }
@@ -37,5 +38,12 @@ public class SelectRewardDoor : MonoBehaviourPun, IInteractable
         {
             canvas.gameObject.SetActive(false);
         }
+    }
+
+    [PunRPC]
+    private void RPC_OpenRewardUIForAll()
+    {
+        // 모든 클라이언트에서 UIManager를 통해 UIRewardPanel 프리팹을 로드해 보상 UI를 엽니다.
+        UIManager.Instance.OpenPopupPanel<UIRewardPanel>();
     }
 }
