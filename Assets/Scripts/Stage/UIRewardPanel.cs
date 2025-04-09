@@ -1,54 +1,56 @@
-using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
 using System.Collections.Generic;
+using UnityEngine;
 
-public class RewardManager : MonoBehaviourPun
+public class UIRewardPanel : UIBase
 {
-    public static RewardManager Instance;
+    public static UIRewardPanel Instance;
 
     [Header("UI References")]
-    public GameObject rewardUI;         // RewardCanvas (¸ðµç ÇÃ·¹ÀÌ¾î°¡ º¼ ÆÐ³Î)
-    public TMP_Text rewardNameText;     // DetailBox º¸»ó ÀÌ¸§ (·ÎÄÃ)
-    public TMP_Text detailText;         // DetailBox ¼³¸í (·ÎÄÃ)
-    public RewardButton[] rewardButtons; // ¹öÆ°µé (A/B¡¦)
+    public GameObject rewardUI;         // ¸ðµç ÇÃ·¹ÀÌ¾î°¡ º¼ º¸»ó ÆÐ³Î(RewardCanvas)
+    public TMP_Text rewardNameText;     // º¸»ó ÀÌ¸§À» Ç¥½ÃÇÒ ÅØ½ºÆ® (·ÎÄÃ)
+    public TMP_Text detailText;         // º¸»ó ¼³¸íÀ» Ç¥½ÃÇÒ ÅØ½ºÆ® (·ÎÄÃ)
+    public RewardButton[] rewardButtons; // º¸»ó ¼±ÅÃ ¹öÆ°µé
 
     [Header("Reward Data")]
-    public RewardData[] rewardDatas;
+    public RewardData[] rewardDatas;    // º¸»ó µ¥ÀÌÅÍ ¹è¿­
 
-    // ¸¶½ºÅÍ°¡ °ü¸®ÇÏ´Â ÅõÇ¥: <playerId, º¸»óÀÎµ¦½º>
+    // ¸¶½ºÅÍ°¡ °ü¸®ÇÏ´Â ÅõÇ¥ ±â·Ï: <ÇÃ·¹ÀÌ¾îID, º¸»ó ÀÎµ¦½º>
     private Dictionary<int, int> votes = new Dictionary<int, int>();
 
-    void Awake()
+    private void Awake()
     {
         Instance = this;
     }
 
-    void Start()
+    private void Start()
     {
-        // UI ÃÊ±â »óÅÂ
+        // ÃÊ±â »óÅÂ: º¸»ó ÆÐ³ÎÀº ºñÈ°¼ºÈ­
         if (rewardUI != null)
             rewardUI.SetActive(false);
+
+        // º¸»ó ¹öÆ° ÃÊ±âÈ­
         foreach (var btn in rewardButtons)
         {
             btn.Init();
         }
-        if (rewardNameText != null) rewardNameText.text = "(º¸»ó ÀÌ¸§)";
-        if (detailText != null) detailText.text = "(º¸»ó ¼³¸í)";
+        if (rewardNameText != null)
+            rewardNameText.text = "(º¸»ó ÀÌ¸§)";
+        if (detailText != null)
+            detailText.text = "(º¸»ó ¼³¸í)";
     }
 
-    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
-    // door »óÈ£ÀÛ¿ë µî¿¡¼­ È£Ãâ ¡æ ¸ðµç Å¬¶óÀÌ¾ðÆ®¿¡ UI Ç¥½Ã
-    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+    // door ¶Ç´Â ´Ù¸¥ »óÈ£ÀÛ¿ë¿¡¼­ È£Ãâ ¡æ ¸ðµç Å¬¶óÀÌ¾ðÆ®¿¡ º¸»ó UI Ç¥½Ã
+    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
     public void OpenRewardUI()
     {
-        // UI ¿­±â (·ÎÄÃ)
         if (rewardUI != null)
             rewardUI.SetActive(true);
 
-        // ´Ù¸¥ Å¬¶óÀÌ¾ðÆ®µéµµ ¿­µµ·Ï RPC
-        photonView.RPC(nameof(RPC_OpenUI), RpcTarget.OthersBuffered);
+        PhotonView.Get(this).RPC(nameof(RPC_OpenUI), RpcTarget.OthersBuffered);
     }
 
     [PunRPC]
@@ -58,37 +60,27 @@ public class RewardManager : MonoBehaviourPun
             rewardUI.SetActive(true);
     }
 
-    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
-    // ¹öÆ° Ã¹ Å¬¸¯ ½Ã ¡æ ±×³É ·ÎÄÃ ÇÏÀÌ¶óÀÌÆ®
-    // ¹öÆ° µÎ ¹øÂ° Å¬¸¯(ÅõÇ¥ È®Á¤) ½Ã ¡æ ¸¶½ºÅÍ¿¡°Ô RPC_ConfirmVote
-    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+    // º¸»ó ¹öÆ° Ã¹ Å¬¸¯ ½Ã ·ÎÄÃ »ó¼¼Á¤º¸ Ç¥½Ã, µÎ ¹øÂ° Å¬¸¯ ½Ã ÅõÇ¥ ¿äÃ»
+    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
     public void RequestVote(int rewardIndex)
     {
-        // ³» ÇÃ·¹ÀÌ¾î ID
         int actorNum = PhotonNetwork.LocalPlayer.ActorNumber;
-        // ¸¶½ºÅÍ¿¡°Ô ¡°ÀÌ ÇÃ·¹ÀÌ¾î°¡ rewardIndex ÅõÇ¥ÇÔ¡±À» ¾Ë¸²
-        photonView.RPC(nameof(RPC_ConfirmVote), RpcTarget.MasterClient, actorNum, rewardIndex);
+        PhotonView.Get(this).RPC(nameof(RPC_ConfirmVote), RpcTarget.MasterClient, actorNum, rewardIndex);
     }
 
-    // ¸¶½ºÅÍ¸¸ ½ÇÇà. votes¿¡ ±â·Ï ÈÄ, ¸ðµç Å¬¶óÀÌ¾ðÆ®¿¡ Ã¼Å© Ç¥½Ã
     [PunRPC]
     void RPC_ConfirmVote(int actorNum, int rewardIndex)
     {
-        // ÀÌ¹Ì ÅõÇ¥Çß´ÂÁö °Ë»ç
         if (votes.ContainsKey(actorNum))
         {
             Debug.Log($"[RPC_ConfirmVote] player {actorNum} already voted. ignoring.");
             return;
         }
-
-        // »õ ÅõÇ¥ ±â·Ï
         votes[actorNum] = rewardIndex;
-
-        // ¸ðµç Å¬¶óÀÌ¾ðÆ®°¡ Ã¼Å© Ç¥½Ã¸¦ º¼ ¼ö ÀÖµµ·Ï RPC
-        photonView.RPC(nameof(RPC_AddCheckMark), RpcTarget.All, rewardIndex);
+        PhotonView.Get(this).RPC(nameof(RPC_AddCheckMark), RpcTarget.All, rewardIndex);
     }
 
-    // ¸ðµç Å¬¶óÀÌ¾ðÆ®¿¡¼­ ½ÇÇà. rewardIndex ¹öÆ°¿¡ Ã¼Å© Ç¥½Ã(2°³µç 1°³µç)
     [PunRPC]
     void RPC_AddCheckMark(int rewardIndex)
     {
@@ -96,17 +88,16 @@ public class RewardManager : MonoBehaviourPun
         {
             if (btn.rewardIndex == rewardIndex)
             {
-                // ¿øÇÏ´Â ¸¸Å­ Ã¼Å© ¾ÆÀÌÄÜ »ý¼º
-                btn.AddCheckIcon(); // 1
-                btn.AddCheckIcon(); // 2
+                btn.AddCheckIcon();
+                btn.AddCheckIcon();
                 break;
             }
         }
     }
 
-    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
-    // º¸»ó ¼³¸í / »ó¼¼´Â ·ÎÄÃ Àü¿ë
-    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+    // º¸»ó »ó¼¼Á¤º¸ ·ÎÄÃ¿¡¼­ Ç¥½Ã
+    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
     public void ShowDetailLocal(int rewardIndex)
     {
         if (rewardDatas == null || rewardIndex < 0 || rewardIndex >= rewardDatas.Length)
@@ -117,17 +108,13 @@ public class RewardManager : MonoBehaviourPun
             detailText.text = rewardDatas[rewardIndex].rewardDetail;
     }
 
-    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
-    // ÅõÇ¥ Ãë¼Ò(´©±º°¡ Cancel ´­·¶À» ¶§) ¡æ ¸¶½ºÅÍ¿¡°Ô ¾Ë¸²
-    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
-
+    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+    // ÅõÇ¥°¡ È®Á¤µÇÁö ¾ÊÀº ¹öÆ°µé ÇÏÀÌ¶óÀÌÆ® ÇØÁ¦
+    // ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
     public void UnhighlightAllNonVoted(RewardButton exceptButton)
     {
-        // rewardButtons ¹è¿­¿¡ ´ã±ä ¸ðµç ¹öÆ°À» ¼øÈ¸
         foreach (var btn in rewardButtons)
         {
-            // ¾ÆÁ÷ ÅõÇ¥°¡ È®Á¤µÇÁö ¾ÊÀº(!btn.isVoted) ¹öÆ° Áß,
-            // Áö±Ý Å¬¸¯µÈ ¹öÆ°(exceptButton)ÀÌ ¾Æ´Ñ °ÍÀÇ ³ë¶û ÇÏÀÌ¶óÀÌÆ®¸¦ ²¨ÁØ´Ù
             if (!btn.isVoted && btn != exceptButton)
             {
                 btn.DisableNormalHighlight();
@@ -137,21 +124,19 @@ public class RewardManager : MonoBehaviourPun
 
     public void RequestCancel()
     {
-        photonView.RPC(nameof(RPC_CancelAllVotes), RpcTarget.MasterClient);
+        PhotonView.Get(this).RPC(nameof(RPC_CancelAllVotes), RpcTarget.MasterClient);
     }
 
-    // ¸¶½ºÅÍ°¡ votes Áö¿ì°í ¡æ ¸ðµÎ¿¡°Ô UI ÃÊ±âÈ­ ¾Ë¸²
     [PunRPC]
     void RPC_CancelAllVotes()
     {
         votes.Clear();
-        photonView.RPC(nameof(RPC_ResetUI), RpcTarget.All);
+        PhotonView.Get(this).RPC(nameof(RPC_ResetUI), RpcTarget.All);
     }
 
     [PunRPC]
     void RPC_ResetUI()
     {
-        // ¸ðµç ¹öÆ° ÃÊ±âÈ­
         foreach (var btn in rewardButtons)
             btn.Init();
 

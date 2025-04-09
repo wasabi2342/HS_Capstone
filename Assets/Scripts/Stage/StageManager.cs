@@ -1,158 +1,85 @@
-using Photon.Pun;
-using Photon.Realtime;
-using TMPro;
-using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using System.Collections.Generic;
 
-public class UIRewardPanel : UIBase
+public class StageManager : MonoBehaviourPun
 {
-    public static UIRewardPanel Instance;
+    [Header("Prefabs (Resources 폴더에 있어야 함)")]
+    public string spawnAreaPrefabName = "SpawnArea"; // SpawnArea 프리팹 이름
+    public string doorPrefabName = "doorPrefab";
+    public string blessingNPCPrefabName = "BlessingNPC"; // Blessing NPC 프리팹 이름
 
-    [Header("UI References")]
-    public GameObject rewardUI;         // RewardCanvas (모든 플레이어가 볼 패널)
-    public TMP_Text rewardNameText;     // 보상 이름 텍스트 (로컬)
-    public TMP_Text detailText;         // 보상 설명 텍스트 (로컬)
-    public RewardButton[] rewardButtons; // 보상 선택 버튼들 (A/B 등)
+    [Header("Stage Settings")]
+    public StageSettings currentStageSettings; // 현재 스테이지에 해당하는 설정
+    public Quaternion spawnAreaRotation = Quaternion.identity; // 기본 회전 값
 
-    [Header("Reward Data")]
-    public RewardData[] rewardDatas;    // 보상 데이터 배열
+    private List<GameObject> spawnAreaInstances = new List<GameObject>();
 
-    // 마스터가 관리하는 투표 (playerId, 보상인덱스)
-    private Dictionary<int, int> votes = new Dictionary<int, int>();
-
-    void Awake()
+    private void Start()
     {
-        Instance = this;
-    }
 
-    void Start()
-    {
-        // 초기 상태: rewardUI는 꺼둡니다.
-        if (rewardUI != null)
-            rewardUI.SetActive(false);
-
-        // 보상 버튼 초기화
-        foreach (var btn in rewardButtons)
+        if (PhotonNetwork.IsMasterClient)
         {
-            btn.Init();
+            SpawnStage();
+            PhotonNetwork.Instantiate(blessingNPCPrefabName, Vector3.zero, Quaternion.identity);
         }
-        if (rewardNameText != null)
-            rewardNameText.text = "(보상 이름)";
-        if (detailText != null)
-            detailText.text = "(보상 설명)";
     }
 
-    // ─────────────────────────────────────────────────
-    // door 상호작용 등에서 호출 → 모든 클라이언트에 보상 UI 표시
-    // ─────────────────────────────────────────────────
-    public void OpenRewardUI()
+    void SpawnStage()
     {
-        // 로컬에서 보상 UI 활성화
-        if (rewardUI != null)
-            rewardUI.SetActive(true);
-
-        // 다른 클라이언트에서도 보상 UI가 열리도록 RPC 호출
-        PhotonView.Get(this).RPC(nameof(RPC_OpenUI), RpcTarget.OthersBuffered);
-    }
-
-    [PunRPC]
-    void RPC_OpenUI()
-    {
-        if (rewardUI != null)
-            rewardUI.SetActive(true);
-    }
-
-    // ─────────────────────────────────────────────────
-    // 버튼 첫 클릭 시 로컬 하이라이트, 두 번째 클릭(투표 확정) 시 마스터에 투표 요청
-    // ─────────────────────────────────────────────────
-    public void RequestVote(int rewardIndex)
-    {
-        // 내 플레이어 ID
-        int actorNum = PhotonNetwork.LocalPlayer.ActorNumber;
-        // 마스터에게 "이 플레이어가 rewardIndex에 투표"했음을 알림
-        PhotonView.Get(this).RPC(nameof(RPC_ConfirmVote), RpcTarget.MasterClient, actorNum, rewardIndex);
-    }
-
-    [PunRPC]
-    void RPC_ConfirmVote(int actorNum, int rewardIndex)
-    {
-        // 이미 투표한 플레이어인지 검사
-        if (votes.ContainsKey(actorNum))
+        foreach (SpawnAreaSetting setting in currentStageSettings.spawnAreaSettings)
         {
-            Debug.Log($"[RPC_ConfirmVote] player {actorNum} already voted. ignoring.");
-            return;
-        }
+            // 1) 스폰 영역 프리팹 생성
+            GameObject spawnAreaInstance = PhotonNetwork.Instantiate(
+                spawnAreaPrefabName,
+                setting.position,
+                spawnAreaRotation
+            );
+            spawnAreaInstances.Add(spawnAreaInstance);
 
-        // 새 투표 기록
-        votes[actorNum] = rewardIndex;
-
-        // 모든 클라이언트에 rewardIndex 버튼에 체크 아이콘 추가하도록 RPC 호출
-        PhotonView.Get(this).RPC(nameof(RPC_AddCheckMark), RpcTarget.All, rewardIndex);
-    }
-
-    [PunRPC]
-    void RPC_AddCheckMark(int rewardIndex)
-    {
-        foreach (var btn in rewardButtons)
-        {
-            if (btn.rewardIndex == rewardIndex)
+            // 2) 반경 설정
+            SpawnArea area = spawnAreaInstance.GetComponent<SpawnArea>();
+            if (area != null)
             {
-                // 원하는 만큼 체크 아이콘 추가 (예: 두 번 추가)
-                btn.AddCheckIcon();
-                btn.AddCheckIcon();
-                break;
+                area.SetRadius(setting.radius);
+            }
+
+            // 3) MonsterSpawner 찾아서 몬스터 스폰
+            MonsterSpawner spawner = spawnAreaInstance.GetComponentInChildren<MonsterSpawner>();
+            if (spawner != null)
+            {
+                spawner.SpawnMonsters(setting.monsterSpawnInfos);
             }
         }
     }
 
-    // ─────────────────────────────────────────────────
-    // 보상 상세 정보를 로컬에서 표시
-    // ─────────────────────────────────────────────────
-    public void ShowDetailLocal(int rewardIndex)
+    public bool AreAllMonstersCleared()
     {
-        if (rewardDatas == null || rewardIndex < 0 || rewardIndex >= rewardDatas.Length)
-            return;
-        if (rewardNameText != null)
-            rewardNameText.text = rewardDatas[rewardIndex].rewardName;
-        if (detailText != null)
-            detailText.text = rewardDatas[rewardIndex].rewardDetail;
-    }
-
-    // ─────────────────────────────────────────────────
-    // 투표 취소 요청: 마스터에게 알림
-    // ─────────────────────────────────────────────────
-    public void UnhighlightAllNonVoted(RewardButton exceptButton)
-    {
-        // rewardButtons의 모든 버튼을 순회하며 아직 투표가 확정되지 않은 버튼의 하이라이트 해제
-        foreach (var btn in rewardButtons)
+        Debug.Log("ActiveMonsterCount: " + EnemyAI.ActiveMonsterCount);
+        bool cleared = EnemyAI.ActiveMonsterCount == 0;
+        if (cleared)
         {
-            if (!btn.isVoted && btn != exceptButton)
+            Debug.Log("모든 몬스터가 제거되었습니다.");
+            if (PhotonNetwork.IsMasterClient)
             {
-                btn.DisableNormalHighlight();
+                // Resources 폴더에서 doorPrefab을 로드
+                GameObject doorPrefab = Resources.Load<GameObject>(doorPrefabName);
+                GameObject blessingNPC = Resources.Load<GameObject>(blessingNPCPrefabName);
+
+                if (doorPrefab != null)
+                {
+                    // doorPrefab 생성 위치 설정 (예: 첫 번째 SpawnArea의 위치 또는 StageManager 위치)
+                    Vector3 doorSpawnPosition = spawnAreaInstances.Count > 0 ? spawnAreaInstances[0].transform.position : transform.position;
+                    PhotonNetwork.Instantiate(doorPrefabName, doorSpawnPosition, Quaternion.identity);
+                }
+                if (blessingNPC != null)
+                {
+                    Vector3 blessingNPCSpawnPosition = spawnAreaInstances.Count > 1 ? spawnAreaInstances[1].transform.position : transform.position;
+                    PhotonNetwork.Instantiate(blessingNPCPrefabName, blessingNPCSpawnPosition, Quaternion.identity);
+                }
             }
+
         }
-    }
-
-    public void RequestCancel()
-    {
-        PhotonView.Get(this).RPC(nameof(RPC_CancelAllVotes), RpcTarget.MasterClient);
-    }
-
-    [PunRPC]
-    void RPC_CancelAllVotes()
-    {
-        votes.Clear();
-        PhotonView.Get(this).RPC(nameof(RPC_ResetUI), RpcTarget.All);
-    }
-
-    [PunRPC]
-    void RPC_ResetUI()
-    {
-        // 모든 버튼 초기화
-        foreach (var btn in rewardButtons)
-            btn.Init();
-
-        if (rewardNameText != null) rewardNameText.text = "(보상 이름)";
-        if (detailText != null) detailText.text = "(보상 설명)";
+        return cleared;
     }
 }
