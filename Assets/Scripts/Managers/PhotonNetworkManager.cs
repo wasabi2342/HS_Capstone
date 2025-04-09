@@ -190,6 +190,12 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     //    }
     //}
     [PunRPC]
+    public void RPC_OpenRewardUIForAll()
+    {
+        // ¡ﬂæ” UIManager∏¶ ≈Î«ÿ UIRewardPanel «¡∏Æ∆’¿ª Instantiate
+        UIManager.Instance.OpenPopupPanel<UIRewardPanel>();
+    }
+    [PunRPC]
     public void RPC_OpenUI()
     {
         if (UIRewardPanel.Instance != null && UIRewardPanel.Instance.rewardUI != null)
