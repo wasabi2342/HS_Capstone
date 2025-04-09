@@ -266,6 +266,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
         if (UIRewardPanel.Instance != null && UIRewardPanel.Instance.rewardNameText != null)
         {
+            // 남은 시간이 있으면 표시, 없으면 텍스트를 지움
             UIRewardPanel.Instance.rewardNameText.text = seconds > 0 ? seconds.ToString() : "";
         }
     }
@@ -327,14 +328,15 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         int countdown = 10;
         while (countdown > 0)
         {
-            // RPC_UpdateCountdown에 두 개의 인수를 전달: countdown과 빈 문자열
+            // 두 개의 인수를 전달: 남은 초와 빈 문자열 (두 번째 인수는 사용하지 않음)
             photonView.RPC("RPC_UpdateCountdown", RpcTarget.All, countdown, "");
             yield return new WaitForSeconds(1f);
             countdown--;
         }
-        // 카운트다운 완료 후 텍스트 초기화
+        // 카운트다운 끝나면 텍스트 초기화
         photonView.RPC("RPC_UpdateCountdown", RpcTarget.All, 0, "");
         // 최종 보상 확정 RPC 호출
         photonView.RPC("RPC_FinalizeRewardSelection", RpcTarget.All);
     }
+
 }
