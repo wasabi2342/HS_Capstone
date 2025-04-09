@@ -1243,7 +1243,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2209331458429171151}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: RewardManager, Assembly-CSharp
         m_MethodName: RPC_CancelAllVotes
         m_Mode: 1
@@ -1819,10 +1819,9 @@ GameObject:
   - component: {fileID: 5302081539649546515}
   - component: {fileID: 8427310226037129347}
   - component: {fileID: 6716597140797300743}
-  - component: {fileID: 2209331458429171151}
   - component: {fileID: 7940411468659505008}
   m_Layer: 5
-  m_Name: Reward Canvas
+  m_Name: RewardUIPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1911,29 +1910,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 8183
---- !u!114 &2209331458429171151
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6943321985337622905}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4835739b366825449b934ac4a5751733, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rewardUI: {fileID: 6943321985337622905}
-  rewardNameText: {fileID: 1384391426022345799}
-  detailText: {fileID: 6081427129875754736}
-  rewardButtons:
-  - {fileID: 6019984269673570003}
-  - {fileID: 3683278957946741443}
-  rewardDatas:
-  - rewardName: A
-    rewardDetail: 1234
-  - rewardName: B
-    rewardDetail: 4321
 --- !u!114 &7940411468659505008
 MonoBehaviour:
   m_ObjectHideFlags: 0

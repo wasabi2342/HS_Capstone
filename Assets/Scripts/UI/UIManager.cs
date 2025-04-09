@@ -111,7 +111,7 @@ public class UIManager : MonoBehaviour
     {
         if (uiStack.Count > 0)
             return uiStack.Peek();
-        else 
+        else    
             return null;
     }
 
