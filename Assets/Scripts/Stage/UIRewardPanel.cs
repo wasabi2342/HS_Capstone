@@ -9,9 +9,9 @@ public class UIRewardPanel : UIBase
     public static UIRewardPanel Instance;
 
     [Header("UI References")]
-    public GameObject rewardUI;         // 모든 플레이어가 볼 보상 패널(RewardCanvas)
-    public TMP_Text rewardNameText;     // 보상 이름을 표시할 텍스트 (로컬)
-    public TMP_Text detailText;         // 보상 설명을 표시할 텍스트 (로컬)
+    public GameObject rewardUI;         
+    public TMP_Text rewardNameText;     // 보상 이름 (로컬)
+    public TMP_Text detailText;         // 보상 설명 (로컬)
     public RewardButton[] rewardButtons; // 보상 선택 버튼들
 
     [Header("Reward Data")]
@@ -27,7 +27,11 @@ public class UIRewardPanel : UIBase
 
     private void Start()
     {
-        // 보상 버튼 초기화
+        // 초기 상태: 보상 UI 숨김
+        if (rewardUI != null)
+            rewardUI.SetActive(false);
+
+        // 각 보상 버튼 초기화
         foreach (var btn in rewardButtons)
         {
             btn.Init();
@@ -38,9 +42,7 @@ public class UIRewardPanel : UIBase
             detailText.text = "(보상 설명)";
     }
 
-    // ─────────────────────────────
-    // door 또는 다른 상호작용에서 호출 → 모든 클라이언트에 보상 UI 표시
-    // ─────────────────────────────
+    // 모든 클라이언트에 보상 UI를 열도록 하는 RPC 호출 메서드
     public void OpenRewardUI()
     {
         if (rewardUI != null)
@@ -56,9 +58,7 @@ public class UIRewardPanel : UIBase
             rewardUI.SetActive(true);
     }
 
-    // ─────────────────────────────
-    // 보상 버튼 첫 클릭 시 로컬 상세정보 표시, 두 번째 클릭 시 투표 요청
-    // ─────────────────────────────
+    // 투표 요청 (RPC 통해 마스터로 전송)
     public void RequestVote(int rewardIndex)
     {
         int actorNum = PhotonNetwork.LocalPlayer.ActorNumber;
@@ -91,9 +91,7 @@ public class UIRewardPanel : UIBase
         }
     }
 
-    // ─────────────────────────────
     // 보상 상세정보 로컬에서 표시
-    // ─────────────────────────────
     public void ShowDetailLocal(int rewardIndex)
     {
         if (rewardDatas == null || rewardIndex < 0 || rewardIndex >= rewardDatas.Length)
@@ -104,9 +102,7 @@ public class UIRewardPanel : UIBase
             detailText.text = rewardDatas[rewardIndex].rewardDetail;
     }
 
-    // ─────────────────────────────
-    // 투표가 확정되지 않은 버튼들 하이라이트 해제
-    // ─────────────────────────────
+    // 아직 투표 확정되지 않은 버튼들 중, 선택된 버튼를 제외하고 하이라이트를 제거하고 버튼 기능을 활성화 (로컬)
     public void UnhighlightAllNonVoted(RewardButton exceptButton)
     {
         foreach (var btn in rewardButtons)
@@ -114,10 +110,13 @@ public class UIRewardPanel : UIBase
             if (!btn.isVoted && btn != exceptButton)
             {
                 btn.DisableNormalHighlight();
+                if (btn.unityButton != null)
+                    btn.unityButton.interactable = true;
             }
         }
     }
 
+    // 투표 취소 요청 (마스터에게 RPC 전송 -> 모든 클라이언트에 초기 상태 복원)
     public void RequestCancel()
     {
         PhotonView.Get(this).RPC(nameof(RPC_CancelAllVotes), RpcTarget.MasterClient);
@@ -133,6 +132,7 @@ public class UIRewardPanel : UIBase
     [PunRPC]
     void RPC_ResetUI()
     {
+        // 모든 버튼 초기화 (체크 아이콘 제거 등)
         foreach (var btn in rewardButtons)
             btn.Init();
 
