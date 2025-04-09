@@ -317,13 +317,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
         if (UIRewardPanel.Instance != null)
         {
-            if (UIRewardPanel.Instance.rewardNameText != null)
-                UIRewardPanel.Instance.rewardNameText.text = "";
-            if (UIRewardPanel.Instance.detailText != null && UIRewardPanel.Instance.rewardDatas != null &&
-                winningIndex < UIRewardPanel.Instance.rewardDatas.Length)
-            {
-                UIRewardPanel.Instance.detailText.text = $"´çÃ· º¸»ó: {UIRewardPanel.Instance.rewardDatas[winningIndex].rewardDetail}";
-            }
+            UIRewardPanel.Instance.detailText.text = $"Final Reward: {UIRewardPanel.Instance.rewardDatas[winningIndex].rewardName}";
         }
     }
 
