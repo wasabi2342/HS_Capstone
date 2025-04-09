@@ -213,31 +213,41 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             return;
         }
         rewardVotes[actorNum] = rewardIndex;
-        photonView.RPC("RPC_AddCheckMark", RpcTarget.All, rewardIndex);
+        // 모든 클라이언트에 해당 플레이어의 체크 아이콘 추가
+        photonView.RPC("RPC_AddCheckMark", RpcTarget.All, actorNum, rewardIndex);
     }
 
     [PunRPC]
-    public void RPC_AddCheckMark(int rewardIndex)
+    public void RPC_AddCheckMark(int actorNum, int rewardIndex)
     {
         if (UIRewardPanel.Instance != null)
         {
-            UIRewardPanel.Instance.AddCheckMark(rewardIndex);
+            UIRewardPanel.Instance.AddCheckMark(rewardIndex, actorNum);
+        }
+    }
+
+    // 로컬 플레이어가 취소할 때 호출되는 RPC
+    [PunRPC]
+    public void RPC_RemoveMyVote(int actorNum)
+    {
+        if (rewardVotes.ContainsKey(actorNum))
+        {
+            int rewardIndex = rewardVotes[actorNum];
+            rewardVotes.Remove(actorNum);
+            photonView.RPC("RPC_RemoveMyCheckIcon", RpcTarget.All, actorNum, rewardIndex);
+        }
+        else
+        {
+            Debug.Log($"[RPC_RemoveMyVote] player {actorNum} did not vote.");
         }
     }
 
     [PunRPC]
-    public void RPC_CancelAllVotes()
-    {
-        rewardVotes.Clear();
-        photonView.RPC("RPC_ResetUI", RpcTarget.All);
-    }
-
-    [PunRPC]
-    public void RPC_ResetUI()
+    public void RPC_RemoveMyCheckIcon(int actorNum, int rewardIndex)
     {
         if (UIRewardPanel.Instance != null)
         {
-            UIRewardPanel.Instance.ResetUI();
+            UIRewardPanel.Instance.RemoveMyCheckIcons(rewardIndex, actorNum);
         }
     }
 }
