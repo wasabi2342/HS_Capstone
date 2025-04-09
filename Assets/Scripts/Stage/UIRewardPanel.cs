@@ -24,9 +24,6 @@ public class UIRewardPanel : UIBase
 
     private void Start()
     {
-        if (rewardUI != null)
-            rewardUI.SetActive(false);
-
         foreach (var btn in rewardButtons)
             btn.Init();
         if (rewardNameText != null)
