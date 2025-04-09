@@ -21,7 +21,9 @@ public class StageManager : MonoBehaviourPun
         if (PhotonNetwork.IsMasterClient)
         {
             SpawnStage();
-            PhotonNetwork.Instantiate(blessingNPCPrefabName, Vector3.zero, Quaternion.identity);
+            //PhotonNetwork.Instantiate(blessingNPCPrefabName, Vector3.zero, Quaternion.identity);
+            PhotonNetwork.Instantiate(doorPrefabName, new Vector3(10,0,0), Quaternion.identity);
+
         }
     }
 

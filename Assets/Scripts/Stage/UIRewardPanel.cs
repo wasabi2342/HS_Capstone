@@ -27,10 +27,6 @@ public class UIRewardPanel : UIBase
 
     private void Start()
     {
-        // 초기 상태: 보상 패널은 비활성화
-        if (rewardUI != null)
-            rewardUI.SetActive(false);
-
         // 보상 버튼 초기화
         foreach (var btn in rewardButtons)
         {
