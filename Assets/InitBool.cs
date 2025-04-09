@@ -10,7 +10,7 @@ public class InitBool : StateMachineBehaviour
 
     private PhotonView photonView;
 
-    private WhitePlayerController whitePlayerController;
+    private ParentPlayerController parentPlayerController;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     //{
@@ -26,9 +26,9 @@ public class InitBool : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (whitePlayerController == null)
+        if (parentPlayerController == null)
         {
-            whitePlayerController = animator.GetComponent<WhitePlayerController>();
+            parentPlayerController = animator.GetComponent<ParentPlayerController>();
         }
         if (!PhotonNetwork.IsConnected)
         {
@@ -41,7 +41,7 @@ public class InitBool : StateMachineBehaviour
         animator.SetBool(parameter, boolValue);
         if (photonView.IsMine)
         {
-            whitePlayerController.SetBoolParameter(parameter, boolValue);
+            parentPlayerController.SetBoolParameter(parameter, boolValue);
         }
         animator.speed = 1.0f;
     }

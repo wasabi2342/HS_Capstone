@@ -389,4 +389,27 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     {
         return runTimeData.abilityPower;
     }
+
+    [PunRPC]
+    public virtual void SyncBoolParameter(string parameter, bool value)
+    {
+        animator.SetBool(parameter, value);
+    }
+
+    public virtual void SetBoolParameter(string parameter, bool value)
+    {
+        photonView.RPC("SyncBoolParameter", RpcTarget.Others, parameter, value);
+    }
+
+    [PunRPC]
+    public virtual void SyncIntParameter(string parameter, int value)
+    {
+        animator.SetInteger(parameter, value);
+    }
+
+    public virtual void SetIntParameter(string parameter, int value)
+    {
+        photonView.RPC("SyncIntParameter", RpcTarget.Others, parameter, value);
+    }
+
 }

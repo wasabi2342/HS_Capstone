@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public class PinkPlayercontroller_event : MonoBehaviourPun
+public class PinkPlayercontroller_event : Playercontroller_event
 {
     private PinkPlayerController pinkPlayerController;
 
@@ -15,8 +15,6 @@ public class PinkPlayercontroller_event : MonoBehaviourPun
     public UnityEvent OnMouseREvent;
     public UnityEvent OnKeyboardShiftLEvent;
     public UnityEvent OnKeyboardREvent;
-
-    public bool isInVillage;
 
     private void Start()
     {

@@ -49,6 +49,7 @@ GameObject:
   - component: {fileID: 405372577379598909}
   - component: {fileID: 5749815652098805473}
   - component: {fileID: 3277823158435553033}
+  - component: {fileID: 2403682794470514799}
   m_Layer: 6
   m_Name: PinkPlayer
   m_TagString: Player
@@ -120,7 +121,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -314,6 +315,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65e73cb19d5aff74bafef167071f3dd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isInVillage: 0
   OnMouseLEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -326,7 +328,6 @@ MonoBehaviour:
   OnKeyboardREvent:
     m_PersistentCalls:
       m_Calls: []
-  isInVillage: 0
 --- !u!54 &5749815652098805473
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -414,6 +415,30 @@ MonoBehaviour:
   - {fileID: 0}
   currentState: 0
   nextState: 0
+--- !u!114 &2403682794470514799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673988289270443858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4625d83469617ee4b9e44541e9041064, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerController: {fileID: 3277823158435553033}
+  specialEffectList:
+  - {fileID: 11400000, guid: db055df592b882a47acd37860025a1d2, type: 2}
+  - {fileID: 11400000, guid: 4ebcd2219b1c83f4687da301da431dde, type: 2}
+  - {fileID: 11400000, guid: d8b2b805fb4c87746b45e23e6cda243e, type: 2}
+  - {fileID: 11400000, guid: 33d50184ab441234fa10ebe3577d4582, type: 2}
+  - {fileID: 11400000, guid: 214d6451a2935f043920ccd594e5737f, type: 2}
+  - {fileID: 11400000, guid: 7ea58cd23590df84a8af6517b9cd59de, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: 3939f00e561c88749b28afda4b9c5f12, type: 2}
+  - {fileID: 11400000, guid: 71f296c4da421d946a460d603f3d6ff9, type: 2}
 --- !u!1 &751039827282177349
 GameObject:
   m_ObjectHideFlags: 0
@@ -629,9 +654,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4173719895387011869}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.3333335, y: 3.8095238, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3671203936979291569}
