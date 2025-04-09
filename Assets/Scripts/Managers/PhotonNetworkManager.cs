@@ -214,10 +214,11 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         }
         rewardVotes[actorNum] = rewardIndex;
 
-        // 모든 클라이언트에서 해당 플레이어(actorNum)의 아이콘을 추가
+        // 모든 클라이언트에서 해당 플레이어의 체크 아이콘 추가
         photonView.RPC("RPC_AddCheckMark", RpcTarget.All, actorNum, rewardIndex);
     }
 
+    // [All Clients] 해당 플레이어(actorNum)가 투표한 보상(rewardIndex)에 대해 체크 아이콘 추가
     [PunRPC]
     public void RPC_AddCheckMark(int actorNum, int rewardIndex)
     {
@@ -227,6 +228,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
+    // [Master Only] 로컬 플레이어가 취소를 요청하면 해당 플레이어의 투표만 제거
     [PunRPC]
     public void RPC_RemoveMyVote(int actorNum)
     {
@@ -235,8 +237,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             int rewardIndex = rewardVotes[actorNum];
             rewardVotes.Remove(actorNum);
 
-            // 체크 아이콘도 제거
-            photonView.RPC(nameof(RPC_RemoveMyCheckIcon), RpcTarget.All, actorNum, rewardIndex);
+            // 모든 클라이언트에 해당 플레이어의 체크 아이콘 제거 요청
+            photonView.RPC("RPC_RemoveMyCheckIcon", RpcTarget.All, actorNum, rewardIndex);
         }
         else
         {
@@ -244,6 +246,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
+    // [All Clients] 특정 보상에서 해당 플레이어(actorNum)가 추가한 체크 아이콘 제거
     [PunRPC]
     public void RPC_RemoveMyCheckIcon(int actorNum, int rewardIndex)
     {
