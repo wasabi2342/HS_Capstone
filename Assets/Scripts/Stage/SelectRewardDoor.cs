@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class SelectRewardDoor : MonoBehaviour, IInteractable
+public class SelectRewardDoor : MonoBehaviourPun, IInteractable
 {
     [SerializeField]
     private bool canInteract = true;
@@ -16,8 +16,7 @@ public class SelectRewardDoor : MonoBehaviour, IInteractable
         {
             Debug.Log("Reward Door 상호작용 시작 - RewardUI 호출");
             canInteract = false;
-            // UIManager의 OpenPopupPanel을 사용해 Reward UI 팝업을 띄웁니다.
-            UIManager.Instance.OpenPopupPanel<UIRewardPanel>();
+            StageManager.Instance.photonView.RPC("RPC_OpenRewardUIForAll", RpcTarget.All);
             InputManager.Instance.ChangeDefaultMap("UI");
         }
     }

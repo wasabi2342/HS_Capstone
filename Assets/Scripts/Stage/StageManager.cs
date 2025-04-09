@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class StageManager : MonoBehaviourPun
 {
+    public static StageManager Instance;
+
     [Header("Prefabs (Resources 폴더에 있어야 함)")]
     public string spawnAreaPrefabName = "SpawnArea"; // SpawnArea 프리팹 이름
     public string doorPrefabName = "doorPrefab";
@@ -15,6 +17,11 @@ public class StageManager : MonoBehaviourPun
 
     private List<GameObject> spawnAreaInstances = new List<GameObject>();
 
+
+    private void Awake()
+    {
+        Instance = this;
+    }
     private void Start()
     {
 
@@ -84,4 +91,11 @@ public class StageManager : MonoBehaviourPun
         }
         return cleared;
     }
+    [PunRPC]
+    public void RPC_OpenRewardUIForAll()
+    {
+        // 모든 클라이언트에서 UIManager를 통해 UIRewardPanel 프리팹을 Instantiate하여 보상 UI를 엽니다.
+        UIManager.Instance.OpenPopupPanel<UIRewardPanel>();
+    }
+
 }
