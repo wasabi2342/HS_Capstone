@@ -951,25 +951,25 @@ public class WhitePlayerController : ParentPlayerController
     }
 
     [PunRPC]
-    public void SyncBoolParameter(string parameter, bool value)
+    public override void SyncBoolParameter(string parameter, bool value)
     {
-        animator.SetBool(parameter, value);
+        base.SyncBoolParameter(parameter, value);
     }
 
-    public void SetBoolParameter(string parameter, bool value)
+    public override void SetBoolParameter(string parameter, bool value)
     {
-        photonView.RPC("SyncBoolParameter", RpcTarget.Others, parameter, value);
+        base.SetBoolParameter(parameter, value);
     }
 
     [PunRPC]
-    public void SyncIntParameter(string parameter, int value)
+    public override void SyncIntParameter(string parameter, int value)
     {
-        animator.SetInteger(parameter, value);
+        base.SyncIntParameter(parameter, value);
     }
 
-    public void SetIntParameter(string parameter, int value)
+    public override void SetIntParameter(string parameter, int value)
     {
-        photonView.RPC("SyncIntParameter", RpcTarget.Others, parameter, value);
+        base.SetIntParameter(parameter, value);
     }
 
     public override void RecoverHealth(float value)

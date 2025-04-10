@@ -728,6 +728,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 444192644336379066, guid: 18fe9937d38b8dd41a22a31a5177160d, type: 3}
   m_PrefabInstance: {fileID: 19657029}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &21042324
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 480
+  m_Height: 191
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1001 &27932675
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19687,6 +19724,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3254718173748875429, guid: 547691f37b3593f4081ebea699d6fd24, type: 3}
+      propertyPath: defaultPlayer
+      value: 
+      objectReference: {fileID: 4131734313779836671, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
+    - target: {fileID: 3254718173748875429, guid: 547691f37b3593f4081ebea699d6fd24, type: 3}
       propertyPath: playerCinemachineCamera
       value: 
       objectReference: {fileID: 1555275788}
@@ -26783,13 +26824,41 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 98263572473656670, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 15.445025
+      objectReference: {fileID: 0}
+    - target: {fileID: 98263572473656670, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 10.958303
+      objectReference: {fileID: 0}
+    - target: {fileID: 98263572473656670, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -9.995751
+      objectReference: {fileID: 0}
     - target: {fileID: 533859889870469717, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 1726590094}
+      objectReference: {fileID: 21042324}
     - target: {fileID: 5779795693520866830, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
       propertyPath: m_Name
       value: Camera
+      objectReference: {fileID: 0}
+    - target: {fileID: 6553486391394693166, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.015025613
+      objectReference: {fileID: 0}
+    - target: {fileID: 6553486391394693166, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.02447784
+      objectReference: {fileID: 0}
+    - target: {fileID: 6943518724002172796, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
+      propertyPath: orthographic size
+      value: 3.4633505
+      objectReference: {fileID: 0}
+    - target: {fileID: 7026183883008340824, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 25.13089
       objectReference: {fileID: 0}
     - target: {fileID: 7302974469561943800, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -30294,43 +30363,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8690171104545380827, guid: 240bd6ab897f87e47a8f454ca576b436, type: 3}
   m_PrefabInstance: {fileID: 1721547781}
   m_PrefabAsset: {fileID: 0}
---- !u!84 &1726590094
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 480
-  m_Height: 270
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &1733759834
 PrefabInstance:
   m_ObjectHideFlags: 0
