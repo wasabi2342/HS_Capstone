@@ -217,20 +217,19 @@ public class PinkPlayerController : ParentPlayerController
 
         if (currentState != PinkPlayerState.Death)
         {
-            //if (currentState == PinkPlayerState.Parry)
-            //{
-            //    Vector3 mousePos = GetMouseWorldPosition();
-            //    animator.SetBool("Right", mousePos.x > transform.position.x);
-            //    animator.SetBool("basicattack", true);
-            //    if (PhotonNetwork.IsConnected)
-            //    {
-            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
-            //    }
-            //    //photonView.RPC("PlayAnimation", RpcTarget.All, "basicattack");
-            //    currentState = PinkPlayerState.Counter;
-            //    return;
-            //}
+            if (currentState == PinkPlayerState.tackle)
+            {
+                animator.SetBool("tackle", true);
+                Vector3 mousePos = GetMouseWorldPosition();
+                animator.SetBool("Right", mousePos.x > transform.position.x);
+                animator.SetBool("basicattack", true);
+                if (PhotonNetwork.IsConnected)
+                {
+                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "tackle", true);
+                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                }
+               return;
+            }
             //else if (currentState == PinkPlayerState.Counter && animator.GetInteger("CounterStack") > 0)
             //{
             //    animator.SetBool("Counter", true);
@@ -292,6 +291,7 @@ public class PinkPlayerController : ParentPlayerController
             }
         }
     }
+
 
     // 특수 공격
     public void HandleSpecialAttack()
