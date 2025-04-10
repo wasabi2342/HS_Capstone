@@ -31,10 +31,10 @@ public class DataManager : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
 
-        skillList = LoadSkillCsv("CSV/skills");
-        effectList = LoadSpecialEffectCsv("CSV/effects");
-        linkList = LoadBlessingEffectLinkCsv("CSV/blessing_effect_links");
-        basicAttackComboDatas = LoadComboCsv("CSV/BasicAttackCombo");
+        skillList = LoadSkillCsv("CSV/Blessing_Table");
+        effectList = LoadSpecialEffectCsv("CSV/Special_Table");
+        linkList = LoadBlessingEffectLinkCsv("CSV/Bless_Special_Table");
+        basicAttackComboDatas = LoadComboCsv("CSV/Norm_Attack_Table");
     }
 
     private List<SkillData> LoadSkillCsv(string resourcePath)

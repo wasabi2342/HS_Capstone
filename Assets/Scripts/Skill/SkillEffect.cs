@@ -14,10 +14,12 @@ public class SkillEffect : MonoBehaviourPun
 
     private float damage;
     private Action triggerEvent;
+    private BoxCollider boxCollider;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
+        boxCollider = GetComponent<BoxCollider>();
     }
 
     /// <summary>
@@ -35,6 +37,16 @@ public class SkillEffect : MonoBehaviourPun
         {
             specialEffect.ApplyEffect();
         }
+    }
+
+    public void OnAttackCollider()
+    {
+        boxCollider.enabled = true;
+    }
+
+    public void OffAttackCollider()
+    {
+        boxCollider.enabled = false;
     }
 
     private void OnTriggerEnter(Collider other)

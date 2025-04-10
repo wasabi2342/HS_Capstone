@@ -14,11 +14,11 @@ public class WhitePlayerInteractionZone : MonoBehaviour
     public List<Action<InputAction.CallbackContext>> interactables = new List<Action<InputAction.CallbackContext>>();
 
     [SerializeField]
-    private WhitePlayercontroller_event whitePlayercontroller_Event;
+    private WhitePlayercontroller_event pinkPlayercontroller_Event;
 
     private void Awake()
     {
-        whitePlayercontroller_Event = GetComponentInParent<WhitePlayercontroller_event>();
+        pinkPlayercontroller_Event = GetComponentInParent<WhitePlayercontroller_event>();
 
         SphereCollider col = GetComponent<SphereCollider>();
         if (col != null)
@@ -33,7 +33,7 @@ public class WhitePlayerInteractionZone : MonoBehaviour
 
         if (other.GetComponent<IInteractable>() != null)
         {
-            whitePlayercontroller_Event.OnInteractionEvent += other.GetComponent<IInteractable>().OnInteract;
+            pinkPlayercontroller_Event.OnInteractionEvent += other.GetComponent<IInteractable>().OnInteract;
             interactables.Add(other.GetComponent<IInteractable>().OnInteract);
             Debug.Log("충돌된다.");
         }
@@ -45,7 +45,7 @@ public class WhitePlayerInteractionZone : MonoBehaviour
 
         if (other.GetComponent<IInteractable>() != null)
         {
-            whitePlayercontroller_Event.OnInteractionEvent -= other.GetComponent<IInteractable>().OnInteract;
+            pinkPlayercontroller_Event.OnInteractionEvent -= other.GetComponent<IInteractable>().OnInteract;
             interactables.Remove(other.GetComponent<IInteractable>().OnInteract);
         }
 
@@ -56,7 +56,7 @@ public class WhitePlayerInteractionZone : MonoBehaviour
     {
         for (int i = 0; i < interactables.Count; i++)
         {
-            whitePlayercontroller_Event.OnInteractionEvent -= interactables[i];
+            pinkPlayercontroller_Event.OnInteractionEvent -= interactables[i];
         }
         interactables.Clear();
     }
