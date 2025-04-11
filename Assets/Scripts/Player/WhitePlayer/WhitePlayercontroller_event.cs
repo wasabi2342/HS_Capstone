@@ -21,7 +21,10 @@ public class WhitePlayercontroller_event : MonoBehaviourPun
     private void Start()
     {
         if (!photonView.IsMine)
+        {
+            Debug.Log("³»°¡ ¾Æ´Ô");
             return;
+        }
 
         InputManager.Instance.PlayerInput.actions["Move"].performed += ctx => OnMove(ctx);
         InputManager.Instance.PlayerInput.actions["Move"].canceled += ctx => OnMove(ctx);
