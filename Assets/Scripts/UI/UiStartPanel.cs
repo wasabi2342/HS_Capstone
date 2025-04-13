@@ -5,13 +5,13 @@ using UnityEngine.UI;
 
 public class UiStartPanel : UIBase
 {
-    [SerializeField] 
+    [SerializeField]
     private Button singlePlayButton;
-    [SerializeField] 
+    [SerializeField]
     private Button multiPlayButton;
-    [SerializeField] 
+    [SerializeField]
     private Button settingButton;
-    [SerializeField] 
+    [SerializeField]
     private Button quitButton;
 
     void Start()
@@ -31,9 +31,10 @@ public class UiStartPanel : UIBase
         quitButton.onClick.AddListener(QuitGame);
         settingButton.onClick.AddListener(() => UIManager.Instance.OpenPopupPanel<UISettingPanel>());
 
-        singlePlayButton.onClick.AddListener(() => {
+        singlePlayButton.onClick.AddListener(() =>
+        {
             UIManager.Instance.CloseAllUI();
-            SceneManager.LoadScene("Room");
+            UIManager.Instance.OpenPanel<UIRoomPanel>();
         }
         );
     }

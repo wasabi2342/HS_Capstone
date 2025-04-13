@@ -81,6 +81,7 @@ public class WhitePlayerController : ParentPlayerController
     public void SetMoveInput(Vector2 input)
     {
         moveInput = input;
+        Debug.Log(input + "이동 인풋값");
     }
 
     // 이동 처리

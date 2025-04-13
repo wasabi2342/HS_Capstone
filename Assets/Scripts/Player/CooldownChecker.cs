@@ -10,7 +10,7 @@ public class CooldownChecker
     private Coroutine coroutine;
     private float timer;
     private UnityEvent<float, float> onCooldownUpdate;
-    public CooldownChecker(float cooldownTime, UnityEvent<float, float> onCooldownUpdate, int maxStacks = 1)
+    public CooldownChecker(float cooldownTime, UnityEvent<float, float>? onCooldownUpdate, int maxStacks = 1)
     {
         this.cooldownTime = cooldownTime;
         this.maxStacks = maxStacks;

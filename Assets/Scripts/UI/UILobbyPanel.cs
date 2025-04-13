@@ -1,3 +1,4 @@
+using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +15,9 @@ public class UILobbyPanel : UIBase
     [SerializeField]
     private RectTransform roomButtonParent;
     [SerializeField]
-    private Button roomButton;
+    private Button roomButton; 
+    [SerializeField]
+    private Button preButton;
 
     private List<Button> joinRoomButtonList = new List<Button>();
 
@@ -23,33 +26,39 @@ public class UILobbyPanel : UIBase
         Init();
     }
 
-    public override void OnDisable()
-    {
-        base.OnDisable();
-        PhotonNetworkManager.Instance.OnRoomListUpdated -= UpdateRoomList;
-    }
-
-    public void UpdateRoomList(List<RoomInfo> roomList)
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
         foreach (Button button in joinRoomButtonList)
         {
-            Destroy(button);
+            joinRoomButtonList.Remove(button);
+            Destroy(button.gameObject);
         }
 
         joinRoomButtonList.Clear();
 
         foreach (RoomInfo room in roomList)
         {
+            // 삭제된 방은 무시
+            if (room.RemovedFromList || room.PlayerCount == 0)
+                continue;
+
             Button newJoinRoomButton = Instantiate(roomButton, roomButtonParent);
             newJoinRoomButton.onClick.AddListener(() => JoinRoom(room.Name));
-            newJoinRoomButton.GetComponentInChildren<Text>().text = $"방 이름: {room.Name}   {room.PlayerCount}/{room.MaxPlayers}";
+            newJoinRoomButton.GetComponentInChildren<Text>().text =
+                $"방 이름: {room.Name}   {room.PlayerCount}/{room.MaxPlayers}";
             joinRoomButtonList.Add(newJoinRoomButton);
         }
     }
 
     private void JoinRoom(string roomName)
     {
-        PhotonNetworkManager.Instance.JoinRoom(roomName);
+        PhotonNetwork.JoinRoom(roomName);
+    }
+
+    public override void OnJoinedRoom()
+    {
+        UIManager.Instance.CloseAllUI();
+        UIManager.Instance.OpenPopupPanel<UIRoomPanel>();
     }
 
     private void OnClickedCreateRoomButton()
@@ -57,9 +66,15 @@ public class UILobbyPanel : UIBase
         UIManager.Instance.OpenPopupPanel<UICreateRoomPanel>();
     }
 
+    private void OnClickedPreButton()
+    {
+        PhotonNetwork.Disconnect();
+        UIManager.Instance.OpenPanel<UiStartPanel>();
+    }
+
     public override void Init()
     {
         createRoomButton.onClick.AddListener(OnClickedCreateRoomButton);
-        PhotonNetworkManager.Instance.OnRoomListUpdated += UpdateRoomList;
+        preButton.onClick.AddListener(OnClickedPreButton);
     }
 }

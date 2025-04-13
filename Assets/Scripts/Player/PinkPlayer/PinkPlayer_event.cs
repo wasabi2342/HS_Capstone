@@ -18,8 +18,11 @@ public class PinkPlayercontroller_event : Playercontroller_event
 
     private void Start()
     {
-        if (!photonView.IsMine)
+        if (PhotonNetwork.InRoom && !photonView.IsMine)
+        {
+            Debug.Log("³»°¡ ¾Æ´Ô");
             return;
+        }
 
         InputManager.Instance.PlayerInput.actions["Move"].performed += ctx => OnMove(ctx);
         InputManager.Instance.PlayerInput.actions["Move"].canceled += ctx => OnMove(ctx);
