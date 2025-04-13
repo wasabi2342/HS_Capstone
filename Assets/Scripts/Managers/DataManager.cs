@@ -7,6 +7,7 @@ using System.Reflection;
 enum Characters
 {
     WhitePlayer,
+    PinkPlayer,
     Max
 }
 
