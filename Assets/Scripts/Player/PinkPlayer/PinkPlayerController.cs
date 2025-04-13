@@ -420,6 +420,26 @@ public class PinkPlayerController : ParentPlayerController
         Debug.Log("¼±µô Á¾·á");
     }
 
+    public void OnAttackLastAttckStart()
+    {
+        animator.SetBool("CancleState2", true);
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState2", true);
+        }
+        Debug.Log("ÈÄµô ½ÃÀÛ");
+    }
+
+    public void OnAttackLastAttckEnd()
+    {
+        animator.SetBool("CancleState2", false);
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState2", false);
+        }
+        Debug.Log("ÈÄµô Á¾·á");
+    }
+
     public void OnMoveFront(float value)
     {
         transform.Translate((GetMouseWorldPosition() - transform.position).normalized * value);

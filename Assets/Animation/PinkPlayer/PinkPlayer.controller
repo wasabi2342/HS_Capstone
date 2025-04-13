@@ -519,7 +519,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: CancleState
+    m_ConditionEvent: CancleState2
     m_EventTreshold: 0
   - m_ConditionMode: 1
     m_ConditionEvent: tackle
@@ -1242,7 +1242,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: CancleState
+    m_ConditionEvent: CancleState2
     m_EventTreshold: 0
   - m_ConditionMode: 1
     m_ConditionEvent: tackle
@@ -1412,6 +1412,12 @@ AnimatorController:
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
   - m_Name: tackle
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: CancleState2
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -1780,7 +1786,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: CancleState
+    m_ConditionEvent: CancleState2
     m_EventTreshold: 0
   - m_ConditionMode: 1
     m_ConditionEvent: tackle
@@ -2032,7 +2038,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: CancleState
+    m_ConditionEvent: CancleState2
     m_EventTreshold: 0
   - m_ConditionMode: 1
     m_ConditionEvent: tackle
@@ -2122,7 +2128,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: CancleState
+    m_ConditionEvent: CancleState2
     m_EventTreshold: 0
   - m_ConditionMode: 1
     m_ConditionEvent: tackle
@@ -2175,10 +2181,13 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: CancleState
+    m_ConditionEvent: CancleState2
     m_EventTreshold: 0
   - m_ConditionMode: 1
     m_ConditionEvent: FreeState
+    m_EventTreshold: 0
+  - m_ConditionMode: 1
+    m_ConditionEvent: Right
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 7473152690733019306}
@@ -2349,7 +2358,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: CancleState
+    m_ConditionEvent: CancleState2
     m_EventTreshold: 0
   - m_ConditionMode: 1
     m_ConditionEvent: tackle
@@ -2455,10 +2464,13 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: CancleState
+    m_ConditionEvent: CancleState2
     m_EventTreshold: 0
   - m_ConditionMode: 1
-    m_ConditionEvent: FreeState
+    m_ConditionEvent: tackle
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: Right
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -2454100877914553444}
