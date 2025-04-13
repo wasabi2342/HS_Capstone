@@ -47,10 +47,14 @@ public class RoomManager : MonoBehaviour
 
     private void Start()
     {
-        if (PhotonNetwork.IsConnected && PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName"] != null)
+        if (PhotonNetwork.IsConnected && PhotonNetwork.LocalPlayer.CustomProperties["SelectCharacter"] != null)
         {
-            Debug.Log(PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName"].ToString());
-            CreateCharacter(PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName"].ToString(), new Vector3(0, 2, 0), Quaternion.identity, isInVillage);
+            Debug.Log(PhotonNetwork.LocalPlayer.CustomProperties["SelectCharacter"].ToString());
+            CreateCharacter(PhotonNetwork.LocalPlayer.CustomProperties["SelectCharacter"].ToString(), new Vector3(0, 2, 0), Quaternion.identity, isInVillage);
+        }
+        else if (!PhotonNetwork.IsConnected && PlayerPrefs.GetString("SelectCharacter") != null)
+        {
+            CreateCharacter(PlayerPrefs.GetString("SelectCharacter"), new Vector3(0, 2, 0), Quaternion.identity, isInVillage);
         }
         else
         {
@@ -68,7 +72,7 @@ public class RoomManager : MonoBehaviour
             players[PhotonNetwork.LocalPlayer.ActorNumber] = playerInstance;
             //PhotonNetworkManager.Instance.AddPlayer(PhotonNetwork.LocalPlayer.ActorNumber, playerInstance.GetComponent<PhotonView>().ViewID);
             playerInstance.GetComponent<Playercontroller_event>().isInVillage = isInVillage; // 플레이어의 공통 스크립트로 변경 해야함
-            PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName"] = playerPrefabName;
+            PhotonNetwork.LocalPlayer.CustomProperties["SelectCharacter"] = playerPrefabName;
         }
         else
         {

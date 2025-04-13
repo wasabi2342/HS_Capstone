@@ -45,6 +45,9 @@ public class UICharacterInfoPanel : UIBase
         {
             PlayerPrefs.SetString("SelectCharacter", name);
             PlayerPrefs.Save();
+
+            UIRoomPanel roomPanel = FindObjectOfType<UIRoomPanel>();
+            roomPanel?.UpdateMyCharacterImage(name);
         }
         action?.Invoke();
     }

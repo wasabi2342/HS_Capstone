@@ -30,6 +30,7 @@ public class UILobbyPanel : UIBase
     {
         foreach (Button button in joinRoomButtonList)
         {
+            joinRoomButtonList.Remove(button);
             Destroy(button.gameObject);
         }
 
@@ -67,6 +68,7 @@ public class UILobbyPanel : UIBase
 
     private void OnClickedPreButton()
     {
+        PhotonNetwork.Disconnect();
         UIManager.Instance.OpenPanel<UiStartPanel>();
     }
 

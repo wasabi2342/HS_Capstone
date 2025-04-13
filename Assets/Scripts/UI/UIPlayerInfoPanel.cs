@@ -18,7 +18,7 @@ public class UIPlayerInfoPanel : UIBase
         {
             ReadyImage.color = Color.green;
 
-            if (PhotonNetwork.IsMasterClient)
+            if (PhotonNetwork.IsMasterClient || !PhotonNetwork.InRoom)
             {
                 selectCharacterButton.interactable = true;
             }

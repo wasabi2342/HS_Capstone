@@ -97,6 +97,10 @@ public class UIRoomPanel : UIBase
                 }
             }
         }
+        else
+        {
+            players.Add(-1, myPanel);
+        }
     }
 
     public void OnClickedSelectCharacterButton()
@@ -139,7 +143,14 @@ public class UIRoomPanel : UIBase
 
     public void OnClickedPreButton()
     {
-        PhotonNetwork.LeaveRoom();
+        if (PhotonNetwork.InRoom)
+        {
+            PhotonNetwork.LeaveRoom();
+        }
+        else
+        {
+            UIManager.Instance.OpenPanel<UiStartPanel>();
+        }
     }
 
     public void OnClickedStartButton()
@@ -198,5 +209,10 @@ public class UIRoomPanel : UIBase
         {
             Destroy(players[otherPlayer.ActorNumber].gameObject);
         }
+    }
+
+    public void UpdateMyCharacterImage(string characterName)
+    {
+        players[-1].Init(true, PlayerPrefs.GetString("Nickname"), characterName);
     }
 }
