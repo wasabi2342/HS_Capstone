@@ -211,7 +211,7 @@ public class PinkPlayerController : ParentPlayerController
         transform.position = targetPos;
     }
 
-
+    // 평타
     public void HandleNormalAttack()
     {
 
@@ -290,6 +290,29 @@ public class PinkPlayerController : ParentPlayerController
                 }
             }
         }
+    }
+
+    // 우클릭
+
+    public void HandleCharge()
+    {
+        if (currentState != PinkPlayerState.Death)
+        {
+            if (currentState == PinkPlayerState.tackle)
+            {
+                animator.SetBool("tackle", true);
+                Vector3 mousePos = GetMouseWorldPosition();
+                animator.SetBool("Right", mousePos.x > transform.position.x);
+                animator.SetBool("basicattack", true);
+                if (PhotonNetwork.IsConnected)
+                {
+                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "tackle", true);
+                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                }
+                return;
+            }
+        }
+
     }
 
 

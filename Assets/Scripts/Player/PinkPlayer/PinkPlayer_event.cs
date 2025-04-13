@@ -82,14 +82,14 @@ public class PinkPlayercontroller_event : Playercontroller_event
         }
     }
 
-    // 마우스 오른쪽 클릭 (가드)
+    // 마우스 오른쪽 클릭 (핑크 플레이어 우클릭)
     public void OnMouse_R(InputAction.CallbackContext context)
     {
-        //if (context.performed && !isInVillage)
-        //{
-        //    pinkPlayerController.HandleTackle();
-        //    OnMouseREvent?.Invoke();
-        //}
+        if (context.performed && !isInVillage)
+        {
+            pinkPlayerController.HandleCharge();
+            OnMouseREvent?.Invoke();
+        }
     }
 
     // 좌 Shift 키 (특수 공격)
