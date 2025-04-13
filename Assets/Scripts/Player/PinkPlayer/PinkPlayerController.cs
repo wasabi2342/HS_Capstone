@@ -300,8 +300,7 @@ public class PinkPlayerController : ParentPlayerController
         {
             if (currentState == PinkPlayerState.BasicAttack && animator.GetBool("CancleState"))
             {
-                if (Mouse.current.rightButton.wasPressedThisFrame) // 우클릭 체크
-                {
+               
                     animator.SetBool("tackle", true);
                     Vector3 mousePos = GetMouseWorldPosition();
                     animator.SetBool("Right", mousePos.x > transform.position.x);
@@ -313,9 +312,8 @@ public class PinkPlayerController : ParentPlayerController
                     }
 
                     animator.SetBool("basicattack", false);
-                    animator.SetBool("tackle", false);
                     return;
-                }
+                
             }
         }
     }
