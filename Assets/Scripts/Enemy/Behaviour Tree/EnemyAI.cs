@@ -37,6 +37,8 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     private float attackAnimTime = 0f;
     private float attackAnimDuration = 0.7f; // 기본값, status.animDuration으로 덮어씀
     private string prevAnimBeforeAttack = "";
+    private bool isPreparingAttack = false;
+    private float attackPrepareTimer = 0f;
 
     // 체력 관련 변수
     private float currentHP;
@@ -95,12 +97,14 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         if (targetPlayer != null)
         {
             // WhitePlayerController (또는 유사 스크립트)에서 Death 상태 확인
-            var wpc = targetPlayer.GetComponent<WhitePlayerController>();
+            var wpc = targetPlayer.GetComponent<ParentPlayerController>();
+            /*
             if (wpc == null || wpc.currentState == WhitePlayerState.Death)
             {
                 // 타겟이 사망 상태이므로 추적 중단
                 targetPlayer = null;
             }
+            */
         }
 
         // Behavior Tree 실행
@@ -224,26 +228,48 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
             if (wpc == null || wpc.currentState == WhitePlayerState.Death)
             {
                 targetPlayer = null;
+                isPreparingAttack = false;
+                attackPrepareTimer = 0f;
                 return INode.NodeState.Failure;
             }
 
-            // 공격 방향에 따른 애니메이션 선택
-            prevAnimBeforeAttack = currentMoveAnim;
-            float targetX = targetPlayer.position.x;
-            float selfX = transform.position.x;
-            string attackAnim = targetX >= selfX ? "Attack_Right" : "Attack_Left";
-            PlayMoveAnim(attackAnim);
+            // 준비 중인 경우 → 시간 측정
+            if (isPreparingAttack)
+            {
+                attackPrepareTimer += Time.deltaTime;
+                if (attackPrepareTimer >= status.waitCool)
+                {
+                    // 준비 시간 끝 → 실제 공격 수행
+                    isPreparingAttack = false;
+                    attackPrepareTimer = 0f;
 
-            // 공격 실행 (Master Client 기준)
-            attackStrategy.Attack(targetPlayer);
+                    string attackAnim = targetPlayer.position.x >= transform.position.x ? "Attack_Right" : "Attack_Left";
+                    prevAnimBeforeAttack = currentMoveAnim;
+                    PlayMoveAnim(attackAnim);
 
-            isAttackAnimationPlaying = true;
-            attackAnimTime = 0f;
-            canAttack = false;
-            cooldownTimer = 0f;
+                    attackStrategy.Attack(targetPlayer);
 
-            return INode.NodeState.Success;
+                    isAttackAnimationPlaying = true;
+                    attackAnimTime = 0f;
+                    canAttack = false;
+                    cooldownTimer = 0f;
+
+                    return INode.NodeState.Success;
+                }
+                return INode.NodeState.Running; // 준비 중
+            }
+            else
+            {
+                // 준비 시작
+                isPreparingAttack = true;
+                attackPrepareTimer = 0f;
+                agent.isStopped = true; // 정지 상태 유지
+                return INode.NodeState.Running;
+            }
         }
+
+        isPreparingAttack = false;
+        attackPrepareTimer = 0f;
         return INode.NodeState.Failure;
     }
 
