@@ -257,21 +257,21 @@ public class WhitePlayerController : ParentPlayerController
                 nextState = WhitePlayerState.BasicAttack;
             }
 
-            if (attackStack >= 4)
-            {
-                animator.SetBool("Pre-Attack", false);
-                animator.SetBool("Pre-Input", false);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", false);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", false);
-                }
-                currentState = WhitePlayerState.Idle;
-                attackStack = 0;
-                AttackStackUpdate?.Invoke(attackStack);
-                Debug.Log("공격 스택 4 도달: 콤보 종료 및 초기화");
-                return;
-            }
+            //if (attackStack >= 4)
+            //{
+            //    animator.SetBool("Pre-Attack", false);
+            //    animator.SetBool("Pre-Input", false);
+            //    if (PhotonNetwork.IsConnected)
+            //    {
+            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", false);
+            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", false);
+            //    }
+            //    currentState = WhitePlayerState.Idle;
+            //    attackStack = 0;
+            //    AttackStackUpdate?.Invoke(attackStack);
+            //    Debug.Log("공격 스택 4 도달: 콤보 종료 및 초기화");
+            //    return;
+            //}
 
             if (currentState == WhitePlayerState.BasicAttack)
             {
