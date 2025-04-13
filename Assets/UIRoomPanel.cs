@@ -58,16 +58,14 @@ public class UIRoomPanel : UIBase
 
         if (PhotonNetwork.InRoom)
         {
+
             players.Add(PhotonNetwork.LocalPlayer.ActorNumber, myPanel);
 
-            if (!(PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("IsReady") && PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("SelectCharacter")))
-            {
-                PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
             {
                 { "IsReady", isReady },
                 { "SelectCharacter", DefeaultCharacter }
             });
-            }
 
             foreach (var kvp in PhotonNetwork.CurrentRoom.Players)
             {
@@ -103,7 +101,7 @@ public class UIRoomPanel : UIBase
 
     public void OnClickedSelectCharacterButton()
     {
-        container.DOAnchorPos(container.anchoredPosition + new Vector2(-2000f, 0f), 0.5f).OnComplete(() => UIManager.Instance.OpenPopupPanel<UISelectCharacterPanel>());
+        container.DOAnchorPos(container.anchoredPosition + new Vector2(-2000f, 0f), 0.5f).OnComplete(() => UIManager.Instance.OpenPopupPanel<UISelectCharacterPanel>().SetRoomPanelContainer(container));
     }
 
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)

@@ -1,6 +1,6 @@
 using Photon.Pun;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
@@ -17,14 +17,14 @@ public class UICharacterInfoPanel : UIBase
     [SerializeField]
     private Button selectButton;
 
-    public void Init(CharacterStats stats)
+    public void Init(CharacterStats stats, UnityAction action)
     {
         nameText.text = stats.name;
         infoText.text = $"최대체력 : {stats.maxHP}\n물리공격력 : {stats.attackPower}\n마법공격력 : {stats.abilityPower}\n공격속도 : {stats.attackSpeed}\n이동속도 : {stats.moveSpeed}";
         characterImage.sprite = Resources.Load<Sprite>("Sprite/" + stats.name);
 
         preButton.onClick.AddListener(OnClickedPreButton);
-        selectButton.onClick.AddListener( () => OnClickedSelectButton(stats.name));
+        selectButton.onClick.AddListener(() => OnClickedSelectButton(stats.name, action));
     }
 
     private void OnClickedPreButton()
@@ -32,12 +32,20 @@ public class UICharacterInfoPanel : UIBase
         UIManager.Instance.ClosePeekUI();
     }
 
-    private void OnClickedSelectButton(string name)
+    private void OnClickedSelectButton(string name, UnityAction action)
     {
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
+        if (PhotonNetwork.InRoom)
+        {
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
             {
                 { "SelectCharacter", name }
             });
-        //UIManager.Instance.CloseAllAndOpen<UIRoomPanel>();
+        }
+        else
+        {
+            PlayerPrefs.SetString("SelectCharacter", name);
+            PlayerPrefs.Save();
+        }
+        action?.Invoke();
     }
 }
