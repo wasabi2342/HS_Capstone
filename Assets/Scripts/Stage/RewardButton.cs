@@ -4,19 +4,20 @@ using System.Collections.Generic;
 
 public class RewardButton : MonoBehaviour
 {
-    public int rewardIndex;          // 0=A, 1=B …
+    public int rewardIndex;
     public Button unityButton;
 
     [Header("Highlight Images")]
-    public Image normalHighlight;    // 첫 클릭 노랑
-    public Image selectHighlight;    // 두 번째 클릭 초록
-    public Image selectRoad;         // 초록 길(옵션)
+    public Image normalHighlight;
+    public Image selectHighlight;
+    public Image selectRoad;
 
     [Header("Check Icons")]
     public Transform checkParent;
     public GameObject checkPrefab;
     public float checkSpacing = 20f;
-    private List<GameObject> spawnedChecks = new List<GameObject>();
+
+    private Dictionary<int, List<GameObject>> playerCheckIcons = new Dictionary<int, List<GameObject>>();
 
     public bool isSelected = false;
     public bool isVoted = false;
@@ -26,13 +27,21 @@ public class RewardButton : MonoBehaviour
         if (unityButton != null)
             unityButton.interactable = true;
 
-        if (normalHighlight != null) normalHighlight.enabled = false;
-        if (selectHighlight != null) selectHighlight.enabled = false;
-        if (selectRoad != null) selectRoad.enabled = false;
+        if (normalHighlight != null)
+            normalHighlight.enabled = false;
+        if (selectHighlight != null)
+            selectHighlight.enabled = false;
+        if (selectRoad != null)
+            selectRoad.enabled = false;
 
-        foreach (var c in spawnedChecks)
-            Destroy(c);
-        spawnedChecks.Clear();
+        foreach (var kvp in playerCheckIcons)
+        {
+            foreach (var icon in kvp.Value)
+            {
+                Destroy(icon);
+            }
+        }
+        playerCheckIcons.Clear();
 
         isSelected = false;
         isVoted = false;
@@ -40,35 +49,36 @@ public class RewardButton : MonoBehaviour
 
     public void OnClickButton()
     {
-        // 이미 투표 확정(초록)이면 무시
-        if (isVoted) return;
+        if (isVoted)
+            return;
 
-        // 첫 클릭 → 노랑
         if (!isSelected && !isVoted)
         {
-            // 다른 노랑 해제
-            RewardManager.Instance.UnhighlightAllNonVoted(this);
-
+            UIRewardPanel.Instance.UnhighlightAllNonVoted(this);
             isSelected = true;
             if (normalHighlight != null)
                 normalHighlight.enabled = true;
-
-            // 보상 상세 표시 (로컬 전용)
-            RewardManager.Instance.ShowDetailLocal(rewardIndex);
+            UIRewardPanel.Instance.ShowDetailLocal(rewardIndex);
         }
-        // 두 번째 클릭 → 초록 (투표 요청)
         else if (isSelected && !isVoted)
         {
             isVoted = true;
+            if (normalHighlight != null)
+                normalHighlight.enabled = false;
+            if (selectHighlight != null)
+                selectHighlight.enabled = true;
+            if (selectRoad != null)
+                selectRoad.enabled = true;
 
-            if (normalHighlight != null) normalHighlight.enabled = false;
-            if (selectHighlight != null) selectHighlight.enabled = true;
-            if (selectRoad != null) selectRoad.enabled = true;
+            UIRewardPanel.Instance.ShowDetailLocal(rewardIndex);
 
-            RewardManager.Instance.ShowDetailLocal(rewardIndex);
+            foreach (var btn in UIRewardPanel.Instance.rewardButtons)
+            {
+                if (btn != this && btn.unityButton != null)
+                    btn.unityButton.interactable = false;
+            }
 
-            // 로컬 → 마스터에게 “이걸로 투표”
-            RewardManager.Instance.RequestVote(rewardIndex);
+            UIRewardPanel.Instance.RequestVote(rewardIndex);
         }
     }
 
@@ -79,15 +89,27 @@ public class RewardButton : MonoBehaviour
         isSelected = false;
     }
 
-    // 마스터가 RPC_AddCheckMark → 모든 클라이언트에서 2개씩 아이콘 생성
-    public void AddCheckIcon()
+    public void AddCheckIcon(int actorNum)
     {
-        if (checkPrefab == null || checkParent == null) return;
+        if (checkPrefab == null || checkParent == null)
+            return;
+        if (!playerCheckIcons.ContainsKey(actorNum))
+            playerCheckIcons[actorNum] = new List<GameObject>();
 
         GameObject newCheck = Instantiate(checkPrefab, checkParent);
-        int idx = spawnedChecks.Count;
+        int idx = playerCheckIcons[actorNum].Count;
         newCheck.transform.localPosition = new Vector3(idx * checkSpacing, 0f, 0f);
+        playerCheckIcons[actorNum].Add(newCheck);
+    }
 
-        spawnedChecks.Add(newCheck);
+    public void RemoveCheckIcons(int actorNum)
+    {
+        if (!playerCheckIcons.ContainsKey(actorNum))
+            return;
+        foreach (var icon in playerCheckIcons[actorNum])
+        {
+            Destroy(icon);
+        }
+        playerCheckIcons[actorNum].Clear();
     }
 }

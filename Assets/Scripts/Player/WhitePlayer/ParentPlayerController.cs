@@ -149,29 +149,30 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         {
             if (!photonView.IsMine) return;
 
-            if (PhotonNetwork.IsMasterClient)
+            while (damage > 0 && shields.Count > 0)
             {
-                while (damage > 0 && shields.Count > 0)
+                if (shields[0].amount > damage)
                 {
-                    if (shields[0].amount > damage)
-                    {
-                        shields[0].amount -= damage;
-                        Debug.Log($"실드로 {damage} 피해 흡수! 남은 실드: {shields[0].amount}");
-                        ShieldUpdate?.Invoke(GetTotalShield(), maxShield);
-                        return;
-                    }
-                    else
-                    {
-                        damage -= shields[0].amount;
-                        Debug.Log($"실드 {shields[0]} 소진 후 파괴됨");
-                        shields.RemoveAt(0);
-                        ShieldUpdate?.Invoke(GetTotalShield(), maxShield);
-                    }
-                }
-                if (damage == 0)
-                {
+                    shields[0].amount -= damage;
+                    Debug.Log($"실드로 {damage} 피해 흡수! 남은 실드: {shields[0].amount}");
+                    ShieldUpdate?.Invoke(GetTotalShield(), maxShield);
                     return;
                 }
+                else
+                {
+                    damage -= shields[0].amount;
+                    Debug.Log($"실드 {shields[0]} 소진 후 파괴됨");
+                    shields.RemoveAt(0);
+                    ShieldUpdate?.Invoke(GetTotalShield(), maxShield);
+                }
+            }
+            if (damage == 0)
+            {
+                return;
+            }
+
+            if (PhotonNetwork.IsMasterClient)
+            {
 
                 // Master Client는 직접 체력 계산
                 runTimeData.currentHealth -= damage;

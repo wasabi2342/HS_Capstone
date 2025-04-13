@@ -2,8 +2,10 @@ using UnityEngine;
 using Photon.Pun;
 using System.Collections.Generic;
 
-public class StageManager : MonoBehaviourPun
+public class StageManager : MonoBehaviour
 {
+    public static StageManager Instance;
+
     [Header("Prefabs (Resources 폴더에 있어야 함)")]
     public string spawnAreaPrefabName = "SpawnArea"; // SpawnArea 프리팹 이름
     public string doorPrefabName = "doorPrefab";
@@ -15,13 +17,20 @@ public class StageManager : MonoBehaviourPun
 
     private List<GameObject> spawnAreaInstances = new List<GameObject>();
 
+
+    private void Awake()
+    {
+        Instance = this;
+    }
     private void Start()
     {
-        
+
         if (PhotonNetwork.IsMasterClient)
         {
             SpawnStage();
-            PhotonNetwork.Instantiate(blessingNPCPrefabName, Vector3.zero, Quaternion.identity);
+            //PhotonNetwork.Instantiate(blessingNPCPrefabName, Vector3.zero, Quaternion.identity);
+            PhotonNetwork.Instantiate(doorPrefabName, new Vector3(10,0,0), Quaternion.identity);
+
         }
     }
 
@@ -72,7 +81,7 @@ public class StageManager : MonoBehaviourPun
                     Vector3 doorSpawnPosition = spawnAreaInstances.Count > 0 ? spawnAreaInstances[0].transform.position : transform.position;
                     PhotonNetwork.Instantiate(doorPrefabName, doorSpawnPosition, Quaternion.identity);
                 }
-                if(blessingNPC != null)
+                if (blessingNPC != null)
                 {
                     Vector3 blessingNPCSpawnPosition = spawnAreaInstances.Count > 1 ? spawnAreaInstances[1].transform.position : transform.position;
                     PhotonNetwork.Instantiate(blessingNPCPrefabName, blessingNPCSpawnPosition, Quaternion.identity);
@@ -82,4 +91,5 @@ public class StageManager : MonoBehaviourPun
         }
         return cleared;
     }
+
 }
