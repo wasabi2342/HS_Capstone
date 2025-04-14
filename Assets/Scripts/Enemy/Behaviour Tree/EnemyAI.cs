@@ -54,25 +54,31 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         agent.updateRotation = false;
         agent.angularSpeed = 500f;
         agent.stoppingDistance = 0.1f;
+
+        // 마스터 클라이언트일 때만 카운트 증가
         if (PhotonNetwork.IsMasterClient)
         {
             ActiveMonsterCount++;
         }
         Debug.Log("EnemyAI Awake: " + gameObject.name + " ActiveMonsterCount: " + ActiveMonsterCount);
 
+        // SpawnArea 자동 할당
         if (spawnArea == null)
         {
             spawnArea = GetComponentInParent<SpawnArea>();
             Debug.Log($"[INIT] spawnArea auto-assigned: {spawnArea}");
         }
 
+        // IMonsterAttack 전략 찾기
         attackStrategy = GetComponent<IMonsterAttack>();
+
+        // EnemyStatus에 정의된 애니메이션 길이 사용
         attackAnimDuration = status.animDuration;
 
         // Behavior Tree 구성
         behaviorTree = new BehaviorTreeRunner(SettingBT());
 
-        // EnemyStatus에 정의된 체력 사용
+        // EnemyStatus에 정의된 초기 체력 사용
         currentHP = status.hp;
     }
 
@@ -82,7 +88,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         if (!PhotonNetwork.IsMasterClient || isDead)
             return;
 
-        // 공격 쿨타임 계산
+        // 공격 쿨타임
         if (!canAttack)
         {
             cooldownTimer += Time.deltaTime;
@@ -97,7 +103,8 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         if (targetPlayer != null)
         {
             // WhitePlayerController (또는 유사 스크립트)에서 Death 상태 확인
-            var wpc = targetPlayer.GetComponent<ParentPlayerController>();
+            // (코드에서는 PlayerController + PlayerState로 수정)
+            var pc = targetPlayer.GetComponent<PlayerController>();
             /*
             if (wpc == null || wpc.currentState == WhitePlayerState.Death)
             {
@@ -105,12 +112,13 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
                 targetPlayer = null;
             }
             */
+            // 여기서는 따로 처리하지 않았으므로 필요하다면 로직 추가
         }
 
         // Behavior Tree 실행
         behaviorTree.Operate();
 
-        // 공격 애니메이션 재생 중?
+        // 공격 애니메이션 진행 중이면 대기
         if (isAttackAnimationPlaying)
         {
             attackAnimTime += Time.deltaTime;
@@ -201,8 +209,10 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
 
         if (targetPlayer != null)
         {
-            var wpc = targetPlayer.GetComponent<WhitePlayerController>();
-            if (wpc == null || wpc.currentState == WhitePlayerState.Death)
+            // 여기서도 원래는 WhitePlayerController / WhitePlayerState 체크
+            // 현재는 PlayerController / PlayerState로 변경
+            var pc = targetPlayer.GetComponent<PlayerController>();
+            if (pc == null || pc.CurrentState == PlayerState.Death)
             {
                 // 죽은 플레이어 무효 처리
                 targetPlayer = null;
@@ -224,27 +234,30 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     {
         if (targetPlayer != null && attackStrategy != null && canAttack)
         {
-            var wpc = targetPlayer.GetComponent<WhitePlayerController>();
-            if (wpc == null || wpc.currentState == WhitePlayerState.Death)
+            // 원래 WhitePlayerController → PlayerController
+            var pc = targetPlayer.GetComponent<PlayerController>();
+            if (pc == null || pc.CurrentState == PlayerState.Death)
             {
                 targetPlayer = null;
-                isPreparingAttack = false;
-                attackPrepareTimer = 0f;
+                ResetAttackPreparation();
                 return INode.NodeState.Failure;
             }
 
-            // 준비 중인 경우 → 시간 측정
+            float targetX = targetPlayer.position.x;
+            string idleAnim = targetX >= transform.position.x ? "Right_Idle" : "Left_Idle";
+
+            // 공격 준비 중?
             if (isPreparingAttack)
             {
                 attackPrepareTimer += Time.deltaTime;
                 if (attackPrepareTimer >= status.waitCool)
                 {
-                    // 준비 시간 끝 → 실제 공격 수행
+                    // 대기 완료 → 공격 실행
                     isPreparingAttack = false;
                     attackPrepareTimer = 0f;
 
-                    string attackAnim = targetPlayer.position.x >= transform.position.x ? "Attack_Right" : "Attack_Left";
                     prevAnimBeforeAttack = currentMoveAnim;
+                    string attackAnim = targetX >= transform.position.x ? "Attack_Right" : "Attack_Left";
                     PlayMoveAnim(attackAnim);
 
                     attackStrategy.Attack(targetPlayer);
@@ -256,21 +269,31 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
 
                     return INode.NodeState.Success;
                 }
-                return INode.NodeState.Running; // 준비 중
+
+                // 준비 중 애니메이션 유지
+                PlayMoveAnim(idleAnim);
+                agent.isStopped = true;
+                return INode.NodeState.Running;
             }
             else
             {
-                // 준비 시작
+                // 공격 준비 시작
                 isPreparingAttack = true;
                 attackPrepareTimer = 0f;
-                agent.isStopped = true; // 정지 상태 유지
+                agent.isStopped = true;
+                PlayMoveAnim(idleAnim);
                 return INode.NodeState.Running;
             }
         }
 
+        ResetAttackPreparation();
+        return INode.NodeState.Failure;
+    }
+
+    private void ResetAttackPreparation()
+    {
         isPreparingAttack = false;
         attackPrepareTimer = 0f;
-        return INode.NodeState.Failure;
     }
 
     // ─────────────────────────────────────────
@@ -285,8 +308,10 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
 
         foreach (GameObject playerObj in players)
         {
-            var wpc = playerObj.GetComponent<WhitePlayerController>();
-            if (wpc == null || wpc.currentState == WhitePlayerState.Death)
+            // 원래는 WhitePlayerController / WhitePlayerState로 체크
+            // now PlayerController / PlayerState
+            var pc = playerObj.GetComponent<PlayerController>();
+            if (pc == null || pc.CurrentState == PlayerState.Death)
                 continue;  // 죽은 플레이어는 무시
 
             float dist = Vector3.Distance(transform.position, playerObj.transform.position);
@@ -309,8 +334,8 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     {
         if (targetPlayer != null)
         {
-            var wpc = targetPlayer.GetComponent<WhitePlayerController>();
-            if (wpc == null || wpc.currentState == WhitePlayerState.Death)
+            var pc = targetPlayer.GetComponent<PlayerController>();
+            if (pc == null || pc.CurrentState == PlayerState.Death)
             {
                 targetPlayer = null;
                 return INode.NodeState.Failure;
@@ -404,15 +429,15 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
 
     private bool IsNearOtherMonsters(Vector3 pos, float minDist)
     {
-        
+        // (주석으로 기존 로직 비활성화)
+        /*
         foreach (var other in FindObjectsOfType<EnemyAI>())
-        {/*
+        {
             if (other != this && Vector3.Distance(other.transform.position, pos) < minDist)
                 return true;
-            */
         }
+        */
         return false;
-        
     }
 
     public void OnAttackHitEvent()
@@ -512,6 +537,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
                 stageManager.AreAllMonstersCleared();
             }
         }
+
         string deathAnim = lastMoveX >= 0 ? "Right_Death" : "Left_Death";
         photonView.RPC("RPC_PlayAnimation", RpcTarget.All, deathAnim);
 
