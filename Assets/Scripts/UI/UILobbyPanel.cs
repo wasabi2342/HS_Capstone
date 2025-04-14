@@ -9,15 +9,23 @@ public class UILobbyPanel : UIBase
     [SerializeField]
     private Button createRoomButton;
     [SerializeField]
-    private Button joinRoomButton;
+    private Button showRoomListButton;
+    [SerializeField]
+    private Button searchRoomButton;
     [SerializeField]
     private InputField roomNameField;
     [SerializeField]
     private RectTransform roomButtonParent;
     [SerializeField]
-    private Button roomButton; 
+    private Button roomButton;
     [SerializeField]
     private Button preButton;
+    [SerializeField]
+    private RectTransform roomListPanel;
+    [SerializeField]
+    private RectTransform createRoomPanel;
+    [SerializeField]
+    private RectTransform searchRoomPanel;
 
     private List<Button> joinRoomButtonList = new List<Button>();
 
@@ -30,7 +38,6 @@ public class UILobbyPanel : UIBase
     {
         foreach (Button button in joinRoomButtonList)
         {
-            joinRoomButtonList.Remove(button);
             Destroy(button.gameObject);
         }
 
@@ -43,17 +50,37 @@ public class UILobbyPanel : UIBase
                 continue;
 
             Button newJoinRoomButton = Instantiate(roomButton, roomButtonParent);
-            newJoinRoomButton.onClick.AddListener(() => JoinRoom(room.Name));
+            newJoinRoomButton.onClick.AddListener(() => JoinRoom(room));
             newJoinRoomButton.GetComponentInChildren<Text>().text =
                 $"방 이름: {room.Name}   {room.PlayerCount}/{room.MaxPlayers}";
             joinRoomButtonList.Add(newJoinRoomButton);
         }
     }
 
-    private void JoinRoom(string roomName)
+    private void JoinRoom(RoomInfo room)
     {
-        PhotonNetwork.JoinRoom(roomName);
+        // 비밀번호가 있는지 확인
+        if (room.CustomProperties.ContainsKey("Password"))
+        {
+            UIManager.Instance.OpenPopupPanel<UICheckPasswordPanel>().Init(room, isCorrect =>
+            {
+                if (isCorrect)
+                {
+                    PhotonNetwork.JoinRoom(room.Name);
+                }
+                else
+                {
+                    UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("비밀번호가 틀렸습니다.");
+                }
+            });
+        }
+        else
+        {
+            PhotonNetwork.JoinRoom(room.Name);
+        }
     }
+
+
 
     public override void OnJoinedRoom()
     {
@@ -63,7 +90,13 @@ public class UILobbyPanel : UIBase
 
     private void OnClickedCreateRoomButton()
     {
-        UIManager.Instance.OpenPopupPanel<UICreateRoomPanel>();
+        roomListPanel.gameObject.SetActive(false);
+        searchRoomPanel.gameObject.SetActive(false);
+        createRoomPanel.gameObject.SetActive(true);
+
+        createRoomButton.gameObject.SetActive(false);
+        showRoomListButton.gameObject.SetActive(true);
+        searchRoomButton.gameObject.SetActive(true);
     }
 
     private void OnClickedPreButton()
@@ -72,9 +105,36 @@ public class UILobbyPanel : UIBase
         UIManager.Instance.OpenPanel<UiStartPanel>();
     }
 
+    private void OnClickedSearchRoomButton()
+    {
+        roomListPanel.gameObject.SetActive(false);
+        searchRoomPanel.gameObject.SetActive(true);
+        createRoomPanel.gameObject.SetActive(false);
+
+        createRoomButton.gameObject.SetActive(true);
+        showRoomListButton.gameObject.SetActive(true);
+        searchRoomButton.gameObject.SetActive(false);
+    }
+
+    private void OnClickedShowRoomListButton()
+    {
+        roomListPanel.gameObject.SetActive(true);
+        searchRoomPanel.gameObject.SetActive(false);
+        createRoomPanel.gameObject.SetActive(false);
+
+        createRoomButton.gameObject.SetActive(true);
+        showRoomListButton.gameObject.SetActive(false);
+        searchRoomButton.gameObject.SetActive(true);
+    }
+
     public override void Init()
     {
         createRoomButton.onClick.AddListener(OnClickedCreateRoomButton);
+        showRoomListButton.onClick.AddListener(OnClickedShowRoomListButton);
+        searchRoomButton.onClick.AddListener(OnClickedSearchRoomButton);
+
         preButton.onClick.AddListener(OnClickedPreButton);
+
+        OnClickedShowRoomListButton();
     }
 }
