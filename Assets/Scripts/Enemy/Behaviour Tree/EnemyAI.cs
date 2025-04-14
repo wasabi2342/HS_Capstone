@@ -19,7 +19,8 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     private SpriteRenderer spriteRenderer;
     public Animator animator;
     private Transform targetPlayer;
-    private NavMeshAgent agent;
+    public DebuffController debuffController;
+    public NavMeshAgent agent { get; private set; }
     private BehaviorTreeRunner behaviorTree;
     private IMonsterAttack attackStrategy;
 
@@ -48,6 +49,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        debuffController = GetComponent<DebuffController>();
 
         agent.updateRotation = false;
         agent.angularSpeed = 500f;
