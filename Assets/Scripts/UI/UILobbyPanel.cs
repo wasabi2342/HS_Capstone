@@ -6,20 +6,23 @@ using UnityEngine.UI;
 
 public class UILobbyPanel : UIBase
 {
+    [Header("패널 선택 버튼")]
     [SerializeField]
-    private Button createRoomButton;
+    private Button showCreateRoomPanelButton;
     [SerializeField]
-    private Button showRoomListButton;
+    private Button showRoomListPanelButton;
     [SerializeField]
-    private Button searchRoomButton;
-    [SerializeField]
-    private InputField roomNameField;
+    private Button showSearchRoomPanelButton;
+
+    [Header("룸 리스트 패널")]
     [SerializeField]
     private RectTransform roomButtonParent;
     [SerializeField]
     private Button roomButton;
     [SerializeField]
-    private Button preButton;
+    private Button preButton1;
+
+    [Header("패널")] 
     [SerializeField]
     private RectTransform roomListPanel;
     [SerializeField]
@@ -27,7 +30,16 @@ public class UILobbyPanel : UIBase
     [SerializeField]
     private RectTransform searchRoomPanel;
 
+    [Header("검색 패널 UI")]
+    [SerializeField]
+    private InputField searchRoomInputField;
+    [SerializeField]
+    private Button searchRoomButton;
+    [SerializeField]
+    private Button preButton2;
+
     private List<Button> joinRoomButtonList = new List<Button>();
+    private List<RoomInfo> roomList = new List<RoomInfo>();
 
     private void Start()
     {
@@ -36,6 +48,8 @@ public class UILobbyPanel : UIBase
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
+        this.roomList = roomList;
+
         foreach (Button button in joinRoomButtonList)
         {
             Destroy(button.gameObject);
@@ -94,9 +108,9 @@ public class UILobbyPanel : UIBase
         searchRoomPanel.gameObject.SetActive(false);
         createRoomPanel.gameObject.SetActive(true);
 
-        createRoomButton.gameObject.SetActive(false);
-        showRoomListButton.gameObject.SetActive(true);
-        searchRoomButton.gameObject.SetActive(true);
+        showCreateRoomPanelButton.gameObject.SetActive(false);
+        showRoomListPanelButton.gameObject.SetActive(true);
+        showSearchRoomPanelButton.gameObject.SetActive(true);
     }
 
     private void OnClickedPreButton()
@@ -111,9 +125,9 @@ public class UILobbyPanel : UIBase
         searchRoomPanel.gameObject.SetActive(true);
         createRoomPanel.gameObject.SetActive(false);
 
-        createRoomButton.gameObject.SetActive(true);
-        showRoomListButton.gameObject.SetActive(true);
-        searchRoomButton.gameObject.SetActive(false);
+        showCreateRoomPanelButton.gameObject.SetActive(true);
+        showRoomListPanelButton.gameObject.SetActive(true);
+        showSearchRoomPanelButton.gameObject.SetActive(false);
     }
 
     private void OnClickedShowRoomListButton()
@@ -122,19 +136,48 @@ public class UILobbyPanel : UIBase
         searchRoomPanel.gameObject.SetActive(false);
         createRoomPanel.gameObject.SetActive(false);
 
-        createRoomButton.gameObject.SetActive(true);
-        showRoomListButton.gameObject.SetActive(false);
-        searchRoomButton.gameObject.SetActive(true);
+        showCreateRoomPanelButton.gameObject.SetActive(true);
+        showRoomListPanelButton.gameObject.SetActive(false);
+        showSearchRoomPanelButton.gameObject.SetActive(true);
     }
 
     public override void Init()
     {
-        createRoomButton.onClick.AddListener(OnClickedCreateRoomButton);
-        showRoomListButton.onClick.AddListener(OnClickedShowRoomListButton);
-        searchRoomButton.onClick.AddListener(OnClickedSearchRoomButton);
+        showCreateRoomPanelButton.onClick.AddListener(OnClickedCreateRoomButton);
+        showRoomListPanelButton.onClick.AddListener(OnClickedShowRoomListButton);
+        showSearchRoomPanelButton.onClick.AddListener(OnClickedSearchRoomButton);
 
-        preButton.onClick.AddListener(OnClickedPreButton);
+        preButton1.onClick.AddListener(OnClickedPreButton);
+        preButton2.onClick.AddListener(OnClickedPreButton);
+        searchRoomButton.onClick.AddListener(TryJoinRoomByName);
 
         OnClickedShowRoomListButton();
+    }
+
+    private void TryJoinRoomByName()
+    {
+        string targetName = searchRoomInputField.text.Trim();
+
+        if (string.IsNullOrEmpty(targetName))
+        {
+            UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("방 이름을 입력해주세요.");
+
+            return;
+        }
+
+        // 같은 이름의 방이 있는지 확인
+        foreach (RoomInfo room in roomList)
+        {
+            if (room.RemovedFromList)
+                continue;
+
+            if (room.Name == targetName)
+            {
+                JoinRoom(room);
+                return;
+            }
+        }
+
+        UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("해당 이름의 방이 존재하지 않습니다.");
     }
 }
