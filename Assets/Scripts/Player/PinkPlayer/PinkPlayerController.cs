@@ -350,7 +350,7 @@ public class PinkPlayerController : ParentPlayerController
             photonView.RPC("SyncIntParameter", RpcTarget.Others, "chargeLevel", chargeLevel);
         }
 
-        //animator.Play(isRight ? "Charge_1_right" : "Charge_1_left", 0, 0f);
+        
     }
 
     // 우클릭을 놓았을 때 (차지 종료)
@@ -629,6 +629,53 @@ public class PinkPlayerController : ParentPlayerController
         }
     }
 
+    // 차징 이펙트 생성
+    public void CreateChargeSkillEffect()
+    {
+        if (animator.GetBool("Right"))
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                if (photonView.IsMine)
+                {
+                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/pink_charging_left_charge{chargeLevel}_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
+                    skillEffect.Init(damage, StartHitlag);
+                    skillEffect.transform.parent = transform;
+                }
+            }
+            else
+            {
+                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/pink_charging_left_charge{chargeLevel}_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
+                skillEffect.Init(damage, StartHitlag);
+                skillEffect.transform.parent = transform;
+            }
+
+
+        }
+        else
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                if (photonView.IsMine)
+                {
+                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/pink_charging_right_charge{chargeLevel}_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
+                    skillEffect.transform.parent = transform;
+                    skillEffect.Init(damage, StartHitlag);
+                }
+            }
+            else
+            {
+                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/pink_charging_right_charge{chargeLevel}_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
+                skillEffect.transform.parent = transform;
+                skillEffect.Init(damage, StartHitlag);
+            }
+        }
+    }
+
     // 시프트 스킬 이펙트 생성
     public void CreateShiftSkillEffect()
     {
@@ -674,50 +721,6 @@ public class PinkPlayerController : ParentPlayerController
         }
     }
 
-    // 카운터 이펙트 생성
-    public void CreateCounterSkillEffect()
-    {
-        if (animator.GetBool("Right"))
-        {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Counter_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag);
-                    skillEffect.transform.parent = transform;
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Counter_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag);
-                skillEffect.transform.parent = transform;
-            }
-        }
-        else
-        {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Counter_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.transform.parent = transform;
-                    skillEffect.Init(damage, StartHitlag);
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Counter_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.transform.parent = transform;
-                skillEffect.Init(damage, StartHitlag);
-            }
-        }
-    }
 
     // 패링 이펙트 생성
     public void CreateParrySkillEffect()
