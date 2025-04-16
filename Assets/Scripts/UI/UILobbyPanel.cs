@@ -22,7 +22,7 @@ public class UILobbyPanel : UIBase
     [SerializeField]
     private Button preButton1;
 
-    [Header("패널")] 
+    [Header("패널")]
     [SerializeField]
     private RectTransform roomListPanel;
     [SerializeField]
@@ -39,7 +39,8 @@ public class UILobbyPanel : UIBase
     private Button preButton2;
 
     private List<Button> joinRoomButtonList = new List<Button>();
-    private List<RoomInfo> roomList = new List<RoomInfo>();
+
+    private Dictionary<string, RoomInfo> cachedRoomDict = new Dictionary<string, RoomInfo>();
 
     public override void OnDisable()
     {
@@ -48,7 +49,9 @@ public class UILobbyPanel : UIBase
 
     public override void OnEnable()
     {
+
         PhotonNetwork.AddCallbackTarget(this);
+
     }
 
     private void Start()
@@ -58,21 +61,45 @@ public class UILobbyPanel : UIBase
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        this.roomList = roomList;
+        foreach (RoomInfo info in roomList)
+        {
+            if (info.RemovedFromList || info.PlayerCount == 0)
+            {
+                if (cachedRoomDict.ContainsKey(info.Name))
+                {
+                    cachedRoomDict.Remove(info.Name);
+                }
+            }
+            else
+            {
+                cachedRoomDict[info.Name] = info; // 새로 추가하거나 기존 항목 업데이트
+            }
+        }
 
+        UpdateRoomListUI();
+    }
+
+    private void UpdateRoomListUI()
+    {
+        Debug.Log("룸리스트 수: " + cachedRoomDict.Count);
+
+        foreach (var kvp in cachedRoomDict)
+        {
+            Debug.Log("룸이름: " + kvp.Key);
+        }
+
+        // 기존 버튼 삭제
         foreach (Button button in joinRoomButtonList)
         {
             Destroy(button.gameObject);
+            Debug.Log("버튼 삭제");
         }
 
         joinRoomButtonList.Clear();
 
-        foreach (RoomInfo room in roomList)
+        foreach (RoomInfo room in cachedRoomDict.Values)
         {
-            if (room.RemovedFromList || room.PlayerCount == 0)
-                continue;
-
-            RoomInfo capturedRoom = room; // 복사본 사용
+            RoomInfo capturedRoom = room;
 
             Button newJoinRoomButton = Instantiate(roomButton, roomButtonParent);
             newJoinRoomButton.onClick.AddListener(() => JoinRoom(capturedRoom));
@@ -80,6 +107,7 @@ public class UILobbyPanel : UIBase
                 $"방 이름: {capturedRoom.Name}   {capturedRoom.PlayerCount}/{capturedRoom.MaxPlayers}";
 
             joinRoomButtonList.Add(newJoinRoomButton);
+            Debug.Log("버튼 생성");
         }
     }
 
@@ -155,6 +183,11 @@ public class UILobbyPanel : UIBase
 
     public override void Init()
     {
+        if (PhotonNetwork.InLobby)
+        {
+            //PhotonNetwork.GetCustomRoomList(TypedLobby.Default, "");
+        }
+
         showCreateRoomPanelButton.onClick.AddListener(OnClickedCreateRoomButton);
         showRoomListPanelButton.onClick.AddListener(OnClickedShowRoomListButton);
         showSearchRoomPanelButton.onClick.AddListener(OnClickedSearchRoomButton);
@@ -177,19 +210,13 @@ public class UILobbyPanel : UIBase
             return;
         }
 
-        // 같은 이름의 방이 있는지 확인
-        foreach (RoomInfo room in roomList)
+        if (cachedRoomDict.ContainsKey(targetName))
         {
-            if (room.RemovedFromList)
-                continue;
-
-            if (room.Name == targetName)
-            {
-                JoinRoom(room);
-                return;
-            }
+            JoinRoom(cachedRoomDict[targetName]);
         }
-
-        UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("해당 이름의 방이 존재하지 않습니다.");
+        else
+        {
+            UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("해당 이름의 방이 존재하지 않습니다.");
+        }
     }
 }

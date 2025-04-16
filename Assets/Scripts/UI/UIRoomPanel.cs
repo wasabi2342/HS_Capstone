@@ -231,6 +231,8 @@ public class UIRoomPanel : UIBase
             Destroy(players[otherPlayer.ActorNumber].gameObject);
             players.Remove(otherPlayer.ActorNumber);
         }
+
+        CheckCanStart();
     }
 
     public void UpdateMyCharacterImage(string characterName)
