@@ -17,7 +17,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
     private Dictionary<int, bool> readyPlayers = new Dictionary<int, bool>();
     private Dictionary<int, int> rewardVotes = new Dictionary<int, int>();
-
+    private Coroutine finalRewardCountdownCoroutine;
+    private Coroutine finalRewardNextStageCoroutine;
 
     private void Awake()
     {
@@ -208,19 +209,15 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     public void RPC_ConfirmVote(int actorNum, int rewardIndex)
     {
         if (rewardVotes.ContainsKey(actorNum))
-        {
-            Debug.Log($"[RPC_ConfirmVote] player {actorNum} already voted. ignoring.");
             return;
-        }
+
         rewardVotes[actorNum] = rewardIndex;
-        // 모든 클라이언트에 해당 플레이어의 체크 아이콘 추가
         photonView.RPC("RPC_AddCheckMark", RpcTarget.All, actorNum, rewardIndex);
 
-        // 모든 플레이어 투표가 완료되면 시작 (마스터 클라이언트에서)
-        if (PhotonNetwork.CurrentRoom.PlayerCount == rewardVotes.Count && PhotonNetwork.IsMasterClient)
+        // 모든 인원이 투표 완료하면 카운트다운 시작 (마스터 클라이언트)
+        if (rewardVotes.Count == PhotonNetwork.CurrentRoom.PlayerCount && PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("모든 플레이어가 투표 완료, 최종 보상 확정 카운트다운 시작");
-            StartCoroutine(StartFinalRewardCountdown());
+            finalRewardCountdownCoroutine = StartCoroutine(StartFinalRewardCountdown());
         }
     }
 
@@ -238,15 +235,19 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void RPC_RemoveMyVote(int actorNum)
     {
-        if (rewardVotes.ContainsKey(actorNum))
+        if (!rewardVotes.ContainsKey(actorNum))
+            return;
+
+        int rewardIndex = rewardVotes[actorNum];
+        rewardVotes.Remove(actorNum);
+
+        photonView.RPC("RPC_RemoveMyCheckIcon", RpcTarget.All, actorNum, rewardIndex);
+
+        // 이미 카운트다운이 진행 중이라면 즉시 중단
+        if (PhotonNetwork.IsMasterClient && finalRewardCountdownCoroutine != null)
         {
-            int rewardIndex = rewardVotes[actorNum];
-            rewardVotes.Remove(actorNum);
-            photonView.RPC("RPC_RemoveMyCheckIcon", RpcTarget.All, actorNum, rewardIndex);
-        }
-        else
-        {
-            Debug.Log($"[RPC_RemoveMyVote] player {actorNum} did not vote or already removed.");
+            StopCoroutine(finalRewardCountdownCoroutine);
+            finalRewardCountdownCoroutine = null;
         }
     }
 
@@ -271,6 +272,29 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
+    /// 최종 보상 확정 카운트다운 코루틴: 10초부터 0까지 카운트 후 최종 확정 RPC 실행
+    private IEnumerator StartFinalRewardCountdown()
+    {
+        int countdown = 10;
+        while (countdown > 0)
+        {
+            photonView.RPC("RPC_UpdateCountdown", RpcTarget.All, countdown, "");
+            yield return new WaitForSeconds(1f);
+            countdown--;
+
+            // (선택) 중간에 누군가 투표 취소했으면 여기서도 break
+            if (rewardVotes.Count < PhotonNetwork.CurrentRoom.PlayerCount)
+                break;
+        }
+
+        if (countdown <= 0)
+        {
+            photonView.RPC("RPC_UpdateCountdown", RpcTarget.All, 0, "");
+            photonView.RPC("RPC_FinalizeRewardSelection", RpcTarget.All);
+        }
+
+        finalRewardCountdownCoroutine = null;
+    }
     ///최종 보상 확정 RPC: weighted random selection 후 결과 전달
     [PunRPC]
     public void RPC_FinalizeRewardSelection()
@@ -310,6 +334,16 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         Debug.Log($"최종 선택된 보상 인덱스: {winningIndex} (확률: {probabilities[winningIndex]:0.00}), 랜덤값: {r}");
         // 최종 결과는 winningIndex 하나만 전달합니다.
         photonView.RPC("RPC_UpdateFinalReward", RpcTarget.All, winningIndex);
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            // 보관할 값을 담을 해시테이블 생성
+            var props = new ExitGames.Client.Photon.Hashtable();
+            props["FinalRewardIndex"] = winningIndex;
+
+            // 현재 방의 CustomProperties에 세팅
+            PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+        }
     }
 
     /// 최종 당첨 결과 업데이트: RewardName 텍스트는 지우고 Detail 텍스트에 당첨 결과를 표시
@@ -318,25 +352,48 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
         if (UIRewardPanel.Instance != null)
         {
-            UIRewardPanel.Instance.detailText.text = $"Final Reward: {UIRewardPanel.Instance.rewardDatas[winningIndex].rewardName}";
+            UIRewardPanel.Instance.rewardNameText.text = $"Final Reward: {UIRewardPanel.Instance.rewardDatas[winningIndex].rewardName}";
+        }
+        if (PhotonNetwork.IsMasterClient && finalRewardNextStageCoroutine == null)
+        {
+            finalRewardNextStageCoroutine = StartCoroutine(StartNextStageCountdown());
         }
     }
 
-    /// 최종 보상 확정 카운트다운 코루틴: 10초부터 0까지 카운트 후 최종 확정 RPC 실행
-    private IEnumerator StartFinalRewardCountdown()
+    private IEnumerator StartNextStageCountdown()
     {
-        int countdown = 10;
+        int countdown = 5; // 예) 5초 후 다음 씬 이동
         while (countdown > 0)
         {
-            // 두 개의 인수를 전달: 남은 초와 빈 문자열 (두 번째 인수는 사용하지 않음)
-            photonView.RPC("RPC_UpdateCountdown", RpcTarget.All, countdown, "");
+            // 모든 클라이언트가 5,4,3,... 메시지를 볼 수 있도록 RPC
+            photonView.RPC("RPC_ShowNextStageCountdown", RpcTarget.All, countdown);
             yield return new WaitForSeconds(1f);
             countdown--;
         }
-        // 카운트다운 끝나면 텍스트 초기화
-        photonView.RPC("RPC_UpdateCountdown", RpcTarget.All, 0, "");
-        // 최종 보상 확정 RPC 호출
-        photonView.RPC("RPC_FinalizeRewardSelection", RpcTarget.All);
+
+        // 카운트다운이 끝나면 마지막으로 0초 표기
+        photonView.RPC("RPC_ShowNextStageCountdown", RpcTarget.All, 0);
+
+        // 이후 원하는 씬으로 이동
+        PhotonNetwork.LoadLevel("StageTest1");
+
+        finalRewardNextStageCoroutine = null;
+    }
+    [PunRPC]
+    public void RPC_ShowNextStageCountdown(int seconds)
+    {
+        if (UIRewardPanel.Instance != null)
+        {
+            // detailText 아래에 추가로 적거나, 별도의 Text 필드를 만들어서 사용
+            if (seconds > 0)
+            {
+                UIRewardPanel.Instance.detailText.text = $"Going Next Stage... {seconds}s";
+            }
+            else
+            {
+                UIRewardPanel.Instance.detailText.text = "Going...";
+            }
+        }
     }
 
 }

@@ -380,7 +380,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
             agent.isStopped = true;
             waitTime = Random.Range(3f, 5f);
             waitTimer = 0f;
-            Debug.Log($"[Wander] 목적지 도착. {waitTime:F2}초 대기 시작.");
+            //Debug.Log($"[Wander] 목적지 도착. {waitTime:F2}초 대기 시작.");
         }
         return INode.NodeState.Running;
     }

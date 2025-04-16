@@ -32,8 +32,24 @@ public class StageManager : MonoBehaviour
             PhotonNetwork.Instantiate(doorPrefabName, new Vector3(10,0,0), Quaternion.identity);
 
         }
-    }
+        // RoomProperties에서 인덱스 읽기
+        if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("FinalRewardIndex"))
+        {
+            int chosenIndex = (int)PhotonNetwork.CurrentRoom.CustomProperties["FinalRewardIndex"];
+            Debug.Log($"이 방에서 확정된 보상 인덱스: {chosenIndex}");
 
+            // (원하는 아이템 지급 / 능력치 상승 / 골드 부여 등)
+            ApplyReward(chosenIndex);
+        }
+        else
+        {
+            Debug.LogWarning("FinalRewardIndex가 존재하지 않습니다!");
+        }
+    }
+    private void ApplyReward(int rewardIndex)
+    {
+        // 실제 프로젝트 로직에 맞춰 구현
+    }
     void SpawnStage()
     {
         foreach (SpawnAreaSetting setting in currentStageSettings.spawnAreaSettings)
