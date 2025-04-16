@@ -32,6 +32,8 @@ public class PinkPlayercontroller_event : Playercontroller_event
         InputManager.Instance.PlayerInput.actions["Interaction"].canceled += ctx => OnInteraction(ctx);
         InputManager.Instance.PlayerInput.actions["Interaction"].started += ctx => OnInteraction(ctx);
         InputManager.Instance.PlayerInput.actions["BasicAttack"].performed += ctx => OnMouse_L(ctx);
+        InputManager.Instance.PlayerInput.actions["SpecialAttack"].started += ctx => OnMouse_R(ctx);
+        InputManager.Instance.PlayerInput.actions["SpecialAttack"].canceled += ctx => OnMouse_R(ctx);
         InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed += ctx => OnMouse_R(ctx);
         InputManager.Instance.PlayerInput.actions["SkillAttack"].performed += ctx => OnKeyboard_Shift_L(ctx);
         InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed += ctx => OnKeyboard_R(ctx);
@@ -94,6 +96,7 @@ public class PinkPlayercontroller_event : Playercontroller_event
         if (context.started)
         {
             pinkPlayerController.StartCharge();
+            
         }
         else if (context.canceled)
         {
@@ -153,6 +156,8 @@ public class PinkPlayercontroller_event : Playercontroller_event
         InputManager.Instance.PlayerInput.actions["Interaction"].canceled -= ctx => OnInteraction(ctx);
         InputManager.Instance.PlayerInput.actions["Interaction"].started -= ctx => OnInteraction(ctx);
         InputManager.Instance.PlayerInput.actions["BasicAttack"].performed -= ctx => OnMouse_L(ctx);
+        InputManager.Instance.PlayerInput.actions["SpecialAttack"].started += ctx => OnMouse_R(ctx);
+        InputManager.Instance.PlayerInput.actions["SpecialAttack"].canceled += ctx => OnMouse_R(ctx);
         InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed -= ctx => OnMouse_R(ctx);
         InputManager.Instance.PlayerInput.actions["SkillAttack"].performed -= ctx => OnKeyboard_Shift_L(ctx);
         InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed -= ctx => OnKeyboard_R(ctx);

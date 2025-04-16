@@ -326,7 +326,7 @@ public class PinkPlayerController : ParentPlayerController
     public float physicalAtk;
     public float magicAtk;
 
-    // 차지 시작
+    // 우클릭 눌렀을 때 (차지 시작)
     public void StartCharge()
     {
         if (isCharging || currentState == PinkPlayerState.Death)
@@ -334,23 +334,26 @@ public class PinkPlayerController : ParentPlayerController
 
         isCharging = true;
         chargeLevel = 1;
-        nextState = PinkPlayerState.Charge1;  // 기본 차지 상태 설정
+        nextState = PinkPlayerState.Charge1;
 
-        // 마우스 방향 기준으로 캐릭터 방향 전환
         Vector3 mousePos = GetMouseWorldPosition();
         bool isRight = mousePos.x > transform.position.x;
 
         animator.SetBool("Right", isRight);
+        animator.SetBool("isCharging", true); 
+        animator.SetInteger("chargeLevel", chargeLevel);
 
         if (PhotonNetwork.IsConnected)
         {
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", isRight);
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "isCharging", true); 
+            photonView.RPC("SyncIntParameter", RpcTarget.Others, "chargeLevel", chargeLevel);
         }
 
-        animator.Play("Charge", 0, 0f);
+        //animator.Play(isRight ? "Charge_1_right" : "Charge_1_left", 0, 0f);
     }
 
-    // 차지 해제
+    // 우클릭을 놓았을 때 (차지 종료)
     public void ReleaseCharge()
     {
         if (!isCharging || currentState == PinkPlayerState.Death)
@@ -358,19 +361,22 @@ public class PinkPlayerController : ParentPlayerController
 
         isCharging = false;
 
+        animator.SetBool("isCharging", false); 
         animator.SetTrigger("ReleaseCharge");
 
         if (PhotonNetwork.IsConnected)
         {
-            // 차지 해제
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "isCharging", false); 
             photonView.RPC("PlayAnimation", RpcTarget.Others, "ReleaseCharge");
         }
     }
 
 
+    // 프레임별 차지 레벨 설정 (애니메이션 이벤트로 호출)
     public void SetChargeLevel(int level)
     {
         chargeLevel = level;
+        animator.SetInteger("chargeLevel", level); // 애니메이터 파라미터 업데이트
 
         switch (level)
         {
@@ -387,6 +393,7 @@ public class PinkPlayerController : ParentPlayerController
 
         Debug.Log($"차지 레벨: {chargeLevel}, nextState: {nextState}");
     }
+
 
 
 
