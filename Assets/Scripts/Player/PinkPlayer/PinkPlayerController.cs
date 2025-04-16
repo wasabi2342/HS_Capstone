@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 using Unity.VisualScripting;
 using System;
 
-public enum PinkPlayerState { Idle, Run, tackle ,BasicAttack, Hit, Dash, Skill, Ultimate, Stun, Revive, Death }
+public enum PinkPlayerState { Idle, Run, tackle ,BasicAttack, Hit, Dash, Skill, Ultimate, Charge1, Charge2, Charge3, Stun, Revive, Death }
 
 public class PinkPlayerController : ParentPlayerController
 {
@@ -317,6 +317,77 @@ public class PinkPlayerController : ParentPlayerController
             }
         }
     }
+
+    // 차지
+
+    private bool isCharging = false;
+    private int chargeLevel = 0;
+
+    public float physicalAtk;
+    public float magicAtk;
+
+    // 차지 시작
+    public void StartCharge()
+    {
+        if (isCharging || currentState == PinkPlayerState.Death)
+            return;
+
+        isCharging = true;
+        chargeLevel = 1;
+        nextState = PinkPlayerState.Charge1;  // 기본 차지 상태 설정
+
+        // 마우스 방향 기준으로 캐릭터 방향 전환
+        Vector3 mousePos = GetMouseWorldPosition();
+        bool isRight = mousePos.x > transform.position.x;
+
+        animator.SetBool("Right", isRight);
+
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", isRight);
+        }
+
+        animator.Play("Charge", 0, 0f);
+    }
+
+    // 차지 해제
+    public void ReleaseCharge()
+    {
+        if (!isCharging || currentState == PinkPlayerState.Death)
+            return;
+
+        isCharging = false;
+
+        animator.SetTrigger("ReleaseCharge");
+
+        if (PhotonNetwork.IsConnected)
+        {
+            // 차지 해제
+            photonView.RPC("PlayAnimation", RpcTarget.Others, "ReleaseCharge");
+        }
+    }
+
+
+    public void SetChargeLevel(int level)
+    {
+        chargeLevel = level;
+
+        switch (level)
+        {
+            case 1:
+                nextState = PinkPlayerState.Charge1;
+                break;
+            case 2:
+                nextState = PinkPlayerState.Charge2;
+                break;
+            case 3:
+                nextState = PinkPlayerState.Charge3;
+                break;
+        }
+
+        Debug.Log($"차지 레벨: {chargeLevel}, nextState: {nextState}");
+    }
+
 
 
 

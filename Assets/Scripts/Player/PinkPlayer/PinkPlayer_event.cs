@@ -88,12 +88,27 @@ public class PinkPlayercontroller_event : Playercontroller_event
     // 마우스 오른쪽 클릭 (핑크 플레이어 우클릭)
     public void OnMouse_R(InputAction.CallbackContext context)
     {
-        if (context.performed && !isInVillage)
+        // 홀드하는 차지
+        if (isInVillage) return;
+
+        if (context.started)
+        {
+            pinkPlayerController.StartCharge();
+        }
+        else if (context.canceled)
+        {
+            pinkPlayerController.ReleaseCharge();
+        }
+
+        // 평타 중 우클릭 
+
+        if (context.performed)
         {
             pinkPlayerController.HandleCharge();
             OnMouseREvent?.Invoke();
         }
     }
+
 
     // 좌 Shift 키 (특수 공격)
     public void OnKeyboard_Shift_L(InputAction.CallbackContext context)
