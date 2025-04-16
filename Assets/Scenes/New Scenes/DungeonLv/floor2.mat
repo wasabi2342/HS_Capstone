@@ -1,18 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-4515746232765314876
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 7
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
@@ -20,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: CloudDataWriterMat
-  m_Shader: {fileID: -6465566751694194690, guid: b2b80765f648b894c9005e850697b621, type: 3}
+  m_Name: floor2
+  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -30,14 +17,16 @@ Material:
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
+  stringTagMap:
+    RenderType: Opaque
+  disabledShaderPasses:
+  - MOTIONVECTORS
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: d0041821489b454499797bd4a7cb695c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -61,7 +50,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: d0041821489b454499797bd4a7cb695c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -94,21 +83,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
-    - _CameraXRot: 32.500015
-    - _CameraXRotCos: 0.94088024
-    - _CameraYRotCos: 0.707107
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
-    - _CloudCoverage: 0.6
-    - _CloudScale: 0.025
-    - _CloudStep: 1
-    - _CloudStrength: 12.12
-    - _CloudVerticalSpeed: 0.001
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
@@ -116,56 +98,39 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
-    - _FarPlane: 60
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
-    - _NearPlane: 0
     - _OcclusionStrength: 1
-    - _Offset: 0
     - _Parallax: 0.005
-    - _PlaneLengthWorldUnits: 60
-    - _PlaneWidthWorldUnits: 40.79458
-    - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _ScreenHeight: 10
-    - _ScreenWidth: 18.497108
-    - _Smoothness: 0.5
+    - _Smoothness: 0.8
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
-    - _SunAngleRadX: 1.5707963
     - _Surface: 0
-    - _TextureSize: 768
     - _WorkflowMode: 1
-    - _WorldSize: 10
     - _ZWrite: 1
-    - _clipping: 0
-    - _pixelInTextLen: 0.1
     m_Colors:
-    - <noninit>: {r: 9.359295, g: -12.989985, b: 13.939641, a: 0}
-    - _AnchorMid: {r: 15.430001, g: -13.820799, b: 14.748739, a: 0}
-    - _AnchorOrigo: {r: -4.6521854, g: 8.8916235, b: 1.7332611, a: 0}
-    - _AnchorPosition: {r: 13.126203, g: 21.220379, b: -23.203003, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _CameraForward: {r: -0.6653024, g: -0.3387393, b: 0.66530323, a: 0}
-    - _CameraForwardXZ: {r: 0, g: 0, b: 0, a: 0}
-    - _CameraPos: {r: 15.43, g: 10.927937, b: -10, a: 0}
-    - _CameraRight: {r: 0.70710737, g: -0.0000004917383, b: 0.70710623, a: 0}
-    - _CameraRotation: {r: 0, g: 0, b: 0, a: 0}
-    - _CameraUp: {r: -0.23952432, g: 0.9408803, b: 0.23952541, a: 0}
-    - _CloudMovement: {r: -0.25, g: 0.25, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _PlaneForward: {r: -0.000000029802322, g: 0.7071067, b: -0.7071068, a: 0}
-    - _PlaneRight: {r: 0.5951676, g: -0.56823206, b: -0.56823206, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _SurfaceColor: {r: 0, g: 0, b: 0, a: 0}
-    - _offsetVec: {r: 0, g: 0, b: 0, a: 0}
-    - _scaleVec: {r: 1, g: 1, b: 0, a: 0}
-    - _sunAngle: {r: -0.8384301, g: -0.5013598, b: 0.2137132, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
+--- !u!114 &8860390000649036821
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 9
