@@ -41,6 +41,16 @@ public class UILobbyPanel : UIBase
     private List<Button> joinRoomButtonList = new List<Button>();
     private List<RoomInfo> roomList = new List<RoomInfo>();
 
+    public override void OnDisable()
+    {
+        PhotonNetwork.RemoveCallbackTarget(this);
+    }
+
+    public override void OnEnable()
+    {
+        PhotonNetwork.AddCallbackTarget(this);
+    }
+
     private void Start()
     {
         Init();
@@ -59,14 +69,16 @@ public class UILobbyPanel : UIBase
 
         foreach (RoomInfo room in roomList)
         {
-            // 삭제된 방은 무시
             if (room.RemovedFromList || room.PlayerCount == 0)
                 continue;
 
+            RoomInfo capturedRoom = room; // 복사본 사용
+
             Button newJoinRoomButton = Instantiate(roomButton, roomButtonParent);
-            newJoinRoomButton.onClick.AddListener(() => JoinRoom(room));
+            newJoinRoomButton.onClick.AddListener(() => JoinRoom(capturedRoom));
             newJoinRoomButton.GetComponentInChildren<Text>().text =
-                $"방 이름: {room.Name}   {room.PlayerCount}/{room.MaxPlayers}";
+                $"방 이름: {capturedRoom.Name}   {capturedRoom.PlayerCount}/{capturedRoom.MaxPlayers}";
+
             joinRoomButtonList.Add(newJoinRoomButton);
         }
     }

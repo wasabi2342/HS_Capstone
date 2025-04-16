@@ -20,12 +20,24 @@ public class UIRoomPanel : UIBase
     private Button startButton;
     [SerializeField]
     private RectTransform container;
+    [SerializeField]
+    private Text roomName;
 
     private Dictionary<int, UIPlayerInfoPanel> players = new Dictionary<int, UIPlayerInfoPanel>();
 
     private bool isReady;
     private bool canStart;
     private readonly string DefeaultCharacter = "WhitePlayer";
+
+    public override void OnDisable()
+    {
+        PhotonNetwork.RemoveCallbackTarget(this);
+    }
+
+    public override void OnEnable()
+    {
+        PhotonNetwork.AddCallbackTarget(this);
+    }
 
     void Start()
     {
@@ -43,6 +55,15 @@ public class UIRoomPanel : UIBase
         {
             startButton.GetComponentInChildren<Text>().text = "준비";
             isReady = false;
+        }
+
+        if(PhotonNetwork.InRoom)
+        {
+            roomName.text = PhotonNetwork.CurrentRoom.Name;
+        }
+        else
+        {
+            roomName.text = "싱글플레이";
         }
 
         startButton.onClick.AddListener(OnClickedStartButton);
@@ -208,11 +229,36 @@ public class UIRoomPanel : UIBase
         if (players.ContainsKey(otherPlayer.ActorNumber))
         {
             Destroy(players[otherPlayer.ActorNumber].gameObject);
+            players.Remove(otherPlayer.ActorNumber);
         }
     }
 
     public void UpdateMyCharacterImage(string characterName)
     {
         players[-1].Init(true, PlayerPrefs.GetString("Nickname"), characterName);
+    }
+
+    public override void OnMasterClientSwitched(Player newMasterClient)
+    {
+        if (PhotonNetwork.LocalPlayer == newMasterClient)
+        {
+            // 마스터 클라이언트가 나 자신이면 버튼 텍스트와 상태 변경
+            startButton.GetComponentInChildren<Text>().text = "시작";
+            isReady = true;
+
+            // 내 패널 상태도 갱신
+            if (PhotonNetwork.InRoom && players.TryGetValue(PhotonNetwork.LocalPlayer.ActorNumber, out var panel))
+            {
+                panel.Init(isReady, PhotonNetwork.LocalPlayer.NickName, (string)PhotonNetwork.LocalPlayer.CustomProperties["SelectCharacter"]);
+            }
+
+            // CustomProperties에도 반영
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
+            {
+                { "IsReady", isReady }
+            });
+
+            CheckCanStart();
+        }
     }
 }
