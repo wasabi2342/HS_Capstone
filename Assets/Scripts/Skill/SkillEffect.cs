@@ -56,6 +56,8 @@ public class SkillEffect : MonoBehaviourPun
             IDamageable damageable = other.GetComponent<IDamageable>();
             if (damageable != null && !other.CompareTag("Player"))
             {
+                specialEffect.InjectCollider(other);
+
                 if (specialEffect != null && !specialEffect.IsInstant())
                 {
                     specialEffect.ApplyEffect();
