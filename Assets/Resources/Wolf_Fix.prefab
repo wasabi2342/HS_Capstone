@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 1918373319551483883}
   - component: {fileID: 6080484080865822958}
   - component: {fileID: 8751130033872277833}
+  - component: {fileID: 5571277871613166694}
   m_Layer: 7
   m_Name: Wolf_Fix
   m_TagString: Enemy
@@ -238,6 +239,7 @@ MonoBehaviour:
   spawnArea: {fileID: 0}
   damageTextPrefab: {fileID: 3708835635005717868, guid: e5ebaf76c09f06746afe14fc96100072, type: 3}
   animator: {fileID: 0}
+  debuffController: {fileID: 0}
 --- !u!114 &6080484080865822958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -267,6 +269,18 @@ MonoBehaviour:
   monsterType: 0
   targetingCooldown: 3
   retargetingTimeThreshold: 5
+--- !u!114 &5571277871613166694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765914048162278020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d145df9c93b686142a943def3695fa55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2400343500577941846
 GameObject:
   m_ObjectHideFlags: 0
