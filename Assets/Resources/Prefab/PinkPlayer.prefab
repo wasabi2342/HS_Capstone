@@ -50,6 +50,8 @@ GameObject:
   - component: {fileID: 5749815652098805473}
   - component: {fileID: 3277823158435553033}
   - component: {fileID: 2403682794470514799}
+  - component: {fileID: 6452079432876883581}
+  - component: {fileID: -3063841993787379930}
   m_Layer: 6
   m_Name: PinkPlayer
   m_TagString: Player
@@ -277,6 +279,9 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 0
     Name: Counter
+  - Type: 4
+    SynchronizeType: 0
+    Name: tackle
   m_SynchronizeLayers:
   - SynchronizeType: 2
     LayerIndex: 0
@@ -439,6 +444,66 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 11400000, guid: 3939f00e561c88749b28afda4b9c5f12, type: 2}
   - {fileID: 11400000, guid: 71f296c4da421d946a460d603f3d6ff9, type: 2}
+--- !u!114 &6452079432876883581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673988289270443858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5dd509795b96a54da6652614f891e56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitlagTime: 0.117
+  stunOverlay: {fileID: 0}
+  stunSlider: {fileID: 0}
+  hpBar: {fileID: 0}
+  OnHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAttackCooldownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDashCooldownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  ShiftCoolDownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  UltimateCoolDownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  MouseRightSkillCoolDownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  AttackStackUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  ShieldUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  SkillOutlineUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  characterBaseStats: {fileID: 0}
+  attackStack: 0
+--- !u!114 &-3063841993787379930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673988289270443858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6728c3e99c1a84041a6c17abac602762, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  servantPrefabName: Servant
+  spawnDelay: 3
+  spawnOffset: {x: -2, y: 0, z: 0}
 --- !u!1 &751039827282177349
 GameObject:
   m_ObjectHideFlags: 0
@@ -519,7 +584,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8178083361214923458
 Transform:
   m_ObjectHideFlags: 0
@@ -528,9 +593,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2610835183164415192}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.3333335, y: 3.8095238, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.76, y: -0.77, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3671203936979291569}
@@ -554,7 +619,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 1.63
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &310908679141205478
 Rigidbody:

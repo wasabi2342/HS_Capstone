@@ -612,6 +612,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnAreaPrefabName: SpawnArea
   doorPrefabName: doorPrefab
+  blessingNPCPrefabName: BlessingNPC
   currentStageSettings: {fileID: 11400000, guid: 8c3b1144011cf9c42ae38d9823f043f1, type: 2}
   spawnAreaRotation: {x: 0, y: 0, z: 0, w: 1}
 --- !u!4 &487237365
@@ -902,7 +903,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.033333335
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 1db7cd02ff37de140818f05a03c11d1c, type: 2}
   m_BuildHeightMesh: 0
@@ -1239,6 +1240,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -9101692495272858994, guid: 00ee46fcbe07c3944a8b95e460df5bfb, type: 3}
+      propertyPath: sceneViewId
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 60929099455841533, guid: 00ee46fcbe07c3944a8b95e460df5bfb, type: 3}
       propertyPath: m_Name
       value: BlessingNPC
