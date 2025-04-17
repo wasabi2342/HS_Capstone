@@ -5,11 +5,11 @@ using UnityEngine.Events;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
-
 public class ParentPlayerController : MonoBehaviourPun, IDamageable
 {
     [SerializeField]
     protected float hitlagTime = 0.117f;
+    
 
     // 죽음, 기절 관련 ui, 체력바 ui
 
