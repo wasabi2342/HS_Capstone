@@ -12,6 +12,10 @@ public class ArrowProjectile : MonoBehaviourPun
     public float overrideDamage = -1f; // 음수면 EnemyStatus.damage 사용
 
     float timer;
+    void Awake()
+    {
+        Debug.Log($"[ArrowProjectile] Spawned by {photonView.Owner.NickName}");
+    }
 
     void FixedUpdate()
     {

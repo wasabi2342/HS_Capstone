@@ -1,12 +1,6 @@
 ﻿using UnityEngine;
 using Photon.Pun;
 
-/// <summary>
-/// Skeleton 원거리 공격 전략.
-/// ─ 공격 시작 : EnemyAI → Attack() 호출(타겟만 저장)  
-/// ─ 화살 발사 : Attack_Right / Attack_Left 애니메이션의
-///              “ShootArrow” 이벤트가 ShootArrow()를 호출
-/// </summary>
 public class SkeletonAttack : MonoBehaviour, IMonsterAttack
 {
     [Header("Projectile")]
@@ -20,16 +14,17 @@ public class SkeletonAttack : MonoBehaviour, IMonsterAttack
     public void Attack(Transform target)
     {
         cachedTarget = target;          // 실제 발사는 애니메이션 이벤트에서
+        Debug.Log($"[SkeletonAttack] Attack() – target = {target?.name}");
+
     }
 
     // ─────────────────────────────
-    // 애니메이션 이벤트용 메서드
-    // Attack_Right / Attack_Left 의
-    // 활시위 “Release” 프레임에 이벤트 추가 → ShootArrow
+    // 애니메이션 이벤트용 메서드 ShootArrow
     // ─────────────────────────────
     public void ShootArrow()
     {
         if (cachedTarget == null || firePoint == null) return;
+        Debug.Log($"[SkeletonAttack] ShootArrow 호출 at {Time.time:F2}s");   // ← 임시 로그
 
         // 방향계산(y 고정)
         Vector3 dir = cachedTarget.position - firePoint.position;
@@ -44,7 +39,7 @@ public class SkeletonAttack : MonoBehaviour, IMonsterAttack
 
         // 속도 부여
         if (proj.TryGetComponent(out Rigidbody rb))
-            rb.linearVelocity = dir * projectileSpeed;
+            rb.velocity = dir * projectileSpeed;
 
         // 데미지 전달
         if (proj.TryGetComponent(out ArrowProjectile ap) &&
