@@ -10,4 +10,5 @@ public class GhoulAttack : MonoBehaviour, IMonsterAttack
     {
         this.target = target;
     }
+
 }

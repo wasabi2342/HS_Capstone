@@ -5,7 +5,7 @@ using Photon.Pun;
 
 public class SpawnArea : MonoBehaviourPun
 {
-    private float spawnRadius = 10f; // 배회할 수 있는 반경
+    private float spawnRadius; // 배회할 수 있는 반경
 
     public void SetRadius(float radius)
     {
@@ -25,10 +25,14 @@ public class SpawnArea : MonoBehaviourPun
             randomPos += transform.position;
             randomPos.y = transform.position.y;
 
-            if (NavMesh.SamplePosition(randomPos, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(randomPos, out NavMeshHit hit, 0f, NavMesh.AllAreas))
                 return hit.position;
         }
         return transform.position; // 실패 시 원점 반환
     }
-
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, spawnRadius);
+    }
 }

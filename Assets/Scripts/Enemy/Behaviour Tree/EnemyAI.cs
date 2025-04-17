@@ -107,14 +107,12 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
             // WhitePlayerController (또는 유사 스크립트)에서 Death 상태 확인
             // (코드에서는 PlayerController + PlayerState로 수정)
             var pc = targetPlayer.GetComponent<PlayerController>();
-            /*
-            if (wpc == null || wpc.currentState == WhitePlayerState.Death)
+            if (pc == null || pc.CurrentState == PlayerState.Death)
             {
-                // 타겟이 사망 상태이므로 추적 중단
                 targetPlayer = null;
+                ResetAttackPreparation();
+                return;
             }
-            */
-            // 여기서는 따로 처리하지 않았으므로 필요하다면 로직 추가
         }
 
         // Behavior Tree 실행

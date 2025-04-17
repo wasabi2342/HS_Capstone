@@ -50,7 +50,6 @@ public class MonsterTargeting : MonoBehaviourPun
         {
             SetTarget(null);   // 즉시 타겟 해제
         }
-
         if (CurrentTarget != null)
         {
             // 추적 시간 누적

@@ -17,9 +17,9 @@ GameObject:
   - component: {fileID: 7763377542229407887}
   - component: {fileID: 1919888365771260053}
   - component: {fileID: 1918373319551483883}
-  - component: {fileID: 8751130033872277833}
   - component: {fileID: 5100535631980958853}
   - component: {fileID: 838009920413138150}
+  - component: {fileID: 7289110215044397794}
   m_Layer: 7
   m_Name: Ghoul_Fix
   m_TagString: Enemy
@@ -240,21 +240,6 @@ MonoBehaviour:
   damageTextPrefab: {fileID: 3708835635005717868, guid: e5ebaf76c09f06746afe14fc96100072, type: 3}
   animator: {fileID: 0}
   debuffController: {fileID: 0}
---- !u!114 &8751130033872277833
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765914048162278020}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32e3650fa64b5c947bcb26d0a0da43ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  monsterType: 0
-  targetingCooldown: 3
-  retargetingTimeThreshold: 5
 --- !u!114 &5100535631980958853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -281,6 +266,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d145df9c93b686142a943def3695fa55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7289110215044397794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765914048162278020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32e3650fa64b5c947bcb26d0a0da43ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monsterType: 0
+  targetingCooldown: 3
+  retargetingTimeThreshold: 5
 --- !u!1 &2400343500577941846
 GameObject:
   m_ObjectHideFlags: 0
@@ -298,7 +298,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &9122515514604926970
 Transform:
   m_ObjectHideFlags: 0

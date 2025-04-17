@@ -282,23 +282,7 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 0
     Name: tackle
-
-  - Type: 4
-    SynchronizeType: 0
-    Name: CancleState2
-  - Type: 3
-    SynchronizeType: 0
-    Name: chargeLevel
-  - Type: 9
-    SynchronizeType: 0
-    Name: ReleaseCharge
-  - Type: 4
-    SynchronizeType: 0
-    Name: isCharging
-
-  m_SynchronizeLayers:
-  - SynchronizeType: 2
-    LayerIndex: 0
+  m_SynchronizeLayers: []
 --- !u!136 &6750105142244718092
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -387,6 +371,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitlagTime: 0.117
+  footPivot: {fileID: 0}
   stunOverlay: {fileID: 0}
   stunSlider: {fileID: 0}
   hpBar: {fileID: 0}
