@@ -8,11 +8,11 @@ public class CreateFireArea : BaseSpecialEffect
     {
         if(PhotonNetwork.IsConnected)
         {
-            PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/Space_FlameArea", playerController.transform.position - new Vector3(0, 2, 0), Quaternion.Euler(90, 0, 0)).GetComponent<FlameArea>().Init(value * playerController.ReturnAbilityPower(), duration);
+            PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/Space_FlameArea", playerController.footPivot.position, Quaternion.Euler(90, 0, 0)).GetComponent<FlameArea>().Init(value * playerController.ReturnAbilityPower(), duration);
         }
         else
         {
-            Instantiate(Resources.Load<FlameArea>("SkillEffect/WhitePlayer/Space_FlameArea"), playerController.transform.position - new Vector3(0, 2, 0), Quaternion.Euler(90, 0, 0)).Init(value * playerController.ReturnAbilityPower(), duration);
+            Instantiate(Resources.Load<FlameArea>("SkillEffect/WhitePlayer/Space_FlameArea"), playerController.footPivot.position, Quaternion.Euler(90, 0, 0)).Init(value * playerController.ReturnAbilityPower(), duration);
         }
     }
 

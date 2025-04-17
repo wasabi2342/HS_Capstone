@@ -11,6 +11,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     protected float hitlagTime = 0.117f;
     
 
+    public Transform footPivot;
+
     // 죽음, 기절 관련 ui, 체력바 ui
 
     public Image stunOverlay;
