@@ -5,11 +5,13 @@ using UnityEngine.Events;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
-
 public class ParentPlayerController : MonoBehaviourPun, IDamageable
 {
     [SerializeField]
     protected float hitlagTime = 0.117f;
+    
+
+    public Transform footPivot;
 
     // 죽음, 기절 관련 ui, 체력바 ui
 
@@ -411,6 +413,11 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     public virtual void SetIntParameter(string parameter, int value)
     {
         photonView.RPC("SyncIntParameter", RpcTarget.Others, parameter, value);
+    }
+
+    public string ReturnNmae()
+    {
+        return characterBaseStats.name;
     }
 
 }

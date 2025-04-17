@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+public enum SpecialEffectType { None, Dot, Slow, Bind }
 
 [Serializable]
 [CreateAssetMenu(fileName = "SkillData", menuName = "Scriptable Objects/SkillData")]
@@ -15,4 +16,8 @@ public class SkillData : ScriptableObject
     public float AbilityPowerCoefficient;
     public float Cooldown;
     public int Stack;
+
+    public SpecialEffectType debuffType = SpecialEffectType.None;
+    public float debuffDuration = 0f;
+    public float debuffValue = 0f;
 }
