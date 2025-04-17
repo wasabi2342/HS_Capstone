@@ -357,6 +357,16 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     // ─────────────────────────────────────────
     INode.NodeState WanderInsideSpawnArea()
     {
+        Debug.Log("[Wander] Entered Wander state");
+
+        if (agent == null)
+        {
+            Debug.LogError("[Wander] agent is null!");
+            return INode.NodeState.Failure;
+        }
+
+        Debug.Log($"[Wander] agent.stopped = {agent.isStopped}, hasPath = {agent.hasPath}, remainingDist = {agent.remainingDistance}");
+
         if (isWaiting)
         {
             waitTimer += Time.deltaTime;
@@ -415,7 +425,12 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
                 {
                     wanderTarget = hit.position;
                     wanderTarget.y = transform.position.y;
-                    if (agent.SetDestination(wanderTarget))
+
+                    agent.isStopped = false;
+                    bool pathSet = agent.SetDestination(wanderTarget);
+                    Debug.Log($"[Wander] pathSet = {pathSet}, target = {wanderTarget}");
+
+                    if (pathSet)
                     {
                         agent.speed = status.wanderSpeed;
                         Debug.Log($"[Wander] 새 목적지: {wanderTarget} (dist: {dist:F2}m)");
