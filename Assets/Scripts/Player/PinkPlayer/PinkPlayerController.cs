@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 using Unity.VisualScripting;
 using System;
 
-public enum PinkPlayerState { Idle, Run, tackle ,BasicAttack, Hit, Dash, Skill, Ultimate, Stun, Revive, Death }
+public enum PinkPlayerState { Idle, Run, tackle ,BasicAttack, Hit, Dash, Skill, Ultimate, Charge1, Charge2, Charge3, Stun, Revive, Death }
 
 public class PinkPlayerController : ParentPlayerController
 {
@@ -211,37 +211,13 @@ public class PinkPlayerController : ParentPlayerController
         transform.position = targetPos;
     }
 
-
+    // 평타
     public void HandleNormalAttack()
     {
 
         if (currentState != PinkPlayerState.Death)
         {
-            if (currentState == PinkPlayerState.tackle)
-            {
-                animator.SetBool("tackle", true);
-                Vector3 mousePos = GetMouseWorldPosition();
-                animator.SetBool("Right", mousePos.x > transform.position.x);
-                animator.SetBool("basicattack", true);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "tackle", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                }
-               return;
-            }
-            //else if (currentState == PinkPlayerState.Counter && animator.GetInteger("CounterStack") > 0)
-            //{
-            //    animator.SetBool("Counter", true);
-            //    Vector3 mousePos = GetMouseWorldPosition();
-            //    animator.SetBool("Right", mousePos.x > transform.position.x);
-            //    if (PhotonNetwork.IsConnected)
-            //    {
-            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Counter", true);
-            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-            //    }
-            //    return;
-            //}
+            
 
             if (nextState < PinkPlayerState.BasicAttack)
             {
@@ -291,6 +267,111 @@ public class PinkPlayerController : ParentPlayerController
             }
         }
     }
+
+    // 우클릭
+
+    public void HandleCharge()
+    {
+        if (currentState != PinkPlayerState.Death)
+        {
+            if (currentState == PinkPlayerState.BasicAttack && animator.GetBool("CancleState"))
+            {
+               
+                    animator.SetBool("tackle", true);
+                    Vector3 mousePos = GetMouseWorldPosition();
+                    animator.SetBool("Right", mousePos.x > transform.position.x);
+
+                    if (PhotonNetwork.IsConnected)
+                    {
+                        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "tackle", true);
+                        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                    }
+
+                    animator.SetBool("basicattack", false);
+                    return;
+                
+            }
+        }
+    }
+
+    // 차지
+
+    private bool isCharging = false;
+    private int chargeLevel = 0;
+
+    public float physicalAtk;
+    public float magicAtk;
+
+    // 우클릭 눌렀을 때 (차지 시작)
+    public void StartCharge()
+    {
+        if (isCharging || currentState == PinkPlayerState.Death)
+            return;
+
+        isCharging = true;
+        chargeLevel = 1;
+        nextState = PinkPlayerState.Charge1;
+
+        Vector3 mousePos = GetMouseWorldPosition();
+        bool isRight = mousePos.x > transform.position.x;
+
+        animator.SetBool("Right", isRight);
+        animator.SetBool("isCharging", true); 
+        animator.SetInteger("chargeLevel", chargeLevel);
+
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", isRight);
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "isCharging", true); 
+            photonView.RPC("SyncIntParameter", RpcTarget.Others, "chargeLevel", chargeLevel);
+        }
+
+        
+    }
+
+    // 우클릭을 놓았을 때 (차지 종료)
+    public void ReleaseCharge()
+    {
+        if (!isCharging || currentState == PinkPlayerState.Death)
+            return;
+
+        isCharging = false;
+
+        animator.SetBool("isCharging", false); 
+        animator.SetTrigger("ReleaseCharge");
+
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "isCharging", false); 
+            photonView.RPC("PlayAnimation", RpcTarget.Others, "ReleaseCharge");
+        }
+    }
+
+
+    // 프레임별 차지 레벨 설정 (애니메이션 이벤트로 호출)
+    public void SetChargeLevel(int level)
+    {
+        chargeLevel = level;
+        animator.SetInteger("chargeLevel", level); // 애니메이터 파라미터 업데이트
+
+        switch (level)
+        {
+            case 1:
+                nextState = PinkPlayerState.Charge1;
+                break;
+            case 2:
+                nextState = PinkPlayerState.Charge2;
+                break;
+            case 3:
+                nextState = PinkPlayerState.Charge3;
+                break;
+        }
+
+        Debug.Log($"차지 레벨: {chargeLevel}, nextState: {nextState}");
+    }
+
+
+
 
 
     // 특수 공격
@@ -391,6 +472,26 @@ public class PinkPlayerController : ParentPlayerController
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
         }
         Debug.Log("선딜 종료");
+    }
+
+    public void OnAttackLastAttckStart()
+    {
+        animator.SetBool("CancleState2", true);
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState2", true);
+        }
+        Debug.Log("후딜 시작");
+    }
+
+    public void OnAttackLastAttckEnd()
+    {
+        animator.SetBool("CancleState2", false);
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState2", false);
+        }
+        Debug.Log("후딜 종료");
     }
 
     public void OnMoveFront(float value)
@@ -504,6 +605,101 @@ public class PinkPlayerController : ParentPlayerController
         }
     }
 
+    // 차징 이펙트 생성
+    public void CreateChargeSkillEffect()
+    {
+        if (animator.GetBool("Right"))
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                if (photonView.IsMine)
+                {
+                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/pink_charging{chargeLevel}_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
+                    skillEffect.Init(damage, StartHitlag);
+                    skillEffect.transform.parent = transform;
+                }
+            }
+            else
+            {
+                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/pink_charging{chargeLevel}_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
+                skillEffect.Init(damage, StartHitlag);
+                skillEffect.transform.parent = transform;
+            }
+
+
+        }
+        else
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                if (photonView.IsMine)
+                {
+                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/pink_charging{chargeLevel}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
+                    skillEffect.transform.parent = transform;
+                    skillEffect.Init(damage, StartHitlag);
+                }
+            }
+            else
+            {
+                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/pink_charging{chargeLevel}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
+                skillEffect.transform.parent = transform;
+                skillEffect.Init(damage, StartHitlag);
+            }
+        }
+    }
+
+    // 차징 홀드 해제 후 이펙트 생성
+
+    public void CreateChargeHItSkillEffect()
+    {
+        if (animator.GetBool("Right"))
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                if (photonView.IsMine)
+                {
+                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
+                    skillEffect.Init(damage, StartHitlag);
+                    skillEffect.transform.parent = transform;
+                }
+            }
+            else
+            {
+                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
+                skillEffect.Init(damage, StartHitlag);
+                skillEffect.transform.parent = transform;
+            }
+
+
+        }
+        else
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                if (photonView.IsMine)
+                {
+                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
+                    skillEffect.transform.parent = transform;
+                    skillEffect.Init(damage, StartHitlag);
+                }
+            }
+            else
+            {
+                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
+                skillEffect.transform.parent = transform;
+                skillEffect.Init(damage, StartHitlag);
+            }
+        }
+    }
+
     // 시프트 스킬 이펙트 생성
     public void CreateShiftSkillEffect()
     {
@@ -549,50 +745,6 @@ public class PinkPlayerController : ParentPlayerController
         }
     }
 
-    // 카운터 이펙트 생성
-    public void CreateCounterSkillEffect()
-    {
-        if (animator.GetBool("Right"))
-        {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Counter_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag);
-                    skillEffect.transform.parent = transform;
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Counter_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag);
-                skillEffect.transform.parent = transform;
-            }
-        }
-        else
-        {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Counter_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.transform.parent = transform;
-                    skillEffect.Init(damage, StartHitlag);
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Counter_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.transform.parent = transform;
-                skillEffect.Init(damage, StartHitlag);
-            }
-        }
-    }
 
     // 패링 이펙트 생성
     public void CreateParrySkillEffect()
