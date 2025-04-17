@@ -29,9 +29,9 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         OpenPanel<UiStartPanel>();
-        
+
         string nickname = PlayerPrefs.GetString("Nickname");
-        
+
         if (nickname != "")
         {
             PhotonNetworkManager.Instance.SetNickname(nickname);
@@ -80,7 +80,7 @@ public class UIManager : MonoBehaviour
     public T OpenPopupPanel<T>() where T : UIBase
     {
         if (uiStack.Count > 0)
-            uiStack.Peek().gameObject.GetComponent<CanvasGroup  >().interactable = false;
+            uiStack.Peek().gameObject.GetComponent<CanvasGroup>().interactable = false;
 
         string prefabName = typeof(T).Name;
         GameObject prefab = Resources.Load<GameObject>($"UI/{prefabName}");
@@ -97,11 +97,11 @@ public class UIManager : MonoBehaviour
 
     public void OnSkillInfo()
     {
-        if(uiStack.Peek() is UIIngameMainPanel)
+        if (uiStack.Peek() is UIIngameMainPanel)
         {
             OpenPopupPanel<UISkillInfoPanel>();
         }
-        else if(uiStack.Peek() is UISkillInfoPanel)
+        else if (uiStack.Peek() is UISkillInfoPanel)
         {
             ClosePeekUI();
         }
@@ -111,17 +111,22 @@ public class UIManager : MonoBehaviour
     {
         if (uiStack.Count > 0)
             return uiStack.Peek();
-        else    
+        else
             return null;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        UIManager.Instance.CloseAllUI();
         if (scene.name.StartsWith("Level")||scene.name=="StageTest1")
         {
-            UIManager.Instance.CloseAllUI();
             UIManager.Instance.OpenPanel<UIIngameMainPanel>();
-            //ReturnLocalPlayer().GetComponent<WhitePlayercontroller_event>().isInVillage = false;
         }
+    }
+
+    public void CloseAllAndOpen<T>() where T : UIBase
+    {
+        CloseAllUI();
+        OpenPanel<T>();
     }
 }

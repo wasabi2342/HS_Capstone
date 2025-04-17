@@ -12,7 +12,6 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
     private string gameVersion = "1";
 
-    public event Action<List<RoomInfo>> OnRoomListUpdated;
     public event Action<int> OnUpdateReadyPlayer;
 
     private Dictionary<int, bool> readyPlayers = new Dictionary<int, bool>();
@@ -51,19 +50,6 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("포톤서버 접속");
     }
 
-    public override void OnRoomListUpdate(List<RoomInfo> roomList)
-    {
-        OnRoomListUpdated?.Invoke(roomList);
-        Debug.Log("방 갱신");
-    }
-
-    public override void OnJoinedRoom()
-    {
-        UIManager.Instance.CloseAllUI();
-        PhotonNetwork.LoadLevel("Room");
-        //gameObject.AddComponent<RoomManager>();
-    }
-
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
         UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText(message);
@@ -72,11 +58,6 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     public void CreateRoom(string roomName, RoomOptions roomOptions)
     {
         PhotonNetwork.CreateRoom(roomName, roomOptions);
-    }
-
-    public void JoinRoom(string roomName)
-    {
-        PhotonNetwork.JoinRoom(roomName);
     }
 
     public void ReadyToEnterStage()
@@ -90,7 +71,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             else
             {
                 RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
-                SceneManager.LoadScene("StageTest1");
+                SceneManager.LoadScene("Level0");
             }
         }
         if (PhotonNetwork.InRoom)
@@ -153,15 +134,20 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         {
             StopCoroutine(stageEnterCoroutine);
         }
+
         if (UIManager.Instance.ReturnPeekUI() as UIStageReadyPanel)
         {
             UIManager.Instance.ClosePeekUI();
             readyPlayers.Clear();
         }
-        if (RoomManager.Instance.players.ContainsKey(otherPlayer.ActorNumber))
+
+        if (RoomManager.Instance != null)
         {
-            RoomManager.Instance.players.Remove(otherPlayer.ActorNumber);
-            RoomManager.Instance.UpdateSortedPlayers();
+            if (RoomManager.Instance.players.ContainsKey(otherPlayer.ActorNumber))
+            {
+                RoomManager.Instance.players.Remove(otherPlayer.ActorNumber);
+                RoomManager.Instance.UpdateSortedPlayers();
+            }
         }
     }
 

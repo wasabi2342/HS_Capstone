@@ -413,4 +413,9 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         photonView.RPC("SyncIntParameter", RpcTarget.Others, parameter, value);
     }
 
+    public string ReturnNmae()
+    {
+        return characterBaseStats.name;
+    }
+
 }

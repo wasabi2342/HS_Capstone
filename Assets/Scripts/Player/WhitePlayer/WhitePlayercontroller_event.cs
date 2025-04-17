@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public class WhitePlayercontroller_event : MonoBehaviourPun
+public class WhitePlayercontroller_event : Playercontroller_event
 {
     private WhitePlayerController whitePlayerController;
 
@@ -16,12 +16,13 @@ public class WhitePlayercontroller_event : MonoBehaviourPun
     public UnityEvent OnKeyboardShiftLEvent;
     public UnityEvent OnKeyboardREvent;
 
-    public bool isInVillage;
-
     private void Start()
     {
-        if (!photonView.IsMine)
+        if (PhotonNetwork.IsConnected && !photonView.IsMine)
+        {
+            Debug.Log("³»°¡ ¾Æ´Ô");
             return;
+        }
 
         InputManager.Instance.PlayerInput.actions["Move"].performed += ctx => OnMove(ctx);
         InputManager.Instance.PlayerInput.actions["Move"].canceled += ctx => OnMove(ctx);
