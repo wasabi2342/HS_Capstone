@@ -10,6 +10,7 @@ public class StageManager : MonoBehaviour
     public string spawnAreaPrefabName = "SpawnArea"; // SpawnArea 프리팹 이름
     public string doorPrefabName = "doorPrefab";
     public string blessingNPCPrefabName = "BlessingNPC"; // Blessing NPC 프리팹 이름
+    public string CoopOrBetrayNPCPrefabName = "CoopOrBetrayNPC"; // coopOrBetrayNPCPos 프리팹 이름
 
     [Header("Stage Settings")]
     public StageSettings currentStageSettings; // 현재 스테이지에 해당하는 설정
@@ -17,6 +18,8 @@ public class StageManager : MonoBehaviour
 
     private List<GameObject> spawnAreaInstances = new List<GameObject>();
 
+    [SerializeField]
+    private Transform coopOrBetrayNPCPos;
 
     private void Awake()
     {
@@ -30,6 +33,7 @@ public class StageManager : MonoBehaviour
             SpawnStage();
             //PhotonNetwork.Instantiate(blessingNPCPrefabName, Vector3.zero, Quaternion.identity);
             PhotonNetwork.Instantiate(doorPrefabName, new Vector3(10,0,0), Quaternion.identity);
+            PhotonNetwork.Instantiate(CoopOrBetrayNPCPrefabName, coopOrBetrayNPCPos.position, Quaternion.identity);
 
         }
         // RoomProperties에서 인덱스 읽기
@@ -101,6 +105,10 @@ public class StageManager : MonoBehaviour
                 {
                     Vector3 blessingNPCSpawnPosition = spawnAreaInstances.Count > 1 ? spawnAreaInstances[1].transform.position : transform.position;
                     PhotonNetwork.Instantiate(blessingNPCPrefabName, blessingNPCSpawnPosition, Quaternion.identity);
+                }
+                if(MonsterStatusManager.instance != null)
+                {
+                    MonsterStatusManager.instance.ResetEnemyDamage();
                 }
             }
 

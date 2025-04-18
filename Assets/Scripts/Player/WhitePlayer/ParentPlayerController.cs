@@ -53,6 +53,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     public int attackStack = 0;
 
+    public float damageBuff = 1;
+
     #region Unity Lifecycle
 
     protected virtual void Awake()

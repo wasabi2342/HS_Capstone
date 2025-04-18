@@ -382,4 +382,43 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_ApplyPlayerBuff(int damageBuff)
+    {
+        if(RoomManager.Instance  != null)
+        {
+            RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().damageBuff *= damageBuff;
+        }
+
+        if(UIManager.Instance.ReturnPeekUI() as UICoopOrBetrayPanel)
+        {
+            UIManager.Instance.ClosePeekUI();
+        }
+    }
+
+    [PunRPC]
+    public void RPC_ApplyMonsterBuff(int damageBuff)
+    {
+        if(MonsterStatusManager.instance != null)
+        {
+            MonsterStatusManager.instance.EnemyDamageBuff(damageBuff);
+        }
+
+        if (UIManager.Instance.ReturnPeekUI() as UICoopOrBetrayPanel)
+        {
+            UIManager.Instance.ClosePeekUI();
+        }
+    }
+
+    [PunRPC]
+    public void PopupBlessingPanel()
+    {
+        if (UIManager.Instance.ReturnPeekUI() as UICoopOrBetrayPanel)
+        {
+            UIManager.Instance.ClosePeekUI();
+        }
+
+        UIManager.Instance.OpenPopupPanel<UISelectBlessingPanel>();
+    }
+
 }
