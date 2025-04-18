@@ -46,7 +46,7 @@ public class UISkillInfoPanel : UIBase
         if(UIManager.Instance.ReturnPeekUI() as UISkillInfoPanel)
         {
             UIManager.Instance.ClosePeekUI();
-            InputManager.Instance.ChangeDefaultMap("Player");
+            InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
         }
     }
 }

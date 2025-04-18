@@ -83,6 +83,8 @@ public class UISelectBlessingPanel : UIBase
 
     public override void Init()
     {
+        InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
+
         isFlipped = new bool[buttons.Count];
         PickUpBlessing();
         int index = 0;
@@ -137,7 +139,7 @@ public class UISelectBlessingPanel : UIBase
         if (selectedBlessing.level != 0)
         {
             RoomManager.Instance.ReturnLocalPlayer().GetComponent<PlayerBlessing>().UpdateBlessing(selectedBlessing);
-            InputManager.Instance.ChangeDefaultMap("Player");
+            InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
             UIManager.Instance.ClosePeekUI();
         }
     }

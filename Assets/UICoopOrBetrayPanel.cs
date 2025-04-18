@@ -17,8 +17,15 @@ public class UICoopOrBetrayPanel : UIBase
         Init();
     }
 
+    private void OnDisable()
+    {
+        InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
+    }
+
     public override void Init()
     {
+        InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
+
         // 이전 선택 초기화
         Hashtable resetProps = new Hashtable
         {
