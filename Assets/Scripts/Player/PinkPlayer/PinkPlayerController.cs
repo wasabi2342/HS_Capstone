@@ -513,6 +513,13 @@ public class PinkPlayerController : ParentPlayerController
         return Vector3.zero;
     }
 
+    // 이펙트 값 null 값을 만들어주는 이벤트 함수
+
+    public void OnEffectEnd()
+    {
+        gameObject.SetActive(false);
+    }
+
     #region 스킬 이펙트 생성
 
     // 궁극기 이펙트 생성
