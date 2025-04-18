@@ -383,7 +383,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void RPC_ApplyPlayerBuff(int damageBuff)
+    public void RPC_ApplyPlayerBuff(float damageBuff)
     {
         if(RoomManager.Instance  != null)
         {
@@ -394,10 +394,12 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         {
             UIManager.Instance.ClosePeekUI();
         }
+
+        UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText($"모두가 협력해 피해량이{damageBuff}배 증가합니다.");
     }
 
     [PunRPC]
-    public void RPC_ApplyMonsterBuff(int damageBuff)
+    public void RPC_ApplyMonsterBuff(float damageBuff)
     {
         if(MonsterStatusManager.instance != null)
         {
@@ -408,6 +410,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         {
             UIManager.Instance.ClosePeekUI();
         }
+
+        UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText($"모두가 배신해 몬스터의 피해량이{damageBuff}배 증가합니다.");
     }
 
     [PunRPC]
@@ -419,6 +423,18 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         }
 
         UIManager.Instance.OpenPopupPanel<UISelectBlessingPanel>();
+
+        UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText($"배신에 성공해 가호를 획득합니다.");
     }
 
+    [PunRPC]
+    public void PopupDialogPanel(string message)
+    {
+        if (UIManager.Instance.ReturnPeekUI() as UICoopOrBetrayPanel)
+        {
+            UIManager.Instance.ClosePeekUI();
+        }
+
+        UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText(message);
+    }
 }

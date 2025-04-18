@@ -100,6 +100,10 @@ public class UICoopOrBetrayPanel : UIBase
                 {
                     PhotonNetworkManager.Instance.photonView.RPC("PopupBlessingPanel", pair.Key);
                 }
+                else
+                {
+                    PhotonNetworkManager.Instance.photonView.RPC("PopupDialogPanel", pair.Key, "누군가가 배신했습니다.");
+                }
             }
         }
     }
