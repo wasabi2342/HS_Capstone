@@ -25,7 +25,6 @@ public class ArrowProjectile : MonoBehaviourPun
         if (timer >= lifeTime && photonView.IsMine)
             PhotonNetwork.Destroy(gameObject);
     }
-
     void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;

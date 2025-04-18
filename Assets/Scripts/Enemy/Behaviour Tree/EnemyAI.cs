@@ -107,14 +107,12 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
             // WhitePlayerController (또는 유사 스크립트)에서 Death 상태 확인
             // (코드에서는 PlayerController + PlayerState로 수정)
             var pc = targetPlayer.GetComponent<PlayerController>();
-            /*
-            if (wpc == null || wpc.currentState == WhitePlayerState.Death)
+            if (pc == null || pc.CurrentState == PlayerState.Death)
             {
-                // 타겟이 사망 상태이므로 추적 중단
                 targetPlayer = null;
+                ResetAttackPreparation();
+                return;
             }
-            */
-            // 여기서는 따로 처리하지 않았으므로 필요하다면 로직 추가
         }
 
         // Behavior Tree 실행
@@ -359,6 +357,16 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     // ─────────────────────────────────────────
     INode.NodeState WanderInsideSpawnArea()
     {
+        Debug.Log("[Wander] Entered Wander state");
+
+        if (agent == null)
+        {
+            Debug.LogError("[Wander] agent is null!");
+            return INode.NodeState.Failure;
+        }
+
+        Debug.Log($"[Wander] agent.stopped = {agent.isStopped}, hasPath = {agent.hasPath}, remainingDist = {agent.remainingDistance}");
+
         if (isWaiting)
         {
             waitTimer += Time.deltaTime;
@@ -417,7 +425,12 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
                 {
                     wanderTarget = hit.position;
                     wanderTarget.y = transform.position.y;
-                    if (agent.SetDestination(wanderTarget))
+
+                    agent.isStopped = false;
+                    bool pathSet = agent.SetDestination(wanderTarget);
+                    Debug.Log($"[Wander] pathSet = {pathSet}, target = {wanderTarget}");
+
+                    if (pathSet)
                     {
                         agent.speed = status.wanderSpeed;
                         Debug.Log($"[Wander] 새 목적지: {wanderTarget} (dist: {dist:F2}m)");

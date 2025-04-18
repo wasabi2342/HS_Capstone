@@ -16,7 +16,6 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
             StartCoroutine(ChargeAttack());
         }
     }
-
     private IEnumerator ChargeAttack()
     {
         Vector3 startPos = transform.position;

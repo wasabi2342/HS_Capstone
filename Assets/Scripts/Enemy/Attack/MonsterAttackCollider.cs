@@ -6,7 +6,6 @@ public class MonsterAttackCollider : MonoBehaviourPun
 {
     // 부모 객체에서 EnemyAI를 찾습니다.
     private EnemyAI enemyAI;
-
     private void Awake()
     {
         enemyAI = GetComponentInParent<EnemyAI>();

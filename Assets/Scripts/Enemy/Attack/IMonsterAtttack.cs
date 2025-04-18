@@ -3,4 +3,5 @@
 public interface IMonsterAttack
 {
     void Attack(Transform target);
+
 }

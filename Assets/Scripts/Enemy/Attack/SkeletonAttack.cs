@@ -39,7 +39,7 @@ public class SkeletonAttack : MonoBehaviour, IMonsterAttack
 
         // 속도 부여
         if (proj.TryGetComponent(out Rigidbody rb))
-            rb.velocity = dir * projectileSpeed;
+            rb.linearVelocity = dir * projectileSpeed;
 
         // 데미지 전달
         if (proj.TryGetComponent(out ArrowProjectile ap) &&
