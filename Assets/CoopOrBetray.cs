@@ -9,6 +9,16 @@ public class CoopOrBetray : MonoBehaviourPun, IInteractable
 
     private bool canInteract = true;
 
+    private void Start()
+    {
+        canvas.gameObject.SetActive(false);
+
+        if (!PhotonNetwork.IsConnected || PhotonNetwork.CurrentRoom.PlayerCount < 2)
+        {
+            canInteract = false;
+        }
+    }
+
     public void OnInteract(InputAction.CallbackContext ctx)
     {
         if (ctx.started)
@@ -20,7 +30,7 @@ public class CoopOrBetray : MonoBehaviourPun, IInteractable
             }
             else
             {
-                UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("이미 상호작용이 완료되었습니다.");
+                UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("상호작용이 불가능합니다.");
             }
         }
     }
