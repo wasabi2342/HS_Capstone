@@ -12,8 +12,6 @@ public class DoorLever : MonoBehaviourPun, IInteractable
 
     private Transform lastPlayer;
 
-    public Action successLeverInteraction;
-
     public void OnInteract(InputAction.CallbackContext ctx)
     {
         if (ctx.started)
@@ -58,14 +56,16 @@ public class DoorLever : MonoBehaviourPun, IInteractable
     {
         if (success)
         {
-            successLeverInteraction?.Invoke();
-
             if (PhotonNetwork.IsConnected)
             {
                 if (photonView != null)
                 {
-                    photonView.RPC("SuccessLeverInteraction", RpcTarget.Others);
+                    photonView.RPC("SuccessLeverInteraction", RpcTarget.All);
                 }
+            }
+            else
+            {
+                DoorInteractionManager.instance.SuccessLeverInteraction();
             }
         }
         else
@@ -85,7 +85,7 @@ public class DoorLever : MonoBehaviourPun, IInteractable
     [PunRPC]
     public void SuccessLeverInteraction()
     {
-        successLeverInteraction?.Invoke();
+        DoorInteractionManager.instance.SuccessLeverInteraction();
     }
 
     [PunRPC]

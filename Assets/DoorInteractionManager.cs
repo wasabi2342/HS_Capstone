@@ -19,12 +19,25 @@ public class DoorInteractionManager : MonoBehaviour
     private int leverCount = 0;
     private int successLeverCount = 0;
 
+    public static DoorInteractionManager instance;
+
+    private void Awake()
+    {
+        if(instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
+    }
+
     void Start()
     {
         if (!PhotonNetwork.IsConnected)
         {
             GameObject newLever = Instantiate(lever, leverPos1.position, Quaternion.identity);
-            newLever.GetComponent<DoorLever>().successLeverInteraction += SuccessLeverInteraction;
             leverCount++;
         }
         else
@@ -35,13 +48,11 @@ public class DoorInteractionManager : MonoBehaviour
             }
 
             GameObject newLever = PhotonNetwork.Instantiate(lever.name, leverPos1.position, Quaternion.identity);
-            newLever.GetComponent<DoorLever>().successLeverInteraction += SuccessLeverInteraction;
             leverCount++;
 
             if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
             {
                 newLever = PhotonNetwork.Instantiate(lever.name, leverPos2.position, Quaternion.identity);
-                newLever.GetComponent<DoorLever>().successLeverInteraction += SuccessLeverInteraction;
                 leverCount++;
             }
         }
