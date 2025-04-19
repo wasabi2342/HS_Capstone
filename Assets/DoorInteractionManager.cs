@@ -29,6 +29,11 @@ public class DoorInteractionManager : MonoBehaviour
         }
         else
         {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                return;
+            }
+
             GameObject newLever = PhotonNetwork.Instantiate(lever.name, leverPos1.position, Quaternion.identity);
             newLever.GetComponent<DoorLever>().successLeverInteraction += SuccessLeverInteraction;
             leverCount++;
