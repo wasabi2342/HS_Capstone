@@ -133,7 +133,7 @@ public class UIIngameMainPanel : UIBase
     public void OpenBlessingInfoPanel(InputAction.CallbackContext ctx)
     {
         UIManager.Instance.OpenPopupPanel<UISkillInfoPanel>();
-        InputManager.Instance.ChangeDefaultMap("UI");
+        InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
     }
 
     public void UpdateIconOutline(UIIcon icon, Color color)

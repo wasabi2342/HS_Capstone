@@ -1673,6 +1673,7 @@ GameObject:
   - component: {fileID: 1637676954}
   - component: {fileID: 1637676953}
   - component: {fileID: 1637676955}
+  - component: {fileID: 1637676956}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -1835,6 +1836,22 @@ MonoBehaviour:
   effectList: []
   linkList: []
   basicAttackComboDatas: []
+--- !u!114 &1637676956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1637676949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90ee7b0dbcbe7a54e800799605d6e271, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyStatusList:
+  - {fileID: 11400000, guid: 95c1f28374649404aacbc36b18792acf, type: 2}
+  - {fileID: 11400000, guid: 3b598a51dfc942946ab4799c0543eb4a, type: 2}
+  - {fileID: 11400000, guid: 585a8c2885ac13d469a69c6a0969dd97, type: 2}
 --- !u!1 &1646542411
 GameObject:
   m_ObjectHideFlags: 0
