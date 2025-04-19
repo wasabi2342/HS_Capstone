@@ -9,6 +9,8 @@ public class UISpaceInterationPanel : UIBase
     private Image fillImage;
     [SerializeField]
     private Image icon;
+    [SerializeField]
+    private Image timerImage;
 
     private Action<bool> action;
 
@@ -31,8 +33,9 @@ public class UISpaceInterationPanel : UIBase
 
         this.action = action;
         fillImage.fillAmount = 0;
+        timerImage.fillAmount = 1f;
 
-        timeRemaining = 15f;
+        timeRemaining = 10f;
         decayTimer = 1f;
         isRunning = true;
 
@@ -56,6 +59,12 @@ public class UISpaceInterationPanel : UIBase
         decayTimer -= Time.deltaTime;
         blinkTimer -= Time.deltaTime;
 
+        if (timerImage != null)
+        {
+            timerImage.fillAmount = timeRemaining / 10f;
+            timerImage.fillAmount = Mathf.Max(timerImage.fillAmount, 0f);
+        }
+
         // 매 1초마다 감소
         if (decayTimer <= 0f)
         {
@@ -75,6 +84,8 @@ public class UISpaceInterationPanel : UIBase
         // 타이머 종료
         if (timeRemaining <= 0f)
         {
+            timerImage.fillAmount = 0;
+
             isRunning = false;
             InputManager.Instance.PlayerInput.actions["Space"].started -= SpaceInput;
 
