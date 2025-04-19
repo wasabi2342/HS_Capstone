@@ -42,18 +42,18 @@ public class DoorInteractionManager : MonoBehaviour
         }
         else
         {
+            leverCount = PhotonNetwork.CurrentRoom.PlayerCount > 1 ? 2 : 1;
+
             if (!PhotonNetwork.IsMasterClient)
             {
                 return;
             }
 
             GameObject newLever = PhotonNetwork.Instantiate(lever.name, leverPos1.position, Quaternion.identity);
-            leverCount++;
 
             if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
             {
                 newLever = PhotonNetwork.Instantiate(lever.name, leverPos2.position, Quaternion.identity);
-                leverCount++;
             }
         }
     }
