@@ -313,6 +313,10 @@ public class PinkPlayerController : ParentPlayerController
             return;
         if (currentState == PinkPlayerState.tackle)
             return;
+        if (currentState == PinkPlayerState.Charge1 || currentState == PinkPlayerState.Charge2 || currentState == PinkPlayerState.Charge3)
+            return;
+        if (nextState > PinkPlayerState.Charge1)
+            return;
 
         isCharging = true;
         chargeLevel = 1;
