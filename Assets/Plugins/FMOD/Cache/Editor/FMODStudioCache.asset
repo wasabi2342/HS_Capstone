@@ -1,5 +1,369 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8838072425292094387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-sword/parrying
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-sword/parrying
+  Guid:
+    Data1: 584783952
+    Data2: 1081805561
+    Data3: 1108263864
+    Data4: 530020893
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1400
+--- !u!114 &-8643604477998274394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ingame/bomb_explosion
+  m_EditorClassIdentifier: 
+  Path: event:/Ingame/bomb_explosion
+  Guid:
+    Data1: 2079126082
+    Data2: 1235872742
+    Data3: -1779103332
+    Data4: -1829277437
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1101
+--- !u!114 &-7909216114549659055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-sword/katana_stab
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-sword/katana_stab
+  Guid:
+    Data1: -1426700477
+    Data2: 1257751529
+    Data3: 1292247450
+    Data4: -381542905
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1400
+--- !u!114 &-7564491170845715599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ingame/shield_broke
+  m_EditorClassIdentifier: 
+  Path: event:/Ingame/shield_broke
+  Guid:
+    Data1: 948893973
+    Data2: 1147707534
+    Data3: 1277333899
+    Data4: -1399625988
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2089
+--- !u!114 &-6677096957998648240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/SFX.bank
+  m_EditorClassIdentifier: 
+  Path: ../../../Desktop/crossxcrosser/Build/Desktop/SFX.bank
+  Name: SFX
+  StudioPath: bank:/SFX
+  lastModified: 638807926790363745
+  FileSizes:
+  - Name: Desktop
+    Value: 1089792
+  Exists: 1
+--- !u!114 &-5613500601508850222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-sword/katana_slash (4)
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-sword/katana_slash (4)
+  Guid:
+    Data1: 1644590126
+    Data2: 1257378190
+    Data3: 1511002772
+    Data4: 863059562
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 860
+--- !u!114 &-4841881342179688974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ingame/clock_timer
+  m_EditorClassIdentifier: 
+  Path: event:/Ingame/clock_timer
+  Guid:
+    Data1: -1454140476
+    Data2: 1205707123
+    Data3: 1366520478
+    Data4: -590591127
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 15046
+--- !u!114 &-3840854676510094695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ingame/reward drop
+  m_EditorClassIdentifier: 
+  Path: event:/Ingame/reward drop
+  Guid:
+    Data1: -629251327
+    Data2: 1111748520
+    Data3: -1508303473
+    Data4: 583973200
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2150
+--- !u!114 &-3587518854627873043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Monster/skeleton die
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Monster/skeleton die
+  Guid:
+    Data1: -499840773
+    Data2: 1133795403
+    Data3: -1993291880
+    Data4: -1016593826
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2533
+--- !u!114 &-2981986279531029549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-sword/dash
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-sword/dash
+  Guid:
+    Data1: 151871399
+    Data2: 1188844812
+    Data3: -1145745492
+    Data4: -430997110
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1400
+--- !u!114 &-1842921823591146275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Master.bank
+  m_EditorClassIdentifier: 
+  Path: ../../../Desktop/crossxcrosser/Build/Desktop/Master.bank
+  Name: Master
+  StudioPath: bank:/Master
+  lastModified: 638807926786796602
+  FileSizes:
+  - Name: Desktop
+    Value: 1074
+  Exists: 1
+--- !u!114 &-1283378436414324521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ingame/set_chess piece
+  m_EditorClassIdentifier: 
+  Path: event:/Ingame/set_chess piece
+  Guid:
+    Data1: 1024295996
+    Data2: 1265137049
+    Data3: 476024221
+    Data4: -960596390
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1050
+--- !u!114 &-1280351874245740183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ingame/heart_beat_sound
+  m_EditorClassIdentifier: 
+  Path: event:/Ingame/heart_beat_sound
+  Guid:
+    Data1: 1778936715
+    Data2: 1166144085
+    Data3: -259763566
+    Data4: -260489424
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2000
+--- !u!114 &-1125433536789612647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Monster/arrow shot
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Monster/arrow shot
+  Guid:
+    Data1: 505654041
+    Data2: 1314685657
+    Data3: 195272885
+    Data4: -2043206088
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2533
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12,10 +376,663 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d32cf7c32a3ed8347bac48ef5ed56d82, type: 3}
   m_Name: FMODStudioCache
   m_EditorClassIdentifier: 
-  EditorBanks: []
-  EditorEvents: []
+  EditorBanks:
+  - {fileID: 6142761934940943708}
+  - {fileID: -1842921823591146275}
+  - {fileID: -6677096957998648240}
+  EditorEvents:
+  - {fileID: -3840854676510094695}
+  - {fileID: 6089362779930384138}
+  - {fileID: 5005097920066141596}
+  - {fileID: -7564491170845715599}
+  - {fileID: -1125433536789612647}
+  - {fileID: 7673756788895005525}
+  - {fileID: 7028037509318101258}
+  - {fileID: 6264452740060412656}
+  - {fileID: 2692481051952813256}
+  - {fileID: -5613500601508850222}
+  - {fileID: 4640543752356796314}
+  - {fileID: -1283378436414324521}
+  - {fileID: -8643604477998274394}
+  - {fileID: -7909216114549659055}
+  - {fileID: -8838072425292094387}
+  - {fileID: 97185130715282264}
+  - {fileID: 3835857995109364061}
+  - {fileID: 3190294135230366432}
+  - {fileID: 3512973775978672787}
+  - {fileID: 2731670091646379454}
+  - {fileID: 9128107013212552371}
+  - {fileID: -1280351874245740183}
+  - {fileID: 2439421462080510298}
+  - {fileID: 7496006452732644974}
+  - {fileID: -2981986279531029549}
+  - {fileID: 8252889115222017194}
+  - {fileID: 999559483891183396}
+  - {fileID: -4841881342179688974}
+  - {fileID: 1476768926523828818}
+  - {fileID: 5053192927195205941}
+  - {fileID: 6648132359821688481}
+  - {fileID: 1105962055743360361}
+  - {fileID: 3580448558867271723}
+  - {fileID: -3587518854627873043}
   EditorParameters: []
-  MasterBanks: []
-  StringsBanks: []
-  cacheTime: 0
+  MasterBanks:
+  - {fileID: -1842921823591146275}
+  StringsBanks:
+  - {fileID: 6142761934940943708}
+  cacheTime: 638807926790363745
   cacheVersion: 131846
+--- !u!114 &97185130715282264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Monster/zombie_attack
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Monster/zombie_attack
+  Guid:
+    Data1: 1775157077
+    Data2: 1237748423
+    Data3: -2017949564
+    Data4: 1557720036
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2200
+--- !u!114 &999559483891183396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-sword/katana_DashAttack
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-sword/katana_DashAttack
+  Guid:
+    Data1: -1775246909
+    Data2: 1296136124
+    Data3: 1400423322
+    Data4: -1145408978
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2739
+--- !u!114 &1105962055743360361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Common/walk sound
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Common/walk sound
+  Guid:
+    Data1: 1566382050
+    Data2: 1340725379
+    Data3: -653524546
+    Data4: 2035826257
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1884
+--- !u!114 &1476768926523828818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Monster/monster die
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Monster/monster die
+  Guid:
+    Data1: 257164231
+    Data2: 1213214130
+    Data3: -815356783
+    Data4: 547340433
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2533
+--- !u!114 &2439421462080510298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ingame/shield_hit
+  m_EditorClassIdentifier: 
+  Path: event:/Ingame/shield_hit
+  Guid:
+    Data1: 1180643982
+    Data2: 1279588792
+    Data3: -1285225284
+    Data4: 378911469
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1800
+--- !u!114 &2692481051952813256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Monster/spawn sound
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Monster/spawn sound
+  Guid:
+    Data1: -1508749522
+    Data2: 1319552757
+    Data3: 1850904713
+    Data4: 540563179
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1925
+--- !u!114 &2731670091646379454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Main/hologram sound2
+  m_EditorClassIdentifier: 
+  Path: event:/Main/hologram sound2
+  Guid:
+    Data1: 1779947910
+    Data2: 1139663812
+    Data3: -447177284
+    Data4: -969076227
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 626
+--- !u!114 &3190294135230366432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-sword/parrying motion
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-sword/parrying motion
+  Guid:
+    Data1: 1247623532
+    Data2: 1327119003
+    Data3: 1564114864
+    Data4: 1983444319
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 450
+--- !u!114 &3512973775978672787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-sword/katana_slash twice
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-sword/katana_slash twice
+  Guid:
+    Data1: 1248904317
+    Data2: 1220289375
+    Data3: 87413637
+    Data4: -636430474
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1110
+--- !u!114 &3580448558867271723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Main/keyboard_type 2
+  m_EditorClassIdentifier: 
+  Path: event:/Main/keyboard_type 2
+  Guid:
+    Data1: 574508267
+    Data2: 1248697911
+    Data3: 805175221
+    Data4: 620575861
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 200
+--- !u!114 &3835857995109364061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Monster/wolf_attack
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Monster/wolf_attack
+  Guid:
+    Data1: -987686046
+    Data2: 1231558377
+    Data3: 1684029572
+    Data4: -1175627178
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2000
+--- !u!114 &4640543752356796314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Main/keyboard_type
+  m_EditorClassIdentifier: 
+  Path: event:/Main/keyboard_type
+  Guid:
+    Data1: 122040635
+    Data2: 1089170227
+    Data3: 781948350
+    Data4: 1705198389
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 300
+--- !u!114 &5005097920066141596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ingame/lever interaction
+  m_EditorClassIdentifier: 
+  Path: event:/Ingame/lever interaction
+  Guid:
+    Data1: 1467880464
+    Data2: 1328360444
+    Data3: 2106975642
+    Data4: 995621675
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2089
+--- !u!114 &5053192927195205941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-pink/knight spawn
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-pink/knight spawn
+  Guid:
+    Data1: -569964584
+    Data2: 1147120843
+    Data3: -1819118709
+    Data4: 402936325
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2533
+--- !u!114 &6089362779930384138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ingame/interaction_hold
+  m_EditorClassIdentifier: 
+  Path: event:/Ingame/interaction_hold
+  Guid:
+    Data1: 1262632964
+    Data2: 1086896022
+    Data3: 1847799460
+    Data4: 1484191043
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 5500
+--- !u!114 &6142761934940943708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Master.strings.bank
+  m_EditorClassIdentifier: 
+  Path: ../../../Desktop/crossxcrosser/Build/Desktop/Master.strings.bank
+  Name: Master.strings
+  StudioPath: bank:/Master.strings
+  lastModified: 638807926786811709
+  FileSizes:
+  - Name: Desktop
+    Value: 2454
+  Exists: 1
+--- !u!114 &6264452740060412656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Main/hologram sound
+  m_EditorClassIdentifier: 
+  Path: event:/Main/hologram sound
+  Guid:
+    Data1: 488294955
+    Data2: 1206387068
+    Data3: -162162793
+    Data4: -1338532455
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1150
+--- !u!114 &6648132359821688481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-sword/huge_slash
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-sword/huge_slash
+  Guid:
+    Data1: -210049831
+    Data2: 1118263951
+    Data3: 2043733634
+    Data4: 719666938
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2000
+--- !u!114 &7028037509318101258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ingame/card-shuffle
+  m_EditorClassIdentifier: 
+  Path: event:/Ingame/card-shuffle
+  Guid:
+    Data1: -519432162
+    Data2: 1224362509
+    Data3: -1623983734
+    Data4: -1669297021
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1000
+--- !u!114 &7496006452732644974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ingame/card-draw
+  m_EditorClassIdentifier: 
+  Path: event:/Ingame/card-draw
+  Guid:
+    Data1: -1833831016
+    Data2: 1084460773
+    Data3: 1217945474
+    Data4: 1623246063
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 950
+--- !u!114 &7673756788895005525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-sword/katana_attack
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-sword/katana_attack
+  Guid:
+    Data1: -1135083238
+    Data2: 1314430663
+    Data3: 627314103
+    Data4: -596264567
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 672
+--- !u!114 &8252889115222017194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ingame/interaction
+  m_EditorClassIdentifier: 
+  Path: event:/Ingame/interaction
+  Guid:
+    Data1: -1036981061
+    Data2: 1090380872
+    Data3: 661739404
+    Data4: -775743004
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1100
+--- !u!114 &9128107013212552371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ingame/wood door open
+  m_EditorClassIdentifier: 
+  Path: event:/Ingame/wood door open
+  Guid:
+    Data1: 403520650
+    Data2: 1076211706
+    Data3: 2042963633
+    Data4: -1496560905
+  Banks:
+  - {fileID: -6677096957998648240}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2289
