@@ -219,7 +219,7 @@ public class PinkPlayerController : ParentPlayerController
         {
             
 
-            if (nextState < PinkPlayerState.BasicAttack)
+            if (nextState == PinkPlayerState.Idle)
             {
 
                 Vector3 mousePos = GetMouseWorldPosition();
@@ -228,6 +228,7 @@ public class PinkPlayerController : ParentPlayerController
                 {
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
                 }
+                currentState = PinkPlayerState.BasicAttack;
                 nextState = PinkPlayerState.BasicAttack;
             }
 
@@ -274,10 +275,13 @@ public class PinkPlayerController : ParentPlayerController
     {
         if (currentState != PinkPlayerState.Death)
         {
-            if (currentState == PinkPlayerState.BasicAttack && animator.GetBool("CancleState"))
+            if (currentState == PinkPlayerState.BasicAttack && animator.GetBool("CancleState2"))
             {
+
                
-                    animator.SetBool("tackle", true);
+                nextState = PinkPlayerState.tackle;
+
+                animator.SetBool("tackle", true);
                     Vector3 mousePos = GetMouseWorldPosition();
                     animator.SetBool("Right", mousePos.x > transform.position.x);
 

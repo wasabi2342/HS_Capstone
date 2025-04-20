@@ -92,23 +92,30 @@ public class PinkPlayercontroller_event : Playercontroller_event
     {
         if (isInVillage) return;
 
-        if (context.started)
+
+        // 1) performed 단계에서만 콤보 취소(tackle) 시도
+        if (context.performed)
         {
-            // 1) 평타( BasicAttack ) 중이면 HandleCharge
-            if (pinkPlayerController.currentState == PinkPlayerState.BasicAttack)
+            bool inBasic = pinkPlayerController.currentState == PinkPlayerState.BasicAttack;
+            // CancleState가 2일 때만
+            bool canCancel = pinkPlayerController.animator.GetBool("CancleState2");
+
+            if (inBasic && canCancel)
             {
+                // tackle 상태로 전환
                 pinkPlayerController.HandleCharge();
                 OnMouseREvent?.Invoke();
+                return;
             }
-            // 2) 그 외에는 차지 시작
-            else
-            {
-                pinkPlayerController.StartCharge();
-            }
+        }
+
+        // 2) 그 외에는 Hold 차지 공격
+        if (context.started)
+        {
+            pinkPlayerController.StartCharge();
         }
         else if (context.canceled)
         {
-            // 차지 해제
             pinkPlayerController.ReleaseCharge();
         }
     }

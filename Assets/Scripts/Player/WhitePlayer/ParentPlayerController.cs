@@ -49,7 +49,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     protected PlayerBlessing playerBlessing;
 
-    protected Animator animator;
+    public Animator animator;
 
     public int attackStack = 0;
 
