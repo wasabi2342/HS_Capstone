@@ -1,6 +1,9 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -28,7 +31,8 @@ public class UIManager : MonoBehaviour
 
     void Start()
     {
-        OpenPanel<UiStartPanel>();
+        //OpenPanel<UiStartPanel>();
+        OpenPanel<UILogoPanel>();
 
         string nickname = PlayerPrefs.GetString("Nickname");
 
