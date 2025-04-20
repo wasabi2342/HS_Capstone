@@ -279,7 +279,7 @@ public class PinkPlayerController : ParentPlayerController
             {
 
                
-                nextState = PinkPlayerState.tackle;
+                currentState = PinkPlayerState.tackle;
 
                 animator.SetBool("tackle", true);
                     Vector3 mousePos = GetMouseWorldPosition();
@@ -311,6 +311,8 @@ public class PinkPlayerController : ParentPlayerController
     {
         if (isCharging || currentState == PinkPlayerState.Death)
             return;
+        if (currentState == PinkPlayerState.tackle)
+            return;
 
         isCharging = true;
         chargeLevel = 1;
@@ -320,8 +322,8 @@ public class PinkPlayerController : ParentPlayerController
         bool isRight = mousePos.x > transform.position.x;
 
         animator.SetBool("Right", isRight);
-        animator.SetBool("isCharging", true); 
-        animator.SetInteger("chargeLevel", chargeLevel);
+        //animator.SetBool("isCharging", true); 
+        //animator.SetInteger("chargeLevel", chargeLevel);
 
         if (PhotonNetwork.IsConnected)
         {
@@ -337,6 +339,9 @@ public class PinkPlayerController : ParentPlayerController
     public void ReleaseCharge()
     {
         if (!isCharging || currentState == PinkPlayerState.Death)
+            return;
+
+        if (!(currentState == PinkPlayerState.Charge1 || currentState == PinkPlayerState.Charge2 || currentState == PinkPlayerState.Charge3))
             return;
 
         isCharging = false;
@@ -361,13 +366,13 @@ public class PinkPlayerController : ParentPlayerController
         switch (level)
         {
             case 1:
-                nextState = PinkPlayerState.Charge1;
+                currentState = PinkPlayerState.Charge1;
                 break;
             case 2:
-                nextState = PinkPlayerState.Charge2;
+                currentState = PinkPlayerState.Charge2;
                 break;
             case 3:
-                nextState = PinkPlayerState.Charge3;
+                currentState = PinkPlayerState.Charge3;
                 break;
         }
 

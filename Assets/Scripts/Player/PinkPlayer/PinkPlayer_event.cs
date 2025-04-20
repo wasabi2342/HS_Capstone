@@ -107,12 +107,15 @@ public class PinkPlayercontroller_event : Playercontroller_event
                 OnMouseREvent?.Invoke();
                 return;
             }
+            else if (!inBasic)
+            {
+                pinkPlayerController.StartCharge();
+            }
         }
 
         // 2) 그 외에는 Hold 차지 공격
         if (context.started)
         {
-            pinkPlayerController.StartCharge();
         }
         else if (context.canceled)
         {

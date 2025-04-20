@@ -47,6 +47,11 @@ public class PinkPlayer_Idle : StateMachineBehaviour
                 pinkPlayerController.SetBoolParameter("basicattack", true);
                 pinkPlayerController.currentState = PinkPlayerState.BasicAttack;
                 break;
+            case PinkPlayerState.Charge1:
+                animator.SetBool("isCharging", true);
+                animator.SetInteger("chargeLevel", 1);
+                pinkPlayerController.currentState = PinkPlayerState.Charge1;
+                break;
             //case PinkPlayerState.Guard:
             //    animator.SetBool("guard", true);
             //    pinkPlayerController.SetBoolParameter("guard", true);
