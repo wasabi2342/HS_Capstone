@@ -90,25 +90,26 @@ public class PinkPlayercontroller_event : Playercontroller_event
     // 마우스 오른쪽 클릭 (핑크 플레이어 우클릭)
     public void OnMouse_R(InputAction.CallbackContext context)
     {
-        // 홀드하는 차지
         if (isInVillage) return;
 
         if (context.started)
         {
-            pinkPlayerController.StartCharge();
-            
+            // 1) 평타( BasicAttack ) 중이면 HandleCharge
+            if (pinkPlayerController.currentState == PinkPlayerState.BasicAttack)
+            {
+                pinkPlayerController.HandleCharge();
+                OnMouseREvent?.Invoke();
+            }
+            // 2) 그 외에는 차지 시작
+            else
+            {
+                pinkPlayerController.StartCharge();
+            }
         }
         else if (context.canceled)
         {
+            // 차지 해제
             pinkPlayerController.ReleaseCharge();
-        }
-
-        // 평타 중 우클릭 
-
-        if (context.performed)
-        {
-            pinkPlayerController.HandleCharge();
-            OnMouseREvent?.Invoke();
         }
     }
 
