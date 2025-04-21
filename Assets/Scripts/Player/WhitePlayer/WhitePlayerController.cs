@@ -72,6 +72,12 @@ public class WhitePlayerController : ParentPlayerController
             return;
         }
 
+        //UpdateCenterPoint();
+        //HandleMovement();
+    }
+
+    private void FixedUpdate()
+    {
         UpdateCenterPoint();
         HandleMovement();
     }
