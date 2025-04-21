@@ -160,7 +160,7 @@ public class WhitePlayerController : ParentPlayerController
         {
             Vector3 moveDir;
             moveDir = (Mathf.Abs(v) > 0.01f) ? new Vector3(h, 0, v).normalized : new Vector3(h, 0, 0).normalized;
-            transform.Translate(moveDir * runTimeData.moveSpeed * Time.deltaTime, Space.World);
+            transform.Translate(moveDir * runTimeData.moveSpeed * Time.fixedDeltaTime, Space.World);
         }
 
         if (animator != null)
