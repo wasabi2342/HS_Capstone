@@ -23,6 +23,10 @@ public class PinkPlayerController : ParentPlayerController
     public Transform[] centerPoints = new Transform[8];
     private int currentDirectionIndex = 0;
 
+    [Header("서번트 소환 설정")]
+    [SerializeField] private GameObject servantPrefab;             
+    [SerializeField] private Vector3 servantSpawnOffset = new Vector3(0f, 0.5f, 0f);
+
     // 이동 입력 및 상태
     private Vector2 moveInput;
     public PinkPlayerState currentState = PinkPlayerState.Idle;
@@ -405,10 +409,26 @@ public class PinkPlayerController : ParentPlayerController
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                    // 소환수 소환 RPC 호출
+                    photonView.RPC("RPC_SpawnServant", RpcTarget.All);
                 }
             }
 
         }
+    }
+
+    // 실제 소환수 소환 로직 분리
+    private void SpawnServant()
+    {
+        Vector3 spawnPos = transform.position + servantSpawnOffset;
+        Instantiate(servantPrefab, spawnPos, Quaternion.identity);
+    }
+
+    // PUN RPC: 모든 클라이언트에서 호출되어 로컬 Instantiate 수행
+    [PunRPC]
+    private void RPC_SpawnServant()
+    {
+        SpawnServant();
     }
 
     // 궁극기 공격 
