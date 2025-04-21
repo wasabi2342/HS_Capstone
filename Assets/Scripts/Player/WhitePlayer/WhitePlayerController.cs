@@ -63,6 +63,24 @@ public class WhitePlayerController : ParentPlayerController
 
     private void Update()
     {
+        //if (currentState == WhitePlayerState.Death)
+        //{
+        //    if (Input.GetKeyDown(KeyCode.X))
+        //    {
+        //        RoomManager.Instance.SwitchCameraToNextPlayer();
+        //    }
+        //    return;
+        //}
+
+        //UpdateCenterPoint();
+        //HandleMovement();
+    }
+
+    private void FixedUpdate()
+    {
+        if (!photonView.IsMine)
+            return;
+
         if (currentState == WhitePlayerState.Death)
         {
             if (Input.GetKeyDown(KeyCode.X))
@@ -72,12 +90,6 @@ public class WhitePlayerController : ParentPlayerController
             return;
         }
 
-        //UpdateCenterPoint();
-        //HandleMovement();
-    }
-
-    private void FixedUpdate()
-    {
         UpdateCenterPoint();
         HandleMovement();
     }
