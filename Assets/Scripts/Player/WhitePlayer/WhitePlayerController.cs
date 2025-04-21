@@ -246,7 +246,7 @@ public class WhitePlayerController : ParentPlayerController
                 }
                 return;
             }
-            else if (nextState < WhitePlayerState.BasicAttack)
+            else if (nextState < WhitePlayerState.BasicAttack && cooldownCheckers[(int)Skills.Mouse_L].CanUse())
             {
 
                 Vector3 mousePos = GetMouseWorldPosition();
@@ -258,7 +258,7 @@ public class WhitePlayerController : ParentPlayerController
                 nextState = WhitePlayerState.BasicAttack;
             }
 
-            if (currentState == WhitePlayerState.BasicAttack)
+            if (currentState == WhitePlayerState.BasicAttack && cooldownCheckers[(int)Skills.Mouse_L].CanUse())
             {
 
                 Vector3 mousePos = GetMouseWorldPosition();
