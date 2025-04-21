@@ -82,6 +82,12 @@ public class WhitePlayercontroller_event : Playercontroller_event
         {
             whitePlayerController.HandleNormalAttack();
             OnMouseLEvent?.Invoke();
+
+            // Katana_slash 사운드 재생
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayCharacterSFX("Character-sword", "Katana_slash", whitePlayerController.transform.position);
+            }
         }
     }
 
