@@ -98,23 +98,39 @@ public class UIIngameMainPanel : UIBase
 
         foreach (var keyValuePair in contentPairs)
         {
-            playerController = RoomManager.Instance.players[keyValuePair.Key].GetComponent<ParentPlayerController>();
-            if (playerController != null)
+            if (RoomManager.Instance.players.ContainsKey(keyValuePair.Key))
             {
-                playerController.OnHealthChanged.RemoveListener(keyValuePair.Value.UpdateHPImage);
+                playerController = RoomManager.Instance.players[keyValuePair.Key].GetComponent<ParentPlayerController>();
+                if (playerController != null)
+                {
+                    playerController.OnHealthChanged.RemoveListener(keyValuePair.Value.UpdateHPImage);
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"Key {keyValuePair.Key} not found in players dictionary.");
             }
         }
 
-        playerController = RoomManager.Instance.players[PhotonNetwork.LocalPlayer.ActorNumber].GetComponent<ParentPlayerController>();
-        if (playerController != null)
+        int localActorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+
+        if (RoomManager.Instance.players.ContainsKey(localActorNumber))
         {
-            playerController.OnHealthChanged.RemoveListener(UpdateHPImage);
-            playerController.ShiftCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.shift].StartUpdateSkillCooldown);
-            playerController.UltimateCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.r].StartUpdateSkillCooldown);
-            playerController.MouseRightSkillCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.mouseR].StartUpdateSkillCooldown);
-            playerController.OnDashCooldownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.space].StartUpdateSkillCooldown);
-            playerController.AttackStackUpdate.RemoveListener(UpdateMouseLeftStack);
-            playerController.SkillOutlineUpdate.RemoveAllListeners();
+            playerController = RoomManager.Instance.players[localActorNumber].GetComponent<ParentPlayerController>();
+            if (playerController != null)
+            {
+                playerController.OnHealthChanged.RemoveListener(UpdateHPImage);
+                playerController.ShiftCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.shift].StartUpdateSkillCooldown);
+                playerController.UltimateCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.r].StartUpdateSkillCooldown);
+                playerController.MouseRightSkillCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.mouseR].StartUpdateSkillCooldown);
+                playerController.OnDashCooldownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.space].StartUpdateSkillCooldown);
+                playerController.AttackStackUpdate.RemoveListener(UpdateMouseLeftStack);
+                playerController.SkillOutlineUpdate.RemoveAllListeners();
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"Local player with ActorNumber {localActorNumber} not found in players dictionary.");
         }
     }
 
