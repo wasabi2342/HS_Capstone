@@ -8,7 +8,7 @@ public class WhitePlayer_Idle : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if(whitePlayerController == null)
+        if (whitePlayerController == null)
             whitePlayerController = animator.GetComponent<WhitePlayerController>();
         whitePlayerController.currentState = WhitePlayerState.Idle;
         animator.SetBool("Pre-Attack", false);
@@ -16,7 +16,7 @@ public class WhitePlayer_Idle : StateMachineBehaviour
         animator.SetBool("CancleState", false);
         animator.SetBool("FreeState", false);
         animator.SetBool("run", false);
-        animator.SetBool("revive", false); 
+        animator.SetBool("revive", false);
         animator.SetInteger("CounterStack", 0);
     }
 
@@ -25,14 +25,17 @@ public class WhitePlayer_Idle : StateMachineBehaviour
     {
         if (whitePlayerController == null)
             whitePlayerController = animator.GetComponent<WhitePlayerController>();
-        if(photonView == null)
+        if (photonView == null)
             photonView = animator.GetComponent<PhotonView>();
-        if(PhotonNetwork.IsConnected && !photonView.IsMine)
+        if (PhotonNetwork.IsConnected && !photonView.IsMine)
             return;
-        switch (whitePlayerController.nextState)
+
+        var state = whitePlayerController.nextState;
+
+        if (state == WhitePlayerState.Idle) return;
+
+        switch (state)
         {
-            case WhitePlayerState.Idle:
-                break;
             case WhitePlayerState.Run:
                 animator.SetBool("run", true);
                 whitePlayerController.currentState = WhitePlayerState.Run;
@@ -42,41 +45,43 @@ public class WhitePlayer_Idle : StateMachineBehaviour
                 Debug.Log(whitePlayerController.attackStack);
                 animator.SetInteger("AttackStack", whitePlayerController.attackStack);
                 whitePlayerController.AttackStackUpdate?.Invoke(whitePlayerController.attackStack);
-                animator.SetBool("basicattack",true);
+                animator.SetBool("basicattack", true);
                 whitePlayerController.currentState = WhitePlayerState.BasicAttack;
-                if (!PhotonNetwork.IsConnected)
-                    return;
-                whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
-                whitePlayerController.SetBoolParameter("basicattack", true);
+
+                if (PhotonNetwork.IsConnected)
+                {
+                    whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
+                    whitePlayerController.SetBoolParameter("basicattack", true);
+                }
                 break;
             case WhitePlayerState.Guard:
                 animator.SetBool("guard", true);
                 whitePlayerController.currentState = WhitePlayerState.Guard;
-                if (!PhotonNetwork.IsConnected)
-                    return;
-                whitePlayerController.SetBoolParameter("guard", true);
+                if (PhotonNetwork.IsConnected)
+                    whitePlayerController.SetBoolParameter("guard", true);
                 break;
             case WhitePlayerState.Skill:
                 animator.SetBool("skill", true);
                 whitePlayerController.currentState = WhitePlayerState.Skill;
-                if (!PhotonNetwork.IsConnected)
-                    return;
-                whitePlayerController.SetBoolParameter("skill", true);
+                if (PhotonNetwork.IsConnected)
+                    whitePlayerController.SetBoolParameter("skill", true);
                 break;
             case WhitePlayerState.Ultimate:
                 animator.SetBool("ultimate", true);
                 whitePlayerController.currentState = WhitePlayerState.Ultimate;
-                if (!PhotonNetwork.IsConnected)
-                    return;
-                whitePlayerController.SetBoolParameter("ultimate", true);
+                if (PhotonNetwork.IsConnected)
+                    whitePlayerController.SetBoolParameter("ultimate", true);
                 break;
             case WhitePlayerState.Dash:
                 animator.SetTrigger("dash");
                 whitePlayerController.currentState = WhitePlayerState.Dash;
                 break;
-
         }
+
+        // 상태 처리 후 Idle로 리셋해서 중복 처리 방지
+        whitePlayerController.nextState = WhitePlayerState.Idle;
     }
+
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -85,7 +90,7 @@ public class WhitePlayer_Idle : StateMachineBehaviour
             whitePlayerController = animator.GetComponent<WhitePlayerController>();
 
         whitePlayerController.nextState = WhitePlayerState.Idle;
-        animator.SetBool("Pre-Attack", false); 
+        animator.SetBool("Pre-Attack", false);
         animator.SetBool("Pre-Input", false);
     }
 
