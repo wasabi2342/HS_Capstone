@@ -36,7 +36,7 @@ public class PinkPlayercontroller_event : Playercontroller_event
         InputManager.Instance.PlayerInput.actions["SpecialAttack"].canceled += ctx => OnMouse_R(ctx);
         InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed += ctx => OnMouse_R(ctx);
         InputManager.Instance.PlayerInput.actions["SkillAttack"].performed += ctx => OnKeyboard_Shift_L(ctx);
-        InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed += ctx => OnKeyboard_R(ctx);
+        InputManager.Instance.PlayerInput.actions["UltimateAttack"].started += ctx => OnKeyboard_R(ctx);
 
     }
     private void Awake()
@@ -137,11 +137,9 @@ public class PinkPlayercontroller_event : Playercontroller_event
     // R Å° (±Ã±Ø±â)
     public void OnKeyboard_R(InputAction.CallbackContext context)
     {
-        if (context.performed && !isInVillage)
-        {
-            pinkPlayerController.HandleUltimateAttack();
-            OnKeyboardREvent?.Invoke();
-        }
+        pinkPlayerController.OnUltimateInput(context);
+        OnKeyboardREvent?.Invoke();
+        
     }
 
     // Space¹Ù (È¸ÇÇ)
@@ -171,6 +169,6 @@ public class PinkPlayercontroller_event : Playercontroller_event
         InputManager.Instance.PlayerInput.actions["SpecialAttack"].canceled += ctx => OnMouse_R(ctx);
         InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed -= ctx => OnMouse_R(ctx);
         InputManager.Instance.PlayerInput.actions["SkillAttack"].performed -= ctx => OnKeyboard_Shift_L(ctx);
-        InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed -= ctx => OnKeyboard_R(ctx);
+        InputManager.Instance.PlayerInput.actions["UltimateAttack"].started -= ctx => OnKeyboard_R(ctx);
     }
 }
