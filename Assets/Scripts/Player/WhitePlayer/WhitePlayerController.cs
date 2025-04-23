@@ -412,7 +412,8 @@ public class WhitePlayerController : ParentPlayerController
         if (!photonView.IsMine && PhotonNetwork.IsConnected)
             return;
 
-        transform.Translate((GetMouseWorldPosition() - transform.position).normalized * value);
+        //transform.Translate((GetMouseWorldPosition() - transform.position).normalized * value);
+        rb.MovePosition(rb.position + ((GetMouseWorldPosition() - transform.position).normalized * value));
     }
 
     private Vector3 GetMouseWorldPosition()
@@ -691,7 +692,9 @@ public class WhitePlayerController : ParentPlayerController
         if (!photonView.IsMine && PhotonNetwork.IsConnected)
             return;
 
-        transform.position += new Vector3(distance, 0, 0);
+        //transform.position += new Vector3(distance, 0, 0);
+        Vector3 targetPosition = rb.position + new Vector3(distance, 0, 0);
+        rb.MovePosition(targetPosition);
     }
 
     public void OnAttackAllowNextInput()
