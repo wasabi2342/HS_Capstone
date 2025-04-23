@@ -43,6 +43,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     protected CharacterStats characterBaseStats;
     protected PlayerRunTimeData runTimeData;
 
+    protected Rigidbody rb;
+
     // ½Çµå
     protected List<Shield> shields = new List<Shield>();
     private readonly float maxShield = 100f;
@@ -81,6 +83,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
 
         playerBlessing = GetComponent<PlayerBlessing>();
+
+        rb = GetComponent<Rigidbody>();
 
         animator = GetComponent<Animator>();
         if (animator == null)

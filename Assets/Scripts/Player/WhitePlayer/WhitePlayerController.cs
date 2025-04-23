@@ -69,7 +69,7 @@ public class WhitePlayerController : ParentPlayerController
         //}
 
         //UpdateCenterPoint();
-        //HandleMovement();
+        //Handle    Movement();
     }
 
     private void FixedUpdate()
@@ -156,7 +156,7 @@ public class WhitePlayerController : ParentPlayerController
         {
             Vector3 moveDir;
             moveDir = (Mathf.Abs(v) > 0.01f) ? new Vector3(h, 0, v).normalized : new Vector3(h, 0, 0).normalized;
-            transform.Translate(moveDir * runTimeData.moveSpeed * Time.fixedDeltaTime, Space.World);
+            rb.MovePosition(rb.position + moveDir * runTimeData.moveSpeed * Time.fixedDeltaTime);
         }
 
         if (animator != null)
