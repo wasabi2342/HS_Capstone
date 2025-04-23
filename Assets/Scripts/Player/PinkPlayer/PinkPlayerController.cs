@@ -434,29 +434,6 @@ public class PinkPlayerController : ParentPlayerController
     private int servantCount = 0;
     private const int maxUltimateStacks = 8;
 
-    //// ±Ã±Ø±â °ø°Ý 
-    //public void HandleUltimateAttack()
-    //{
-    //    if (currentState != PinkPlayerState.Death)
-    //    {
-    //        if (cooldownCheckers[(int)Skills.R].CanUse() && nextState < PinkPlayerState.Ultimate)
-    //        {
-
-    //            nextState = PinkPlayerState.Ultimate;
-    //            animator.SetBool("Pre-Attack", true);
-    //            animator.SetBool("Pre-Input", true);
-    //            Vector3 mousePos = GetMouseWorldPosition();
-    //            animator.SetBool("Right", mousePos.x > transform.position.x);
-
-    //            if (PhotonNetwork.IsConnected)
-    //            {
-    //                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
-    //                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-    //                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-    //            }
-    //        }
-    //    }
-    //}
 
     // ±Ã±Ø±â
 
