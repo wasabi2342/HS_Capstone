@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 using Unity.VisualScripting;
 using System;
 
-public enum PinkPlayerState { Idle, Run, tackle ,BasicAttack, Hit, Dash, Skill, Ultimate, Charge1, Charge2, Charge3, Stun, Revive, Death }
+public enum PinkPlayerState { Idle, Run, tackle ,BasicAttack, Hit, Dash, Skill, Ultimate, R_Idle, R_hit1, R_hit2, R_hit3, R_finish, Charge1, Charge2, Charge3, Stun, Revive, Death }
 
 public class PinkPlayerController : ParentPlayerController
 {
@@ -22,6 +22,10 @@ public class PinkPlayerController : ParentPlayerController
     [Tooltip("8방향 CenterPoint 배열 (순서: 0=위, 1=우상, 2=오른쪽, 3=우하, 4=아래, 5=좌하, 6=왼쪽, 7=좌상)")]
     public Transform[] centerPoints = new Transform[8];
     private int currentDirectionIndex = 0;
+
+    [Header("서번트 소환 설정")]
+    [SerializeField] private GameObject servantPrefab;             
+    [SerializeField] private Vector3 servantSpawnOffset = new Vector3(0f, 0.5f, 0f);
 
     // 이동 입력 및 상태
     private Vector2 moveInput;
@@ -215,11 +219,53 @@ public class PinkPlayerController : ParentPlayerController
     public void HandleNormalAttack()
     {
 
-        if (currentState != PinkPlayerState.Death)
+        if (currentState != PinkPlayerState.Death || currentState == PinkPlayerState.Stun)
         {
-            
 
-            if (nextState < PinkPlayerState.BasicAttack)
+            if (currentState == PinkPlayerState.R_Idle)
+            {
+                Vector3 mousePos = GetMouseWorldPosition();
+                animator.SetBool("Right", mousePos.x > transform.position.x);
+                animator.SetBool("basicattack", true);
+                if (PhotonNetwork.IsConnected)
+                {
+                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
+                }
+                //photonView.RPC("PlayAnimation", RpcTarget.All, "basicattack");
+                currentState = PinkPlayerState.R_hit1;
+                return;
+            }
+
+            else if (currentState == PinkPlayerState.R_hit1)
+            {
+                //animator.SetBool("basicattack", true);
+                //Vector3 mousePos = GetMouseWorldPosition();
+                //animator.SetBool("Right", mousePos.x > transform.position.x);
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                //}
+                //currentState = PinkPlayerState.R_hit2;
+                return;
+            }
+
+            //else if (currentState == PinkPlayerState.R_hit1 && animator.GetInteger("attackStack") > 2)
+            //{
+            //    animator.SetBool("basicattack", true);
+            //    Vector3 mousePos = GetMouseWorldPosition();
+            //    animator.SetBool("Right", mousePos.x > transform.position.x);
+            //    if (PhotonNetwork.IsConnected)
+            //    {
+            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
+            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+            //    }
+            //    currentState = PinkPlayerState.R_hit3;
+            //    return;
+            //}
+
+            if (nextState == PinkPlayerState.Idle)
             {
 
                 Vector3 mousePos = GetMouseWorldPosition();
@@ -228,6 +274,7 @@ public class PinkPlayerController : ParentPlayerController
                 {
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
                 }
+                currentState = PinkPlayerState.BasicAttack;
                 nextState = PinkPlayerState.BasicAttack;
             }
 
@@ -274,10 +321,13 @@ public class PinkPlayerController : ParentPlayerController
     {
         if (currentState != PinkPlayerState.Death)
         {
-            if (currentState == PinkPlayerState.BasicAttack && animator.GetBool("CancleState"))
+            if (currentState == PinkPlayerState.BasicAttack && animator.GetBool("CancleState2"))
             {
+
                
-                    animator.SetBool("tackle", true);
+                currentState = PinkPlayerState.tackle;
+
+                animator.SetBool("tackle", true);
                     Vector3 mousePos = GetMouseWorldPosition();
                     animator.SetBool("Right", mousePos.x > transform.position.x);
 
@@ -307,6 +357,12 @@ public class PinkPlayerController : ParentPlayerController
     {
         if (isCharging || currentState == PinkPlayerState.Death)
             return;
+        if (currentState == PinkPlayerState.tackle)
+            return;
+        if (currentState == PinkPlayerState.Charge1 || currentState == PinkPlayerState.Charge2 || currentState == PinkPlayerState.Charge3)
+            return;
+        if (nextState > PinkPlayerState.Charge1)
+            return;
 
         isCharging = true;
         chargeLevel = 1;
@@ -316,8 +372,8 @@ public class PinkPlayerController : ParentPlayerController
         bool isRight = mousePos.x > transform.position.x;
 
         animator.SetBool("Right", isRight);
-        animator.SetBool("isCharging", true); 
-        animator.SetInteger("chargeLevel", chargeLevel);
+        //animator.SetBool("isCharging", true); 
+        //animator.SetInteger("chargeLevel", chargeLevel);
 
         if (PhotonNetwork.IsConnected)
         {
@@ -333,6 +389,9 @@ public class PinkPlayerController : ParentPlayerController
     public void ReleaseCharge()
     {
         if (!isCharging || currentState == PinkPlayerState.Death)
+            return;
+
+        if (!(currentState == PinkPlayerState.Charge1 || currentState == PinkPlayerState.Charge2 || currentState == PinkPlayerState.Charge3))
             return;
 
         isCharging = false;
@@ -357,13 +416,13 @@ public class PinkPlayerController : ParentPlayerController
         switch (level)
         {
             case 1:
-                nextState = PinkPlayerState.Charge1;
+                currentState = PinkPlayerState.Charge1;
                 break;
             case 2:
-                nextState = PinkPlayerState.Charge2;
+                currentState = PinkPlayerState.Charge2;
                 break;
             case 3:
-                nextState = PinkPlayerState.Charge3;
+                currentState = PinkPlayerState.Charge3;
                 break;
         }
 
@@ -392,33 +451,118 @@ public class PinkPlayerController : ParentPlayerController
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                    // 소환수 소환 RPC 호출
+                    photonView.RPC("RPC_SpawnServant", RpcTarget.All);
                 }
             }
 
         }
     }
 
-    // 궁극기 공격 
-    public void HandleUltimateAttack()
+    // 실제 소환수 소환 로직 분리
+    private void SpawnServant()
     {
-        if (currentState != PinkPlayerState.Death)
+        Vector3 spawnPos = transform.position + servantSpawnOffset;
+        Instantiate(servantPrefab, spawnPos, Quaternion.identity);
+    }
+
+    // PUN RPC: 모든 클라이언트에서 호출되어 로컬 Instantiate 수행
+    [PunRPC]
+    private void RPC_SpawnServant()
+    {
+        SpawnServant();
+    }
+
+    private int servantCount = 0;
+    private const int maxUltimateStacks = 8;
+
+
+    // 궁극기
+
+    /// <summary>
+    /// R 키 입력이 들어왔을 때,
+    /// 현재 상태에 따라 궁극기 시작 or 마지막 일격 실행
+    /// </summary>
+    public void OnUltimateInput(InputAction.CallbackContext context)
+    {
+        if (animator == null || currentState == PinkPlayerState.Death)
+            return;
+        // 2) 키가 눌린 순간(started)만
+        if (context.started)
         {
-            if (cooldownCheckers[(int)Skills.R].CanUse() && nextState < PinkPlayerState.Ultimate)
-            {
+            R_attackStack = 0;
+            currentState = PinkPlayerState.R_Idle;
+            // R_idle 애니메이션 진입용 Bool/Trigger
+            animator.SetBool("ultimate", true);
+        }
+    }
 
-                nextState = PinkPlayerState.Ultimate;
-                animator.SetBool("Pre-Attack", true);
-                animator.SetBool("Pre-Input", true);
-                Vector3 mousePos = GetMouseWorldPosition();
-                animator.SetBool("Right", mousePos.x > transform.position.x);
+    // 궁극기 시전 시작
+    public void HandleUltimateStart()
+    {
+        if (currentState == PinkPlayerState.Death || !cooldownCheckers[(int)Skills.R].CanUse())
+            return;
 
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                }
-            }
+        nextState = PinkPlayerState.Ultimate;
+        animator.SetBool("Pre-Attack", true);
+        animator.SetBool("Pre-Input", true);
+        bool isRight = GetMouseWorldPosition().x > transform.position.x;
+        animator.SetBool("Right", isRight);
+
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", isRight);
+        }
+    }
+
+    // 궁극기 지속시간이 다 되거나 R을 다시 누를 때 호출
+    public void HandleUltimateEndOrFinal()
+    {
+        // 애니메이터에서 마지막 일격(FinalStrike) 상태로 전이
+        currentState = PinkPlayerState.Ultimate;
+        animator.SetTrigger("FinalStrike");
+        animator.SetTrigger("FinalStrike");
+        if (PhotonNetwork.IsConnected)
+            photonView.RPC("PlayAnimation", RpcTarget.Others, "FinalStrike");
+    }
+
+    [PunRPC]
+    public void RPC_SpawnServant_Stack()
+    {
+        SpawnServant();
+        // 스택 갱신
+        servantCount = Mathf.Min(servantCount + 1, maxUltimateStacks);
+        Debug.Log($"서번트 소환! 현재 스택: {servantCount}");
+    }
+
+    public int R_attackStack;
+
+    // 애니메이션 이벤트로 평타 스택 설정해주기
+    public void OnAttackStack()
+    {
+        //if (currentState != PinkPlayerState.BasicAttack) return;
+
+        R_attackStack++;
+        Debug.Log(R_attackStack);
+        animator.SetInteger("R_attackStack", R_attackStack);
+        AttackStackUpdate?.Invoke(R_attackStack);
+        Debug.Log($"평타 스택 설정: {R_attackStack}");
+    }
+
+    // 쉴드 관련 이벤트로 호출
+    public void OnUltimateCastComplete()
+    {
+        int stacks = servantCount;
+        float totalShield = 30f * stacks;
+        float totalDuration = 2f * stacks;
+
+        if (stacks > 0)
+        {
+            AddShield(totalShield, totalDuration);
+            Debug.Log($"궁극기 쉴드: +{totalShield}HP, 지속 {totalDuration}s (스택 {stacks})");
+            servantCount = 0;   // 스택 초기화
         }
     }
 
@@ -512,6 +656,7 @@ public class PinkPlayerController : ParentPlayerController
 
         return Vector3.zero;
     }
+
 
     #region 스킬 이펙트 생성
 
@@ -855,28 +1000,6 @@ public class PinkPlayerController : ParentPlayerController
         AttackStackUpdate?.Invoke(attackStack);
     }
 
-    //// 가드/패링 처리
-    //public void HandleGuard()
-    //{
-    //    if (currentState != PinkPlayerState.Death)
-    //    {
-    //        if (cooldownCheckers[(int)Skills.Mouse_R].CanUse() && nextState < PinkPlayerState.Guard)
-    //        {
-
-    //            nextState = PinkPlayerState.Guard;
-    //            animator.SetBool("Pre-Attack", true);
-    //            animator.SetBool("Pre-Input", true);
-    //            Vector3 mousePos = GetMouseWorldPosition();
-    //            animator.SetBool("Right", mousePos.x > transform.position.x);
-    //            if (PhotonNetwork.IsConnected)
-    //            {
-    //                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
-    //                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-    //                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-    //            }
-    //        }
-    //    }
-    //}
 
     // 피격 및 사망 처리
     public override void TakeDamage(float damage)

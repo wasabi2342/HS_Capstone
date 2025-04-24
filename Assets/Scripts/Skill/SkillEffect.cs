@@ -84,4 +84,11 @@ public class SkillEffect : MonoBehaviourPun
     {
         triggerEvent = null;
     }
+
+    // 이펙트 값 null 값을 만들어주는 이벤트 함수
+
+    public void OnEffectEnd()
+    {
+        gameObject.SetActive(false);
+    }
 }

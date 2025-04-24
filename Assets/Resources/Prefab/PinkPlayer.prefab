@@ -282,7 +282,30 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 0
     Name: tackle
-  m_SynchronizeLayers: []
+  - Type: 4
+    SynchronizeType: 0
+    Name: CancleState2
+  - Type: 9
+    SynchronizeType: 0
+    Name: ReleaseCharge
+  - Type: 3
+    SynchronizeType: 0
+    Name: chargeLevel
+  - Type: 4
+    SynchronizeType: 0
+    Name: isCharging
+  - Type: 9
+    SynchronizeType: 0
+    Name: FinalStrike
+  - Type: 4
+    SynchronizeType: 0
+    Name: ultimateActive
+  - Type: 3
+    SynchronizeType: 0
+    Name: R_attackStack
+  m_SynchronizeLayers:
+  - SynchronizeType: 0
+    LayerIndex: 0
 --- !u!136 &6750105142244718092
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -403,6 +426,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   characterBaseStats: {fileID: 11400000, guid: 61ca03da317d77c45b67a57d535d6138, type: 2}
+  animator: {fileID: 0}
   attackStack: 0
   dashDistance: 2
   dashDoubleClickThreshold: 0.3
@@ -417,10 +441,13 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  servantPrefab: {fileID: 624602654739490362, guid: 078c9b073e78c6b4ea9ffcac1ecc7baf, type: 3}
+  servantSpawnOffset: {x: 0, y: 0, z: 0}
   currentState: 0
   nextState: 0
   physicalAtk: 0
   magicAtk: 0
+  R_attackStack: 0
 --- !u!114 &2403682794470514799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -497,7 +524,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 673988289270443858}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6728c3e99c1a84041a6c17abac602762, type: 3}
   m_Name: 

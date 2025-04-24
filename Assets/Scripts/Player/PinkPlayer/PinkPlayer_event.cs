@@ -36,7 +36,7 @@ public class PinkPlayercontroller_event : Playercontroller_event
         InputManager.Instance.PlayerInput.actions["SpecialAttack"].canceled += ctx => OnMouse_R(ctx);
         InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed += ctx => OnMouse_R(ctx);
         InputManager.Instance.PlayerInput.actions["SkillAttack"].performed += ctx => OnKeyboard_Shift_L(ctx);
-        InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed += ctx => OnKeyboard_R(ctx);
+        InputManager.Instance.PlayerInput.actions["UltimateAttack"].started += ctx => OnKeyboard_R(ctx);
 
     }
     private void Awake()
@@ -90,25 +90,36 @@ public class PinkPlayercontroller_event : Playercontroller_event
     // 마우스 오른쪽 클릭 (핑크 플레이어 우클릭)
     public void OnMouse_R(InputAction.CallbackContext context)
     {
-        // 홀드하는 차지
         if (isInVillage) return;
 
+
+        // 1) performed 단계에서만 콤보 취소(tackle) 시도
+        if (context.performed)
+        {
+            bool inBasic = pinkPlayerController.currentState == PinkPlayerState.BasicAttack;
+            // CancleState가 2일 때만
+            bool canCancel = pinkPlayerController.animator.GetBool("CancleState2");
+
+            if (inBasic && canCancel)
+            {
+                // tackle 상태로 전환
+                pinkPlayerController.HandleCharge();
+                OnMouseREvent?.Invoke();
+                return;
+            }
+            else if (!inBasic)
+            {
+                pinkPlayerController.StartCharge();
+            }
+        }
+
+        // 2) 그 외에는 Hold 차지 공격
         if (context.started)
         {
-            pinkPlayerController.StartCharge();
-            
         }
         else if (context.canceled)
         {
             pinkPlayerController.ReleaseCharge();
-        }
-
-        // 평타 중 우클릭 
-
-        if (context.performed)
-        {
-            pinkPlayerController.HandleCharge();
-            OnMouseREvent?.Invoke();
         }
     }
 
@@ -126,11 +137,9 @@ public class PinkPlayercontroller_event : Playercontroller_event
     // R 키 (궁극기)
     public void OnKeyboard_R(InputAction.CallbackContext context)
     {
-        if (context.performed && !isInVillage)
-        {
-            pinkPlayerController.HandleUltimateAttack();
-            OnKeyboardREvent?.Invoke();
-        }
+        pinkPlayerController.OnUltimateInput(context);
+        OnKeyboardREvent?.Invoke();
+        
     }
 
     // Space바 (회피)
@@ -160,6 +169,6 @@ public class PinkPlayercontroller_event : Playercontroller_event
         InputManager.Instance.PlayerInput.actions["SpecialAttack"].canceled += ctx => OnMouse_R(ctx);
         InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed -= ctx => OnMouse_R(ctx);
         InputManager.Instance.PlayerInput.actions["SkillAttack"].performed -= ctx => OnKeyboard_Shift_L(ctx);
-        InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed -= ctx => OnKeyboard_R(ctx);
+        InputManager.Instance.PlayerInput.actions["UltimateAttack"].started -= ctx => OnKeyboard_R(ctx);
     }
 }

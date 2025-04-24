@@ -27,6 +27,7 @@ public class InitBool : StateMachineBehaviour
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.SetBool(parameter, boolValue);
+        Debug.Log(parameter + animator.GetBool(parameter));
         if (parentPlayerController == null)
         {
             parentPlayerController = animator.GetComponent<ParentPlayerController>();
