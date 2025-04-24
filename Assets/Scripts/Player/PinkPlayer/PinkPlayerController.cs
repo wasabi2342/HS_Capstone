@@ -237,19 +237,19 @@ public class PinkPlayerController : ParentPlayerController
                 return;
             }
 
-            //else if (currentState == PinkPlayerState.R_hit1 && animator.GetInteger("attackStack") > 1)
-            //{
-            //    animator.SetBool("basicattack", true);
-            //    Vector3 mousePos = GetMouseWorldPosition();
-            //    animator.SetBool("Right", mousePos.x > transform.position.x);
-            //    if (PhotonNetwork.IsConnected)
-            //    {
-            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
-            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-            //    }
-            //    currentState = PinkPlayerState.R_hit2;
-            //    return;
-            //}
+            else if (currentState == PinkPlayerState.R_hit1)
+            {
+                //animator.SetBool("basicattack", true);
+                //Vector3 mousePos = GetMouseWorldPosition();
+                //animator.SetBool("Right", mousePos.x > transform.position.x);
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                //}
+                //currentState = PinkPlayerState.R_hit2;
+                return;
+            }
 
             //else if (currentState == PinkPlayerState.R_hit1 && animator.GetInteger("attackStack") > 2)
             //{
@@ -490,6 +490,7 @@ public class PinkPlayerController : ParentPlayerController
         // 2) 키가 눌린 순간(started)만
         if (context.started)
         {
+            R_attackStack = 0;
             currentState = PinkPlayerState.R_Idle;
             // R_idle 애니메이션 진입용 Bool/Trigger
             animator.SetBool("ultimate", true);
@@ -536,14 +537,18 @@ public class PinkPlayerController : ParentPlayerController
         Debug.Log($"서번트 소환! 현재 스택: {servantCount}");
     }
 
+    public int R_attackStack;
+
     // 애니메이션 이벤트로 평타 스택 설정해주기
-    public void OnAttackStack(int stack)
+    public void OnAttackStack()
     {
         if (currentState != PinkPlayerState.BasicAttack) return;
 
-        attackStack = stack;
-        AttackStackUpdate?.Invoke(attackStack);
-        Debug.Log($"평타 스택 설정: {attackStack}");
+        R_attackStack++;
+        Debug.Log(R_attackStack);
+        animator.SetInteger("R_attackStack", R_attackStack);
+        AttackStackUpdate?.Invoke(R_attackStack);
+        Debug.Log($"평타 스택 설정: {R_attackStack}");
     }
 
     // 쉴드 관련 이벤트로 호출
