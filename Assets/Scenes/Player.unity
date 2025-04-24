@@ -1554,6 +1554,7 @@ MonoBehaviour:
   characterBaseStats: {fileID: 11400000, guid: 61ca03da317d77c45b67a57d535d6138, type: 2}
   animator: {fileID: 0}
   attackStack: 0
+  damageBuff: 1
 --- !u!1001 &2002596588356340426
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1741,6 +1742,67 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f6ea7a56633cac841b8b86bd805c780e, type: 3}
+--- !u!1001 &4302665491953714928
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1039647777565874462, guid: 55e09138915a1934c8526f36bb198058, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1039647777565874462, guid: 55e09138915a1934c8526f36bb198058, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1039647777565874462, guid: 55e09138915a1934c8526f36bb198058, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -3.69
+      objectReference: {fileID: 0}
+    - target: {fileID: 1039647777565874462, guid: 55e09138915a1934c8526f36bb198058, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1039647777565874462, guid: 55e09138915a1934c8526f36bb198058, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1039647777565874462, guid: 55e09138915a1934c8526f36bb198058, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1039647777565874462, guid: 55e09138915a1934c8526f36bb198058, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1039647777565874462, guid: 55e09138915a1934c8526f36bb198058, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1039647777565874462, guid: 55e09138915a1934c8526f36bb198058, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1039647777565874462, guid: 55e09138915a1934c8526f36bb198058, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1214417828390488408, guid: 55e09138915a1934c8526f36bb198058, type: 3}
+      propertyPath: sceneViewId
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4144302978662835280, guid: 55e09138915a1934c8526f36bb198058, type: 3}
+      propertyPath: m_Name
+      value: CoopOrBetrayNPC
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 55e09138915a1934c8526f36bb198058, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1759,3 +1821,4 @@ SceneRoots:
   - {fileID: 3883903738333318148}
   - {fileID: 670849653}
   - {fileID: 760057817}
+  - {fileID: 4302665491953714928}

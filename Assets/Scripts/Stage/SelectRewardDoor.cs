@@ -18,7 +18,7 @@ public class SelectRewardDoor : MonoBehaviourPun, IInteractable
             canInteract = false;
             // PhotonNetworkManager의 PhotonView를 사용하여 모든 클라이언트에 보상 UI를 열도록 RPC 호출
             PhotonNetworkManager.Instance.photonView.RPC("RPC_OpenRewardUIForAll", RpcTarget.All);
-            InputManager.Instance.ChangeDefaultMap("UI");
+            InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
         }
     }
 
