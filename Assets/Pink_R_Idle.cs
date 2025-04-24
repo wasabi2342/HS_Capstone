@@ -7,6 +7,7 @@ public class Pink_R_Idle : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.SetBool("ultimate", false);
+        animator.GetComponent<PinkPlayerController>().currentState = PinkPlayerState.R_Idle;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

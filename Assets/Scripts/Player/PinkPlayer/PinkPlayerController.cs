@@ -542,7 +542,7 @@ public class PinkPlayerController : ParentPlayerController
     // 애니메이션 이벤트로 평타 스택 설정해주기
     public void OnAttackStack()
     {
-        if (currentState != PinkPlayerState.BasicAttack) return;
+        //if (currentState != PinkPlayerState.BasicAttack) return;
 
         R_attackStack++;
         Debug.Log(R_attackStack);
