@@ -436,6 +436,7 @@ GameObject:
   - component: {fileID: 5970755759370503948}
   - component: {fileID: 8948592928334562595}
   - component: {fileID: 7495074585491262718}
+  - component: {fileID: 3485286042132721548}
   m_Layer: 6
   m_Name: WhitePlayer
   m_TagString: Player
@@ -561,6 +562,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 4953368423216620942}
   - {fileID: 5970755759370503948}
+  - {fileID: 3485286042132721548}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -571,7 +573,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4131734313779836671}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
@@ -710,70 +712,70 @@ MonoBehaviour:
     SynchronizeType: 2
     Name: moveX
   - Type: 3
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: AttackStack
   - Type: 9
-    SynchronizeType: 1
+    SynchronizeType: 2
     Name: die
   - Type: 9
-    SynchronizeType: 1
+    SynchronizeType: 2
     Name: hit
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: guard
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: parry
   - Type: 9
-    SynchronizeType: 1
+    SynchronizeType: 2
     Name: dash
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: ultimate
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: basicattack
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: skill
   - Type: 4
     SynchronizeType: 2
     Name: run
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Pre-Attack
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: FreeState
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: CancleState
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Pre-Input
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: MouseX
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Right
   - Type: 9
-    SynchronizeType: 1
+    SynchronizeType: 2
     Name: stun
   - Type: 9
-    SynchronizeType: 1
+    SynchronizeType: 2
     Name: revive
   - Type: 3
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: mouseRightBlessing
   - Type: 1
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: moveY
   - Type: 3
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: CounterStack
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Counter
   m_SynchronizeLayers:
   - SynchronizeType: 2
@@ -826,8 +828,41 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 122
+  m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &3485286042132721548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4131734313779836671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8efc6b1d64977384eb3405357896c656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PositionModel:
+    SynchronizeEnabled: 1
+    TeleportEnabled: 1
+    TeleportIfDistanceGreaterThan: 5
+    InterpolateOption: 4
+    InterpolateMoveTowardsSpeed: 30
+    InterpolateLerpSpeed: 15
+    ExtrapolateOption: 0
+    ExtrapolateSpeed: 1
+    ExtrapolateIncludingRoundTripTime: 1
+    ExtrapolateNumberOfStoredPositions: 1
+  m_RotationModel:
+    SynchronizeEnabled: 0
+    InterpolateOption: 1
+    InterpolateRotateTowardsSpeed: 180
+    InterpolateLerpSpeed: 5
+  m_ScaleModel:
+    SynchronizeEnabled: 0
+    InterpolateOption: 0
+    InterpolateMoveTowardsSpeed: 1
+    InterpolateLerpSpeed: 0
 --- !u!1 &4855534633877809112
 GameObject:
   m_ObjectHideFlags: 0
