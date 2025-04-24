@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 using Unity.VisualScripting;
 using System;
 
-public enum PinkPlayerState { Idle, Run, tackle ,BasicAttack, Hit, Dash, Skill, Ultimate, UltimateIdle, Charge1, Charge2, Charge3, Stun, Revive, Death }
+public enum PinkPlayerState { Idle, Run, tackle ,BasicAttack, Hit, Dash, Skill, Ultimate, R_Idle, R_hit1, R_hit2, R_hit3, R_finish, Charge1, Charge2, Charge3, Stun, Revive, Death }
 
 public class PinkPlayerController : ParentPlayerController
 {
@@ -219,9 +219,51 @@ public class PinkPlayerController : ParentPlayerController
     public void HandleNormalAttack()
     {
 
-        if (currentState != PinkPlayerState.Death)
+        if (currentState != PinkPlayerState.Death || currentState == PinkPlayerState.Stun)
         {
-            
+
+            if (currentState == PinkPlayerState.R_Idle)
+            {
+                Vector3 mousePos = GetMouseWorldPosition();
+                animator.SetBool("Right", mousePos.x > transform.position.x);
+                animator.SetBool("basicattack", true);
+                if (PhotonNetwork.IsConnected)
+                {
+                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
+                }
+                //photonView.RPC("PlayAnimation", RpcTarget.All, "basicattack");
+                currentState = PinkPlayerState.R_hit1;
+                return;
+            }
+
+            //else if (currentState == PinkPlayerState.R_hit1 && animator.GetInteger("attackStack") > 1)
+            //{
+            //    animator.SetBool("basicattack", true);
+            //    Vector3 mousePos = GetMouseWorldPosition();
+            //    animator.SetBool("Right", mousePos.x > transform.position.x);
+            //    if (PhotonNetwork.IsConnected)
+            //    {
+            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
+            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+            //    }
+            //    currentState = PinkPlayerState.R_hit2;
+            //    return;
+            //}
+
+            //else if (currentState == PinkPlayerState.R_hit1 && animator.GetInteger("attackStack") > 2)
+            //{
+            //    animator.SetBool("basicattack", true);
+            //    Vector3 mousePos = GetMouseWorldPosition();
+            //    animator.SetBool("Right", mousePos.x > transform.position.x);
+            //    if (PhotonNetwork.IsConnected)
+            //    {
+            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
+            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+            //    }
+            //    currentState = PinkPlayerState.R_hit3;
+            //    return;
+            //}
 
             if (nextState == PinkPlayerState.Idle)
             {
@@ -448,7 +490,7 @@ public class PinkPlayerController : ParentPlayerController
         // 2) 키가 눌린 순간(started)만
         if (context.started)
         {
-            currentState = PinkPlayerState.UltimateIdle;
+            currentState = PinkPlayerState.R_Idle;
             // R_idle 애니메이션 진입용 Bool/Trigger
             animator.SetBool("ultimate", true);
         }
@@ -497,6 +539,8 @@ public class PinkPlayerController : ParentPlayerController
     // 애니메이션 이벤트로 평타 스택 설정해주기
     public void OnAttackStack(int stack)
     {
+        if (currentState != PinkPlayerState.BasicAttack) return;
+
         attackStack = stack;
         AttackStackUpdate?.Invoke(attackStack);
         Debug.Log($"평타 스택 설정: {attackStack}");
