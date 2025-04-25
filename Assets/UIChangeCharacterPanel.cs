@@ -49,7 +49,7 @@ public class UIChangeCharacterPanel : UIBase
     {
         if (PhotonNetwork.InRoom)
         {
-            if (!(characterDatas[selectedCharacterIndex].name == player.GetComponent<ParentPlayerController>().ReturnNmae()))
+            if (!(characterDatas[selectedCharacterIndex].name == player.GetComponent<ParentPlayerController>().ReturnCharacterName()))
             {
                 RoomManager.Instance.CreateCharacter(characterDatas[selectedCharacterIndex].name, player.transform.position, player.transform.rotation, true);
                 PhotonNetwork.Destroy(player);
@@ -58,7 +58,7 @@ public class UIChangeCharacterPanel : UIBase
         }
         else
         {
-            if (!(characterDatas[selectedCharacterIndex].name == player.GetComponent<ParentPlayerController>().ReturnNmae()))
+            if (!(characterDatas[selectedCharacterIndex].name == player.GetComponent<ParentPlayerController>().ReturnCharacterName()))
             {
                 RoomManager.Instance.CreateCharacter(characterDatas[selectedCharacterIndex].name, player.transform.position, player.transform.rotation, true);
                 Destroy(player);
