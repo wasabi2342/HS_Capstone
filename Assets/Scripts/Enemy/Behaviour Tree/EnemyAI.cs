@@ -20,6 +20,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     public Animator animator;
     private SpriteRenderer sr;
     private DebuffController debuff;
+    public DebuffController debuffController { get => debuff; private set => debuff = value; }
     private IMonsterAttack attackStrategy;
     private BehaviorTreeRunner bt;
 
