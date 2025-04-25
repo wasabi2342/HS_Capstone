@@ -27,10 +27,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public static RoomManager Instance { get; private set; }
 
     private Dictionary<int, bool> playerInRestrictedArea = new Dictionary<int, bool>();
-
-    public bool isEnteringStage;
-
     public Dictionary<int, GameObject> players = new Dictionary<int, GameObject>();
+    public bool isEnteringStage;
 
     // 카메라 전환에서 사용
     private List<GameObject> sortedPlayers;
@@ -44,20 +42,29 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        if (Instance == null)
+        if (Instance == null || Instance.Equals(null))
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
+            return;
         }
 
         players = new Dictionary<int, GameObject>();
         int layerIdx = LayerMask.NameToLayer("Player");
         PLAYER_LAYER = layerIdx != -1 ? layerIdx : 0;
     }
-
+    public override void OnEnable() {
+        base.OnEnable();                    
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    public override void OnDisable() {
+        base.OnDisable();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
     /*
     private void Start()
     {
@@ -92,7 +99,39 @@ public class RoomManager : MonoBehaviourPunCallbacks
             CreateCharacter(defaultPlayer.name, new Vector3(0, 0, 0), Quaternion.identity, isInVillage);
         }
     }
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 1) 캐시 초기화
+        players.Clear();
+        sortedPlayers.Clear();
+        currentIndex = 0;
 
+        // 2) 새 씬에 존재하는 시네머신 카메라 찾기 (이름·태그는 프로젝트 상황에 맞게 교체)
+        playerCinemachineCamera = GameObject.Find("CM_Player")?.GetComponent<CinemachineCamera>();
+        backgroundCinemachineCamera = GameObject.Find("CM_Background")?.GetComponent<CinemachineCamera>();
+        minimapCinemachineCamera = GameObject.Find("CM_Minimap")?.GetComponent<CinemachineCamera>();
+
+        // 3) 로컬 플레이어 재생성
+        SpawnLocalPlayerAndSetupCamera();
+    }
+    private void SpawnLocalPlayerAndSetupCamera()
+    {
+        string key = PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName";
+        string prefabName = defaultPlayer.name;
+
+        if (PhotonNetwork.IsConnected &&
+            PhotonNetwork.CurrentRoom != null &&
+            PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(key, out var val) &&
+            val is string charName)
+        {
+            prefabName = charName;
+        }
+
+        CreateCharacter(prefabName,
+                        new Vector3(0, 1, 0),
+                        Quaternion.identity,
+                        isInVillage);
+    }
     public void CreateCharacter(string playerPrefabName, Vector3 pos, Quaternion quaternion, bool isInVillage)
     {
         GameObject playerInstance;
@@ -106,7 +145,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
         else
         {
-            playerInstance = Instantiate(Resources.Load<ParentPlayerController>(playerPrefabName), pos, quaternion).gameObject;
+            playerInstance = Instantiate(Resources.Load<PlayerController>(playerPrefabName), pos, quaternion).gameObject;
             players[0] = playerInstance;
         }
         playerInstance.tag = PLAYER_TAG;
@@ -164,7 +203,52 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     public GameObject ReturnLocalPlayer() =>
     PhotonNetwork.InRoom ? players[PhotonNetwork.LocalPlayer.ActorNumber] : players[0];
+    public void UpdateSortedPlayers()
+    {
+        sortedPlayers = players.OrderBy(p => p.Key == PhotonNetwork.LocalPlayer.ActorNumber ? 0 : 1)
+                               .Select(p => p.Value)
+                               .ToList();
 
+        // 현재 따라가고 있는 플레이어가 리스트에서 몇 번째인지 찾기
+        GameObject currentTarget = playerCinemachineCamera.Follow?.gameObject;
+        int newIndex = sortedPlayers.FindIndex(p => p == currentTarget);
+
+        // 유효한 값이면 currentIndex 갱신
+        if (newIndex != -1)
+            currentIndex = newIndex;
+        else
+            currentIndex = 0; // 기본적으로 첫 번째 플레이어를 바라보도록
+    }
+
+    public void AddPlayerDic(int actNum, GameObject player)
+    {
+        if (!players.ContainsKey(actNum))
+        {
+            players[actNum] = player;
+            player.tag = PLAYER_TAG;
+            SetLayerRecursively(player, PLAYER_LAYER);
+
+            UpdateSortedPlayers();
+            UIUpdate?.Invoke(actNum, player);
+        }
+    }
+    public void SwitchCameraToNextPlayer()
+    {
+        if (sortedPlayers.Count == 0) return;
+
+        // 다음 플레이어로 이동 (마지막이면 0번으로 돌아감)
+        currentIndex = (currentIndex + 1) % sortedPlayers.Count;
+
+        // 카메라 변경
+        playerCinemachineCamera.Follow = sortedPlayers[currentIndex].transform;
+        playerCinemachineCamera.LookAt = sortedPlayers[currentIndex].transform;
+
+        backgroundCinemachineCamera.Follow = sortedPlayers[currentIndex].transform;
+        backgroundCinemachineCamera.LookAt = sortedPlayers[currentIndex].transform;
+
+        minimapCinemachineCamera.Follow = sortedPlayers[currentIndex].transform;
+        minimapCinemachineCamera.LookAt = sortedPlayers[currentIndex].transform;
+    }
     public UIConfirmPanel InteractWithDungeonNPC()
     {
         var panel = UIManager.Instance.OpenPopupPanel<UIConfirmPanel>();
@@ -211,53 +295,9 @@ public class RoomManager : MonoBehaviourPunCallbacks
         return playerInRestrictedArea.ContainsValue(true);
     }
 
-    public void SwitchCameraToNextPlayer()
-    {
-        if (sortedPlayers.Count == 0) return;
 
-        // 다음 플레이어로 이동 (마지막이면 0번으로 돌아감)
-        currentIndex = (currentIndex + 1) % sortedPlayers.Count;
 
-        // 카메라 변경
-        playerCinemachineCamera.Follow = sortedPlayers[currentIndex].transform;
-        playerCinemachineCamera.LookAt = sortedPlayers[currentIndex].transform;
 
-        backgroundCinemachineCamera.Follow = sortedPlayers[currentIndex].transform;
-        backgroundCinemachineCamera.LookAt = sortedPlayers[currentIndex].transform;
-
-        minimapCinemachineCamera.Follow = sortedPlayers[currentIndex].transform;
-        minimapCinemachineCamera.LookAt = sortedPlayers[currentIndex].transform;
-    }
-
-    public void UpdateSortedPlayers()
-    {
-        sortedPlayers = players.OrderBy(p => p.Key == PhotonNetwork.LocalPlayer.ActorNumber ? 0 : 1)
-                               .Select(p => p.Value)
-                               .ToList();
-
-        // 현재 따라가고 있는 플레이어가 리스트에서 몇 번째인지 찾기
-        GameObject currentTarget = playerCinemachineCamera.Follow?.gameObject;
-        int newIndex = sortedPlayers.FindIndex(p => p == currentTarget);
-
-        // 유효한 값이면 currentIndex 갱신
-        if (newIndex != -1)
-            currentIndex = newIndex;
-        else
-            currentIndex = 0; // 기본적으로 첫 번째 플레이어를 바라보도록
-    }
-
-    public void AddPlayerDic(int actNum, GameObject player)
-    {
-        if (!players.ContainsKey(actNum))
-        {
-            players[actNum] = player;
-            player.tag = PLAYER_TAG;
-            SetLayerRecursively(player, PLAYER_LAYER);
-
-            UpdateSortedPlayers();
-            UIUpdate?.Invoke(actNum, player);
-        }
-    }
     // ────────────────────────────────
     // 유틸
     // ────────────────────────────────
