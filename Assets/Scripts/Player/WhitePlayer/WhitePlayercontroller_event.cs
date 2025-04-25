@@ -83,12 +83,10 @@ public class WhitePlayercontroller_event : Playercontroller_event
             whitePlayerController.HandleNormalAttack();
             OnMouseLEvent?.Invoke();
 
-            // Katana_slash 사운드 재생
-            if (AudioManager.Instance != null)
-            {
-                AudioManager.Instance.PlayCharacterSFX("Character-sword", "Katana_slash", whitePlayerController.transform.position);
-            }
-        }
+            // katana_slash 사운드 재생
+            AudioManager.Instance.PlayOneShot("event:/Character/Character-sword/katana_slash", transform.position);
+
+    }
     }
 
     // 마우스 오른쪽 클릭 (가드)
@@ -108,6 +106,9 @@ public class WhitePlayercontroller_event : Playercontroller_event
         {
             whitePlayerController.HandleSpecialAttack();
             OnKeyboardShiftLEvent?.Invoke();
+
+            // katana_stab 재생
+            AudioManager.Instance.PlayOneShot("event:/Character/Character-sword/katana_stab", transform.position);
         }
     }
 

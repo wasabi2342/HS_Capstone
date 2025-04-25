@@ -72,26 +72,21 @@ public class AudioManager : MonoBehaviour
     // 경로 기반 헬퍼 메서드 (폴더 구조 반영)
     public void PlayCharacterSFX(string characterType, string actionName, Vector3 position)
     {
-        PlayOneShot($"event:/Character/{characterType}/{actionName}", position);
+        PlayOneShot($"event:/Events/Character/{characterType}/{actionName}", position);
     }
 
     public void PlayMonsterSFX(string actionName, Vector3 position)
     {
-        PlayOneShot($"event:/Character/Monster/{actionName}", position);
+        PlayOneShot($"event:/Events/Character/Monster/{actionName}", position);
     }
 
     public void PlayCommonSFX(string soundName, Vector3 position)
     {
-        PlayOneShot($"event:/Character/Common/{soundName}", position);
+        PlayOneShot($"event:/Events/Character/Common/{soundName}", position);
     }
 
-    public void PlayIngameSFX(string sfxName, Vector3 position)
+    public void PlayUISFX(string sfxName, Vector3 position)
     {
-        PlayOneShot($"event:/SFX/Ingame/{sfxName}", position);
-    }
-
-    public void PlayMainSFX(string sfxName, Vector3 position)
-    {
-        PlayOneShot($"event:/SFX/Main/{sfxName}", position);
+        PlayOneShot($"event:/Events/UI/{sfxName}", position);
     }
 }
