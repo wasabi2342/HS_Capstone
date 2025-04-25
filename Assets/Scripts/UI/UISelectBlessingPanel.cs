@@ -26,9 +26,9 @@ public class UISelectBlessingPanel : UIBase
     private void PickUpBlessing()
     {
         var arr = RoomManager.Instance.ReturnLocalPlayer().GetComponent<PlayerBlessing>().ReturnSkillWithLevel();
-        if(arr == null)
+        if (arr == null)
             Debug.Log("arr 널");
-        for(int i =0; i < arr.Length; i++)
+        for (int i = 0; i < arr.Length; i++)
         {
             Debug.Log(arr[i]);
         }
@@ -119,11 +119,15 @@ public class UISelectBlessingPanel : UIBase
                     buttons[index2].interactable = false;
                     buttons[index2].transform.DOLocalRotate(new Vector3(0, 90, 0), 0.3f).OnComplete(() =>
                     {
-                        buttons[index2].GetComponent<UISelectBlessingButton>().SetEnabled();
                         buttons[index2].transform.DOLocalRotate(new Vector3(0, 0, 0), 0.3f).OnComplete(() =>
                         {
+                            UISelectBlessingButton button = buttons[index2].GetComponent<UISelectBlessingButton>();
+                            button.SetEnabled();
                             isFlipped[index2] = true;
-                            buttons[index2].image.sprite = null;
+                            //buttons[index2].image.sprite = Resources.Load<Sprite>($"Blessing/Front/{button.ReturnBlessing().skillData.Blessing_name}"); 가호 스킬 마다 카드
+                            //buttons[index2].image.sprite = Resources.Load<Sprite>($"Blessing/Front/{(Blessings)button.ReturnBlessing().skillData.Devil}"); 가호마다 카드
+                            buttons[index2].image.sprite = Resources.Load<Sprite>("Blessing/Front/Crocell");  // 임시 카드
+
                             buttons[index2].interactable = true;
                         });
                     });
@@ -136,6 +140,11 @@ public class UISelectBlessingPanel : UIBase
 
     private void SelectBleesing()
     {
+        if (selectedBlessing == null)
+        {
+            return;
+        }
+
         if (selectedBlessing.level != 0)
         {
             RoomManager.Instance.ReturnLocalPlayer().GetComponent<PlayerBlessing>().UpdateBlessing(selectedBlessing);
