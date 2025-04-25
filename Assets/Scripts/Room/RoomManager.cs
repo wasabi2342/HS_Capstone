@@ -57,6 +57,14 @@ public class RoomManager : MonoBehaviourPunCallbacks
         int layerIdx = LayerMask.NameToLayer("Player");
         PLAYER_LAYER = layerIdx != -1 ? layerIdx : 0;
     }
+    public override void OnEnable() {
+        base.OnEnable();                    
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    public override void OnDisable() {
+        base.OnDisable();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
     /*
     private void Start()
     {
@@ -91,7 +99,21 @@ public class RoomManager : MonoBehaviourPunCallbacks
             CreateCharacter(defaultPlayer.name, new Vector3(0, 0, 0), Quaternion.identity, isInVillage);
         }
     }
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 1) 캐시 초기화
+        players.Clear();
+        sortedPlayers.Clear();
+        currentIndex = 0;
 
+        // 2) 새 씬에 존재하는 시네머신 카메라 찾기 (이름·태그는 프로젝트 상황에 맞게 교체)
+        playerCinemachineCamera = GameObject.Find("CM_Player")?.GetComponent<CinemachineCamera>();
+        backgroundCinemachineCamera = GameObject.Find("CM_Background")?.GetComponent<CinemachineCamera>();
+        minimapCinemachineCamera = GameObject.Find("CM_Minimap")?.GetComponent<CinemachineCamera>();
+
+        // 3) 로컬 플레이어 재생성
+        SpawnLocalPlayerAndSetupCamera();
+    }
     private void SpawnLocalPlayerAndSetupCamera()
     {
         string key = PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName";
