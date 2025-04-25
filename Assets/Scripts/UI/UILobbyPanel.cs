@@ -18,7 +18,9 @@ public class UILobbyPanel : UIBase
     [SerializeField]
     private RectTransform roomButtonParent;
     [SerializeField]
-    private Button roomButton;
+    private Button roomButton1;
+    [SerializeField]
+    private Button roomButton2;
     [SerializeField]
     private Button preButton1;
 
@@ -97,17 +99,25 @@ public class UILobbyPanel : UIBase
 
         joinRoomButtonList.Clear();
 
+        int index = 0;
+
         foreach (RoomInfo room in cachedRoomDict.Values)
         {
             RoomInfo capturedRoom = room;
 
-            Button newJoinRoomButton = Instantiate(roomButton, roomButtonParent);
+            // 홀수/짝수에 따라 프리팹 선택
+            Button buttonPrefab = (index % 2 == 0) ? roomButton1 : roomButton2;
+
+            // 버튼 생성
+            Button newJoinRoomButton = Instantiate(buttonPrefab, roomButtonParent).GetComponent<Button>();
             newJoinRoomButton.onClick.AddListener(() => JoinRoom(capturedRoom));
             newJoinRoomButton.GetComponentInChildren<Text>().text =
                 $"방 이름: {capturedRoom.Name}   {capturedRoom.PlayerCount}/{capturedRoom.MaxPlayers}";
 
             joinRoomButtonList.Add(newJoinRoomButton);
             Debug.Log("버튼 생성");
+
+            index++;
         }
     }
 
