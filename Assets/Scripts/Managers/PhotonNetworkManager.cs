@@ -359,7 +359,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
         // 카운트다운이 끝나면 마지막으로 0초 표기
         photonView.RPC("RPC_ShowNextStageCountdown", RpcTarget.All, 0);
-
+        PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
         // 이후 원하는 씬으로 이동
         PhotonNetwork.LoadLevel("StageTest1");
 
@@ -385,12 +385,12 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void RPC_ApplyPlayerBuff(float damageBuff)
     {
-        if(RoomManager.Instance  != null)
+        if (RoomManager.Instance != null)
         {
             RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().damageBuff *= damageBuff;
         }
 
-        if(UIManager.Instance.ReturnPeekUI() as UICoopOrBetrayPanel)
+        if (UIManager.Instance.ReturnPeekUI() as UICoopOrBetrayPanel)
         {
             UIManager.Instance.ClosePeekUI();
         }
@@ -401,7 +401,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void RPC_ApplyMonsterBuff(float damageBuff)
     {
-        if(MonsterStatusManager.instance != null)
+        if (MonsterStatusManager.instance != null)
         {
             MonsterStatusManager.instance.EnemyDamageBuff(damageBuff);
         }
