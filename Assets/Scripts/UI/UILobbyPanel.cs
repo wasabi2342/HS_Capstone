@@ -144,13 +144,7 @@ public class UILobbyPanel : UIBase
 
     private void OnClickedCreateRoomButton()
     {
-        roomListPanel.gameObject.SetActive(false);
-        searchRoomPanel.gameObject.SetActive(false);
-        createRoomPanel.gameObject.SetActive(true);
-
-        showCreateRoomPanelButton.gameObject.SetActive(false);
-        showRoomListPanelButton.gameObject.SetActive(true);
-        showSearchRoomPanelButton.gameObject.SetActive(true);
+        createRoomPanel.transform.SetAsLastSibling();
     }
 
     private void OnClickedPreButton()
@@ -161,24 +155,12 @@ public class UILobbyPanel : UIBase
 
     private void OnClickedSearchRoomButton()
     {
-        roomListPanel.gameObject.SetActive(false);
-        searchRoomPanel.gameObject.SetActive(true);
-        createRoomPanel.gameObject.SetActive(false);
-
-        showCreateRoomPanelButton.gameObject.SetActive(true);
-        showRoomListPanelButton.gameObject.SetActive(true);
-        showSearchRoomPanelButton.gameObject.SetActive(false);
+        searchRoomPanel.transform.SetAsLastSibling();
     }
 
     private void OnClickedShowRoomListButton()
     {
-        roomListPanel.gameObject.SetActive(true);
-        searchRoomPanel.gameObject.SetActive(false);
-        createRoomPanel.gameObject.SetActive(false);
-
-        showCreateRoomPanelButton.gameObject.SetActive(true);
-        showRoomListPanelButton.gameObject.SetActive(false);
-        showSearchRoomPanelButton.gameObject.SetActive(true);
+        roomListPanel.transform.SetAsLastSibling();
     }
 
     public override void Init()

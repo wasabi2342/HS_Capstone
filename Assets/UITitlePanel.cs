@@ -42,6 +42,8 @@ public class UITitlePanel : UIBase
     IEnumerator FadeTitle()
     {
         yield return StartCoroutine(FadeImageAlpha(fadeImage, 1f, 0f, 0.5f));
+        yield return StartCoroutine(FadeImageAlpha(titleImage, 0f, 1f, 0.5f));
+
 
         while (true)
         {

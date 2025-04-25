@@ -32,9 +32,11 @@ public class UICreateRoomPanel : UIBase
     {
         cancelButton.onClick.AddListener(OnClickedCancelButton);
         confirmButton.onClick.AddListener(OnClickedConfirmButton);
-        foreach (Button button in maxPlayerButtons)
+        for (int i = 0; i < maxPlayerButtons.Count; i++)
         {
-            button.onClick.AddListener(() => OnClickedMaxPlayerButton(int.Parse(button.GetComponentInChildren<Text>().text), button));
+            int maxPlayers = i + 2; // 인원수는 2부터 시작
+            Button button = maxPlayerButtons[i];
+            button.onClick.AddListener(() => OnClickedMaxPlayerButton(maxPlayers, button));
         }
         isVisibleToggle.onValueChanged.AddListener(OnisVisibleToggleChanged);
         passwordInputField.gameObject.SetActive(false); 
