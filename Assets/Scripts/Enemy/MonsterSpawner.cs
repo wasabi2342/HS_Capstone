@@ -38,12 +38,6 @@ public class MonsterSpawner : MonoBehaviourPun
                 GameObject monster =
                     PhotonNetwork.Instantiate(info.monsterPrefabName, pos, Quaternion.identity);
 
-                float normShield = 1f;                // 쉴드 100 %
-                float normHP = 1f;                // 체력 100 %
-                PhotonView mPV = monster.GetComponent<PhotonView>();
-                mPV.RPC("UpdateShield", RpcTarget.AllBuffered, normShield);
-                mPV.RPC("UpdateHP", RpcTarget.AllBuffered, normHP);
-
                 /* 3. 부모 지정 (로컬) */
                 monster.transform.SetParent(spawnArea.transform);
 
