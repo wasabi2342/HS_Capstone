@@ -64,7 +64,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsConnected && PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName"] != null)
         {
             Debug.Log(PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName"].ToString());
-            CreateCharacter(PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName"].ToString(), new Vector3(0, 2, 0), Quaternion.identity, isInVillage);
+            CreateCharacter(PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName"].ToString(), new Vector3(0, 1, 0), Quaternion.identity, isInVillage);
         }
         else
         {
@@ -72,26 +72,28 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
     }
     */
+
     private void Start()
     {
         // 키 정의
-        string key = PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName";
+        string key = "SelectCharacter";
 
         // 룸에 연결되어 있고 커스텀 프로퍼티에 해당 키가 있으면 안전하게 꺼내기
         if (PhotonNetwork.IsConnected
             && PhotonNetwork.CurrentRoom != null
-            && PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(key, out var val)
+            && PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(key, out var val)
             && val is string charName)
         {
             Debug.Log($"Loaded character name: {charName}");
-            CreateCharacter(charName, new Vector3(0, 1, 0), Quaternion.identity, isInVillage);
+            CreateCharacter(charName, new Vector3(0, 1.5f, 0), Quaternion.identity, isInVillage);
         }
         else
         {
             // 키가 없거나 오프라인 모드일 때 기본 플레이어로 생성
-            CreateCharacter(defaultPlayer.name, new Vector3(0, 0, 0), Quaternion.identity, isInVillage);
+            CreateCharacter(defaultPlayer.name, new Vector3(0, 1.5f, 0), Quaternion.identity, isInVillage);
         }
     }
+
 
     public void CreateCharacter(string playerPrefabName, Vector3 pos, Quaternion quaternion, bool isInVillage)
     {
@@ -113,14 +115,23 @@ public class RoomManager : MonoBehaviourPunCallbacks
         SetLayerRecursively(playerInstance, PLAYER_LAYER);
         playerInstance.GetComponent<Playercontroller_event>().isInVillage = isInVillage; // 플레이어의 공통 스크립트로 변경 해야함
 
-        playerCinemachineCamera.Follow = playerInstance.transform;
-        playerCinemachineCamera.LookAt = playerInstance.transform;
+        if (playerCinemachineCamera != null)
+        {
+            playerCinemachineCamera.Follow = playerInstance.transform;
+            playerCinemachineCamera.LookAt = playerInstance.transform;
+        }
 
-        backgroundCinemachineCamera.Follow = playerInstance.transform;
-        backgroundCinemachineCamera.LookAt = playerInstance.transform;
+        if (backgroundCinemachineCamera != null)
+        {
+            backgroundCinemachineCamera.Follow = playerInstance.transform;
+            backgroundCinemachineCamera.LookAt = playerInstance.transform;
+        }
 
-        minimapCinemachineCamera.Follow = playerInstance.transform;
-        minimapCinemachineCamera.LookAt = playerInstance.transform;
+        if (minimapCinemachineCamera != null)
+        {
+            minimapCinemachineCamera.Follow = playerInstance.transform;
+            minimapCinemachineCamera.LookAt = playerInstance.transform;
+        }
 
         UpdateSortedPlayers();
     }
