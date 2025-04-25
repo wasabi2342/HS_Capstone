@@ -93,7 +93,13 @@ public class UIManager : MonoBehaviour
         panelInstance.transform.SetParent(transform, false);
 
         T popup = panelInstance.GetComponent<T>();
-
+        InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
+        popup.onClose += () =>
+        {
+            // 스택에 더 이상 팝업이 없으면 Player 맵으로
+            if (uiStack.Count <= 1)
+                InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
+        };
         uiStack.Push(popup);
 
         return popup;
@@ -117,6 +123,8 @@ public class UIManager : MonoBehaviour
             return uiStack.Peek();
         else
             return null;
+        if (uiStack.Count == 0)
+            InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

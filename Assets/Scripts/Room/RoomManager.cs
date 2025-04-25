@@ -111,7 +111,12 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
         playerInstance.tag = PLAYER_TAG;
         SetLayerRecursively(playerInstance, PLAYER_LAYER);
+
         playerInstance.GetComponent<Playercontroller_event>().isInVillage = isInVillage; // 플레이어의 공통 스크립트로 변경 해야함
+
+        var parentPC = playerInstance.GetComponent<ParentPlayerController>();
+        parentPC.LoadRunTimeData();   // 값 적용
+        parentPC.EnableInput(true);
 
         playerCinemachineCamera.Follow = playerInstance.transform;
         playerCinemachineCamera.LookAt = playerInstance.transform;
