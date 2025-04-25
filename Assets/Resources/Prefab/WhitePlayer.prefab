@@ -437,6 +437,7 @@ GameObject:
   - component: {fileID: 8948592928334562595}
   - component: {fileID: 7495074585491262718}
   - component: {fileID: 3485286042132721548}
+  - component: {fileID: 5520725726102547783}
   m_Layer: 6
   m_Name: WhitePlayer
   m_TagString: Player
@@ -864,6 +865,51 @@ MonoBehaviour:
     InterpolateOption: 0
     InterpolateMoveTowardsSpeed: 1
     InterpolateLerpSpeed: 0
+--- !u!114 &5520725726102547783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4131734313779836671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5dd509795b96a54da6652614f891e56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitlagTime: 0.117
+  stunOverlay: {fileID: 0}
+  stunSlider: {fileID: 0}
+  hpBar: {fileID: 0}
+  OnHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAttackCooldownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDashCooldownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  ShiftCoolDownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  UltimateCoolDownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  MouseRightSkillCoolDownUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  AttackStackUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  ShieldUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  SkillOutlineUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  characterBaseStats: {fileID: 0}
+  attackStack: 0
 --- !u!1 &4855534633877809112
 GameObject:
   m_ObjectHideFlags: 0
