@@ -119,14 +119,11 @@ public class UISelectBlessingPanel : UIBase
                     buttons[index2].interactable = false;
                     buttons[index2].transform.DOLocalRotate(new Vector3(0, 90, 0), 0.3f).OnComplete(() =>
                     {
+                        buttons[index2].GetComponent<UISelectBlessingButton>().SetEnabled();
+                        isFlipped[index2] = true;
+
                         buttons[index2].transform.DOLocalRotate(new Vector3(0, 0, 0), 0.3f).OnComplete(() =>
                         {
-                            UISelectBlessingButton button = buttons[index2].GetComponent<UISelectBlessingButton>();
-                            button.SetEnabled();
-                            isFlipped[index2] = true;
-                            //buttons[index2].image.sprite = Resources.Load<Sprite>($"Blessing/Front/{button.ReturnBlessing().skillData.Blessing_name}"); 가호 스킬 마다 카드
-                            //buttons[index2].image.sprite = Resources.Load<Sprite>($"Blessing/Front/{(Blessings)button.ReturnBlessing().skillData.Devil}"); 가호마다 카드
-                            buttons[index2].image.sprite = Resources.Load<Sprite>("Blessing/Front/Crocell");  // 임시 카드
 
                             buttons[index2].interactable = true;
                         });
