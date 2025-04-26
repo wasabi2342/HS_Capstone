@@ -161,8 +161,8 @@ GameObject:
   - component: {fileID: 4902560492959105719}
   - component: {fileID: 4056982117855752084}
   - component: {fileID: 3252832403611348556}
-  - component: {fileID: 3222430950875838966}
   - component: {fileID: 5607677096386579048}
+  - component: {fileID: 9013024303269004046}
   m_Layer: 5
   m_Name: UIRewardPanel
   m_TagString: Untagged
@@ -233,29 +233,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &3222430950875838966
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1809671155103210440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96c5db7b79d0e4045969d96f8f86136b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rewardUI: {fileID: 1809671155103210440}
-  rewardNameText: {fileID: 4885585514510764523}
-  detailText: {fileID: 332948930481826652}
-  rewardButtons:
-  - {fileID: 247708173497588607}
-  - {fileID: 7198700795683661679}
-  rewardDatas:
-  - rewardName: a
-    rewardDetail: 1234
-  - rewardName: b
-    rewardDetail: 4321
 --- !u!114 &5607677096386579048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -278,6 +255,29 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &9013024303269004046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1809671155103210440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96c5db7b79d0e4045969d96f8f86136b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rewardUI: {fileID: 1809671155103210440}
+  rewardNameText: {fileID: 4885585514510764523}
+  detailText: {fileID: 332948930481826652}
+  rewardButtons:
+  - {fileID: 247708173497588607}
+  - {fileID: 7198700795683661679}
+  rewardDatas:
+  - rewardName: a
+    rewardDetail: 1234
+  - rewardName: b
+    rewardDetail: 4321
 --- !u!1 &1868422964698534248
 GameObject:
   m_ObjectHideFlags: 0
@@ -2108,7 +2108,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3222430950875838966}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UIRewardPanel, Assembly-CSharp
         m_MethodName: RequestCancel
         m_Mode: 1
