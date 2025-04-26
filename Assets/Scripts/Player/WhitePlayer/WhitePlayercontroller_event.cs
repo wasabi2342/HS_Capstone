@@ -108,7 +108,7 @@ public class WhitePlayercontroller_event : Playercontroller_event
             OnKeyboardShiftLEvent?.Invoke();
 
             // katana_stab Àç»ý
-            AudioManager.Instance.PlayOneShot("event:/Character/Character-sword/katana_stab", transform.position);
+            //AudioManager.Instance.PlayOneShot("event:/Character/Character-sword/katana_stab", transform.position);
         }
     }
 
