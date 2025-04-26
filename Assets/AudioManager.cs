@@ -89,4 +89,23 @@ public class AudioManager : MonoBehaviour
     {
         PlayOneShot($"event:/Events/UI/{sfxName}", position);
     }
+
+    // BGM 사운드 재생 (OneShot용, 필요하면 루프용도 추가 가능)
+    public void PlayBGM(string bgmName, Vector3 position)
+    {
+        PlayOneShot($"event:/Events/BGM/{bgmName}", position);
+    }
+
+    // BGM 루프 사운드 재생
+    public void PlayBGMLoop(string bgmName, Vector3 position)
+    {
+        PlayLoop($"event:/Events/BGM/{bgmName}", position);
+    }
+
+    // BGM 루프 사운드 정지
+    public void StopBGMLoop(string bgmName)
+    {
+        StopLoop($"event:/Events/BGM/{bgmName}");
+    }
+
 }
