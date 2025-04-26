@@ -59,15 +59,15 @@ public class UICoopOrBetrayPanel : UIBase
 
     public override void Init()
     {
-        InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
+        // InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
         
-        // ÀÌÀü ¼±ÅÃ ÃÊ±âÈ­
-        ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable
-        {
-            { "coopChoice", null } // null·Î ¼³Á¤ÇÏ¸é »ç½Ç»ó ÃÊ±âÈ­Ã³·³ µ¿ÀÛ
-        };
+        // // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
+        // ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable
+        // {
+        //     { "coopChoice", null } // nullï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½Ç»ï¿½ ï¿½Ê±ï¿½È­Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        // };
         
-        PhotonNetwork.LocalPlayer.SetCustomProperties(resetProps);
+        // PhotonNetwork.LocalPlayer.SetCustomProperties(resetProps);
 
         StartCoroutine(StartAnimation());
 
@@ -142,13 +142,13 @@ public class UICoopOrBetrayPanel : UIBase
         Vector2 coopOriginPos = coopRect.anchoredPosition;
         Vector2 betrayOriginPos = betrayRect.anchoredPosition;
 
-        // coopButton ¿ÞÂÊ ÀÌµ¿ ÈÄ µ¹¾Æ¿À±â
+        // coopButton ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Æ¿ï¿½ï¿½ï¿½
         Sequence coopSeq = DOTween.Sequence();
         coopSeq.Append(coopRect.DOAnchorPos(coopOriginPos + Vector2.left * 200f, 0.1f).SetEase(Ease.OutQuad))
                .AppendInterval(0.2f)
                .Append(coopRect.DOAnchorPos(coopOriginPos, 0.2f).SetEase(Ease.InBack));
 
-        // betrayButton ¿À¸¥ÂÊ ÀÌµ¿ ÈÄ µ¹¾Æ¿À±â
+        // betrayButton ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Æ¿ï¿½ï¿½ï¿½
         Sequence betraySeq = DOTween.Sequence();
         betraySeq.Append(betrayRect.DOAnchorPos(betrayOriginPos + Vector2.right * 200f, 0.1f).SetEase(Ease.OutQuad))
                  .AppendInterval(0.2f)
@@ -169,7 +169,7 @@ public class UICoopOrBetrayPanel : UIBase
 
     private IEnumerator GlitchEffect(Image target, Sprite[] sprites)
     {
-        // ±Û¸®Ä¡ È¿°ú Áö¼Ó ½Ã°£¸¸Å­ ¹Ýº¹
+        // ï¿½Û¸ï¿½Ä¡ È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½Å­ ï¿½Ýºï¿½
         float elapsedTime = 0f;
 
         int i = 0;
@@ -179,31 +179,31 @@ public class UICoopOrBetrayPanel : UIBase
             target.sprite = sprites[i % sprites.Length];
             target.SetNativeSize();
 
-            yield return new WaitForSeconds(0.1f); // 0.1ÃÊ °£°ÝÀ¸·Î º¯°æ
+            yield return new WaitForSeconds(0.1f); // 0.1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
             elapsedTime += 0.1f;
             i++;
         }
 
-        // ±Û¸®Ä¡ È¿°ú ÈÄ, ½ºÇÁ¶óÀÌÆ® À¯Áö
-        // ¿øÇÏ½Ã´Â ½ºÇÁ¶óÀÌÆ®¸¦ ³²°Ü³õ°Å³ª ¸¶Áö¸·À¸·Î º¸¿©ÁØ ½ºÇÁ¶óÀÌÆ®¸¦ °è¼Ó À¯ÁöÇÏ·Á¸é Ãß°¡ÇÒ ¼ö ÀÖ½À´Ï´Ù.
-        // ¿¹¸¦ µé¾î, ¸¶Áö¸· ½ºÇÁ¶óÀÌÆ®·Î À¯ÁöÇÒ ¼ö ÀÖ½À´Ï´Ù.
+        // ï¿½Û¸ï¿½Ä¡ È¿ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+        // ï¿½ï¿½ï¿½Ï½Ã´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½Ü³ï¿½ï¿½Å³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.
         target.sprite = sprites[sprites.Length - 1];
         target.SetNativeSize();
     }
 
     private void OnChoiceMade(bool choice)
     {
-        Debug.Log("¹öÆ° ´­¸²: " + (choice ? "Çù·Â" : "¹è½Å"));
+        Debug.Log("ï¿½ï¿½Æ° ï¿½ï¿½ï¿½ï¿½: " + (choice ? "ï¿½ï¿½ï¿½ï¿½" : "ï¿½ï¿½ï¿½"));
 
-        // CustomProperties¿¡ ¼±ÅÃ ÀúÀå
+        // CustomPropertiesï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
         {
             { "coopChoice", choice }
         };
         PhotonNetwork.LocalPlayer.SetCustomProperties(props);
 
-        // ¹öÆ° ºñÈ°¼ºÈ­
+        // ï¿½ï¿½Æ° ï¿½ï¿½È°ï¿½ï¿½È­
         coopButton.interactable = false;
         betrayButton.interactable = false;
         coopConfirmButton.interactable = false;
@@ -217,7 +217,7 @@ public class UICoopOrBetrayPanel : UIBase
         if (!PhotonNetwork.IsMasterClient) return;
         if (!changedProps.ContainsKey("coopChoice")) return;
 
-        // ¸ðµç ³²Àº ÇÃ·¹ÀÌ¾î¿¡ ´ëÇØ È®ÀÎ
+        // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
         var currentPlayers = PhotonNetwork.CurrentRoom.Players.Values;
         var choices = new Dictionary<Player, bool>();
 
@@ -229,10 +229,10 @@ public class UICoopOrBetrayPanel : UIBase
             }
         }
 
-        // ¾ÆÁ÷ ¼±ÅÃ ¾ÈÇÑ »ç¶÷ ÀÖÀ¸¸é ´ë±â
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         if (choices.Count < currentPlayers.Count) return;
 
-        // °á°ú °è»ê
+        // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         int coopCount = 0;
         int betrayCount = 0;
 
@@ -244,20 +244,20 @@ public class UICoopOrBetrayPanel : UIBase
 
         if (coopCount == choices.Count)
         {
-            Debug.Log("Àü¿ø Çù·Â!");
-            // Àü¿ø¿¡°Ô ¹öÇÁ ºÎ¿©
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½!");
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½
             PhotonNetworkManager.Instance.photonView.RPC("RPC_ApplyPlayerBuff", RpcTarget.All, 1.5f);
         }
         else if (betrayCount == choices.Count)
         {
-            Debug.Log("Àü¿ø ¹è½Å!");
-            // Àü¿ø¿¡°Ô µð¹öÇÁ ºÎ¿©
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½!");
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½
             PhotonNetworkManager.Instance.photonView.RPC("RPC_ApplyMonsterBuff", RpcTarget.All, 1.5f);
         }
         else
         {
-            Debug.Log("ÀÏºÎ ¹è½Å");
-            // ¹è½ÅÇÑ »ç¶÷¸¸ ¹öÇÁ
+            Debug.Log("ï¿½Ïºï¿½ ï¿½ï¿½ï¿½");
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             foreach (var pair in choices)
             {
                 if (!pair.Value)
@@ -266,7 +266,7 @@ public class UICoopOrBetrayPanel : UIBase
                 }
                 else
                 {
-                    PhotonNetworkManager.Instance.photonView.RPC("PopupDialogPanel", pair.Key, "´©±º°¡°¡ ¹è½ÅÇß½À´Ï´Ù.");
+                    PhotonNetworkManager.Instance.photonView.RPC("PopupDialogPanel", pair.Key, "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.");
                 }
             }
         }
