@@ -123,10 +123,10 @@ MonoBehaviour:
   Path: ../../../Desktop/crossxcrosser/Build/Desktop/SFX.bank
   Name: SFX
   StudioPath: bank:/SFX
-  lastModified: 638812371827663795
+  lastModified: 638812773063468026
   FileSizes:
   - Name: Desktop
-    Value: 1398752
+    Value: 1382048
   Exists: 1
 --- !u!114 &-6446853771573084975
 MonoBehaviour:
@@ -359,10 +359,10 @@ MonoBehaviour:
   Path: ../../../Desktop/crossxcrosser/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638812371823840476
+  lastModified: 638812773062839432
   FileSizes:
   - Name: Desktop
-    Value: 1074
+    Value: 3470432
   Exists: 1
 --- !u!114 &-1422312973053583621
 MonoBehaviour:
@@ -451,7 +451,6 @@ MonoBehaviour:
   - {fileID: 7609386915456149686}
   - {fileID: -4230717793462357250}
   - {fileID: 3954066052647592662}
-  - {fileID: 2462993131816615090}
   - {fileID: 5066760971910572654}
   - {fileID: -1422312973053583621}
   - {fileID: 5989866297089924793}
@@ -481,12 +480,14 @@ MonoBehaviour:
   - {fileID: 378545503845280763}
   - {fileID: 7058122327104347294}
   - {fileID: 2959351665885512962}
+  - {fileID: 6352337657041448509}
+  - {fileID: 7732440140824954625}
   EditorParameters: []
   MasterBanks:
   - {fileID: -1842921823591146275}
   StringsBanks:
   - {fileID: 6142761934940943708}
-  cacheTime: 638812371827663795
+  cacheTime: 638812773063468026
   cacheVersion: 131846
 --- !u!114 &97185130715282264
 MonoBehaviour:
@@ -758,33 +759,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 200
---- !u!114 &2462993131816615090
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/UI/interaction_hold
-  m_EditorClassIdentifier: 
-  Path: event:/UI/interaction_hold
-  Guid:
-    Data1: 1262632964
-    Data2: 1086896022
-    Data3: 1847799460
-    Data4: 1484191043
-  Banks:
-  - {fileID: -6677096957998648240}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 5500
 --- !u!114 &2692481051952813256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1070,11 +1044,38 @@ MonoBehaviour:
   Path: ../../../Desktop/crossxcrosser/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638812371823850466
+  lastModified: 638812773062849456
   FileSizes:
   - Name: Desktop
-    Value: 2940
+    Value: 3006
   Exists: 1
+--- !u!114 &6352337657041448509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/BGM/CrossXCrosser_MainTitleOst
+  m_EditorClassIdentifier: 
+  Path: event:/BGM/CrossXCrosser_MainTitleOst
+  Guid:
+    Data1: -1042066576
+    Data2: 1273016515
+    Data3: 5237671
+    Data4: -2087494845
+  Banks:
+  - {fileID: -1842921823591146275}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 239999
 --- !u!114 &6461913528165723844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1264,6 +1265,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 2000
+--- !u!114 &7732440140824954625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/BGM/gamestart
+  m_EditorClassIdentifier: 
+  Path: event:/BGM/gamestart
+  Guid:
+    Data1: 1430590090
+    Data2: 1247320359
+    Data3: 843191171
+    Data4: 381207726
+  Banks:
+  - {fileID: -1842921823591146275}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2424
 --- !u!114 &7958896352746221078
 MonoBehaviour:
   m_ObjectHideFlags: 0
