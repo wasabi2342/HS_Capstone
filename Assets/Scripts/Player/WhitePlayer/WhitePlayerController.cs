@@ -41,28 +41,42 @@ public class WhitePlayerController : ParentPlayerController
     {
         currentState = WhitePlayerState.Idle;
 
-        if (photonView.IsMine)
+        if (photonView.IsMine || !PhotonNetwork.IsConnected)
         {
-            if (photonView.IsMine)
+            if (stunOverlay != null) stunOverlay.enabled = false;
+            if (stunSlider != null) stunSlider.enabled = false;
+            if (hpBar != null) hpBar.enabled = true;
+
+            gaugeInteraction = GetComponentInChildren<GaugeInteraction>();
+
+            var eventController = GetComponent<WhitePlayercontroller_event>();
+            if (eventController != null)
             {
-
-                if (stunOverlay != null) stunOverlay.enabled = false;
-                if (stunSlider != null) stunSlider.enabled = false;
-                if (hpBar != null) hpBar.enabled = true;
-
-                gaugeInteraction = GetComponentInChildren<GaugeInteraction>();
-
-                var eventController = GetComponent<WhitePlayercontroller_event>();
-                if (eventController != null)
-                {
-                    //eventController.OnInteractionEvent += HandleReviveInteraction;
-                }
+                //eventController.OnInteractionEvent += HandleReviveInteraction;
             }
         }
     }
 
     private void Update()
     {
+        //if (currentState == WhitePlayerState.Death)
+        //{
+        //    if (Input.GetKeyDown(KeyCode.X))
+        //    {
+        //        RoomManager.Instance.SwitchCameraToNextPlayer();
+        //    }
+        //    return;
+        //}
+
+        //UpdateCenterPoint();
+        //Handle    Movement();
+    }
+
+    private void FixedUpdate()
+    {
+        if (!photonView.IsMine)
+            return;
+
         if (currentState == WhitePlayerState.Death)
         {
             if (Input.GetKeyDown(KeyCode.X))
@@ -142,7 +156,7 @@ public class WhitePlayerController : ParentPlayerController
         {
             Vector3 moveDir;
             moveDir = (Mathf.Abs(v) > 0.01f) ? new Vector3(h, 0, v).normalized : new Vector3(h, 0, 0).normalized;
-            transform.Translate(moveDir * runTimeData.moveSpeed * Time.deltaTime, Space.World);
+            rb.MovePosition(rb.position + moveDir * runTimeData.moveSpeed * Time.fixedDeltaTime);
         }
 
         if (animator != null)
@@ -246,7 +260,7 @@ public class WhitePlayerController : ParentPlayerController
                 }
                 return;
             }
-            else if (nextState < WhitePlayerState.BasicAttack)
+            else if (nextState < WhitePlayerState.BasicAttack && cooldownCheckers[(int)Skills.Mouse_L].CanUse())
             {
 
                 Vector3 mousePos = GetMouseWorldPosition();
@@ -258,7 +272,7 @@ public class WhitePlayerController : ParentPlayerController
                 nextState = WhitePlayerState.BasicAttack;
             }
 
-            if (currentState == WhitePlayerState.BasicAttack)
+            if (currentState == WhitePlayerState.BasicAttack && cooldownCheckers[(int)Skills.Mouse_L].CanUse())
             {
 
                 Vector3 mousePos = GetMouseWorldPosition();
@@ -329,31 +343,49 @@ public class WhitePlayerController : ParentPlayerController
 
     public override void StartMouseRCoolDown()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.StartMouseRCoolDown();
     }
 
     public override void StartShiftCoolDown()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.StartShiftCoolDown();
     }
 
     public override void StartUltimateCoolDown()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.StartUltimateCoolDown();
     }
 
     public override void StartAttackCooldown()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.StartAttackCooldown();
     }
 
     public override void StartSpaceCooldown()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.StartSpaceCooldown();
     }
 
     public void OnAttackPreAttckStart()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         animator.SetBool("CancleState", true);
         if (PhotonNetwork.IsConnected)
         {
@@ -364,6 +396,9 @@ public class WhitePlayerController : ParentPlayerController
 
     public void OnAttackPreAttckEnd()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         animator.SetBool("CancleState", false);
         if (PhotonNetwork.IsConnected)
         {
@@ -374,7 +409,11 @@ public class WhitePlayerController : ParentPlayerController
 
     public void OnMoveFront(float value)
     {
-        transform.Translate((GetMouseWorldPosition() - transform.position).normalized * value);
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
+        //transform.Translate((GetMouseWorldPosition() - transform.position).normalized * value);
+        rb.MovePosition(rb.position + ((GetMouseWorldPosition() - transform.position).normalized * value));
     }
 
     private Vector3 GetMouseWorldPosition()
@@ -565,7 +604,7 @@ public class WhitePlayerController : ParentPlayerController
             }
             else
             {
-                float damage =  (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
+                float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
                 SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Counter_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
                 skillEffect.transform.parent = transform;
                 skillEffect.Init(damage, StartHitlag);
@@ -642,16 +681,27 @@ public class WhitePlayerController : ParentPlayerController
 
     public void GetUltimateBonus()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         Debug.Log("±Ã±Ø±â ³³µµ ¹öÇÁ");
     }
 
     public void UltimateMove(float distance)
     {
-        transform.position += new Vector3(distance, 0, 0);
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
+        //transform.position += new Vector3(distance, 0, 0);
+        Vector3 targetPosition = rb.position + new Vector3(distance, 0, 0);
+        rb.MovePosition(targetPosition);
     }
 
     public void OnAttackAllowNextInput()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         animator.SetBool("FreeState", true);
         if (PhotonNetwork.IsConnected)
         {
@@ -662,6 +712,9 @@ public class WhitePlayerController : ParentPlayerController
 
     public void OnAttackAnimationEnd()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         attackStack = 0;
         AttackStackUpdate?.Invoke(attackStack);
         animator.SetBool("Pre-Attack", false);
@@ -678,6 +731,9 @@ public class WhitePlayerController : ParentPlayerController
 
     public void InitAttackStak()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         attackStack = 0;
         AttackStackUpdate?.Invoke(attackStack);
     }
@@ -911,21 +967,33 @@ public class WhitePlayerController : ParentPlayerController
 
     public override void EnterInvincibleState()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.EnterInvincibleState();
     }
 
     public override void ExitInvincibleState()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.ExitInvincibleState();
     }
 
     public override void EnterSuperArmorState()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.EnterSuperArmorState();
     }
 
     public override void ExitSuperArmorState()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.ExitSuperArmorState();
     }
 
@@ -979,6 +1047,9 @@ public class WhitePlayerController : ParentPlayerController
 
     public void Guard_01_Crocell_AddShield()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID, this).ApplyEffect();
     }
 }

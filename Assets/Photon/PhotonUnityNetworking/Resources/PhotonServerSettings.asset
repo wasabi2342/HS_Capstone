@@ -28,7 +28,7 @@ MonoBehaviour:
     AuthMode: 0
     EnableLobbyStatistics: 0
     NetworkLogging: 1
-  DevRegion: jp
+  DevRegion: asia
   PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
@@ -84,18 +84,19 @@ MonoBehaviour:
   - EnterPlayer
   - RPC_SetMaster
   - RPC_ShowNextStageCountdown
-
-  - RPC_SpawnServant
-  - RPC_SpawnServant_Stack
+  - 
   - Interact
-  - RPC_ApplyBuff
-  - RPC_ApplyPlayerBuff
-  - RPC_ApplyMonsterBuff
   - PopupBlessingPanel
   - PopupDialogPanel
-  - RPC_OpenDoor
-  - SyncCanInteract
+  - RPC_ApplyMonsterBuff
+  - RPC_ApplyPlayerBuff
+  - RPC_SpawnServant
+  - RPC_SpawnServant_Stack
   - SuccessLeverInteraction
+  - SyncCanInteract
+  - RPC_Flash
+  - RPC_PlayAnim
+  - UpdateShield
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

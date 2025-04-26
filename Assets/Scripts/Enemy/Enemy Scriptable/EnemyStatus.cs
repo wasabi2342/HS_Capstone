@@ -12,6 +12,10 @@ public class EnemyStatus : ScriptableObject
     public new string name;
     public float damage;
     public float hp;
+    public float headOffset;
+
+    [Header("Shield (0 = no)")]
+    public float maxShield = 0f;
 
     [Header("Attack")]
     public float waitCool;        // 공격 준비 시간

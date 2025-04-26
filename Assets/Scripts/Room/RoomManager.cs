@@ -6,8 +6,11 @@ using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class RoomManager : MonoBehaviour
+public class RoomManager : MonoBehaviourPunCallbacks
 {
+    // ────────────────────────────────
+    // 인스펙터 참조
+    // ────────────────────────────────
     [SerializeField]
     private GameObject defaultPlayer;
     [SerializeField]
@@ -15,7 +18,12 @@ public class RoomManager : MonoBehaviour
     [SerializeField]
     private CinemachineCamera backgroundCinemachineCamera;
     [SerializeField]
+    private CinemachineCamera minimapCinemachineCamera;
+    [SerializeField]
     private bool isInVillage;
+    // ────────────────────────────────
+    // 런타임 변수
+    // ────────────────────────────────
     public static RoomManager Instance { get; private set; }
 
     private Dictionary<int, bool> playerInRestrictedArea = new Dictionary<int, bool>();
@@ -30,6 +38,10 @@ public class RoomManager : MonoBehaviour
 
     public event Action<int, GameObject> UIUpdate;
 
+    // 태그, 레이어 상수
+    private const string PLAYER_TAG = "Player";
+    private int PLAYER_LAYER = 0;
+
     private void Awake()
     {
         if (Instance == null)
@@ -42,23 +54,42 @@ public class RoomManager : MonoBehaviour
         }
 
         players = new Dictionary<int, GameObject>();
+        int layerIdx = LayerMask.NameToLayer("Player");
+        PLAYER_LAYER = layerIdx != -1 ? layerIdx : 0;
     }
 
-
+    /*
     private void Start()
     {
-        if (PhotonNetwork.IsConnected && PhotonNetwork.LocalPlayer.CustomProperties["SelectCharacter"] != null)
+        if (PhotonNetwork.IsConnected && PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName"] != null)
         {
-            Debug.Log(PhotonNetwork.LocalPlayer.CustomProperties["SelectCharacter"].ToString());
-            CreateCharacter(PhotonNetwork.LocalPlayer.CustomProperties["SelectCharacter"].ToString(), new Vector3(0, 2, 0), Quaternion.identity, isInVillage);
-        }
-        else if (!PhotonNetwork.IsConnected && PlayerPrefs.GetString("SelectCharacter") != null)
-        {
-            CreateCharacter(PlayerPrefs.GetString("SelectCharacter"), new Vector3(0, 2, 0), Quaternion.identity, isInVillage);
+            Debug.Log(PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName"].ToString());
+            CreateCharacter(PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName"].ToString(), new Vector3(0, 2, 0), Quaternion.identity, isInVillage);
         }
         else
         {
-            CreateCharacter(defaultPlayer.name, new Vector3(0, 2, 0), Quaternion.identity, isInVillage);
+            CreateCharacter(defaultPlayer.name, new Vector3(0, 0, 0), Quaternion.identity, isInVillage);
+        }
+    }
+    */
+    private void Start()
+    {
+        // 키 정의
+        string key = PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName";
+
+        // 룸에 연결되어 있고 커스텀 프로퍼티에 해당 키가 있으면 안전하게 꺼내기
+        if (PhotonNetwork.IsConnected
+            && PhotonNetwork.CurrentRoom != null
+            && PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(key, out var val)
+            && val is string charName)
+        {
+            Debug.Log($"Loaded character name: {charName}");
+            CreateCharacter(charName, new Vector3(0, 1, 0), Quaternion.identity, isInVillage);
+        }
+        else
+        {
+            // 키가 없거나 오프라인 모드일 때 기본 플레이어로 생성
+            CreateCharacter(defaultPlayer.name, new Vector3(0, 0, 0), Quaternion.identity, isInVillage);
         }
     }
 
@@ -71,22 +102,53 @@ public class RoomManager : MonoBehaviour
             playerInstance = PhotonNetwork.Instantiate("Prefab/" + playerPrefabName, pos, quaternion);
             players[PhotonNetwork.LocalPlayer.ActorNumber] = playerInstance;
             //PhotonNetworkManager.Instance.AddPlayer(PhotonNetwork.LocalPlayer.ActorNumber, playerInstance.GetComponent<PhotonView>().ViewID);
-            playerInstance.GetComponent<Playercontroller_event>().isInVillage = isInVillage; // 플레이어의 공통 스크립트로 변경 해야함
-            PhotonNetwork.LocalPlayer.CustomProperties["SelectCharacter"] = playerPrefabName;
+            PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName"] = playerPrefabName;
         }
         else
         {
-            playerInstance = Instantiate(Resources.Load<ParentPlayerController>("Prefab/" + playerPrefabName), pos, quaternion).gameObject;
-            playerInstance.GetComponent<Playercontroller_event>().isInVillage = isInVillage; // 플레이어의 공통 스크립트로 변경 해야함
+            playerInstance = Instantiate(Resources.Load<ParentPlayerController>(playerPrefabName), pos, quaternion).gameObject;
             players[0] = playerInstance;
         }
+        playerInstance.tag = PLAYER_TAG;
+        SetLayerRecursively(playerInstance, PLAYER_LAYER);
+        playerInstance.GetComponent<Playercontroller_event>().isInVillage = isInVillage; // 플레이어의 공통 스크립트로 변경 해야함
 
         playerCinemachineCamera.Follow = playerInstance.transform;
         playerCinemachineCamera.LookAt = playerInstance.transform;
+
         backgroundCinemachineCamera.Follow = playerInstance.transform;
         backgroundCinemachineCamera.LookAt = playerInstance.transform;
+
+        minimapCinemachineCamera.Follow = playerInstance.transform;
+        minimapCinemachineCamera.LookAt = playerInstance.transform;
+
+        UpdateSortedPlayers();
+    }
+    public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
+    {
+        // 네트워크로 전송되는 Instantiate 시점에 AddPlayerDic() 을 RPC 로 호출해두면 됨
+        // 단, 여기에서도 혹시 누락된 원격 플레이어가 있으면 찾아서 사후 처리
+        StartCoroutine(LateCheckRemotePlayer(newPlayer.ActorNumber));
     }
 
+    System.Collections.IEnumerator LateCheckRemotePlayer(int actorNum)
+    {
+        yield return new WaitForSeconds(1f);   // 네트워크 Instantiate 완료 대기
+
+        if (!players.ContainsKey(actorNum))
+        {
+            // 씬 내 모든 Player 태그 검색 후 PhotonView 체크
+            foreach (var p in GameObject.FindGameObjectsWithTag(PLAYER_TAG))
+            {
+                if (p.TryGetComponent(out PhotonView pv) && pv.OwnerActorNr == actorNum)
+                {
+                    AddPlayerDic(actorNum, p);
+                    break;
+                }
+            }
+        }
+    }
+    /*
     public GameObject ReturnLocalPlayer()
     {
         if (!PhotonNetwork.InRoom)
@@ -98,6 +160,10 @@ public class RoomManager : MonoBehaviour
             return players[PhotonNetwork.LocalPlayer.ActorNumber];
         }
     }
+    */
+
+    public GameObject ReturnLocalPlayer() =>
+    PhotonNetwork.InRoom ? players[PhotonNetwork.LocalPlayer.ActorNumber] : players[0];
 
     public UIConfirmPanel InteractWithDungeonNPC()
     {
@@ -155,8 +221,12 @@ public class RoomManager : MonoBehaviour
         // 카메라 변경
         playerCinemachineCamera.Follow = sortedPlayers[currentIndex].transform;
         playerCinemachineCamera.LookAt = sortedPlayers[currentIndex].transform;
+
         backgroundCinemachineCamera.Follow = sortedPlayers[currentIndex].transform;
         backgroundCinemachineCamera.LookAt = sortedPlayers[currentIndex].transform;
+
+        minimapCinemachineCamera.Follow = sortedPlayers[currentIndex].transform;
+        minimapCinemachineCamera.LookAt = sortedPlayers[currentIndex].transform;
     }
 
     public void UpdateSortedPlayers()
@@ -178,8 +248,25 @@ public class RoomManager : MonoBehaviour
 
     public void AddPlayerDic(int actNum, GameObject player)
     {
-        players[actNum] = player;
-        UpdateSortedPlayers();
-        UIUpdate?.Invoke(actNum, player);
+        if (!players.ContainsKey(actNum))
+        {
+            players[actNum] = player;
+            player.tag = PLAYER_TAG;
+            SetLayerRecursively(player, PLAYER_LAYER);
+
+            UpdateSortedPlayers();
+            UIUpdate?.Invoke(actNum, player);
+        }
+    }
+    // ────────────────────────────────
+    // 유틸
+    // ────────────────────────────────
+
+
+    private void SetLayerRecursively(GameObject obj, int layer)
+    {
+        obj.layer = layer;
+        foreach (Transform child in obj.transform)
+            SetLayerRecursively(child.gameObject, layer);
     }
 }

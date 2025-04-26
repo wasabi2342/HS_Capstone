@@ -59,6 +59,7 @@ public class CooldownChecker
     private IEnumerator StartCooldown()
     {
         timer = cooldownTime;
+        Debug.Log(cooldownTime + "초 쿨타임 시작");
         while (currentStacks < maxStacks)
         {
             yield return null;
