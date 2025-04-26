@@ -8,7 +8,7 @@
 [LOG] Thread::initThread                       : Init FMOD stream thread. Affinity: 0x4000000000000003, Priority: 0xFFFF7FFB, Stack Size: 98304, Semaphore: No, Sleep Time: 10, Looping: Yes.
 [LOG] SystemI::DSPCodecPoolRegister            : register codec pool for pool type 0
 [LOG] Thread::initThread                       : Init FMOD mixer thread. Affinity: 0x4000000000000001, Priority: 0xFFFF7FFA, Stack Size: 81920, Semaphore: No, Sleep Time: 0, Looping: Yes.
-[LOG] AsyncManager::init                       : manager 000001A19CF7E548 isAsync 0 updatePeriod 0.02
+[LOG] AsyncManager::init                       : manager 000002AC95213408 isAsync 0 updatePeriod 0.02
 [LOG] AsyncManager::init                       : done
 [LOG] PlaybackSystem::init                     : 
 [LOG] Thread::initThread                       : Init FMOD Studio sample load thread. Affinity: 0x4000000000000003, Priority: 0xFFFF7FFD, Stack Size: 98304, Semaphore: No, Sleep Time: 1, Looping: No.
@@ -21,624 +21,130 @@
 [LOG] BankLoader::serializeBank                : fileversion = 146, compatVersion = 146 (oldest = 44, newest = 146)
 [LOG] SystemI::createSoundInternal             : Create name='', mode=0x02000202
 [LOG] SystemI::createSoundInternal             : exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             : exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             : exinfo->fileoffset         = 53664
+[LOG] SystemI::createSoundInternal             : exinfo->length             = 1356544
+[LOG] SystemI::createSoundInternal             : exinfo->fileoffset         = 56480
 [LOG] SystemI::createSoundInternal             : exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             : exinfo->inclusionlist      = 00000059377BEC18
+[LOG] SystemI::createSoundInternal             : exinfo->inclusionlist      = 000000ADC286F088
 [LOG] SystemI::createSoundInternal             : exinfo->inclusionlistnum   = 1
 [LOG] SystemI::createSoundInternal             : exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             : exinfo->useropen           = 00007FFCDA9ED3E0
-[LOG] SystemI::createSoundInternal             : exinfo->userclose          = 00007FFCDA9ED3A0
-[LOG] SystemI::createSoundInternal             : exinfo->userread           = 00007FFCDA9ED4C0
-[LOG] SystemI::createSoundInternal             : exinfo->userseek           = 00007FFCDA9ED580
-[LOG] SystemI::createSoundInternal             : exinfo->fileuserdata       = 000001A2AE29CE08
+[LOG] SystemI::createSoundInternal             : exinfo->useropen           = 00007FFC6A58D3E0
+[LOG] SystemI::createSoundInternal             : exinfo->userclose          = 00007FFC6A58D3A0
+[LOG] SystemI::createSoundInternal             : exinfo->userread           = 00007FFC6A58D4C0
+[LOG] SystemI::createSoundInternal             : exinfo->userseek           = 00007FFC6A58D580
+[LOG] SystemI::createSoundInternal             : exinfo->fileuserdata       = 000002A68AE4D8E8
+[LOG] SystemI::createSoundInternal             : exinfo->initialseekpostype = 1
+[LOG] SystemI::DSPCodecPoolRegister            : register codec pool for pool type 4
+[LOG] SystemI::createSoundInternal             : Sample 0/1: name='katana_slash (4)', format=5, channels=2, frequency=48000, lengthbytes=12480, lengthpcm=51408, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.999969.
+[LOG] SystemI::createSoundInternal             : Create name='', mode=0x02000202
+[LOG] SystemI::createSoundInternal             : exinfo->cbsize             = 224
+[LOG] SystemI::createSoundInternal             : exinfo->length             = 1356544
+[LOG] SystemI::createSoundInternal             : exinfo->fileoffset         = 56480
+[LOG] SystemI::createSoundInternal             : exinfo->numsubsounds       = 1
+[LOG] SystemI::createSoundInternal             : exinfo->inclusionlist      = 000000ADC286F088
+[LOG] SystemI::createSoundInternal             : exinfo->inclusionlistnum   = 1
+[LOG] SystemI::createSoundInternal             : exinfo->suggestedsoundtype = 5
+[LOG] SystemI::createSoundInternal             : exinfo->useropen           = 00007FFC6A58D3E0
+[LOG] SystemI::createSoundInternal             : exinfo->userclose          = 00007FFC6A58D3A0
+[LOG] SystemI::createSoundInternal             : exinfo->userread           = 00007FFC6A58D4C0
+[LOG] SystemI::createSoundInternal             : exinfo->userseek           = 00007FFC6A58D580
+[LOG] SystemI::createSoundInternal             : exinfo->fileuserdata       = 000002AA08418EC8
 [LOG] SystemI::createSoundInternal             : exinfo->initialseekpostype = 1
 [LOG] SystemI::DSPCodecPoolRegister            : register codec pool for pool type 4
 [LOG] SystemI::createSoundInternal             : Sample 0/1: name='walk sound', format=5, channels=2, frequency=48000, lengthbytes=49760, lengthpcm=195604, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.045563.
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] Thread::initThread                       : Init FMOD nonblocking thread (0). Affinity: 0x4000000000000003, Priority: 0xFFFF7FFC, Stack Size: 114688, Semaphore: Yes, Sleep Time: 0, Looping: Yes.
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A06CD617E8, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A06CD617E8
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A0E5928178
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] Thread::initThread                       :     Init FMOD file thread. Affinity: 0x4000000000000003, Priority: 0xFFFF7FFC, Stack Size: 65536, Semaphore: No, Sleep Time: 10, Looping: Yes.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A06CD617E8
-[LOG] SoundI::release                          : heavy mace (000001A06CD617E8)
-[LOG] SoundI::release                          :     heavy mace (000001A1D89C8758)
-[LOG] SoundI::release                          :     heavy mace (000001A1D6CC2558)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1C7CE0648, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1C7CE0648
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A22488AFD8
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1C7CE0648
 [LOG] SystemI::createSoundInternal             : Create name='', mode=0x02000202
 [LOG] SystemI::createSoundInternal             : exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             : exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             : exinfo->fileoffset         = 53664
+[LOG] SystemI::createSoundInternal             : exinfo->length             = 1356544
+[LOG] SystemI::createSoundInternal             : exinfo->fileoffset         = 56480
 [LOG] SystemI::createSoundInternal             : exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             : exinfo->inclusionlist      = 00000059377BEC18
+[LOG] SystemI::createSoundInternal             : exinfo->inclusionlist      = 000000ADC286F088
 [LOG] SystemI::createSoundInternal             : exinfo->inclusionlistnum   = 1
 [LOG] SystemI::createSoundInternal             : exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             : exinfo->useropen           = 00007FFCDA9ED3E0
-[LOG] SystemI::createSoundInternal             : exinfo->userclose          = 00007FFCDA9ED3A0
-[LOG] SystemI::createSoundInternal             : exinfo->userread           = 00007FFCDA9ED4C0
-[LOG] SystemI::createSoundInternal             : exinfo->userseek           = 00007FFCDA9ED580
-[LOG] SystemI::createSoundInternal             : exinfo->fileuserdata       = 000001A2281F0888
+[LOG] SystemI::createSoundInternal             : exinfo->useropen           = 00007FFC6A58D3E0
+[LOG] SystemI::createSoundInternal             : exinfo->userclose          = 00007FFC6A58D3A0
+[LOG] SystemI::createSoundInternal             : exinfo->userread           = 00007FFC6A58D4C0
+[LOG] SystemI::createSoundInternal             : exinfo->userseek           = 00007FFC6A58D580
+[LOG] SystemI::createSoundInternal             : exinfo->fileuserdata       = 000002AA0C2A3AA8
 [LOG] SystemI::createSoundInternal             : exinfo->initialseekpostype = 1
 [LOG] SystemI::DSPCodecPoolRegister            : register codec pool for pool type 4
 [LOG] SystemI::createSoundInternal             : Sample 0/1: name='dodge roll', format=5, channels=2, frequency=48000, lengthbytes=7648, lengthpcm=36000, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.282349.
-[LOG] SoundI::release                          : heavy mace (000001A1C7CE0648)
-[LOG] SoundI::release                          :     heavy mace (000001A06A9184F8)
-[LOG] SoundI::release                          :     heavy mace (000001A1C117C468)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1DA193FF8, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1DA193FF8
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A193616858
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1DA193FF8
-[LOG] SoundI::release                          : heavy mace (000001A1DA193FF8)
-[LOG] SoundI::release                          :     heavy mace (000001A06EFE2F78)
-[LOG] SoundI::release                          :     heavy mace (000001A1C9AD1CA8)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A19C442D88, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A19C442D88
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A08B65DBC8
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A19C442D88
-[LOG] SoundI::release                          : heavy mace (000001A19C442D88)
-[LOG] SoundI::release                          :     heavy mace (000001A21E77D678)
-[LOG] SoundI::release                          :     heavy mace (000001A1C0DF5968)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1D6CC3818, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1D6CC3818
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A1C9CAD5F8
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1D6CC3818
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1D6CC4AD8, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1D6CC4AD8
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A1C9CAD758
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1D6CC4AD8
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1C0DF5968, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1C0DF5968
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1C0DF5968
-[LOG] SoundI::release                          : heavy mace (000001A1D6CC3818)
-[LOG] SoundI::release                          :     heavy mace (000001A06DF5BE88)
-[LOG] SoundI::release                          :     heavy mace (000001A07C12ED78)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A0724BD488, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A0724BD488
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A040E8DC48
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A0724BD488
-[LOG] SoundI::release                          : heavy mace (000001A1D6CC4AD8)
-[LOG] SoundI::release                          :     heavy mace (000001A21E77D678)
-[LOG] SoundI::release                          :     heavy mace (000001A1C0DF5968)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1D6CC4AD8, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1D6CC4AD8
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A1C9CAD5F8
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1D6CC4AD8
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1DA194188, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1DA194188
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1DA194188
-[LOG] SoundI::release                          : heavy mace (000001A0724BD488)
-[LOG] SoundI::release                          :     heavy mace (000001A1CA21F288)
-[LOG] SoundI::release                          :     heavy mace (000001A1C13C9358)
 [LOG] SystemI::createSoundInternal             : Create name='', mode=0x02000202
 [LOG] SystemI::createSoundInternal             : exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             : exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             : exinfo->fileoffset         = 53664
+[LOG] SystemI::createSoundInternal             : exinfo->length             = 1356544
+[LOG] SystemI::createSoundInternal             : exinfo->fileoffset         = 56480
 [LOG] SystemI::createSoundInternal             : exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             : exinfo->inclusionlist      = 00000059377BEC18
+[LOG] SystemI::createSoundInternal             : exinfo->inclusionlist      = 000000ADC286F088
 [LOG] SystemI::createSoundInternal             : exinfo->inclusionlistnum   = 1
 [LOG] SystemI::createSoundInternal             : exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             : exinfo->useropen           = 00007FFCDA9ED3E0
-[LOG] SystemI::createSoundInternal             : exinfo->userclose          = 00007FFCDA9ED3A0
-[LOG] SystemI::createSoundInternal             : exinfo->userread           = 00007FFCDA9ED4C0
-[LOG] SystemI::createSoundInternal             : exinfo->userseek           = 00007FFCDA9ED580
-[LOG] SystemI::createSoundInternal             : exinfo->fileuserdata       = 000001A2281EFC28
+[LOG] SystemI::createSoundInternal             : exinfo->useropen           = 00007FFC6A58D3E0
+[LOG] SystemI::createSoundInternal             : exinfo->userclose          = 00007FFC6A58D3A0
+[LOG] SystemI::createSoundInternal             : exinfo->userread           = 00007FFC6A58D4C0
+[LOG] SystemI::createSoundInternal             : exinfo->userseek           = 00007FFC6A58D580
+[LOG] SystemI::createSoundInternal             : exinfo->fileuserdata       = 000002AC945A6508
 [LOG] SystemI::createSoundInternal             : exinfo->initialseekpostype = 1
 [LOG] SystemI::DSPCodecPoolRegister            : register codec pool for pool type 4
-[LOG] SystemI::createSoundInternal             : Sample 0/1: name='low hum charge', format=5, channels=2, frequency=48000, lengthbytes=6880, lengthpcm=51408, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.949860.
-[LOG] SoundI::release                          : heavy mace (000001A1D6CC4AD8)
-[LOG] SoundI::release                          :     heavy mace (000001A06E06A988)
-[LOG] SoundI::release                          :     heavy mace (000001A1DA194188)
+[LOG] SystemI::createSoundInternal             : Sample 0/1: name='spear stab', format=5, channels=2, frequency=48000, lengthbytes=22784, lengthpcm=100310, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.967621.
 [LOG] SystemI::createSoundInternal             : Create name='', mode=0x02000202
 [LOG] SystemI::createSoundInternal             : exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             : exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             : exinfo->fileoffset         = 53664
+[LOG] SystemI::createSoundInternal             : exinfo->length             = 1356544
+[LOG] SystemI::createSoundInternal             : exinfo->fileoffset         = 56480
 [LOG] SystemI::createSoundInternal             : exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             : exinfo->inclusionlist      = 00000059377BEC18
+[LOG] SystemI::createSoundInternal             : exinfo->inclusionlist      = 000000ADC286F088
 [LOG] SystemI::createSoundInternal             : exinfo->inclusionlistnum   = 1
 [LOG] SystemI::createSoundInternal             : exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             : exinfo->useropen           = 00007FFCDA9ED3E0
-[LOG] SystemI::createSoundInternal             : exinfo->userclose          = 00007FFCDA9ED3A0
-[LOG] SystemI::createSoundInternal             : exinfo->userread           = 00007FFCDA9ED4C0
-[LOG] SystemI::createSoundInternal             : exinfo->userseek           = 00007FFCDA9ED580
-[LOG] SystemI::createSoundInternal             : exinfo->fileuserdata       = 000001A2281EE998
+[LOG] SystemI::createSoundInternal             : exinfo->useropen           = 00007FFC6A58D3E0
+[LOG] SystemI::createSoundInternal             : exinfo->userclose          = 00007FFC6A58D3A0
+[LOG] SystemI::createSoundInternal             : exinfo->userread           = 00007FFC6A58D4C0
+[LOG] SystemI::createSoundInternal             : exinfo->userseek           = 00007FFC6A58D580
+[LOG] SystemI::createSoundInternal             : exinfo->fileuserdata       = 000002A68A66FCC8
 [LOG] SystemI::createSoundInternal             : exinfo->initialseekpostype = 1
 [LOG] SystemI::DSPCodecPoolRegister            : register codec pool for pool type 4
-[LOG] SystemI::createSoundInternal             : Sample 0/1: name='mace smash', format=5, channels=2, frequency=48000, lengthbytes=19680, lengthpcm=75232, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.973358.
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1C7CE15E8, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1C7CE15E8
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A22488A798
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1C7CE15E8
-[LOG] SoundI::release                          : heavy mace (000001A1C7CE15E8)
-[LOG] SoundI::release                          :     heavy mace (000001A3262A0268)
-[LOG] SoundI::release                          :     heavy mace (000001A19CA6F9A8)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1C7E24AB8, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1C7E24AB8
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A22488A798
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1C7E24AB8
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A06F6E12B8, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A06F6E12B8
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 0000019E90CFADD8
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A06F6E12B8
-[LOG] SoundI::release                          : heavy mace (000001A1C7E24AB8)
-[LOG] SoundI::release                          :     heavy mace (000001A06E06A208)
-[LOG] SoundI::release                          :     heavy mace (000001A1DA194F98)
-[LOG] SoundI::release                          : heavy mace (000001A06F6E12B8)
-[LOG] SoundI::release                          :     heavy mace (000001A21E77F2F8)
-[LOG] SoundI::release                          :     heavy mace (000001A1C0DF5968)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1C7BE87A8, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1C7BE87A8
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A08B65E6C8
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1C7BE87A8
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1C13C3D68, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1C13C3D68
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A1943843A8
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1C13C3D68
-[LOG] SoundI::release                          : heavy mace (000001A1C7BE87A8)
-[LOG] SoundI::release                          :     heavy mace (000001A29668C5A8)
-[LOG] SoundI::release                          :     heavy mace (000001A1C7E23348)
-[LOG] SoundI::release                          : heavy mace (000001A1C13C3D68)
-[LOG] SoundI::release                          :     heavy mace (000001A21E77ECF8)
-[LOG] SoundI::release                          :     heavy mace (000001A1C0DF5968)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A06F6E2D48, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A06F6E2D48
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 0000019E90CFB098
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A06F6E2D48
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1C7BE7358, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1C7BE7358
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A08B65E6C8
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1C7BE7358
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A06CD5DE18, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A06CD5DE18
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A06CD5DE18
-[LOG] SoundI::release                          : heavy mace (000001A06F6E2D48)
-[LOG] SoundI::release                          :     heavy mace (000001A06A9184F8)
-[LOG] SoundI::release                          :     heavy mace (000001A1C117D728)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A0724BD938, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A0724BD938
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A040E8DC48
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A0724BD938
-[LOG] SoundI::release                          : heavy mace (000001A1C7BE7358)
-[LOG] SoundI::release                          :     heavy mace (000001A3262A06E8)
-[LOG] SoundI::release                          :     heavy mace (000001A06CD5DE18)
-[LOG] SoundI::release                          : heavy mace (000001A0724BD938)
-[LOG] SoundI::release                          :     heavy mace (000001A21E77D678)
-[LOG] SoundI::release                          :     heavy mace (000001A1C0DF5968)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1DA204328, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1DA204328
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A193616598
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1DA204328
-[LOG] SoundI::release                          : heavy mace (000001A1DA204328)
-[LOG] SoundI::release                          :     heavy mace (000001A21E77DC78)
-[LOG] SoundI::release                          :     heavy mace (000001A1C0DF5968)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1D6CC3FE8, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1D6CC3FE8
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A1C9CAA318
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1D6CC3FE8
-[LOG] SoundI::release                          : heavy mace (000001A1D6CC3FE8)
-[LOG] SoundI::release                          :     heavy mace (000001A21E77F2F8)
-[LOG] SoundI::release                          :     heavy mace (000001A1C0DF5968)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A2966A8638, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A2966A8638
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A040E8B468
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A2966A8638
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A06F1E1448, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A06F1E1448
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A22488B138
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A06F1E1448
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1CA2235A8, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1CA2235A8
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1CA2235A8
-[LOG] SoundI::release                          : heavy mace (000001A2966A8638)
-[LOG] SoundI::release                          :     heavy mace (000001A21E77E578)
-[LOG] SoundI::release                          :     heavy mace (000001A1C0DF5968)
-[LOG] SoundI::release                          : heavy mace (000001A06F1E1448)
-[LOG] SoundI::release                          :     heavy mace (000001A1CA21E808)
-[LOG] SoundI::release                          :     heavy mace (000001A1CA2235A8)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1C7BE7E48, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1C7BE7E48
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A08B65E2A8
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1C7BE7E48
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1C7CE0C88, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1C7CE0C88
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A22488ABB8
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1C7CE0C88
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1AE023738, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1AE023738
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1AE023738
-[LOG] SoundI::release                          : heavy mace (000001A1C7BE7E48)
-[LOG] SoundI::release                          :     heavy mace (000001A21E77D678)
-[LOG] SoundI::release                          :     heavy mace (000001A1C0DF6778)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1AE023F08, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1AE023F08
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A1CA44EA78
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1AE023F08
-[LOG] SoundI::release                          : heavy mace (000001A1C7CE0C88)
-[LOG] SoundI::release                          :     heavy mace (000001A1C9AFD448)
-[LOG] SoundI::release                          :     heavy mace (000001A1AE023738)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1AE023418, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1AE023418
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A1CA44EE98
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1AE023418
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1C0DF5968, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1C0DF5968
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1C0DF5968
-[LOG] SoundI::release                          : heavy mace (000001A1AE023F08)
-[LOG] SoundI::release                          :     heavy mace (000001A21E77D7F8)
-[LOG] SoundI::release                          :     heavy mace (000001A1C0DF9B08)
-[LOG] SoundI::release                          : heavy mace (000001A1AE023418)
-[LOG] SoundI::release                          :     heavy mace (000001A21E77ECF8)
-[LOG] SoundI::release                          :     heavy mace (000001A1C0DF5968)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1C7E22B78, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1C7E22B78
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A22488ABB8
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1C7E22B78
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A19CA6E3C8, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A19CA6E3C8
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A0E5928438
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A19CA6E3C8
-[LOG] SoundI::release                          : heavy mace (000001A1C7E22B78)
-[LOG] SoundI::release                          :     heavy mace (000001A06A918378)
-[LOG] SoundI::release                          :     heavy mace (000001A1C117B018)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1C7E226C8, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1C7E226C8
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A22488AE78
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1C7E226C8
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1DA202BB8, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1DA202BB8
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1DA202BB8
-[LOG] SoundI::release                          : heavy mace (000001A19CA6E3C8)
-[LOG] SoundI::release                          :     heavy mace (000001A06DF5C308)
-[LOG] SoundI::release                          :     heavy mace (000001A1C13C3598)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1C0DFA2D8, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1C0DFA2D8
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A0D6EC5B48
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1C0DFA2D8
-[LOG] SoundI::release                          : heavy mace (000001A1C7E226C8)
-[LOG] SoundI::release                          :     heavy mace (000001A06E06A508)
-[LOG] SoundI::release                          :     heavy mace (000001A1DA202BB8)
-[LOG] SystemI::createSound                     : filename = Assets/FMOD Sound/Build/Desktop/SFX.bank : mode 02010082
-[LOG] SystemI::createSound                     : FMOD_NONBLOCKING specified.  Putting into queue to be opened asynchronously!
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1CA2246D8, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1CA2246D8
-[LOG] SystemI::createSoundInternal             :     Create name='Assets/FMOD Sound/Build/Desktop/SFX.bank', mode=0x02010082
-[LOG] SystemI::createSoundInternal             :     exinfo->cbsize             = 224
-[LOG] SystemI::createSoundInternal             :     exinfo->length             = 1328384
-[LOG] SystemI::createSoundInternal             :     exinfo->fileoffset         = 53664
-[LOG] SystemI::createSoundInternal             :     exinfo->numsubsounds       = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlist      = 000001A1CA07C018
-[LOG] SystemI::createSoundInternal             :     exinfo->inclusionlistnum   = 1
-[LOG] SystemI::createSoundInternal             :     exinfo->suggestedsoundtype = 5
-[LOG] SystemI::createSoundInternal             :     exinfo->initialseekpostype = 1
-[LOG] SystemI::createSoundInternal             :     Stream 0/1: name='heavy mace', format=5, channels=2, frequency=48000, lengthbytes=171456, lengthpcm=1650872, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.991393.
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1CA2246D8
-[LOG] AsyncThread::add                         : add sound to async queue : soundi = 000001A1C7E24928, queue head = 000001A06CD60FD8, queue count = 0
-[LOG] AsyncThread::threadFunc                  : Starting Asynchronous operation on sound 000001A1C7E24928
-[LOG] AsyncThread::threadFunc                  : Finished Asynchronous operation on sound 000001A1C7E24928
-[LOG] SoundI::release                          : heavy mace (000001A1C0DFA2D8)
-[LOG] SoundI::release                          :     heavy mace (000001A1C9AFD148)
-[LOG] SoundI::release                          :     heavy mace (000001A1AE023F08)
-[LOG] SoundI::release                          : heavy mace (000001A1CA2246D8)
-[LOG] SoundI::release                          :     heavy mace (000001A29668BFA8)
-[LOG] SoundI::release                          :     heavy mace (000001A1C7E24928)
-[LOG] SoundI::release                          :  (000001A06EE09DD8)
-[LOG] SoundI::release                          :     low hum charge (000001A21E77E0F8)
-[LOG] SoundI::release                          :  (000001A06EE09F38)
-[LOG] SoundI::release                          :     mace smash (000001A21E77DF78)
-[LOG] SoundI::release                          :  (000001A1D6F9EAA8)
-[LOG] SoundI::release                          :     dodge roll (000001A21E77EB78)
-[LOG] SoundI::release                          :  (000001A193616198)
-[LOG] SoundI::release                          :     walk sound (000001A06E06A088)
+[LOG] SystemI::createSoundInternal             : Sample 0/1: name='huge_slash', format=5, channels=2, frequency=48000, lengthbytes=27104, lengthpcm=100310, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.994720.
+[LOG] SystemI::createSoundInternal             : Create name='', mode=0x02000202
+[LOG] SystemI::createSoundInternal             : exinfo->cbsize             = 224
+[LOG] SystemI::createSoundInternal             : exinfo->length             = 1356544
+[LOG] SystemI::createSoundInternal             : exinfo->fileoffset         = 56480
+[LOG] SystemI::createSoundInternal             : exinfo->numsubsounds       = 1
+[LOG] SystemI::createSoundInternal             : exinfo->inclusionlist      = 000000ADC286F088
+[LOG] SystemI::createSoundInternal             : exinfo->inclusionlistnum   = 1
+[LOG] SystemI::createSoundInternal             : exinfo->suggestedsoundtype = 5
+[LOG] SystemI::createSoundInternal             : exinfo->useropen           = 00007FFC6A58D3E0
+[LOG] SystemI::createSoundInternal             : exinfo->userclose          = 00007FFC6A58D3A0
+[LOG] SystemI::createSoundInternal             : exinfo->userread           = 00007FFC6A58D4C0
+[LOG] SystemI::createSoundInternal             : exinfo->userseek           = 00007FFC6A58D580
+[LOG] SystemI::createSoundInternal             : exinfo->fileuserdata       = 000002AC945A9058
+[LOG] SystemI::createSoundInternal             : exinfo->initialseekpostype = 1
+[LOG] SystemI::DSPCodecPoolRegister            : register codec pool for pool type 4
+[LOG] SystemI::createSoundInternal             : Sample 0/1: name='monster die', format=5, channels=2, frequency=48000, lengthbytes=25312, lengthpcm=121626, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.937927.
+[LOG] SystemI::createSoundInternal             : Create name='', mode=0x02000202
+[LOG] SystemI::createSoundInternal             : exinfo->cbsize             = 224
+[LOG] SystemI::createSoundInternal             : exinfo->length             = 1356544
+[LOG] SystemI::createSoundInternal             : exinfo->fileoffset         = 56480
+[LOG] SystemI::createSoundInternal             : exinfo->numsubsounds       = 1
+[LOG] SystemI::createSoundInternal             : exinfo->inclusionlist      = 000000ADC286F088
+[LOG] SystemI::createSoundInternal             : exinfo->inclusionlistnum   = 1
+[LOG] SystemI::createSoundInternal             : exinfo->suggestedsoundtype = 5
+[LOG] SystemI::createSoundInternal             : exinfo->useropen           = 00007FFC6A58D3E0
+[LOG] SystemI::createSoundInternal             : exinfo->userclose          = 00007FFC6A58D3A0
+[LOG] SystemI::createSoundInternal             : exinfo->userread           = 00007FFC6A58D4C0
+[LOG] SystemI::createSoundInternal             : exinfo->userseek           = 00007FFC6A58D580
+[LOG] SystemI::createSoundInternal             : exinfo->fileuserdata       = 000002AC15CB3A08
+[LOG] SystemI::createSoundInternal             : exinfo->initialseekpostype = 1
+[LOG] SystemI::DSPCodecPoolRegister            : register codec pool for pool type 4
+[LOG] SystemI::createSoundInternal             : Sample 0/1: name='skeleton die', format=5, channels=2, frequency=48000, lengthbytes=35200, lengthpcm=121626, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.874542.
+[LOG] SoundI::release                          :  (000002A83DA9CBB8)
+[LOG] SoundI::release                          :     dodge roll (000002A83D679528)
+[LOG] SoundI::release                          :  (000002AC9483CA38)
+[LOG] SoundI::release                          :     spear stab (000002A9097D0FA8)
+[LOG] SoundI::release                          :  (000002ABD54045F8)
+[LOG] SoundI::release                          :     huge_slash (000002A8FCD0E398)
+[LOG] SoundI::release                          :  (000002AC9483C778)
+[LOG] SoundI::release                          :     monster die (000002A9097D09A8)
+[LOG] SoundI::release                          :  (000002A90974E218)
+[LOG] SoundI::release                          :     katana_slash (4) (000002A99C21C398)
+[LOG] SoundI::release                          :  (000002AA04243EF8)
+[LOG] SoundI::release                          :     skeleton die (000002A68BD16688)
+[LOG] SoundI::release                          :  (000002AA0384A3E8)
+[LOG] SoundI::release                          :     walk sound (000002A99BF05518)
 [LOG] Thread::callback                         : FMOD Studio update thread finished.
 [LOG] Thread::callback                         : FMOD Studio bank load thread finished.
 [LOG] Profile::disconnectAll                   : Profiler disconnecting all clients
@@ -649,4 +155,3 @@
 [LOG] Thread::callback                         : FMOD mixer thread finished.
 [LOG] Profile::disconnectAll                   : Profiler disconnecting all clients
 [LOG] SystemI::closeInternal                   : Closed.
-[ERR] ~Global                                  : assertion: 'gSystemInitCount == 0' failed
