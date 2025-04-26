@@ -613,8 +613,10 @@ MonoBehaviour:
   spawnAreaPrefabName: SpawnArea
   doorPrefabName: doorPrefab
   blessingNPCPrefabName: BlessingNPC
+  CoopOrBetrayNPCPrefabName: CoopOrBetrayNPC
   currentStageSettings: {fileID: 11400000, guid: 8c3b1144011cf9c42ae38d9823f043f1, type: 2}
   spawnAreaRotation: {x: 0, y: 0, z: 0, w: 1}
+  coopOrBetrayNPCPos: {fileID: 0}
 --- !u!4 &487237365
 Transform:
   m_ObjectHideFlags: 0
@@ -903,9 +905,9 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.033333335
+  m_VoxelSize: 0.1
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 1db7cd02ff37de140818f05a03c11d1c, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: dc4287b966aff894d9d227437fe15e68, type: 2}
   m_BuildHeightMesh: 0
 --- !u!64 &1645897542
 MeshCollider:

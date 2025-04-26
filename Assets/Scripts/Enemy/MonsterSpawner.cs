@@ -1,58 +1,84 @@
 ﻿using UnityEngine;
+using UnityEngine.AI;
 using Photon.Pun;
 
+/// <summary>
+/// SpawnArea 안에서 몬스터 프리팹을 네트워크 Instantiate 하고
+/// ─ 부모(SpawnArea) 설정 (RPC_SetParent)  
+/// ─ SpawnArea 참조를 EnemyAI 에 확정 (RPC_LinkSpawnArea)  
+/// ─ NavMesh 밖에 떨어졌으면 Warp 로 보정
+/// 마스터 클라이언트에서만 실행된다.
+/// </summary>
 public class MonsterSpawner : MonoBehaviourPun
 {
-    public SpawnArea spawnArea;
+    public SpawnArea spawnArea;           // 인스펙터에서 연결 or 부모 자동 검색
 
-    private void Awake()
+    void Awake()
     {
         if (spawnArea == null)
         {
             spawnArea = GetComponentInParent<SpawnArea>();
             if (spawnArea == null)
-            {
-                Debug.LogError("MonsterSpawner: SpawnArea를 찾을 수 없습니다.");
-            }
+                Debug.LogError("[MonsterSpawner] SpawnArea not found!");
         }
     }
 
-    // [변경] MonsterSpawnInfo 배열을 받아서 각 몬스터를 개별적으로 스폰
-    public void SpawnMonsters(MonsterSpawnInfo[] monsterSpawnInfos)
+    public void SpawnMonsters(MonsterSpawnInfo[] infos)
     {
-        if (!PhotonNetwork.IsMasterClient)
-            return;
+        if (!PhotonNetwork.IsMasterClient || spawnArea == null) return;
 
-        foreach (var info in monsterSpawnInfos)
+        foreach (var info in infos)
         {
-            // info.count만큼 반복해서 스폰
             for (int i = 0; i < info.count; i++)
             {
-                Vector3 spawnPoint = spawnArea.GetRandomPointInsideArea();
+                /* 1. 위치 선정 */
+                Vector3 pos = spawnArea.GetRandomPointInsideArea();
 
-                // Resources 폴더 내 prefabName으로 네트워크 Instantiate
-                GameObject monster = PhotonNetwork.Instantiate(info.monsterPrefabName, spawnPoint, Quaternion.identity);
+                /* 2. 네트워크 Instantiate */
+                GameObject monster =
+                    PhotonNetwork.Instantiate(info.monsterPrefabName, pos, Quaternion.identity);
 
-                // SpawnArea를 부모로 설정
+                /* 3. 부모 지정 (로컬) */
                 monster.transform.SetParent(spawnArea.transform);
 
-                // 다른 클라이언트에서도 동일하게 부모 설정
-                int monsterViewID = monster.GetComponent<PhotonView>().ViewID;
-                int parentViewID = spawnArea.photonView.ViewID;
-                photonView.RPC("RPC_SetParent", RpcTarget.OthersBuffered, monsterViewID, parentViewID);
+                /* 4. 다른 클라이언트에도 부모 지정 */
+                int mViewID = monster.GetComponent<PhotonView>().ViewID;
+                int aViewID = spawnArea.photonView.ViewID;
+                photonView.RPC(nameof(RPC_SetParent), RpcTarget.OthersBuffered, mViewID, aViewID);
+                photonView.RPC(nameof(RPC_LinkSpawnArea), RpcTarget.AllBuffered, mViewID, aViewID);
+
+                /* 5. NavMesh 보정 (마스터 자신에게만) */
+                if (monster.TryGetComponent(out NavMeshAgent ag) && !ag.isOnNavMesh)
+                {
+                    if (NavMesh.SamplePosition(ag.transform.position, out var hit, 3f, NavMesh.AllAreas))
+                        ag.Warp(hit.position);
+                }
             }
         }
     }
 
+    /* ───────── RPC 1 : transform 부모 동기화 ───────── */
     [PunRPC]
-    void RPC_SetParent(int monsterViewID, int parentViewID)
+    void RPC_SetParent(int monsterVid, int areaVid)
     {
-        PhotonView monsterPV = PhotonView.Find(monsterViewID);
-        PhotonView parentPV = PhotonView.Find(parentViewID);
-        if (monsterPV != null && parentPV != null)
-        {
-            monsterPV.gameObject.transform.SetParent(parentPV.gameObject.transform);
-        }
+        PhotonView mPV = PhotonView.Find(monsterVid);
+        PhotonView aPV = PhotonView.Find(areaVid);
+        if (mPV != null && aPV != null)
+            mPV.transform.SetParent(aPV.transform);
     }
 
+    /* ───────── RPC 2 : EnemyAI 에 SpawnArea 참조 확정 ───────── */
+    [PunRPC]
+    void RPC_LinkSpawnArea(int monsterVid, int areaVid)
+    {
+        PhotonView mPV = PhotonView.Find(monsterVid);
+        PhotonView aPV = PhotonView.Find(areaVid);
+
+        if (mPV != null && aPV != null &&
+            mPV.TryGetComponent(out EnemyAI ai) &&
+            aPV.TryGetComponent(out SpawnArea sa))
+        {
+            ai.SetSpawnArea(sa);   // EnemyAI 내부에서 PickWanderPoint() 호출
+        }
+    }
 }
