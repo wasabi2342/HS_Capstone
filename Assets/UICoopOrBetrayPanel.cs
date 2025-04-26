@@ -59,15 +59,15 @@ public class UICoopOrBetrayPanel : UIBase
 
     public override void Init()
     {
-        //InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
-        //
-        //// 이전 선택 초기화
-        //ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable
-        //{
-        //    { "coopChoice", null } // null로 설정하면 사실상 초기화처럼 동작
-        //};
-        //
-        //PhotonNetwork.LocalPlayer.SetCustomProperties(resetProps);
+        InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
+        
+        // 이전 선택 초기화
+        ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable
+        {
+            { "coopChoice", null } // null로 설정하면 사실상 초기화처럼 동작
+        };
+        
+        PhotonNetwork.LocalPlayer.SetCustomProperties(resetProps);
 
         StartCoroutine(StartAnimation());
 
