@@ -1,6 +1,8 @@
+using DG.Tweening;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +13,11 @@ public class UICoopOrBetrayPanel : UIBase
     private Button coopButton;
     [SerializeField]
     private Button betrayButton;
+    [SerializeField]
+    private List<RectTransform> labelList = new List<RectTransform>();
+    [SerializeField]
+    private List<Vector3> labelPosList = new List<Vector3>();
+
 
     private void Start()
     {
@@ -24,18 +31,35 @@ public class UICoopOrBetrayPanel : UIBase
 
     public override void Init()
     {
-        InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
+        //InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
+        //
+        //// 이전 선택 초기화
+        //ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable
+        //{
+        //    { "coopChoice", null } // null로 설정하면 사실상 초기화처럼 동작
+        //};
+        //
+        //PhotonNetwork.LocalPlayer.SetCustomProperties(resetProps);
 
-        // 이전 선택 초기화
-        Hashtable resetProps = new Hashtable
-        {
-            { "coopChoice", null } // null로 설정하면 사실상 초기화처럼 동작
-        };
-
-        PhotonNetwork.LocalPlayer.SetCustomProperties(resetProps);
+        StartCoroutine(StartAnimation());
 
         coopButton.onClick.AddListener(() => OnChoiceMade(true));
         betrayButton.onClick.AddListener(() => OnChoiceMade(false));
+    }
+
+    private IEnumerator StartAnimation()
+    {
+        for(int i = 0; i < labelList.Count; i++)
+        {
+            labelList[i].DOAnchorPos(labelPosList[i], 1f).SetEase(Ease.InOutQuad);
+        }
+
+        yield return new WaitForSeconds(1f);
+
+        for (int i = 0; i < labelList.Count; i++)
+        {
+            labelList[i].GetComponent<LabelController>().StartScroll();
+        }
     }
 
     private void OnChoiceMade(bool choice)
@@ -43,7 +67,7 @@ public class UICoopOrBetrayPanel : UIBase
         Debug.Log("버튼 눌림: " + (choice ? "협력" : "배신"));
 
         // CustomProperties에 선택 저장
-        Hashtable props = new Hashtable
+        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
         {
             { "coopChoice", choice }
         };
@@ -55,7 +79,7 @@ public class UICoopOrBetrayPanel : UIBase
 
     }
 
-    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
     {
         if (!PhotonNetwork.IsMasterClient) return;
         if (!changedProps.ContainsKey("coopChoice")) return;
