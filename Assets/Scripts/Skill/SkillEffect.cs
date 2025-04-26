@@ -9,6 +9,8 @@ public class SkillEffect : MonoBehaviourPun
     private Animator animator;
     [SerializeField]
     private float hitlagTime = 0.117f;
+    [SerializeField]
+    private AttackerType attackerType;
 
     private BaseSpecialEffect specialEffect;
 
@@ -66,7 +68,7 @@ public class SkillEffect : MonoBehaviourPun
                     specialEffect.ApplyEffect();
                 }
 
-                damageable.TakeDamage(damage);
+                damageable.TakeDamage(damage, attackerType);
                 triggerEvent?.Invoke();
                 StartCoroutine(PauseForSeconds());
             }

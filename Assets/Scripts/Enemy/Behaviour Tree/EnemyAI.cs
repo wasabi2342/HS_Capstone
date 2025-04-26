@@ -251,7 +251,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     }
 
     /* ───────── Damage & Shield ───────── */
-    public void TakeDamage(float dmg) =>
+    public void TakeDamage(float dmg, AttackerType attackerType = AttackerType.Default) =>
         photonView.RPC(nameof(DamageToMaster), RpcTarget.MasterClient, dmg);
 
     [PunRPC]

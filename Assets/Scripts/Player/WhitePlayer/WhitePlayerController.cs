@@ -762,7 +762,7 @@ public class WhitePlayerController : ParentPlayerController
     }
 
     // 피격 및 사망 처리
-    public override void TakeDamage(float damage)
+    public override void TakeDamage(float damage, AttackerType attackerType = AttackerType.Default)
     {
         if (currentState == WhitePlayerState.Death || currentState == WhitePlayerState.Stun)
         {

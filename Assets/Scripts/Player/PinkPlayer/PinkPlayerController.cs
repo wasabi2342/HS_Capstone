@@ -1002,7 +1002,7 @@ public class PinkPlayerController : ParentPlayerController
 
 
     // 피격 및 사망 처리
-    public override void TakeDamage(float damage)
+    public override void TakeDamage(float damage, AttackerType attackerType = AttackerType.Default)
     {
         if (currentState == PinkPlayerState.Death || currentState == PinkPlayerState.Stun)
         {

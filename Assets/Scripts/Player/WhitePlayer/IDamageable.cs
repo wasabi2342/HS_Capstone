@@ -1,5 +1,13 @@
 using Photon.Pun;
 
+public enum AttackerType
+{
+    Default,
+    WhitePlayer,
+    PinkPlayer,
+    Enemy
+}
+
 public interface IDamageable
 {
     
@@ -7,5 +15,5 @@ public interface IDamageable
 
     [PunRPC] public void UpdateHP(float damage);
 
-    public void TakeDamage(float damage);
+    public void TakeDamage(float damage, AttackerType attackerType = AttackerType.Default);
 }

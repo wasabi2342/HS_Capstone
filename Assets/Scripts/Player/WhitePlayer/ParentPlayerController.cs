@@ -150,7 +150,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     }
 
     // 2) 추가 파라미터 useRPC를 사용한 데미지 처리
-    public virtual void TakeDamage(float damage)
+    public virtual void TakeDamage(float damage, AttackerType attackerType = AttackerType.Default)
     {
 
         if (PhotonNetwork.InRoom)
