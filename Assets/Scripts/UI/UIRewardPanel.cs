@@ -123,4 +123,11 @@ public class UIRewardPanel : UIBase
         if (detailText != null)
             detailText.text = "(보상 설명)";
     }
+    public override void OnDisable()
+    {
+        base.OnDisable(); 
+        // 보상 UI가 사라졌으니 입력을 Player 맵으로 복귀
+        if (InputManager.Instance != null)
+            InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
+    }
 }
