@@ -131,14 +131,14 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0
-    functionName: OnAttackPreAttckStart
+    functionName: StartAttackCooldown
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 0
-    functionName: StartAttackCooldown
+    functionName: OnAttackPreAttckStart
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
@@ -154,6 +154,13 @@ AnimationClip:
   - time: 0.1
     functionName: OnMoveFront
     data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.2
+    functionName: WhitePlayerSoundEffect
+    data: katana_slash
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0

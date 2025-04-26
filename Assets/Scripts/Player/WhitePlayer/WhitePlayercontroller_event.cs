@@ -82,6 +82,10 @@ public class WhitePlayercontroller_event : Playercontroller_event
         {
             whitePlayerController.HandleNormalAttack();
             OnMouseLEvent?.Invoke();
+
+            // katana_slash 사운드 재생
+            //AudioManager.Instance.PlayOneShot("event:/Character/Character-sword/katana_slash", transform.position);
+
         }
     }
 
@@ -102,6 +106,9 @@ public class WhitePlayercontroller_event : Playercontroller_event
         {
             whitePlayerController.HandleSpecialAttack();
             OnKeyboardShiftLEvent?.Invoke();
+
+            // katana_stab 재생
+            AudioManager.Instance.PlayOneShot("event:/Character/Character-sword/katana_stab", transform.position);
         }
     }
 
