@@ -112,8 +112,6 @@ public class UIManager : MonoBehaviour
             return uiStack.Peek();
         else
             return null;
-        if (uiStack.Count == 0)
-            InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
