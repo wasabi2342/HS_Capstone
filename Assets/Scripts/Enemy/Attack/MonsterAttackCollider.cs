@@ -96,10 +96,17 @@ public class MonsterAttackCollider : MonoBehaviourPun
     {
         if (!photonView.IsMine) return;
 
+      
+        if (other.CompareTag("InteractionZone") || other.gameObject.name.Contains("InteractionZone"))
+        {
+            return;
+        }
+
         IDamageable damageable = other.GetComponentInParent<IDamageable>();
         if (damageable != null && enemyAI != null)
         {
             damageable.TakeDamage(enemyAI.status.damage);
         }
     }
+
 }
