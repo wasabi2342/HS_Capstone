@@ -84,9 +84,9 @@ public class WhitePlayercontroller_event : Playercontroller_event
             OnMouseLEvent?.Invoke();
 
             // katana_slash 사운드 재생
-            AudioManager.Instance.PlayOneShot("event:/Character/Character-sword/katana_slash", transform.position);
+            //AudioManager.Instance.PlayOneShot("event:/Character/Character-sword/katana_slash", transform.position);
 
-    }
+        }
     }
 
     // 마우스 오른쪽 클릭 (가드)
