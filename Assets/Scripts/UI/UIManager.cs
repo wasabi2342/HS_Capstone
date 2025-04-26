@@ -72,6 +72,10 @@ public class UIManager : MonoBehaviour
             Destroy(uiStack.Pop().gameObject);
         }
 
+        if (uiStack.Count > 0)
+        {
+            uiStack.Peek().gameObject.GetComponent<CanvasGroup>().interactable = true;
+        }
     }
 
     public void CloseAllUI()
