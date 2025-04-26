@@ -46,23 +46,5 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
         isCharging = false;
     }
 
-    public void EnableWeaponRotation()
-    {
-        weaponColliderObject.transform.localEulerAngles = new Vector3(180f, 0f, 180f);
-    }
-    public void DisableWeaponRotation()
-    {
-        weaponColliderObject.transform.localEulerAngles = Vector3.zero;
-    }
-    public void EnableWeaponCollider()
-    {
-        if (weaponColliderObject != null)
-            weaponColliderObject.SetActive(true);
-    }
 
-    public void DisableWeaponCollider()
-    {
-        if (weaponColliderObject != null)
-            weaponColliderObject.SetActive(false);
-    }
 }
