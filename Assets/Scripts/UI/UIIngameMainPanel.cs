@@ -33,6 +33,10 @@ public class UIIngameMainPanel : UIBase
     private RectTransform partyHPParent;
     [SerializeField]
     private UIPartyHPContent partyHPContent;
+    [SerializeField]
+    private TextMeshProUGUI etherText;
+    [SerializeField]
+    private TextMeshProUGUI goldText;
 
     private Dictionary<int, UIPartyHPContent> contentPairs = new Dictionary<int, UIPartyHPContent>();
 
@@ -49,9 +53,10 @@ public class UIIngameMainPanel : UIBase
 
     public override void Init() // 선택된 캐릭터 정보를 받아와 이미지 갱신
     {
-        foreach (var icon in uISkillIcons)
+        string playerCharacter = RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().ReturnCharacterName();
+        for(int i = 0; i < uISkillIcons.Count; i++)
         {
-
+            uISkillIcons[i].SetImage(playerCharacter, (Skills)i, Blessings.None);
         }
 
         ParentPlayerController playerController = RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>();
@@ -59,6 +64,8 @@ public class UIIngameMainPanel : UIBase
         {
             playerController.OnHealthChanged.RemoveAllListeners();
             playerController.OnHealthChanged.AddListener(UpdateHPImage);
+            playerController.OnAttackCooldownUpdate.RemoveAllListeners();
+            playerController.OnAttackCooldownUpdate.AddListener(uISkillIcons[(int)UIIcon.mouseL].StartUpdateSkillCooldown);
             playerController.ShiftCoolDownUpdate.RemoveAllListeners();
             playerController.ShiftCoolDownUpdate.AddListener(uISkillIcons[(int)UIIcon.shift].StartUpdateSkillCooldown);
             playerController.UltimateCoolDownUpdate.RemoveAllListeners();

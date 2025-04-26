@@ -26,9 +26,9 @@ public class UISelectBlessingPanel : UIBase
     private void PickUpBlessing()
     {
         var arr = RoomManager.Instance.ReturnLocalPlayer().GetComponent<PlayerBlessing>().ReturnSkillWithLevel();
-        if(arr == null)
+        if (arr == null)
             Debug.Log("arr ³Î");
-        for(int i =0; i < arr.Length; i++)
+        for (int i = 0; i < arr.Length; i++)
         {
             Debug.Log(arr[i]);
         }
@@ -120,10 +120,11 @@ public class UISelectBlessingPanel : UIBase
                     buttons[index2].transform.DOLocalRotate(new Vector3(0, 90, 0), 0.3f).OnComplete(() =>
                     {
                         buttons[index2].GetComponent<UISelectBlessingButton>().SetEnabled();
+                        isFlipped[index2] = true;
+
                         buttons[index2].transform.DOLocalRotate(new Vector3(0, 0, 0), 0.3f).OnComplete(() =>
                         {
-                            isFlipped[index2] = true;
-                            buttons[index2].image.sprite = null;
+
                             buttons[index2].interactable = true;
                         });
                     });
@@ -136,6 +137,11 @@ public class UISelectBlessingPanel : UIBase
 
     private void SelectBleesing()
     {
+        if (selectedBlessing == null)
+        {
+            return;
+        }
+
         if (selectedBlessing.level != 0)
         {
             RoomManager.Instance.ReturnLocalPlayer().GetComponent<PlayerBlessing>().UpdateBlessing(selectedBlessing);

@@ -13,7 +13,7 @@ public class UITitlePanel : UIBase
     [SerializeField]
     private Text pressAnyKey;
     [SerializeField]
-    private Text title;
+    private Image titleImage;
 
     private bool anyKeyInput = false;
 
@@ -21,12 +21,14 @@ public class UITitlePanel : UIBase
     {
         InputManager.Instance.PlayerInput.actions["AnyKey"].started -= ctx => AnyKeyInput(ctx);
         InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
+        //UIManager.Instance.SetCanvasSize(new Vector2(1920f, 1080f));
     }
 
     void Start()
     {
         InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
         InputManager.Instance.PlayerInput.actions["AnyKey"].started += ctx => AnyKeyInput(ctx);
+        //UIManager.Instance.SetCanvasSize(new Vector2(15040f, 4611.875f));
 
         StartCoroutine(FadeTitle());
         StartCoroutine(PressAnyKeyBlinkingEffect());
@@ -40,6 +42,8 @@ public class UITitlePanel : UIBase
     IEnumerator FadeTitle()
     {
         yield return StartCoroutine(FadeImageAlpha(fadeImage, 1f, 0f, 0.5f));
+        yield return StartCoroutine(FadeImageAlpha(titleImage, 0f, 1f, 0.5f));
+
 
         while (true)
         {
@@ -52,10 +56,14 @@ public class UITitlePanel : UIBase
         }
 
         pressAnyKey.gameObject.SetActive(false);
-        title.gameObject.SetActive(false);
+        titleImage.gameObject.SetActive(false);
 
-        // backgroundImage의 스케일을 0.6으로 축소
-        backgroundImage.transform.DOScale(1f, 1f).SetEase(Ease.InOutSine);  // 1초 동안 크기 축소
+        
+        backgroundImage.transform.DOScale(1f, 1f).SetEase(Ease.InOutSine);
+        // 위치를 위로 200만큼 올리기 (현재 위치 기준)
+        RectTransform rectTransform = backgroundImage.GetComponent<RectTransform>();
+        Vector2 newPos = rectTransform.anchoredPosition + new Vector2(0, 400);
+        rectTransform.DOAnchorPos(newPos, 1f).SetEase(Ease.InOutSine);
 
         yield return new WaitForSeconds(0.5f);
 

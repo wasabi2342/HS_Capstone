@@ -11,6 +11,9 @@ public class UIManager : MonoBehaviour
 
     private Stack<UIBase> uiStack = new Stack<UIBase>();
 
+    private Canvas canvas;
+    private CanvasScaler scaler;
+
     private void Awake()
     {
         if (Instance == null)
@@ -18,6 +21,9 @@ public class UIManager : MonoBehaviour
         else
             Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
+
+        canvas = GetComponent<Canvas>();
+        scaler = GetComponent<CanvasScaler>();
     }
     private void OnEnable()
     {
@@ -132,5 +138,10 @@ public class UIManager : MonoBehaviour
     {
         CloseAllUI();
         OpenPanel<T>();
+    }
+
+    public void SetCanvasSize(Vector2 scale)
+    {
+        scaler.referenceResolution = scale;
     }
 }
