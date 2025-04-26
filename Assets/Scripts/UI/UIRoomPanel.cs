@@ -180,6 +180,8 @@ public class UIRoomPanel : UIBase
         {
             if (canStart)
             {
+                PhotonNetwork.CurrentRoom.IsOpen = false;
+                PhotonNetwork.CurrentRoom.IsVisible = false;
                 PhotonNetwork.LoadLevel("Room");
             }
         }
