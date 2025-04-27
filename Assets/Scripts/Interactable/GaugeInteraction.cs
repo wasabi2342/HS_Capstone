@@ -16,7 +16,7 @@ public class GaugeInteraction : MonoBehaviourPun, IInteractable
 
     protected virtual void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && (!PhotonNetwork.InRoom ||
+        if (other.CompareTag("Interactable") && (!PhotonNetwork.InRoom ||
             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
             canvas.gameObject.SetActive(true);
@@ -25,7 +25,7 @@ public class GaugeInteraction : MonoBehaviourPun, IInteractable
 
     protected virtual void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player") && (!PhotonNetwork.InRoom ||
+        if (other.CompareTag("Interactable") && (!PhotonNetwork.InRoom ||
             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
             canvas.gameObject.SetActive(false);

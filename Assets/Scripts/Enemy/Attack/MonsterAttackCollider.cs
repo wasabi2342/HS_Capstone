@@ -94,14 +94,13 @@ public class MonsterAttackCollider : MonoBehaviourPun
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!photonView.IsMine) return;
-
+        //if (!photonView.IsMine) return;
       
-        if (other.CompareTag("InteractionZone") || other.gameObject.name.Contains("InteractionZone"))
+        if (other.CompareTag("Interactable") || other.gameObject.name.Contains("Interactable"))
         {
             return;
         }
-
+    
         IDamageable damageable = other.GetComponentInParent<IDamageable>();
         if (damageable != null && enemyAI != null)
         {
@@ -109,4 +108,17 @@ public class MonsterAttackCollider : MonoBehaviourPun
         }
     }
 
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (!photonView.IsMine) return;
+    //
+    //    if (other.CompareTag("InteractionZone") || other.gameObject.name.Contains("InteractionZone"))
+    //        return;
+    //
+    //    PhotonView targetPhotonView = other.GetComponentInParent<PhotonView>();
+    //    if (targetPhotonView == null) return;
+    //
+    //    targetPhotonView.RPC("TakeDamageFromMonster", targetPhotonView.Owner, enemyAI.status.damage);
+    //
+    //}
 }

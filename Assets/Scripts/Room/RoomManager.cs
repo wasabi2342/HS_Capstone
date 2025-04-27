@@ -116,6 +116,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
         playerInstance.tag = PLAYER_TAG;
         SetLayerRecursively(playerInstance, PLAYER_LAYER);
+        playerInstance.transform.localScale = playerScale;
         playerInstance.GetComponent<Playercontroller_event>().isInVillage = isInVillage; // 플레이어의 공통 스크립트로 변경 해야함
 
         if (playerCinemachineCamera != null)
