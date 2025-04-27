@@ -7,7 +7,7 @@ public class TestEnemy : ParentPlayerController
         runTimeData.currentHealth = 100f;
     }
 
-    public override void TakeDamage(float damage)
+    public override void TakeDamage(float damage, AttackerType attackerType = AttackerType.Default)
     {
 
         base.TakeDamage(damage);

@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 3696415010247975744}
   - component: {fileID: 6125284283506199871}
   - component: {fileID: 5537281206284771642}
-  - component: {fileID: 1413362949655838399}
   - component: {fileID: 8834516401841631238}
   m_Layer: 12
   m_Name: WhitePlayer_Ultimateffect_Right_3
@@ -31,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.7, z: 0.5}
+  m_LocalScale: {x: 0.375, y: 0.525, z: 0.375}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -127,28 +126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 6125284283506199871}
   hitlagTime: 0.13
---- !u!114 &1413362949655838399
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6757029191275686844}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents: []
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
+  attackerType: 1
 --- !u!65 &8834516401841631238
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -168,5 +146,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 30, y: 7, z: 0.5}
+  m_Size: {x: 30, y: 7, z: 4}
   m_Center: {x: 0, y: 1, z: 0}

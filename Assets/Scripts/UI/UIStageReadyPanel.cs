@@ -17,10 +17,14 @@ public class UIStageReadyPanel : UIBase
     private int maxPlayer;
     private List<Toggle> toggles = new List<Toggle>();
 
+    private System.Action<InputAction.CallbackContext> stageEnterConfirmAction;
+
     private void Start()
     {
         StartCoroutine(TimeCount());
-        InputManager.Instance.PlayerInput.actions["StageEnterConfirm"].performed += ctx => Ready(ctx);
+
+        stageEnterConfirmAction = Ready;
+        InputManager.Instance.PlayerInput.actions["StageEnterConfirm"].performed += stageEnterConfirmAction;
     }
 
 
@@ -57,7 +61,11 @@ public class UIStageReadyPanel : UIBase
     {
         base.OnDisable();
         PhotonNetworkManager.Instance.OnUpdateReadyPlayer -= UpdateToggls;
-        InputManager.Instance.PlayerInput.actions["StageEnterConfirm"].performed -= ctx => Ready(ctx);
+
+        if (InputManager.Instance != null && InputManager.Instance.PlayerInput != null && stageEnterConfirmAction != null)
+        {
+            InputManager.Instance.PlayerInput.actions["StageEnterConfirm"].performed -= stageEnterConfirmAction;
+        }
     }
 
     public void UpdateToggls(int readyPlayerNum)

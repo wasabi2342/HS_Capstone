@@ -21,15 +21,24 @@ public class UISpaceInterationPanel : UIBase
     private float blinkTimer = 0f;
     private bool isBright = true;
 
+    private System.Action<InputAction.CallbackContext> spaceInputAction;
+
     private void OnDisable()
     {
+        if (InputManager.Instance != null && InputManager.Instance.PlayerInput != null && spaceInputAction != null)
+        {
+            InputManager.Instance.PlayerInput.actions["Space"].started -= spaceInputAction;
+        }
+
         InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
     }
 
     public void Init(Action<bool> action = null)
     {
         InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
-        InputManager.Instance.PlayerInput.actions["Space"].started += ctx => SpaceInput(ctx);
+
+        spaceInputAction = SpaceInput;
+        InputManager.Instance.PlayerInput.actions["Space"].started += spaceInputAction;
 
         this.action = action;
         fillImage.fillAmount = 0;

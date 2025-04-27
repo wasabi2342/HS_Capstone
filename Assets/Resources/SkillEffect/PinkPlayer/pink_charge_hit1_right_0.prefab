@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 3385354349603761787}
   - component: {fileID: 4284361979801750674}
   - component: {fileID: 1172981353429579606}
-  - component: {fileID: 1211752583005826393}
   - component: {fileID: 8356094727883407310}
   m_Layer: 0
   m_Name: pink_charge_hit1_right_0
@@ -127,28 +126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 4284361979801750674}
   hitlagTime: 0.117
---- !u!114 &1211752583005826393
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6567239060433933665}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents: []
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
+  attackerType: 2
 --- !u!65 &8356094727883407310
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -164,9 +142,9 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
-  m_Size: {x: 8.4, y: 4, z: 0.5}
+  m_Size: {x: 8.4, y: 4, z: 2}
   m_Center: {x: 2.1, y: 3, z: 0}

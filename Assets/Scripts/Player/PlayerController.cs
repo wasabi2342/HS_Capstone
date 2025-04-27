@@ -156,7 +156,7 @@ public class PlayerController : MonoBehaviourPun, IDamageable
 
     public float GetTotalShield() => shields.Sum(x => x.amount);
 
-    public virtual void TakeDamage(float damage)
+    public virtual void TakeDamage(float damage, AttackerType attackerType = AttackerType.Default)
     {
         if (CurrentState == PlayerState.Death) return;
 

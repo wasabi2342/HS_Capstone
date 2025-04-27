@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿/*******************************************************
+ * EnemyAI.cs – Shield 우선차감 + HPBar 제거 2025-04-25
+ *******************************************************/
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -7,130 +10,127 @@ using Photon.Pun;
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyAI : MonoBehaviourPun, IDamageable
 {
-    /* ────────────── Editor 노출 ────────────── */
-    public EnemyStatus status;                       // ScriptableObject (hp, damage, headOffset …)
-    [SerializeField] private SpawnArea spawnArea;    // 배회 영역
-    public GameObject damageTextPrefab;              // 데미지 숫자 프리팹
+    /* ───── Inspector ───── */
+    public EnemyStatus status;                         // hp, damage, headOffset, maxShield…
+    [SerializeField] private SpawnArea spawnArea;      // Wander 영역
+    public GameObject damageTextPrefab;
 
-    /* ────────────── 런타임 필드 ────────────── */
+    /* ───── Runtime ───── */
     public NavMeshAgent agent { get; private set; }
     public Animator animator;
-    private SpriteRenderer spriteRenderer;
-    public DebuffController debuffController { get; private set; }
+    private SpriteRenderer sr;
+    private DebuffController debuff;
+    public DebuffController debuffController { get => debuff; private set => debuff = value; }
     private IMonsterAttack attackStrategy;
-    private BehaviorTreeRunner behaviorTree;
+    private BehaviorTreeRunner bt;
 
-    private MonsterTargeting targeting;              // ★ 몬스터 타입 확인용
+    Transform targetPlayer;
+    float lastMoveX = 1f;
+    string currentAnim = "";
 
-    // 타깃 & 이동
-    private Transform targetPlayer;
-    private float lastMoveX = 1f;
-    private string currentMoveAnim = "";
-    private bool canAttack = true;
-    private float cooldownTimer;
-    private bool isAttackAnimPlaying;
-    private float attackAnimTime;
-    private float attackAnimDuration = 0.7f;   // status.animDuration 로 덮어씀
-    private bool isPreparingAttack;
-    private float attackPrepareTimer;
+    bool canAttack = true; float atkCoolT;
+    bool atkAnim; float atkT;
+    bool prepping; float prepT;
+    float atkDur = .7f;
 
-    // 배회
-    private bool isWaiting;
-    private float waitTime, waitTimer;
-    private Vector3 wanderTarget;
+    bool waiting; float waitT, waitDur;
+    Vector3 wanderTarget;
 
-    // HP·Shield
-    private float maxHP, currentHP;
-    private float maxShield, currentShield;
+    /* HP & Shield */
+    float maxHP, hp;
+    float maxShield, shield;          // 실드
+    bool dead;
+    const float DIE_DUR = 1.5f;
 
-    // 상태
-    private bool isDead;
-    private float deathAnimDuration = 1.5f;
-    public static int ActiveMonsterCount;
+    public static int ActiveMonsterCount = 0;
 
-    // UI
-    private UIEnemyHealthBar uiBar;
+    /* UI */
+    UIEnemyHealthBar uiBar;
 
-    /* ───────────────────────────── Awake ───────────────────────────── */
+    /* ───────────────────────── Awake ───────────────────────── */
     void Awake()
     {
-        /* 필수 컴포넌트 캐시 */
+        /* 컴포넌트 */
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        debuffController = GetComponent<DebuffController>();
-        targeting = GetComponent<MonsterTargeting>();    // ★
+        sr = GetComponent<SpriteRenderer>();
+        debuff = GetComponent<DebuffController>();
+        attackStrategy = GetComponent<IMonsterAttack>();
 
         agent.updateRotation = false;
-        agent.angularSpeed = 500f;
-        agent.stoppingDistance = 0.1f;
+        agent.stoppingDistance = .1f;
+
+        /* 스탯 초기화 */
+        maxHP = hp = status.hp;
+        maxShield = shield = status.maxShield;
+        atkDur = status.animDuration;
 
         if (PhotonNetwork.IsMasterClient) ActiveMonsterCount++;
 
-        /* 스탯 초기화 */
-        maxHP = status.hp;
-        currentHP = status.hp;
-        maxShield = status.maxShield;
-        currentShield = status.maxShield;
-        attackAnimDuration = status.animDuration;
+        EnsureSpawnArea();
 
-        /* 체력바 UI 인스턴스 */
-        GameObject prefab = Resources.Load<GameObject>("UIEnemyHealthBar");
+        /* HP / Shield 바 */
+        var prefab = Resources.Load<GameObject>("UIEnemyHealthBar");
         if (prefab != null)
         {
-            GameObject go = Instantiate(prefab);          // 부모 지정 X ‒ 스케일 영향 안 받음
+            var go = Instantiate(prefab);
             uiBar = go.GetComponent<UIEnemyHealthBar>();
-            uiBar.Init(transform, new Vector3(0f, status.headOffset, 0f));
+            uiBar.Init(transform, Vector3.up * status.headOffset);
             uiBar.SetHP(1f);
             uiBar.SetShield(maxShield > 0 ? 1f : 0f);
         }
 
-        /* AI 세팅 */
-        attackStrategy = GetComponent<IMonsterAttack>();
-        behaviorTree = new BehaviorTreeRunner(BuildBehaviorTree());
+        /* Behavior Tree */
+        bt = new BehaviorTreeRunner(BuildBT());
 
-        EnsureSpawnArea();                                // Awake에서도 한 번 시도
+        /* 클라이언트 제어 분기 */
+        if (PhotonNetwork.InRoom && (!photonView.IsMine || !PhotonNetwork.IsMasterClient))
+            agent.enabled = false;
     }
 
-    /* ─────────────────── 부모 변경 시 SpawnArea 재확인 ─────────────────── */
-    void OnTransformParentChanged() => EnsureSpawnArea();
-
-    /* SpawnArea 확보 함수 (성공 시 true) */
+    /* ───────── SpawnArea 확보 ───────── */
+    void OnTransformParentChanged() { EnsureSpawnArea(); }
     bool EnsureSpawnArea()
     {
         if (spawnArea) return true;
         spawnArea = GetComponentInParent<SpawnArea>();
         return spawnArea != null;
     }
+    public void SetSpawnArea(SpawnArea sa)
+    {
+        spawnArea = sa;
 
-    /* ───────────────────────────── Update ───────────────────────────── */
+        // 이미 NavMesh 위에 있고 살아 있으면 즉시 새 Wander 목적지 선택
+        if (agent != null && agent.enabled && agent.isOnNavMesh && !dead)
+            PickWanderPoint();
+    }
+    /* ───────────────────────── Update ───────────────────────── */
     void Update()
     {
-        if (!PhotonNetwork.IsMasterClient || isDead) return;
+        if (!agent.enabled || dead) return;
 
-        /* 공격 쿨다운 */
+        /* 쿨타임 */
         if (!canAttack)
         {
-            cooldownTimer += Time.deltaTime;
-            if (cooldownTimer >= status.attackCool)
-            { canAttack = true; cooldownTimer = 0f; }
+            atkCoolT += Time.deltaTime;
+            if (atkCoolT >= status.attackCool) { canAttack = true; atkCoolT = 0f; }
         }
 
-        behaviorTree.Operate();           // 행동 트리 실행
+        bt.Operate();   // Behavior Tree 실행
 
-        /* 공격 애니메이션 진행 중이면 대기 */
-        if (isAttackAnimPlaying)
+        /* 공격 애니 진행 중 */
+        if (atkAnim)
         {
-            attackAnimTime += Time.deltaTime;
-            if (attackAnimTime >= attackAnimDuration)
+            atkT += Time.deltaTime;
+            if (atkT >= atkDur)
             {
-                isAttackAnimPlaying = false;
+                atkAnim = false;
                 PlayAnim(lastMoveX >= 0 ? "Right_Idle" : "Left_Idle");
             }
             return;
         }
 
-        /* 이동/Idle 애니메이션 */
+        /* 이동/Idle 애니 */
         float vx = agent.velocity.x;
         if (!Mathf.Approximately(vx, 0f)) lastMoveX = vx;
 
@@ -140,90 +140,50 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
             else if (vx < 0) PlayAnim("Run_Left");
             else PlayAnim(lastMoveX >= 0 ? "Run_Right" : "Run_Left");
         }
-        else
-            PlayAnim(lastMoveX >= 0 ? "Right_Idle" : "Left_Idle");
+        else PlayAnim(lastMoveX >= 0 ? "Right_Idle" : "Left_Idle");
     }
 
-    /* ─────────────────── 애니메이션 & RPC ─────────────────── */
-    void PlayAnim(string anim)
+    /* ───────── Behavior Tree 구축 ───────── */
+    INode BuildBT() => new SelectorNode(new List<INode>()
     {
-        if (currentMoveAnim == anim) return;
-        animator.Play(anim);
-        currentMoveAnim = anim;
-        photonView.RPC(nameof(RPC_PlayAnim), RpcTarget.Others, anim);
-    }
-    [PunRPC] void RPC_PlayAnim(string anim) { animator.Play(anim); currentMoveAnim = anim; }
-
-    /* ─────────────────── Behavior Tree ─────────────────── */
-    INode BuildBehaviorTree()
-    {
-        return new SelectorNode(new List<INode>()
+        new SequenceNode(new List<INode>()
         {
-            new SequenceNode(new List<INode>()
-            {
-                new ActionNode(CheckEnemyInAttackRange),
-                new ActionNode(DoAttack),
-            }),
-            new SequenceNode(new List<INode>()
-            {
-                new ActionNode(CheckDetectEnemy),
-                new ActionNode(MoveToEnemy),
-            }),
-            new ActionNode(WanderInsideSpawnArea),
-        });
-    }
+            new ActionNode(CheckEnemyInRange),
+            new ActionNode(DoAttack),
+        }),
+        new SequenceNode(new List<INode>()
+        {
+            new ActionNode(DetectEnemy),
+            new ActionNode(MoveToEnemy),
+        }),
+        new ActionNode(WanderInsideArea),
+    });
 
-    /* ───── 조건 노드 ───── */
-    INode.NodeState CheckEnemyInAttackRange()
+    /* ─── BT 노드들 ─── */
+    INode.NodeState CheckEnemyInRange()
     {
         if (!canAttack || targetPlayer == null) return INode.NodeState.Failure;
-
-        var pc = targetPlayer.GetComponent<PlayerController>();
-        if (pc == null || pc.CurrentState == PlayerState.Death)
-        { targetPlayer = null; return INode.NodeState.Failure; }
-
         return Vector3.Distance(transform.position, targetPlayer.position) < status.attackRange
-            ? INode.NodeState.Success : INode.NodeState.Failure;
+             ? INode.NodeState.Success : INode.NodeState.Failure;
     }
 
-    INode.NodeState CheckDetectEnemy()
+    INode.NodeState DetectEnemy()
     {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        float minDist = status.detectRange;
-        Transform nearest = null;
-
-        foreach (var p in players)
+        Transform near = null; float min = status.detectRange;
+        foreach (var p in GameObject.FindGameObjectsWithTag("Player"))
         {
-            var pc = p.GetComponent<PlayerController>();
-            if (pc == null || pc.CurrentState == PlayerState.Death) continue;
-
             float d = Vector3.Distance(transform.position, p.transform.position);
-            if (d < minDist) { minDist = d; nearest = p.transform; }
+            if (d < min) { min = d; near = p.transform; }
         }
-
-        targetPlayer = nearest;
-        return nearest ? INode.NodeState.Success : INode.NodeState.Failure;
+        targetPlayer = near;
+        return near ? INode.NodeState.Success : INode.NodeState.Failure;
     }
 
-    /* ───── 행동 노드 ───── */
     INode.NodeState MoveToEnemy()
     {
         if (!targetPlayer) return INode.NodeState.Failure;
-
-        /* ★ Ranged 타입은 사정거리 안에 들어오면 추적 중단 */
-        if (targeting && targeting.monsterType == MonsterType.Ranged)
-        {
-            float dist = Vector3.Distance(transform.position, targetPlayer.position);
-            if (dist <= status.attackRange)
-            {
-                agent.isStopped = true;
-                agent.ResetPath();
-                return INode.NodeState.Failure;   // 이동 노드 종료 → 공격 시퀀스로
-            }
-        }
-
-        agent.speed = status.chaseSpeed;
         agent.isStopped = false;
+        agent.speed = status.chaseSpeed;
         agent.SetDestination(new Vector3(targetPlayer.position.x,
                                          transform.position.y,
                                          targetPlayer.position.z));
@@ -235,49 +195,32 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         if (!canAttack || attackStrategy == null || !targetPlayer)
             return INode.NodeState.Failure;
 
-        var pc = targetPlayer.GetComponent<PlayerController>();
-        if (pc == null || pc.CurrentState == PlayerState.Death)
-        { targetPlayer = null; ResetPrep(); return INode.NodeState.Failure; }
-
-        if (isPreparingAttack)
+        if (prepping)
         {
-            attackPrepareTimer += Time.deltaTime;
-            if (attackPrepareTimer >= status.waitCool)
+            prepT += Time.deltaTime;
+            if (prepT >= status.waitCool)
             {
-                isPreparingAttack = false; attackPrepareTimer = 0f;
-
-                string atkAnim = targetPlayer.position.x >= transform.position.x ? "Attack_Right" : "Attack_Left";
-                PlayAnim(atkAnim);
-
+                prepping = false; prepT = 0f;
+                string a = targetPlayer.position.x >= transform.position.x ? "Attack_Right" : "Attack_Left";
+                PlayAnim(a);
                 attackStrategy.Attack(targetPlayer);
-                isAttackAnimPlaying = true; attackAnimTime = 0f;
-                canAttack = false; cooldownTimer = 0f;
+                atkAnim = true; atkT = 0f; canAttack = false; atkCoolT = 0f;
                 return INode.NodeState.Success;
             }
-
-            PlayAnim(targetPlayer.position.x >= transform.position.x ? "Right_Idle" : "Left_Idle");
-            agent.isStopped = true;
-            return INode.NodeState.Running;
-        }
-        else
-        {
-            isPreparingAttack = true; attackPrepareTimer = 0f;
-            agent.isStopped = true;
             PlayAnim(targetPlayer.position.x >= transform.position.x ? "Right_Idle" : "Left_Idle");
             return INode.NodeState.Running;
         }
+        else { prepping = true; prepT = 0f; agent.isStopped = true; return INode.NodeState.Running; }
     }
-    void ResetPrep() { isPreparingAttack = false; attackPrepareTimer = 0f; }
 
-    /* ───── Wander 노드 ───── */
-    INode.NodeState WanderInsideSpawnArea()
+    INode.NodeState WanderInsideArea()
     {
         if (!EnsureSpawnArea()) return INode.NodeState.Failure;
 
-        if (isWaiting)
+        if (waiting)
         {
-            if ((waitTimer += Time.deltaTime) >= waitTime)
-            { isWaiting = false; agent.isStopped = false; PickWanderPoint(); }
+            if ((waitT += Time.deltaTime) >= waitDur)
+            { waiting = false; agent.isStopped = false; PickWanderPoint(); }
             return INode.NodeState.Running;
         }
 
@@ -285,8 +228,8 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
 
         if (!agent.hasPath || agent.remainingDistance <= agent.stoppingDistance + .1f)
         {
-            isWaiting = true; agent.isStopped = true;
-            waitTime = Random.Range(3f, 5f); waitTimer = 0f;
+            waiting = true; agent.isStopped = true;
+            waitDur = Random.Range(3f, 5f); waitT = 0f;
         }
         return INode.NodeState.Running;
     }
@@ -294,16 +237,11 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     void PickWanderPoint()
     {
         if (!EnsureSpawnArea()) return;
-
-        const int MAX_TRIES = 10;
-        const float MIN_DIST = 1.5f;
-
-        for (int i = 0; i < MAX_TRIES; i++)
+        for (int i = 0; i < 10; i++)
         {
-            Vector3 cand = spawnArea.GetRandomPointInsideArea();
-            if (NavMesh.SamplePosition(cand, out var hit, 2f, NavMesh.AllAreas))
+            Vector3 p = spawnArea.GetRandomPointInsideArea();
+            if (NavMesh.SamplePosition(p, out NavMeshHit hit, 2f, NavMesh.AllAreas))
             {
-                if (Vector3.Distance(transform.position, hit.position) < MIN_DIST) continue;
                 wanderTarget = hit.position;
                 agent.speed = status.wanderSpeed;
                 agent.SetDestination(wanderTarget);
@@ -312,130 +250,111 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         }
     }
 
-    /* ───── 애니메이션 이벤트 ───── */
-    public void OnAttackHitEvent()
-    {
-        if (targetPlayer && attackStrategy != null)
-            attackStrategy.Attack(targetPlayer);
-    }
-
-    /* ───── IDamageable 구현 ───── */
-    public void TakeDamage(float dmg)
-    {
+    /* ───────── Damage & Shield ───────── */
+    public void TakeDamage(float dmg, AttackerType attackerType = AttackerType.Default) =>
         photonView.RPC(nameof(DamageToMaster), RpcTarget.MasterClient, dmg);
-    }
 
     [PunRPC]
     public void DamageToMaster(float dmg)
     {
-        if (!PhotonNetwork.IsMasterClient || isDead) return;
+        if (!PhotonNetwork.IsMasterClient || dead) return;
 
-        /* 쉴드 선감소 */
-        float beforeShield = currentShield;
-        if (currentShield > 0)
+        /* 실드 먼저 차감 */
+        float before = shield;
+        if (shield > 0)
         {
-            currentShield = Mathf.Max(0, currentShield - dmg);
-            dmg = Mathf.Max(0, dmg - beforeShield);
-            photonView.RPC(nameof(UpdateShield), RpcTarget.AllBuffered, currentShield);
+            shield = Mathf.Max(0, shield - dmg);
+            dmg = Mathf.Max(0, dmg - before);
+            photonView.RPC(nameof(UpdateShield), RpcTarget.AllBuffered, shield / maxShield);
+
+            if (shield == 0 && before > 0)
+                photonView.RPC(nameof(RPC_ShieldBreakFx), RpcTarget.All);
         }
 
-        /* HP 감소 */
-        currentHP = Mathf.Max(0, currentHP - dmg);
-        photonView.RPC(nameof(UpdateHP), RpcTarget.AllBuffered, currentHP);
+        /* HP 차감 */
+        hp = Mathf.Max(0, hp - dmg);
+        photonView.RPC(nameof(UpdateHP), RpcTarget.AllBuffered, hp / maxHP);
 
-        /* 피격 애니메이션 */
-        if (currentShield <= 0)
-            photonView.RPC(nameof(RPC_PlayAnim), RpcTarget.All, lastMoveX >= 0 ? "Right_Hit" : "Left_Hit");
+        /* 피격 연출 (실드가 없을 때만 경직) */
+        if (shield <= 0)
+            photonView.RPC(nameof(RPC_PlayAnim), RpcTarget.All,
+                           lastMoveX >= 0 ? "Right_Hit" : "Left_Hit");
 
         photonView.RPC(nameof(RPC_Flash), RpcTarget.All);
         SpawnDamageText(dmg);
 
-        if (currentHP <= 0) Die();
+        if (hp <= 0) Die();
     }
 
-    /* ───── UI RPC ───── */
-    [PunRPC]
-    public void UpdateHP(float hp)
-    {
-        currentHP = hp;
-        if (uiBar)
-        {
-            float n = currentHP / maxHP;
-            uiBar.SetHP(n);
-            uiBar.CheckThreshold(n, false);
-        }
-    }
+    /* ───────── UI RPC ───────── */
+    [PunRPC] public void UpdateHP(float n) { uiBar?.SetHP(n); }
+    [PunRPC] public void UpdateShield(float n) { uiBar?.SetShield(n); }
+    [PunRPC] void RPC_ShieldBreakFx() { /* 파티클·사운드 */ }
 
-    [PunRPC]
-    public void UpdateShield(float shd)
-    {
-        currentShield = shd;
-        if (uiBar)
-        {
-            float n = maxShield == 0 ? 0 : currentShield / maxShield;
-            uiBar.SetShield(n);
-            uiBar.CheckThreshold(n, true);
-        }
-    }
-
-    /* ───── 피격 점멸 ───── */
-    [PunRPC] void RPC_Flash() => StartCoroutine(CoFlash());
-    IEnumerator CoFlash()
-    {
-        Color org = spriteRenderer.color;
-        spriteRenderer.color = new Color(1f, 0.3f, 0.3f);
-        yield return new WaitForSeconds(0.1f);
-        spriteRenderer.color = org;
-    }
-
-    /* ───── 데미지 숫자 ───── */
-    void SpawnDamageText(float dmg)
-    {
-        if (!damageTextPrefab) return;
-        var go = Instantiate(damageTextPrefab,
-                             transform.position + Vector3.up * 1.5f,
-                             Quaternion.identity);
-        if (go.TryGetComponent(out TextMesh tm))
-            tm.text = dmg.ToString();
-    }
-
-    /* ───── 사망 처리 ───── */
+    /* ───────── Death & Cleanup ───────── */
     void Die()
     {
-        if (isDead) return;
-        isDead = true;
-        agent.isStopped = true;
-        if (uiBar) Destroy(uiBar.gameObject);
+        if (dead) return;
+        dead = true; agent.isStopped = true;
+
+        photonView.RPC(nameof(RPC_DestroyHPBar), RpcTarget.AllBuffered);
+        photonView.RPC(nameof(RPC_PlayAnim), RpcTarget.All,
+                       lastMoveX >= 0 ? "Right_Death" : "Left_Death");
 
         if (PhotonNetwork.IsMasterClient)
         {
             ActiveMonsterCount--;
-            StageManager sm = Object.FindAnyObjectByType<StageManager>();
-            sm?.AreAllMonstersCleared();
+            StartCoroutine(CoDestroyLater());
         }
-
-        photonView.RPC(nameof(RPC_PlayAnim), RpcTarget.All,
-                       lastMoveX >= 0 ? "Right_Death" : "Left_Death");
-        StartCoroutine(CoDestroyLater());
     }
-
+    [PunRPC] void RPC_DestroyHPBar() { if (uiBar) Destroy(uiBar.gameObject); }
     IEnumerator CoDestroyLater()
     {
-        yield return new WaitForSeconds(deathAnimDuration);
-        if (PhotonNetwork.IsMasterClient)
-            PhotonNetwork.Destroy(gameObject);
+        yield return new WaitForSeconds(DIE_DUR);
+        if (PhotonNetwork.IsMasterClient) PhotonNetwork.Destroy(gameObject);
     }
 
-    /* ───── Gizmos ───── */
+    /* ───────── Helper / RPC ───────── */
+    void PlayAnim(string anim)
+    {
+        if (currentAnim == anim) return;
+        animator.Play(anim); currentAnim = anim;
+        photonView.RPC(nameof(RPC_PlayAnim), RpcTarget.Others, anim);
+    }
+    [PunRPC] void RPC_PlayAnim(string a) { animator.Play(a); currentAnim = a; }
+    [PunRPC] void RPC_Flash() => StartCoroutine(CoFlash());
+    IEnumerator CoFlash()
+    {
+        var c = sr.color; sr.color = new Color(1, .3f, .3f);
+        yield return new WaitForSeconds(.1f); sr.color = c;
+    }
+
+    void SpawnDamageText(float dmg)
+    {
+        if (!damageTextPrefab) return;
+        var g = Instantiate(damageTextPrefab, transform.position + Vector3.up * 1.5f, Quaternion.identity);
+        if (g.TryGetComponent(out TextMesh tm)) tm.text = dmg.ToString("F0");
+    }
+
+    /* ───────── Gizmos ───────── */
+    void OnDrawGizmos()
+    {
+        if (agent && agent.enabled && agent.isOnNavMesh && agent.velocity.sqrMagnitude > .01f)
+        {
+            Gizmos.color = Color.blue;
+            Vector3 d = agent.velocity.normalized * 1.2f;
+            Gizmos.DrawLine(transform.position, transform.position + d);
+            Gizmos.DrawSphere(transform.position + d, .07f);
+        }
+    }
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, 0.3f);
-
+        Gizmos.DrawWireSphere(transform.position, .25f);
         if (wanderTarget != Vector3.zero)
         {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawSphere(wanderTarget, 0.4f);
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawSphere(wanderTarget, .25f);
             Gizmos.DrawLine(transform.position, wanderTarget);
         }
     }

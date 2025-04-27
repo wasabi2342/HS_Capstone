@@ -72,40 +72,40 @@ public class AudioManager : MonoBehaviour
     // 경로 기반 헬퍼 메서드 (폴더 구조 반영)
     public void PlayCharacterSFX(string characterType, string actionName, Vector3 position)
     {
-        PlayOneShot($"event:/Events/Character/{characterType}/{actionName}", position);
+        PlayOneShot($"event:/Character/{characterType}/{actionName}", position);
     }
 
     public void PlayMonsterSFX(string actionName, Vector3 position)
     {
-        PlayOneShot($"event:/Events/Character/Monster/{actionName}", position);
+        PlayOneShot($"event:/Character/Monster/{actionName}", position);
     }
 
     public void PlayCommonSFX(string soundName, Vector3 position)
     {
-        PlayOneShot($"event:/Events/Character/Common/{soundName}", position);
+        PlayOneShot($"event:/Character/Common/{soundName}", position);
     }
 
     public void PlayUISFX(string sfxName, Vector3 position)
     {
-        PlayOneShot($"event:/Events/UI/{sfxName}", position);
+        PlayOneShot($"event:/UI/{sfxName}", position);
     }
 
     // BGM 사운드 재생 (OneShot용, 필요하면 루프용도 추가 가능)
     public void PlayBGM(string bgmName, Vector3 position)
     {
-        PlayOneShot($"event:/Events/BGM/{bgmName}", position);
+        PlayOneShot($"event:/BGM/{bgmName}", position);
     }
 
     // BGM 루프 사운드 재생
     public void PlayBGMLoop(string bgmName, Vector3 position)
     {
-        PlayLoop($"event:/Events/BGM/{bgmName}", position);
+        PlayLoop($"event:/BGM/{bgmName}", position);
     }
 
     // BGM 루프 사운드 정지
     public void StopBGMLoop(string bgmName)
     {
-        StopLoop($"event:/Events/BGM/{bgmName}");
+        StopLoop($"event:/BGM/{bgmName}");
     }
 
 }

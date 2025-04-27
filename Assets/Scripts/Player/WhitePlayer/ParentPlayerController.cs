@@ -150,7 +150,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     }
 
     // 2) 추가 파라미터 useRPC를 사용한 데미지 처리
-    public virtual void TakeDamage(float damage)
+    public virtual void TakeDamage(float damage, AttackerType attackerType = AttackerType.Default)
     {
 
         if (PhotonNetwork.InRoom)
@@ -426,4 +426,10 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         return characterBaseStats.name;
     }
 
+    [PunRPC]
+    public virtual void CreateAnimation(string name, Vector3 pos)
+    {
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(name), pos, Quaternion.identity);
+        skillEffect.transform.parent = transform;
+    }
 }

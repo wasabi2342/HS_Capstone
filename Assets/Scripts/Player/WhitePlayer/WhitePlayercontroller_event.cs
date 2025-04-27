@@ -16,6 +16,18 @@ public class WhitePlayercontroller_event : Playercontroller_event
     public UnityEvent OnKeyboardShiftLEvent;
     public UnityEvent OnKeyboardREvent;
 
+    private Action<InputAction.CallbackContext> movePerformedCallback;
+    private Action<InputAction.CallbackContext> moveCanceledCallback;
+    private Action<InputAction.CallbackContext> dashPerformedCallback;
+    private Action<InputAction.CallbackContext> dashCanceledCallback;
+    private Action<InputAction.CallbackContext> interactionPerformedCallback;
+    private Action<InputAction.CallbackContext> interactionCanceledCallback;
+    private Action<InputAction.CallbackContext> interactionStartedCallback;
+    private Action<InputAction.CallbackContext> basicAttackPerformedCallback;
+    private Action<InputAction.CallbackContext> specialAttackPerformedCallback;
+    private Action<InputAction.CallbackContext> skillAttackPerformedCallback;
+    private Action<InputAction.CallbackContext> ultimateAttackPerformedCallback;
+
     private void Start()
     {
         if (PhotonNetwork.IsConnected && !photonView.IsMine)
@@ -24,17 +36,29 @@ public class WhitePlayercontroller_event : Playercontroller_event
             return;
         }
 
-        InputManager.Instance.PlayerInput.actions["Move"].performed += ctx => OnMove(ctx);
-        InputManager.Instance.PlayerInput.actions["Move"].canceled += ctx => OnMove(ctx);
-        InputManager.Instance.PlayerInput.actions["Dash"].performed += ctx => OnKeyboard_Spacebar(ctx);
-        InputManager.Instance.PlayerInput.actions["Dash"].canceled += ctx => OnKeyboard_Spacebar(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].performed += ctx => OnInteraction(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].canceled += ctx => OnInteraction(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].started += ctx => OnInteraction(ctx);
-        InputManager.Instance.PlayerInput.actions["BasicAttack"].performed += ctx => OnMouse_L(ctx);
-        InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed += ctx => OnMouse_R(ctx);
-        InputManager.Instance.PlayerInput.actions["SkillAttack"].performed += ctx => OnKeyboard_Shift_L(ctx);
-        InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed += ctx => OnKeyboard_R(ctx);
+        movePerformedCallback = OnMove;
+        moveCanceledCallback = OnMove;
+        dashPerformedCallback = OnKeyboard_Spacebar;
+        dashCanceledCallback = OnKeyboard_Spacebar;
+        interactionPerformedCallback = OnInteraction;
+        interactionCanceledCallback = OnInteraction;
+        interactionStartedCallback = OnInteraction;
+        basicAttackPerformedCallback = OnMouse_L;
+        specialAttackPerformedCallback = OnMouse_R;
+        skillAttackPerformedCallback = OnKeyboard_Shift_L;
+        ultimateAttackPerformedCallback = OnKeyboard_R;
+
+        InputManager.Instance.PlayerInput.actions["Move"].performed += movePerformedCallback;
+        InputManager.Instance.PlayerInput.actions["Move"].canceled += moveCanceledCallback;
+        InputManager.Instance.PlayerInput.actions["Dash"].performed += dashPerformedCallback;
+        InputManager.Instance.PlayerInput.actions["Dash"].canceled += dashCanceledCallback;
+        InputManager.Instance.PlayerInput.actions["Interaction"].performed += interactionPerformedCallback;
+        InputManager.Instance.PlayerInput.actions["Interaction"].canceled += interactionCanceledCallback;
+        InputManager.Instance.PlayerInput.actions["Interaction"].started += interactionStartedCallback;
+        InputManager.Instance.PlayerInput.actions["BasicAttack"].performed += basicAttackPerformedCallback;
+        InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed += specialAttackPerformedCallback;
+        InputManager.Instance.PlayerInput.actions["SkillAttack"].performed += skillAttackPerformedCallback;
+        InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed += ultimateAttackPerformedCallback;
 
     }
     private void Awake()
@@ -108,7 +132,7 @@ public class WhitePlayercontroller_event : Playercontroller_event
             OnKeyboardShiftLEvent?.Invoke();
 
             // katana_stab Àç»ý
-            AudioManager.Instance.PlayOneShot("event:/Character/Character-sword/katana_stab", transform.position);
+            //AudioManager.Instance.PlayOneShot("event:/Character/Character-sword/katana_stab", transform.position);
         }
     }
 
@@ -137,16 +161,16 @@ public class WhitePlayercontroller_event : Playercontroller_event
         if (!photonView.IsMine)
             return;
 
-        InputManager.Instance.PlayerInput.actions["Move"].performed -= ctx => OnMove(ctx);
-        InputManager.Instance.PlayerInput.actions["Move"].canceled -= ctx => OnMove(ctx);
-        InputManager.Instance.PlayerInput.actions["Dash"].performed -= ctx => OnKeyboard_Spacebar(ctx);
-        InputManager.Instance.PlayerInput.actions["Dash"].canceled -= ctx => OnKeyboard_Spacebar(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].performed -= ctx => OnInteraction(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].canceled -= ctx => OnInteraction(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].started -= ctx => OnInteraction(ctx);
-        InputManager.Instance.PlayerInput.actions["BasicAttack"].performed -= ctx => OnMouse_L(ctx);
-        InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed -= ctx => OnMouse_R(ctx);
-        InputManager.Instance.PlayerInput.actions["SkillAttack"].performed -= ctx => OnKeyboard_Shift_L(ctx);
-        InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed -= ctx => OnKeyboard_R(ctx);
+        InputManager.Instance.PlayerInput.actions["Move"].performed -= movePerformedCallback;
+        InputManager.Instance.PlayerInput.actions["Move"].canceled -= moveCanceledCallback;
+        InputManager.Instance.PlayerInput.actions["Dash"].performed -= dashPerformedCallback;
+        InputManager.Instance.PlayerInput.actions["Dash"].canceled -= dashCanceledCallback;
+        InputManager.Instance.PlayerInput.actions["Interaction"].performed -= interactionPerformedCallback;
+        InputManager.Instance.PlayerInput.actions["Interaction"].canceled -= interactionCanceledCallback;
+        InputManager.Instance.PlayerInput.actions["Interaction"].started -= interactionStartedCallback;
+        InputManager.Instance.PlayerInput.actions["BasicAttack"].performed -= basicAttackPerformedCallback;
+        InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed -= specialAttackPerformedCallback;
+        InputManager.Instance.PlayerInput.actions["SkillAttack"].performed -= skillAttackPerformedCallback;
+        InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed -= ultimateAttackPerformedCallback;
     }
 }

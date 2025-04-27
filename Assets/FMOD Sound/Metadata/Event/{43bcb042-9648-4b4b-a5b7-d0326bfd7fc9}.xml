@@ -32,7 +32,7 @@
 			<destination>{b8c1788c-405f-4b36-a6a9-40865b6204ed}</destination>
 		</relationship>
 		<relationship name="banks">
-			<destination>{32fafa21-db90-40b1-b4b0-d71ab19a0883}</destination>
+			<destination>{0b294ce9-98fa-48cf-9be2-9fab6d86a035}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixer" id="{16434a49-a31a-44d3-af7a-b97892a2df3a}">
@@ -60,7 +60,7 @@
 	<object class="MarkerTrack" id="{e5c6dc72-938c-4c49-a687-4cfc6d0a5115}" />
 	<object class="GroupTrack" id="{96e37eb9-7717-491c-8fa8-07892f872a3d}">
 		<relationship name="automationTracks">
-			<destination>{c89d40cc-21ef-45a5-b25f-5b6a765d0884}</destination>
+			<destination>{27b9a94b-3338-4140-9d3b-eba1b8761229}</destination>
 		</relationship>
 		<relationship name="modules">
 			<destination>{ff7f450d-a2d2-4bd5-ad79-40b449ef893b}</destination>
@@ -91,7 +91,7 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{fe567f30-deb9-41d8-ac38-668a07157bb3}" />
-	<object class="AutomationTrack" id="{c89d40cc-21ef-45a5-b25f-5b6a765d0884}">
+	<object class="AutomationTrack" id="{27b9a94b-3338-4140-9d3b-eba1b8761229}">
 		<relationship name="automator">
 			<destination>{75a675bb-65e5-43f9-87b7-d3def9cd8488}</destination>
 		</relationship>
@@ -161,6 +161,7 @@
 			<destination>{eddc33d1-9358-4108-8ed8-bccd81e2ac87}</destination>
 			<destination>{8be7c02d-bc73-4e3e-b745-509d8b508bd3}</destination>
 			<destination>{9e6ad8f9-797b-4837-bde4-5a6e7ac95442}</destination>
+			<destination>{0e99f0d7-0300-4026-a565-9bab2aa683a0}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusFader" id="{90f440d7-3ea0-418a-9dba-4797fd96bff3}" />
@@ -169,7 +170,7 @@
 			<value>0.22</value>
 		</property>
 		<property name="value">
-			<value>9</value>
+			<value>0</value>
 		</property>
 	</object>
 	<object class="AutomationPoint" id="{eddc33d1-9358-4108-8ed8-bccd81e2ac87}">
@@ -193,10 +194,21 @@
 	</object>
 	<object class="AutomationPoint" id="{9e6ad8f9-797b-4837-bde4-5a6e7ac95442}">
 		<property name="position">
-			<value>0.010658015179459263</value>
+			<value>0.029999999999999999</value>
 		</property>
 		<property name="value">
-			<value>-17</value>
+			<value>0</value>
+		</property>
+	</object>
+	<object class="AutomationPoint" id="{0e99f0d7-0300-4026-a565-9bab2aa683a0}">
+		<property name="position">
+			<value>0.46000000000000002</value>
+		</property>
+		<property name="value">
+			<value>0</value>
+		</property>
+		<property name="curveShape">
+			<value>0.498774558</value>
 		</property>
 	</object>
 </objects>

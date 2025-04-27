@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 5794307441898918424}
   - component: {fileID: 7237591700111527150}
   - component: {fileID: 1593184172693793049}
-  - component: {fileID: 1087488838327629222}
   - component: {fileID: 5068743798596389523}
   m_Layer: 12
   m_Name: ShiftSkill_Left_Effect_1
@@ -31,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 8.9, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.7, z: 0.5}
+  m_LocalScale: {x: 0.375, y: 0.525, z: 0.375}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -127,28 +126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 7237591700111527150}
   hitlagTime: 0.117
---- !u!114 &1087488838327629222
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5679457308201497132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents: []
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
+  attackerType: 1
 --- !u!65 &5068743798596389523
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -168,5 +146,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
-  m_Size: {x: 22, y: 15, z: 0.5}
+  m_Size: {x: 22, y: 15, z: 2}
   m_Center: {x: -2, y: 1, z: 0}

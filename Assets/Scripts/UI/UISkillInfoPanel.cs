@@ -17,7 +17,9 @@ public class UISkillInfoPanel : UIBase
 {
     [SerializeField]
     private UISkillDataSlot[] dataSlots = new UISkillDataSlot[5];
-    
+
+    private System.Action<InputAction.CallbackContext> closeUIAction;
+
     private void Start()
     {
         Init();
@@ -38,7 +40,8 @@ public class UISkillInfoPanel : UIBase
             }
         }
 
-        InputManager.Instance.PlayerInput.actions["Tab"].performed += ctx => CloseUI(ctx);
+        closeUIAction = CloseUI;
+        InputManager.Instance.PlayerInput.actions["Tab"].performed += closeUIAction;
     }
 
     public void CloseUI(InputAction.CallbackContext ctx)
@@ -47,6 +50,16 @@ public class UISkillInfoPanel : UIBase
         {
             UIManager.Instance.ClosePeekUI();
             InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
+        }
+    }
+
+    public override void OnDisable()
+    {
+        base.OnDisable();
+
+        if (InputManager.Instance != null && InputManager.Instance.PlayerInput != null && closeUIAction != null)
+        {
+            InputManager.Instance.PlayerInput.actions["Tab"].performed -= closeUIAction;
         }
     }
 }
