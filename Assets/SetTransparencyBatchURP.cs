@@ -1,3 +1,4 @@
+// File: Scripts/SetTransparencyBatchURP.cs
 using UnityEngine;
 using System.Collections.Generic;
 using Photon.Pun;
@@ -9,13 +10,16 @@ public class SetTransparencyBatchURP : MonoBehaviour
     private List<GameObject> targetObjects = new List<GameObject>();
 
     [Range(0f, 1f)]
-    [Header("알파값 (0:완전투명 ~ 1:불투명)")]
+    [Header("알파값 (0:완전투명 ~ 1:완전불투명)")]
     public float transparency = 0.5f;
+
+    private Dictionary<GameObject, Material> originalMaterials = new Dictionary<GameObject, Material>();
 
     private void OnTriggerEnter(Collider other)
     {
-        if ((other.CompareTag("Interactable") && (!PhotonNetwork.InRoom ||
-         (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine))))
+        if (other.CompareTag("Interactable") &&
+            (!PhotonNetwork.InRoom ||
+             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
             MakeAllTransparent();
         }
@@ -23,10 +27,11 @@ public class SetTransparencyBatchURP : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if ((other.CompareTag("Interactable") && (!PhotonNetwork.InRoom ||
-         (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine))))
+        if (other.CompareTag("Interactable") &&
+            (!PhotonNetwork.InRoom ||
+             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
-            MakeAllOpaque();
+            RestoreOriginalMaterials();
         }
     }
 
@@ -43,23 +48,28 @@ public class SetTransparencyBatchURP : MonoBehaviour
                 continue;
             }
 
-            Material originalMaterial = meshRenderer.sharedMaterial;
-            Material instanceMaterial = new Material(originalMaterial);
-            meshRenderer.material = instanceMaterial;
-
-            if (instanceMaterial.shader.name.Contains("Universal Render Pipeline/Lit"))
+            if (!originalMaterials.ContainsKey(obj))
             {
-                instanceMaterial.SetFloat("_Surface", 1); // Transparent
-                instanceMaterial.SetFloat("_Blend", 0); // Alpha Blend
-                instanceMaterial.SetOverrideTag("RenderType", "Transparent");
-                instanceMaterial.renderQueue = 3000;
+                originalMaterials[obj] = meshRenderer.sharedMaterial; // 원본 저장
+            }
 
-                instanceMaterial.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                instanceMaterial.DisableKeyword("_SURFACE_TYPE_OPAQUE");
+            Material originalMaterial = meshRenderer.sharedMaterial;
+            Material transparentMaterial = new Material(originalMaterial); // 복제
 
-                Color color = instanceMaterial.color;
+            meshRenderer.material = transparentMaterial; // 복제본 적용
+
+            if (transparentMaterial.shader.name.Contains("Universal Render Pipeline/Lit"))
+            {
+                transparentMaterial.SetFloat("_Surface", 1); // Transparent 설정
+                transparentMaterial.SetOverrideTag("RenderType", "Transparent");
+                transparentMaterial.renderQueue = 3000;
+
+                transparentMaterial.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                transparentMaterial.DisableKeyword("_SURFACE_TYPE_OPAQUE");
+
+                Color color = transparentMaterial.color;
                 color.a = transparency;
-                instanceMaterial.color = color;
+                transparentMaterial.color = color;
             }
             else
             {
@@ -67,7 +77,8 @@ public class SetTransparencyBatchURP : MonoBehaviour
             }
         }
     }
-    private void MakeAllOpaque()
+
+    private void RestoreOriginalMaterials()
     {
         foreach (GameObject obj in targetObjects)
         {
@@ -80,25 +91,12 @@ public class SetTransparencyBatchURP : MonoBehaviour
                 continue;
             }
 
-            Material material = meshRenderer.material;
-
-            if (material.shader.name.Contains("Universal Render Pipeline/Lit"))
+            if (originalMaterials.ContainsKey(obj))
             {
-                material.SetFloat("_Surface", 0); // Opaque
-                material.SetOverrideTag("RenderType", "Opaque");
-                material.renderQueue = -1;
-
-                material.EnableKeyword("_SURFACE_TYPE_OPAQUE");
-                material.DisableKeyword("_SURFACE_TYPE_TRANSPARENT");
-
-                Color color = material.color;
-                color.a = 1.0f;
-                material.color = color;
-            }
-            else
-            {
-                Debug.LogWarning($"{obj.name} 의 Shader가 URP Lit이 아닙니다.");
+                meshRenderer.sharedMaterial = originalMaterials[obj]; // 원본 복구
             }
         }
+
+        originalMaterials.Clear();
     }
 }
