@@ -1,5 +1,6 @@
 using Photon.Pun;
 using Photon.Realtime;
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -37,6 +38,9 @@ public class UIIngameMainPanel : UIBase
     private TextMeshProUGUI etherText;
     [SerializeField]
     private TextMeshProUGUI goldText;
+    [SerializeField]
+    private List<Image> playerIconList = new List<Image>();
+
 
     private Dictionary<int, UIPartyHPContent> contentPairs = new Dictionary<int, UIPartyHPContent>();
 
@@ -58,7 +62,7 @@ public class UIIngameMainPanel : UIBase
     public override void Init() // 선택된 캐릭터 정보를 받아와 이미지 갱신
     {
         string playerCharacter = RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().ReturnCharacterName();
-        for(int i = 0; i < uISkillIcons.Count; i++)
+        for (int i = 0; i < uISkillIcons.Count; i++)
         {
             uISkillIcons[i].SetImage(playerCharacter, (Skills)i, Blessings.None);
         }
@@ -87,6 +91,16 @@ public class UIIngameMainPanel : UIBase
             playerController.stunSlider = stunSlider;
             playerController.ShieldUpdate.RemoveAllListeners();
             playerController.ShieldUpdate.AddListener(UpdateShieldImage);
+        }
+
+        if (Enum.TryParse<Characters>(playerController.ReturnCharacterName(), out var character))
+        {
+            int characterInt = (int)character;
+            playerIconList[characterInt].gameObject.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("변환 실패!");
         }
     }
 
