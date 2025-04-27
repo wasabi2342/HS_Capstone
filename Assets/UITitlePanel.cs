@@ -37,6 +37,7 @@ public class UITitlePanel : UIBase
     public void AnyKeyInput(InputAction.CallbackContext ctx)
     {
         anyKeyInput = true;
+        AudioManager.Instance.PlayBGM("gamestart", transform.position);
     }
 
     IEnumerator FadeTitle()
