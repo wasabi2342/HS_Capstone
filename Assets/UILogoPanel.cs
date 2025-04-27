@@ -27,6 +27,9 @@ public class UILogoPanel : UIBase
         // 알파값 1 → 0 (0.5초)
         yield return StartCoroutine(FadeImageAlpha(logoImage, 1f, 0f, 0.5f));
 
+        // 브금 재생 시작
+        AudioManager.Instance.PlayBGMLoop("MainTitleOST", Vector3.zero);
+
         yield return new WaitForSeconds(0.5f);
 
         yield return StartCoroutine(FadeImageAlpha(fadeImage, 0f, 1f, 0.5f));

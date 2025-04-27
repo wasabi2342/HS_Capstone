@@ -11,13 +11,19 @@ public class AudioManager : MonoBehaviour
     public float masterVolume = 1.0f;
 
     private Dictionary<string, EventInstance> loopingSounds = new Dictionary<string, EventInstance>();
+    private string currentBGMPath = "";
 
     private void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
         else
+        {
             Destroy(gameObject);
+        }
     }
 
     // 1. OneShot 사운드 재생 (위치 적용)
@@ -62,7 +68,6 @@ public class AudioManager : MonoBehaviour
     public void SetMasterVolume(float volume)
     {
         masterVolume = Mathf.Clamp01(volume);
-
         foreach (var pair in loopingSounds)
         {
             pair.Value.setVolume(masterVolume);
@@ -90,22 +95,47 @@ public class AudioManager : MonoBehaviour
         PlayOneShot($"event:/UI/{sfxName}", position);
     }
 
-    // BGM 사운드 재생 (OneShot용, 필요하면 루프용도 추가 가능)
+    // BGM 사운드 재생 (OneShot용)
     public void PlayBGM(string bgmName, Vector3 position)
     {
         PlayOneShot($"event:/BGM/{bgmName}", position);
     }
 
-    // BGM 루프 사운드 재생
+    // BGM 루프 사운드 재생 (중복 재생 방지)
     public void PlayBGMLoop(string bgmName, Vector3 position)
     {
-        PlayLoop($"event:/BGM/{bgmName}", position);
+        string path = $"event:/BGM/{bgmName}";
+
+        // 이미 동일 BGM이 재생 중이면 무시
+        if (currentBGMPath == path && loopingSounds.ContainsKey(path))
+            return;
+
+        // 다른 BGM이 재생 중이면 정지
+        if (!string.IsNullOrEmpty(currentBGMPath))
+        {
+            StopLoop(currentBGMPath);
+        }
+
+        currentBGMPath = path;
+        PlayLoop(path, position);
     }
 
     // BGM 루프 사운드 정지
     public void StopBGMLoop(string bgmName)
     {
-        StopLoop($"event:/BGM/{bgmName}");
+        string path = $"event:/BGM/{bgmName}";
+        StopLoop(path);
+        if (currentBGMPath == path)
+            currentBGMPath = "";
     }
 
+    // 현재 재생 중인 BGM 정지
+    public void StopCurrentBGM()
+    {
+        if (!string.IsNullOrEmpty(currentBGMPath))
+        {
+            StopLoop(currentBGMPath);
+            currentBGMPath = "";
+        }
+    }
 }
