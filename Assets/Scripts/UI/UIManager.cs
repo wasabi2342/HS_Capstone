@@ -35,6 +35,11 @@ public class UIManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    public void SetRenderCamera(Camera camera)
+    {
+        canvas.worldCamera = camera;
+    }
+
     void Start()
     {
         //OpenPanel<UiStartPanel>();
