@@ -23,6 +23,8 @@ public class UICoopOrBetrayPanel : UIBase
     private List<RectTransform> labelList = new List<RectTransform>();
     [SerializeField]
     private List<Vector3> labelPosList = new List<Vector3>();
+    [SerializeField]
+    private List<Vector3> labelStartPosList = new List<Vector3>();
 
     [SerializeField]
     private RectTransform cross1;
@@ -131,8 +133,8 @@ public class UICoopOrBetrayPanel : UIBase
         coopButton.interactable = false;
         betrayButton.interactable = false;
 
-        coopButton.transform.DOScale(Vector3.one, 0.1f).SetEase(Ease.Linear);
-        betrayButton.transform.DOScale(Vector3.one, 0.1f).SetEase(Ease.Linear);
+        coopButton.transform.DOScaleX(1f, 0.1f).SetEase(Ease.Linear);
+        betrayButton.transform.DOScaleX(1f, 0.1f).SetEase(Ease.Linear);
 
         yield return new WaitForSeconds(0.1f);
 
@@ -146,13 +148,13 @@ public class UICoopOrBetrayPanel : UIBase
         Sequence coopSeq = DOTween.Sequence();
         coopSeq.Append(coopRect.DOAnchorPos(coopOriginPos + Vector2.left * 200f, 0.1f).SetEase(Ease.OutQuad))
                .AppendInterval(0.2f)
-               .Append(coopRect.DOAnchorPos(coopOriginPos, 0.2f).SetEase(Ease.InBack));
+               .Append(coopRect.DOAnchorPos(coopOriginPos, 0.2f).SetEase(Ease.OutBounce));
 
         // betrayButton ������ �̵� �� ���ƿ���
         Sequence betraySeq = DOTween.Sequence();
         betraySeq.Append(betrayRect.DOAnchorPos(betrayOriginPos + Vector2.right * 200f, 0.1f).SetEase(Ease.OutQuad))
                  .AppendInterval(0.2f)
-                 .Append(betrayRect.DOAnchorPos(betrayOriginPos, 0.2f).SetEase(Ease.InBack));
+                 .Append(betrayRect.DOAnchorPos(betrayOriginPos, 0.2f).SetEase(Ease.OutBounce));
 
         yield return new WaitForSeconds(0.5f);
 
@@ -203,6 +205,18 @@ public class UICoopOrBetrayPanel : UIBase
         };
         PhotonNetwork.LocalPlayer.SetCustomProperties(props);
 
+        coopInfoPanel.gameObject.SetActive(false);
+        betrayInfoPanel.gameObject.SetActive(false);
+
+        if (choice)
+        {
+            betrayButton.transform.DOScaleX(0f, 0.1f).SetEase(Ease.Linear).OnComplete(EndSelect);
+        }
+        else
+        {
+            coopButton.transform.DOScaleX(0f, 0.1f).SetEase(Ease.Linear).OnComplete(EndSelect);
+        }
+
         // ��ư ��Ȱ��ȭ
         coopButton.interactable = false;
         betrayButton.interactable = false;
@@ -210,6 +224,19 @@ public class UICoopOrBetrayPanel : UIBase
         betrayConfirmButton.interactable = false;
         resetInfoPanelButton.interactable = false;
 
+    }
+
+    private void EndSelect()
+    {
+        for (int i = 0; i < labelList.Count; i++)
+        {
+            labelList[i].GetComponent<LabelController>().StopScroll();
+        }
+
+        for (int i = 0; i < labelList.Count; i++)
+        {
+            labelList[i].DOAnchorPos(labelStartPosList[i], 1f).SetEase(Ease.InOutQuad);
+        }
     }
 
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
