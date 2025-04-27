@@ -96,7 +96,7 @@ public class DoorLever : MonoBehaviourPun, IInteractable
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.transform.parent.CompareTag("Player") && canInteract && (!PhotonNetwork.InRoom ||
+        if (other.CompareTag("Interactable") && canInteract && (!PhotonNetwork.InRoom ||
             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
             if (canvas != null)
@@ -110,7 +110,7 @@ public class DoorLever : MonoBehaviourPun, IInteractable
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.transform.parent.CompareTag("Player") && (!PhotonNetwork.InRoom ||
+        if (other.CompareTag("Interactable") && (!PhotonNetwork.InRoom ||
             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
             if (canvas != null)
