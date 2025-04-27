@@ -459,7 +459,8 @@ public class WhitePlayerController : ParentPlayerController
             skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
         }
 
-        photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.R].skillData.ID, this) : null);
         skillEffect.transform.parent = transform;
@@ -494,7 +495,8 @@ public class WhitePlayerController : ParentPlayerController
             skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
         }
 
-        photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this) : null);
         skillEffect.transform.parent = transform;
@@ -503,23 +505,33 @@ public class WhitePlayerController : ParentPlayerController
     // 시프트 스킬 이펙트 생성
     public void CreateShiftSkillEffect()
     {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
         float damage = (runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
 
         // Photon에 접속 중인지 확인하여 isMine 설정
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
         SkillEffect skillEffect = null;
+        Vector3 targetPos = transform.position;
+        string effectPath;
 
         if (animator.GetBool("Right"))
         {
-            string effectPath = $"SkillEffect/WhitePlayer/ShiftSkill_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}";
+            effectPath = $"SkillEffect/WhitePlayer/ShiftSkill_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}";
             skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
         }
         else
         {
-            string effectPath = $"SkillEffect/WhitePlayer/ShiftSkill_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}";
+            effectPath = $"SkillEffect/WhitePlayer/ShiftSkill_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}";
             skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
         }
+
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this) : null);
         skillEffect.transform.parent = transform;
@@ -528,23 +540,33 @@ public class WhitePlayerController : ParentPlayerController
     // 카운터 이펙트 생성
     public void CreateCounterSkillEffect()
     {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
         float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
 
         // Photon에 접속 중인지 확인하여 isMine 설정
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
         SkillEffect skillEffect = null;
+        Vector3 targetPos = transform.position;
+        string effectPath;
 
         if (animator.GetBool("Right"))
         {
-            string effectPath = $"SkillEffect/WhitePlayer/Counter_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
+            effectPath = $"SkillEffect/WhitePlayer/Counter_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
             skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
         }
         else
         {
-            string effectPath = $"SkillEffect/WhitePlayer/Counter_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
+            effectPath = $"SkillEffect/WhitePlayer/Counter_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
             skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
         }
+
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, null);
         skillEffect.transform.parent = transform;
@@ -553,23 +575,33 @@ public class WhitePlayerController : ParentPlayerController
     // 패링 이펙트 생성
     public void CreateParrySkillEffect()
     {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
         float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
 
         // Photon에 접속 중인지 확인하여 isMine 설정
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
         SkillEffect skillEffect = null;
+        Vector3 targetPos = transform.position;
+        string effectPath;
 
         if (animator.GetBool("Right"))
         {
-            string effectPath = "SkillEffect/WhitePlayer/Parry_Right_Effect";
+            effectPath = "SkillEffect/WhitePlayer/Parry_Right_Effect";
             skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
         }
         else
         {
-            string effectPath = "SkillEffect/WhitePlayer/Parry_Left_Effect";
+            effectPath = "SkillEffect/WhitePlayer/Parry_Left_Effect";
             skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
         }
+
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, null);
         skillEffect.transform.parent = transform;
@@ -578,6 +610,11 @@ public class WhitePlayerController : ParentPlayerController
     // 스페이스 이펙트 컨테이너에 효과만 나타나도록
     public void CreateSpaceSkillEffect()
     {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
         // Photon에 접속 중이 아닐 때 photonView.IsMine 값은 false로 처리
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
@@ -589,10 +626,9 @@ public class WhitePlayerController : ParentPlayerController
     #endregion
 
     [PunRPC]
-    public void CreateAnimation(string name, Vector3 pos)
+    public override void CreateAnimation(string name, Vector3 pos)
     {
-        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(name), pos, Quaternion.identity);
-        skillEffect.transform.parent = transform;
+        base.CreateAnimation(name, pos);
     }
 
     public void GetUltimateBonus()

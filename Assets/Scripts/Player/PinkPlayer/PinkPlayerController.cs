@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 using Unity.VisualScripting;
 using System;
 
-public enum PinkPlayerState { Idle, Run, tackle ,BasicAttack, Hit, Dash, Skill, Ultimate, R_Idle, R_hit1, R_hit2, R_hit3, R_finish, Charge1, Charge2, Charge3, Stun, Revive, Death }
+public enum PinkPlayerState { Idle, Run, tackle, BasicAttack, Hit, Dash, Skill, Ultimate, R_Idle, R_hit1, R_hit2, R_hit3, R_finish, Charge1, Charge2, Charge3, Stun, Revive, Death }
 
 public class PinkPlayerController : ParentPlayerController
 {
@@ -24,7 +24,7 @@ public class PinkPlayerController : ParentPlayerController
     private int currentDirectionIndex = 0;
 
     [Header("서번트 소환 설정")]
-    [SerializeField] private GameObject servantPrefab;             
+    [SerializeField] private GameObject servantPrefab;
     [SerializeField] private Vector3 servantSpawnOffset = new Vector3(0f, 0.5f, 0f);
 
     // 이동 입력 및 상태
@@ -278,7 +278,7 @@ public class PinkPlayerController : ParentPlayerController
                 nextState = PinkPlayerState.BasicAttack;
             }
 
-            if(attackStack == 2)
+            if (attackStack == 2)
             {
 
             }
@@ -324,22 +324,22 @@ public class PinkPlayerController : ParentPlayerController
             if (currentState == PinkPlayerState.BasicAttack && animator.GetBool("CancleState2"))
             {
 
-               
+
                 currentState = PinkPlayerState.tackle;
 
                 animator.SetBool("tackle", true);
-                    Vector3 mousePos = GetMouseWorldPosition();
-                    animator.SetBool("Right", mousePos.x > transform.position.x);
+                Vector3 mousePos = GetMouseWorldPosition();
+                animator.SetBool("Right", mousePos.x > transform.position.x);
 
-                    if (PhotonNetwork.IsConnected)
-                    {
-                        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "tackle", true);
-                        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                    }
+                if (PhotonNetwork.IsConnected)
+                {
+                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "tackle", true);
+                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                }
 
-                    animator.SetBool("basicattack", false);
-                    return;
-                
+                animator.SetBool("basicattack", false);
+                return;
+
             }
         }
     }
@@ -378,11 +378,11 @@ public class PinkPlayerController : ParentPlayerController
         if (PhotonNetwork.IsConnected)
         {
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", isRight);
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "isCharging", true); 
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "isCharging", true);
             photonView.RPC("SyncIntParameter", RpcTarget.Others, "chargeLevel", chargeLevel);
         }
 
-        
+
     }
 
     // 우클릭을 놓았을 때 (차지 종료)
@@ -396,12 +396,12 @@ public class PinkPlayerController : ParentPlayerController
 
         isCharging = false;
 
-        animator.SetBool("isCharging", false); 
+        animator.SetBool("isCharging", false);
         animator.SetTrigger("ReleaseCharge");
 
         if (PhotonNetwork.IsConnected)
         {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "isCharging", false); 
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "isCharging", false);
             photonView.RPC("PlayAnimation", RpcTarget.Others, "ReleaseCharge");
         }
     }
@@ -495,12 +495,12 @@ public class PinkPlayerController : ParentPlayerController
             currentState = PinkPlayerState.R_Idle;
             animator.SetBool("ultimate", true);
 
-            
+
             Vector3 mousePos = GetMouseWorldPosition();
             bool isRight = mousePos.x > transform.position.x;
             animator.SetBool("Right", isRight);
 
-            
+
             if (PhotonNetwork.IsConnected)
             {
                 photonView.RPC(
@@ -692,15 +692,20 @@ public class PinkPlayerController : ParentPlayerController
     // 궁극기 이펙트 생성
     public void CreateUltimateEffectStart()
     {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
         // 궁극기 데미지 계산
         float damage = (runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                         runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
 
         // Photon에 접속 중인지 확인하여 isMine 설정
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
-
-        // 이펙트 경로 및 위치 설정
+        Vector3 targetPos = transform.position;
         string effectPath;
+        // 이펙트 경로 및 위치 설정
 
         if (animator.GetBool("Right"))
         {
@@ -711,8 +716,11 @@ public class PinkPlayerController : ParentPlayerController
             effectPath = $"SkillEffect/PinkPlayer/Pink_R_idle_left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
         }
 
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
+
         // Photon에 접속 중이든 아니든, 로컬에서 이펙트를 생성하는 코드
-        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine);
 
         // 생성된 이펙트의 부모를 설정
@@ -722,13 +730,18 @@ public class PinkPlayerController : ParentPlayerController
     // 궁극기 히트 이펙트 생성
     public void CreateUltimateEffectHit()
     {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
         // 궁극기 데미지 계산
         float damage = (runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                         runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
 
         // Photon에 접속 중인지 확인하여 isMine 설정
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
-
+        Vector3 targetPos = transform.position;
         // 이펙트 경로 및 위치 설정
         string effectPath;
 
@@ -741,8 +754,11 @@ public class PinkPlayerController : ParentPlayerController
             effectPath = $"SkillEffect/PinkPlayer/pink_R_hit{R_attackStack}_left_front_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
         }
 
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
+
         // Photon에 접속 중이든 아니든, 로컬에서 이펙트를 생성하는 코드
-        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
 
         // Init 메서드 호출
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine);
@@ -754,12 +770,18 @@ public class PinkPlayerController : ParentPlayerController
     // 궁극기 이펙트 생성 (Finish)
     public void CreateUltimateEffectFinish()
     {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
         // 궁극기 데미지 계산
         float damage = (runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                         runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower);
 
         // Photon에 접속 중인지 확인하여 isMine 설정
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
+        Vector3 targetPos = transform.position;
 
         // 이펙트 경로 및 위치 설정
         string effectPath;
@@ -773,8 +795,11 @@ public class PinkPlayerController : ParentPlayerController
             effectPath = $"SkillEffect/PinkPlayer/Pink_R_finish_left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
         }
 
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
+
         // Photon에 접속 중이든 아니든, 로컬에서 이펙트를 생성하는 코드
-        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position + (animator.GetBool("Right") ? new Vector3(8.5f, 0, 0) : new Vector3(-8.5f, 0, 0)), Quaternion.identity);
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
 
         // Init 메서드 호출
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine);
@@ -813,16 +838,14 @@ public class PinkPlayerController : ParentPlayerController
             effectPosition = transform.position; // 왼쪽일 때 위치는 기본 위치 그대로 설정
         }
 
-        // Photon 연결 여부에 따른 이펙트 생성
-        SkillEffect skillEffect;
+        // 다른 클라이언트에게도 이펙트를 생성하도록 RPC 호출
         if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
-            skillEffect = PhotonNetwork.Instantiate(effectPath, effectPosition, Quaternion.identity).GetComponent<SkillEffect>();
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition);
         }
-        else
-        {
-            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
-        }
+
+        // Photon 연결 여부에 따른 이펙트 생성
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
 
         // Init 메서드 호출
         skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
@@ -834,6 +857,11 @@ public class PinkPlayerController : ParentPlayerController
     // 차징 이펙트 생성
     public void CreateChargeSkillEffect()
     {
+        if (!photonView.IsMine)
+        {
+            attackStack = animator.GetInteger("AttackStack");
+        }
+
         // 차징 스킬 데미지 계산
         float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                        runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
@@ -854,16 +882,14 @@ public class PinkPlayerController : ParentPlayerController
             effectPath = $"SkillEffect/PinkPlayer/pink_charging{chargeLevel}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
         }
 
-        // Photon 연결 여부에 따른 이펙트 생성
-        SkillEffect skillEffect;
+        // 다른 클라이언트에게도 이펙트를 생성하도록 RPC 호출
         if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
-            skillEffect = PhotonNetwork.Instantiate(effectPath, effectPosition, Quaternion.identity).GetComponent<SkillEffect>();
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition);
         }
-        else
-        {
-            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
-        }
+
+        // Photon 연결 여부에 따른 이펙트 생성
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
 
         // Init 메서드 호출
         skillEffect.Init(damage, StartHitlag, isMine);
@@ -872,9 +898,13 @@ public class PinkPlayerController : ParentPlayerController
         skillEffect.transform.parent = transform;
     }
 
-    // 차징 홀드 해제 후 이펙트 생성
-    public void CreateChargeHItSkillEffect()
+    public void CreateChargeHitSkillEffect()
     {
+        if (!photonView.IsMine)
+        {
+            attackStack = animator.GetInteger("AttackStack");
+        }
+
         // 차징 스킬 데미지 계산
         float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                        runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
@@ -895,7 +925,13 @@ public class PinkPlayerController : ParentPlayerController
             effectPath = $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
         }
 
-        // Instantiate로 로컬에서 이펙트 생성
+        // 다른 클라이언트에게도 이펙트를 생성하도록 RPC 호출
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+        {
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition);
+        }
+
+        // Photon 연결 여부에 관계없이 로컬에서 이펙트 생성
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
 
         // Init 메서드 호출
@@ -908,6 +944,11 @@ public class PinkPlayerController : ParentPlayerController
     // 시프트 스킬 이펙트 생성
     public void CreateShiftSkillEffect()
     {
+        if (!photonView.IsMine)
+        {
+            attackStack = animator.GetInteger("AttackStack");
+        }
+
         // 시프트 스킬 데미지 계산
         float damage = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                        runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
@@ -928,7 +969,13 @@ public class PinkPlayerController : ParentPlayerController
             effectPath = $"SkillEffect/WhitePlayer/ShiftSkill_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}";
         }
 
-        // Instantiate로 로컬에서 이펙트 생성
+        // 다른 클라이언트에게도 이펙트를 생성하도록 RPC 호출
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+        {
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition);
+        }
+
+        // Photon 연결 여부에 관계없이 로컬에서 이펙트 생성
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
 
         // Init 메서드 호출
@@ -941,6 +988,11 @@ public class PinkPlayerController : ParentPlayerController
     // 패링 이펙트 생성
     public void CreateParrySkillEffect()
     {
+        if (!photonView.IsMine)
+        {
+            attackStack = animator.GetInteger("AttackStack");
+        }
+
         // 패링 스킬 데미지 계산
         float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                        runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
@@ -961,7 +1013,13 @@ public class PinkPlayerController : ParentPlayerController
             effectPath = $"SkillEffect/WhitePlayer/Parry_Left_Effect";
         }
 
-        // Instantiate로 로컬에서 이펙트 생성
+        // 다른 클라이언트에게도 이펙트를 생성하도록 RPC 호출
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+        {
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition);
+        }
+
+        // Photon 연결 여부에 관계없이 로컬에서 이펙트 생성
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
 
         // Init 메서드 호출
@@ -970,6 +1028,7 @@ public class PinkPlayerController : ParentPlayerController
         // 생성된 이펙트의 부모를 설정
         skillEffect.transform.parent = transform;
     }
+
 
     // 스페이스 이펙트 컨테이너에 효과만 나타나도록
     public void CreateSpaceSkillEffect()
@@ -983,6 +1042,13 @@ public class PinkPlayerController : ParentPlayerController
     }
 
     #endregion
+
+
+    [PunRPC]
+    public override void CreateAnimation(string name, Vector3 pos)
+    {
+        base.CreateAnimation(name, pos);
+    }
 
     public void GetUltimateBonus()
     {
