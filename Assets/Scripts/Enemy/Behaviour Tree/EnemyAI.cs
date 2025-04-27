@@ -179,71 +179,39 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         return near ? INode.NodeState.Success : INode.NodeState.Failure;
     }
 
-
     INode.NodeState MoveToEnemy()
     {
         if (!targetPlayer) return INode.NodeState.Failure;
-
-        float dst = Vector3.Distance(transform.position, targetPlayer.position);
-
-        if (dst <= status.attackRange * 0.95f)
-        {
-            agent.isStopped = true;                
-            agent.ResetPath();                      
-            return INode.NodeState.Running;
-        }
         agent.isStopped = false;
-        agent.SetDestination(targetPlayer.position);
-
-        float t = Mathf.InverseLerp(status.attackRange * 2f,    // 멀리선 빠르게
-                                    status.attackRange,         // 가까이선 느리게
-                                    dst);
-        agent.speed = Mathf.Lerp(status.wanderSpeed,
-                                 status.chaseSpeed, t);
-
+        agent.speed = status.chaseSpeed;
+        agent.SetDestination(new Vector3(targetPlayer.position.x,
+                                         transform.position.y,
+                                         targetPlayer.position.z));
         return INode.NodeState.Running;
     }
-
 
     INode.NodeState DoAttack()
     {
         if (!canAttack || attackStrategy == null || !targetPlayer)
             return INode.NodeState.Failure;
 
-        // ───── 준비 단계 ─────
-        if (!prepping)
+        if (prepping)
         {
-            prepping = true; prepT = 0f;
-            agent.isStopped = true;
-            agent.ResetPath();          
-            agent.velocity = Vector3.zero;
-            PlayAnim(targetPlayer.position.x >= transform.position.x
-         ? "Right_Idle" : "Left_Idle");
+            prepT += Time.deltaTime;
+            if (prepT >= status.waitCool)
+            {
+                prepping = false; prepT = 0f;
+                string a = targetPlayer.position.x >= transform.position.x ? "Attack_Right" : "Attack_Left";
+                PlayAnim(a);
+                attackStrategy.Attack(targetPlayer);
+                atkAnim = true; atkT = 0f; canAttack = false; atkCoolT = 0f;
+                return INode.NodeState.Success;
+            }
+            PlayAnim(targetPlayer.position.x >= transform.position.x ? "Right_Idle" : "Left_Idle");
             return INode.NodeState.Running;
         }
-
-        // ───── 타이머 진행 ─────
-        prepT += Time.deltaTime;
-        if (prepT < status.waitCool)
-        {
-            PlayAnim(targetPlayer.position.x >= transform.position.x
-                     ? "Right_Idle" : "Left_Idle");
-            return INode.NodeState.Running;
-        }
-
-        // ───── 공격 발동 ─────
-        prepping = false;
-        string anim = targetPlayer.position.x >= transform.position.x
-                    ? "Attack_Right" : "Attack_Left";
-        PlayAnim(anim);
-        attackStrategy.Attack(targetPlayer);
-
-        atkAnim = true; atkT = 0f;
-        canAttack = false; atkCoolT = 0f;
-
-        return INode.NodeState.Success;
+        else { prepping = true; prepT = 0f; agent.isStopped = true; return INode.NodeState.Running; }
     }
-
 
     INode.NodeState WanderInsideArea()
     {

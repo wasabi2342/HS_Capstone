@@ -52,17 +52,18 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void OpenPanel<T>() where T : UIBase
+    public T OpenPanel<T>(bool additive = false) where T : UIBase
     {
         string prefabName = typeof(T).Name;
         GameObject prefab = Resources.Load<GameObject>($"UI/{prefabName}");
 
-        GameObject panelInstance = Instantiate(prefab);
-        panelInstance.transform.SetParent(transform, false);
+        GameObject panelInstance = Instantiate(prefab, transform, false);
+        T panel = panelInstance.GetComponent<T>();
 
-        ClosePeekUI();
+        if (!additive) ClosePeekUI();
 
-        uiStack.Push(panelInstance.GetComponent<T>());
+        uiStack.Push(panel);
+        return panel;
     }
 
     public void ClosePeekUI()
@@ -126,10 +127,11 @@ public class UIManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        UIManager.Instance.CloseAllUI();
+        CloseAllUI();
         if (scene.name.StartsWith("Level")||scene.name=="StageTest1")
         {
-            UIManager.Instance.OpenPanel<UIIngameMainPanel>();
+            OpenPanel<UIIngameMainPanel>();
+            OpenPanel<UIMinimapPanel>(additive: true);
         }
     }
 
