@@ -40,9 +40,13 @@ public class UIIngameMainPanel : UIBase
 
     private Dictionary<int, UIPartyHPContent> contentPairs = new Dictionary<int, UIPartyHPContent>();
 
+    private System.Action<InputAction.CallbackContext> openBlessingInfoAction;
+
     private void Start()
     {
-        InputManager.Instance.PlayerInput.actions["OpenBlessingInfo"].performed += ctx => OpenBlessingInfoPanel(ctx);
+        openBlessingInfoAction = OpenBlessingInfoPanel;
+        InputManager.Instance.PlayerInput.actions["OpenBlessingInfo"].performed += openBlessingInfoAction;
+
         RoomManager.Instance.UIUpdate += AddPartyPlayerHPbar;
         Init();
     }
@@ -101,6 +105,11 @@ public class UIIngameMainPanel : UIBase
 
     private void OnDisable()
     {
+        if (InputManager.Instance != null && InputManager.Instance.PlayerInput != null)
+        {
+            InputManager.Instance.PlayerInput.actions["OpenBlessingInfo"].performed -= openBlessingInfoAction;
+        }
+
         ParentPlayerController playerController;
 
         foreach (var keyValuePair in contentPairs)
