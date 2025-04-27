@@ -39,9 +39,9 @@ public class DoorLever : MonoBehaviourPun, IInteractable
                     Vector3 uiWorldPos;
 
                     if (dir.x < 0)
-                        uiWorldPos = transform.position + new Vector3(5f, 1f, 0f);
+                        uiWorldPos = transform.position + new Vector3(2f, 1f, 0f);
                     else
-                        uiWorldPos = transform.position + new Vector3(-5f, 1f, 0f);
+                        uiWorldPos = transform.position + new Vector3(-2f, 1f, 0f);
                     panel.SetPanelPosition(uiWorldPos);
                 }
             }
