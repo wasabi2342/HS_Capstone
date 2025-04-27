@@ -692,377 +692,289 @@ public class PinkPlayerController : ParentPlayerController
     // 궁극기 이펙트 생성
     public void CreateUltimateEffectStart()
     {
+        // 궁극기 데미지 계산
+        float damage = (runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
+                        runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
+
+        // Photon에 접속 중인지 확인하여 isMine 설정
+        bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
+
+        // 이펙트 경로 및 위치 설정
+        string effectPath;
+
         if (animator.GetBool("Right"))
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/Pink_R_idle_right_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}", transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag);
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/Pink_R_idle_right_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}"), transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag);
-            }
+            effectPath = $"SkillEffect/PinkPlayer/Pink_R_idle_right_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
         }
         else
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/Pink_R_idle_left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}", transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag);
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/Pink_R_idle_left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}"), transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag);
-            }
+            effectPath = $"SkillEffect/PinkPlayer/Pink_R_idle_left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
         }
+
+        // Photon에 접속 중이든 아니든, 로컬에서 이펙트를 생성하는 코드
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
+        skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine);
+
+        // 생성된 이펙트의 부모를 설정
+        skillEffect.transform.parent = transform;
     }
 
+    // 궁극기 히트 이펙트 생성
     public void CreateUltimateEffectHit()
     {
+        // 궁극기 데미지 계산
+        float damage = (runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
+                        runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
+
+        // Photon에 접속 중인지 확인하여 isMine 설정
+        bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
+
+        // 이펙트 경로 및 위치 설정
+        string effectPath;
+
         if (animator.GetBool("Right"))
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/pink_R_hit{R_attackStack}_right_front_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}", transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag);
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/pink_R_hit{R_attackStack}_right_front_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}"), transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag);
-            }
+            effectPath = $"SkillEffect/PinkPlayer/pink_R_hit{R_attackStack}_right_front_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
         }
         else
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/pink_R_hit{R_attackStack}_left_front_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}", transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag);
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/pink_R_hit{R_attackStack}_left_front_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}"), transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag);
-            }
+            effectPath = $"SkillEffect/PinkPlayer/pink_R_hit{R_attackStack}_left_front_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
         }
+
+        // Photon에 접속 중이든 아니든, 로컬에서 이펙트를 생성하는 코드
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
+
+        // Init 메서드 호출
+        skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine);
+
+        // 생성된 이펙트의 부모를 설정
+        skillEffect.transform.parent = transform;
     }
 
+    // 궁극기 이펙트 생성 (Finish)
     public void CreateUltimateEffectFinish()
     {
+        // 궁극기 데미지 계산
+        float damage = (runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
+                        runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower);
+
+        // Photon에 접속 중인지 확인하여 isMine 설정
+        bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
+
+        // 이펙트 경로 및 위치 설정
+        string effectPath;
+
         if (animator.GetBool("Right"))
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/Pink_R_finish_right_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}", transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag);
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/Pink_R_finish_right_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}"), transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag);
-            }
+            effectPath = $"SkillEffect/PinkPlayer/Pink_R_finish_right_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
         }
         else
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/Pink_R_finish_left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}", transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag);
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/Pink_R_finish_left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}"), transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag);
-            }
+            effectPath = $"SkillEffect/PinkPlayer/Pink_R_finish_left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
         }
+
+        // Photon에 접속 중이든 아니든, 로컬에서 이펙트를 생성하는 코드
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position + (animator.GetBool("Right") ? new Vector3(8.5f, 0, 0) : new Vector3(-8.5f, 0, 0)), Quaternion.identity);
+
+        // Init 메서드 호출
+        skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine);
+
+        // 생성된 이펙트의 부모를 설정
+        skillEffect.transform.parent = transform;
     }
 
     // 평타 이펙트 생성
     public void CreateBasicAttackEffect()
     {
+        // 평타 데미지 계산
+        float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
+        float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower +
+                        runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * coefficient;
+
+        // Photon에 접속 중인지 확인하여 isMine 설정
+        bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
+
+        // 이펙트 경로 및 위치 설정
+        string effectPath;
+        Vector3 effectPosition = transform.position;
+
         if (animator.GetBool("Right"))
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
-                    float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * coefficient;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/pink_attack{attackStack}_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
-                    skillEffect.transform.parent = transform;
-                }
-            }
-            else
-            {
-                float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
-                float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * coefficient;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/pink_attack{attackStack}_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
-                skillEffect.transform.parent = transform;
-            }
+            effectPath = $"SkillEffect/PinkPlayer/pink_attack{attackStack}_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}";
         }
         else
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
-                    float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * coefficient;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/pink_attack{attackStack}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.transform.parent = transform;
-                    skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
-                }
-            }
-            else
-            {
-                float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
-                float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * coefficient;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/pink_attack{attackStack}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.transform.parent = transform;
-                skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
-            }
+            effectPath = $"SkillEffect/PinkPlayer/pink_attack{attackStack}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}";
+            effectPosition = transform.position; // 왼쪽일 때 위치는 기본 위치 그대로 설정
         }
+
+        // Photon 연결 여부에 따른 이펙트 생성
+        SkillEffect skillEffect;
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+        {
+            skillEffect = PhotonNetwork.Instantiate(effectPath, effectPosition, Quaternion.identity).GetComponent<SkillEffect>();
+        }
+        else
+        {
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
+        }
+
+        // Init 메서드 호출
+        skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
+
+        // 생성된 이펙트의 부모를 설정
+        skillEffect.transform.parent = transform;
     }
 
     // 차징 이펙트 생성
     public void CreateChargeSkillEffect()
     {
+        // 차징 스킬 데미지 계산
+        float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
+                       runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+
+        // Photon에 접속 중인지 확인하여 isMine 설정
+        bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
+
+        // 이펙트 경로 및 위치 설정
+        string effectPath;
+        Vector3 effectPosition = transform.position;
+
         if (animator.GetBool("Right"))
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/pink_charging{chargeLevel}_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag);
-                    skillEffect.transform.parent = transform;
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/pink_charging{chargeLevel}_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag);
-                skillEffect.transform.parent = transform;
-            }
-
-
+            effectPath = $"SkillEffect/PinkPlayer/pink_charging{chargeLevel}_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
         }
         else
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/pink_charging{chargeLevel}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.transform.parent = transform;
-                    skillEffect.Init(damage, StartHitlag);
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/pink_charging{chargeLevel}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.transform.parent = transform;
-                skillEffect.Init(damage, StartHitlag);
-            }
+            effectPath = $"SkillEffect/PinkPlayer/pink_charging{chargeLevel}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
         }
+
+        // Photon 연결 여부에 따른 이펙트 생성
+        SkillEffect skillEffect;
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+        {
+            skillEffect = PhotonNetwork.Instantiate(effectPath, effectPosition, Quaternion.identity).GetComponent<SkillEffect>();
+        }
+        else
+        {
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
+        }
+
+        // Init 메서드 호출
+        skillEffect.Init(damage, StartHitlag, isMine);
+
+        // 생성된 이펙트의 부모를 설정
+        skillEffect.transform.parent = transform;
     }
 
     // 차징 홀드 해제 후 이펙트 생성
-
     public void CreateChargeHItSkillEffect()
     {
+        // 차징 스킬 데미지 계산
+        float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
+                       runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+
+        // Photon에 접속 중인지 확인하여 isMine 설정
+        bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
+
+        // 이펙트 경로 및 위치 설정
+        string effectPath;
+        Vector3 effectPosition = transform.position;
+
         if (animator.GetBool("Right"))
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag);
-                    skillEffect.transform.parent = transform;
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag);
-                skillEffect.transform.parent = transform;
-            }
-
-
+            effectPath = $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
         }
         else
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.transform.parent = transform;
-                    skillEffect.Init(damage, StartHitlag);
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.transform.parent = transform;
-                skillEffect.Init(damage, StartHitlag);
-            }
+            effectPath = $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
         }
+
+        // Instantiate로 로컬에서 이펙트 생성
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
+
+        // Init 메서드 호출
+        skillEffect.Init(damage, StartHitlag, isMine);
+
+        // 생성된 이펙트의 부모를 설정
+        skillEffect.transform.parent = transform;
     }
 
     // 시프트 스킬 이펙트 생성
     public void CreateShiftSkillEffect()
     {
+        // 시프트 스킬 데미지 계산
+        float damage = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower +
+                       runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+
+        // Photon에 접속 중인지 확인하여 isMine 설정
+        bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
+
+        // 이펙트 경로 및 위치 설정
+        string effectPath;
+        Vector3 effectPosition = transform.position;
+
         if (animator.GetBool("Right"))
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/ShiftSkill_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this));
-                    skillEffect.transform.parent = transform;
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/ShiftSkill_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this));
-                skillEffect.transform.parent = transform;
-            }
+            effectPath = $"SkillEffect/WhitePlayer/ShiftSkill_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}";
         }
         else
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/ShiftSkill_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.transform.parent = transform;
-                    skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this));
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/ShiftSkill_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.transform.parent = transform;
-                skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this));
-            }
+            effectPath = $"SkillEffect/WhitePlayer/ShiftSkill_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}";
         }
-    }
 
+        // Instantiate로 로컬에서 이펙트 생성
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
+
+        // Init 메서드 호출
+        skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this));
+
+        // 생성된 이펙트의 부모를 설정
+        skillEffect.transform.parent = transform;
+    }
 
     // 패링 이펙트 생성
     public void CreateParrySkillEffect()
     {
+        // 패링 스킬 데미지 계산
+        float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
+                       runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+
+        // Photon에 접속 중인지 확인하여 isMine 설정
+        bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
+
+        // 이펙트 경로 및 위치 설정
+        string effectPath;
+        Vector3 effectPosition = transform.position;
+
         if (animator.GetBool("Right"))
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Parry_Right_Effect", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag);
-                    skillEffect.transform.parent = transform;
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Parry_Right_Effect"), transform.position, Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag);
-                skillEffect.transform.parent = transform;
-            }
+            effectPath = $"SkillEffect/WhitePlayer/Parry_Right_Effect";
         }
         else
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Parry_Left_Effect", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.transform.parent = transform;
-                    skillEffect.Init(damage, StartHitlag);
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Parry_Left_Effect"), transform.position, Quaternion.identity);
-                skillEffect.transform.parent = transform;
-                skillEffect.Init(damage, StartHitlag);
-            }
+            effectPath = $"SkillEffect/WhitePlayer/Parry_Left_Effect";
         }
+
+        // Instantiate로 로컬에서 이펙트 생성
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
+
+        // Init 메서드 호출
+        skillEffect.Init(damage, StartHitlag, isMine);
+
+        // 생성된 이펙트의 부모를 설정
+        skillEffect.transform.parent = transform;
     }
 
     // 스페이스 이펙트 컨테이너에 효과만 나타나도록
     public void CreateSpaceSkillEffect()
     {
-        if (PhotonNetwork.IsConnected)
-        {
-            if (photonView.IsMine)
-            {
-                SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/EffectContainer", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                skillEffect.transform.parent = transform;
-                skillEffect.Init(0, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Space].skillData.ID, this));
-            }
-        }
-        else
-        {
-            SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/EffectContainer"), transform.position, Quaternion.identity);
-            skillEffect.transform.parent = transform;
-            skillEffect.Init(0, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Space].skillData.ID, this));
-        }
+        // Photon에 접속 중이 아닐 때 photonView.IsMine 값은 false로 처리
+        bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
+
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/EffectContainer"), transform.position, Quaternion.identity);
+        skillEffect.transform.parent = transform;
+        skillEffect.Init(0, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Space].skillData.ID, this));
     }
 
     #endregion
