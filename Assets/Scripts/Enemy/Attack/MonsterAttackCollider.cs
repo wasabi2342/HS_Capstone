@@ -13,7 +13,6 @@ public class MonsterAttackCollider : MonoBehaviourPun
             enemyAI = GetComponentInParent<EnemyAI>();
     }
 
-
     // ─────────────────────────────
     // 충돌 판정
     // ─────────────────────────────
@@ -21,10 +20,8 @@ public class MonsterAttackCollider : MonoBehaviourPun
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Interactable") || other.gameObject.name.Contains("Interactable"))
-        {
             return;
-        }
-    
+
         IDamageable damageable = other.GetComponentInParent<IDamageable>();
         if (damageable != null && enemyAI != null)
         {

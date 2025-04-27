@@ -4,9 +4,9 @@ public class GhoulAttack : MonoBehaviour, IMonsterAttack
 {
     public int damage = 10;
     private Transform target;
-    public GameObject weaponColliderObject;    
-    private Collider weaponCollider;          
-    private Vector3 defaultCenter;             
+    public GameObject weaponColliderObject;
+    private Collider weaponCollider;
+    private Vector3 defaultCenter;
 
     public void Attack(Transform target)
     {

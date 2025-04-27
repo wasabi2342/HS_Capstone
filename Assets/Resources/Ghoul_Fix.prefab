@@ -304,6 +304,7 @@ GameObject:
   - component: {fileID: 9122515514604926970}
   - component: {fileID: 8501103848813346631}
   - component: {fileID: 3870959949186208092}
+  - component: {fileID: 8214720451653661668}
   m_Layer: 7
   m_Name: WeaponCollider
   m_TagString: Untagged
@@ -348,6 +349,7 @@ BoxCollider:
   m_Size: {x: 3, y: 4, z: 2}
   m_Center: {x: 2, y: 2.5, z: 0}
 --- !u!114 &3870959949186208092
+--- !u!114 &8214720451653661668
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -359,3 +361,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ce0d0fccb130564599ce7102728d41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponColliderObject: {fileID: 0}
+  weaponCollider: {fileID: 0}
