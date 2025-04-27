@@ -907,6 +907,8 @@ public class WhitePlayerController : ParentPlayerController
 
     public void Revive()
     {
+        Debug.Log("Revive ½ÇÇàµÊ");
+
         if (!photonView.IsMine)
         {
             photonView.RPC("ReviveRPC", photonView.Owner);
