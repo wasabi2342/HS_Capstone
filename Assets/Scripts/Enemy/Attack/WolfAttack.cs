@@ -7,6 +7,8 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
     private bool isCharging = false;
     private Transform target;
     public GameObject weaponColliderObject;
+    private Collider weaponCollider;
+    private Vector3 defaultCenter;
     public void Attack(Transform target)
     {
         if (!isCharging)
@@ -45,6 +47,36 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
 
         isCharging = false;
     }
+    // 애니메이션 이벤트용
+    public void EnableAttack()
+    {
+        if (weaponColliderObject != null)
+            weaponColliderObject.SetActive(true);
+    }
 
+    public void DisableAttack()
+    {
+        if (weaponColliderObject != null)
+            weaponColliderObject.SetActive(false);
+    }
 
+    public void SetColliderRight()
+    {
+        if (weaponCollider == null) return;
+
+        if (weaponCollider is BoxCollider box)
+            box.center = new Vector3(Mathf.Abs(defaultCenter.x), defaultCenter.y, defaultCenter.z);
+        else if (weaponCollider is SphereCollider sphere)
+            sphere.center = new Vector3(Mathf.Abs(defaultCenter.x), defaultCenter.y, defaultCenter.z);
+    }
+
+    public void SetColliderLeft()
+    {
+        if (weaponCollider == null) return;
+
+        if (weaponCollider is BoxCollider box)
+            box.center = new Vector3(-Mathf.Abs(defaultCenter.x), defaultCenter.y, defaultCenter.z);
+        else if (weaponCollider is SphereCollider sphere)
+            sphere.center = new Vector3(-Mathf.Abs(defaultCenter.x), defaultCenter.y, defaultCenter.z);
+    }
 }
