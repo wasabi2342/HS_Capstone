@@ -14,6 +14,7 @@ public class WhitePlayerController : ParentPlayerController
     [Header("대쉬 설정")]
     public float dashDistance = 2f;
     public float dashDoubleClickThreshold = 0.3f;
+    private Vector3 dashDirection;
     //private float lastDashClickTime = -Mathf.Infinity;
 
     [Header("중심점 설정")]
@@ -212,21 +213,21 @@ public class WhitePlayerController : ParentPlayerController
         }
         Vector3 dashDir = new Vector3(moveInput.x, 0, 0);
 
-        if (dashDir == Vector3.zero)
-        {
-            dashDir = Vector3.right;
-        }
+        dashDirection = new Vector3(Mathf.Sign(moveInput.x), 0f, 0f);
+        if (dashDirection == Vector3.zero)
+            dashDirection = Vector3.right;  // 기본 우측
 
-        StartCoroutine(DoDash(dashDir));
+
+        //StartCoroutine(DoDash(dashDir));
     }
 
-    private IEnumerator DoDash(Vector3 dashDir)
-    {
-        Vector3 startPos = transform.position;
-        Vector3 targetPos = startPos + dashDir.normalized * dashDistance;
-        yield return null;
-        transform.position = targetPos;
-    }
+    //private IEnumerator DoDash(Vector3 dashDir)
+    //{
+    //    Vector3 startPos = transform.position;
+    //    Vector3 targetPos = startPos + dashDir.normalized * dashDistance;
+    //    yield return null;
+    //    transform.position = targetPos;
+    //}
 
 
     public void HandleNormalAttack()
@@ -416,6 +417,14 @@ public class WhitePlayerController : ParentPlayerController
         rb.MovePosition(rb.position + ((GetMouseWorldPosition() - transform.position).normalized * value));
     }
 
+    public void OnMoveFront2(float value)
+    {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
+        Vector3 movement = dashDirection * value;
+        rb.MovePosition(rb.position + movement);
+    }
     private Vector3 GetMouseWorldPosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
