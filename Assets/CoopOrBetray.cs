@@ -44,7 +44,7 @@ public class CoopOrBetray : MonoBehaviourPun, IInteractable
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && canInteract && (!PhotonNetwork.InRoom ||
+        if (other.transform.parent.CompareTag("Player") && canInteract && (!PhotonNetwork.InRoom ||
             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
             canvas.gameObject.SetActive(true);
@@ -53,7 +53,7 @@ public class CoopOrBetray : MonoBehaviourPun, IInteractable
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player") && canInteract && (!PhotonNetwork.InRoom ||
+        if (other.transform.parent.CompareTag("Player") && canInteract && (!PhotonNetwork.InRoom ||
             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
             canvas.gameObject.SetActive(false);

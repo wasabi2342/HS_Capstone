@@ -24,7 +24,7 @@ public class SelectRewardDoor : MonoBehaviourPun, IInteractable
 
     private void OnTriggerEnter(Collider other)
     {
-        if (canInteract && (other.CompareTag("Player") && (!PhotonNetwork.InRoom ||
+        if (canInteract && (other.transform.parent.CompareTag("Player") && (!PhotonNetwork.InRoom ||
             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine))))
         {
             canvas.gameObject.SetActive(true);
@@ -33,7 +33,7 @@ public class SelectRewardDoor : MonoBehaviourPun, IInteractable
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player") && (!PhotonNetwork.InRoom ||
+        if (other.transform.parent.CompareTag("Player") && (!PhotonNetwork.InRoom ||
             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
             canvas.gameObject.SetActive(false);
