@@ -27,6 +27,11 @@ public class StageManager : MonoBehaviour
     }
     private void Start()
     {
+        // 브금 종료
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopCurrentBGM();
+        }
 
         if (PhotonNetwork.IsMasterClient)
         {

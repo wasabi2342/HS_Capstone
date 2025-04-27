@@ -195,9 +195,6 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         UIManager.Instance.ClosePeekUI();
         PhotonNetworkManager.Instance.ReadyToEnterStage();
-
-        // 로비 브금 끄기
-        AudioManager.Instance.StopCurrentBGM();
     }
 
     public void EnterRestrictedArea(int viewID)
