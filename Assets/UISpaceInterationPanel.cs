@@ -109,15 +109,20 @@ public class UISpaceInterationPanel : UIBase
     public void SetPanelPosition(Vector3 worldPos)
     {
         Canvas canvas = GetComponentInParent<Canvas>();
-        if (canvas == null || canvas.renderMode != RenderMode.ScreenSpaceOverlay) return;
+        if (canvas == null || canvas.renderMode != RenderMode.ScreenSpaceCamera || canvas.worldCamera == null)
+        {
+            Debug.LogWarning("캔버스가 Screen Space - Camera 모드가 아니거나 연결된 카메라가 없습니다.");
+            return;
+        }
 
-        Vector2 screenPoint = Camera.main.WorldToScreenPoint(worldPos);
+        Camera canvasCamera = canvas.worldCamera;
+        Vector2 screenPoint = canvasCamera.WorldToScreenPoint(worldPos);
 
         RectTransform panelRT = GetComponent<RectTransform>();
         RectTransform canvasRT = canvas.GetComponent<RectTransform>();
 
         Vector2 anchoredPos;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRT, screenPoint, null, out anchoredPos);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRT, screenPoint, canvasCamera, out anchoredPos);
 
         panelRT.anchoredPosition = anchoredPos;
     }
