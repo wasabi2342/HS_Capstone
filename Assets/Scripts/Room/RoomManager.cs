@@ -95,6 +95,9 @@ public class RoomManager : MonoBehaviourPunCallbacks
             // 키가 없거나 오프라인 모드일 때 기본 플레이어로 생성
             CreateCharacter(defaultPlayer.name, new Vector3(0, 1.5f, 0), Quaternion.identity, isInVillage);
         }
+
+        UIManager.Instance.SetRenderCamera(Camera.main);
+
     }
 
 
