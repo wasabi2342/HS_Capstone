@@ -94,8 +94,7 @@ public class MonsterAttackCollider : MonoBehaviourPun
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!photonView.IsMine) return;
-    
+        //if (!photonView.IsMine) return;
       
         if (other.CompareTag("InteractionZone") || other.gameObject.name.Contains("InteractionZone"))
         {

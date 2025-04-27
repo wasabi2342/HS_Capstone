@@ -29,7 +29,7 @@ public class SelectRewardDoor : MonoBehaviourPun, IInteractable
         {
             canvas.gameObject.SetActive(true);
         }
-    }
+    } 
 
     private void OnTriggerExit(Collider other)
     {
