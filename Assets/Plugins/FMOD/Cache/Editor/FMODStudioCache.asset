@@ -243,6 +243,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 1800
+--- !u!114 &-6988238188934957169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/BGM/MainTitleOST
+  m_EditorClassIdentifier: 
+  Path: event:/BGM/MainTitleOST
+  Guid:
+    Data1: -1042066576
+    Data2: 1273016515
+    Data3: 5237671
+    Data4: -2087494845
+  Banks:
+  - {fileID: 2075240316572538295}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 239999
 --- !u!114 &-6771431180137679668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -710,7 +737,7 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/SFX.bank
   Name: SFX
   StudioPath: bank:/SFX
-  lastModified: 638813951364643230
+  lastModified: 638813703326646117
   FileSizes:
   - Name: Desktop
     Value: 1413248
@@ -784,10 +811,10 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638813951364565836
+  lastModified: 638814001289177168
   FileSizes:
   - Name: Desktop
-    Value: 3156
+    Value: 3142
   Exists: 1
 --- !u!114 &-3378726307173014011
 MonoBehaviour:
@@ -1258,7 +1285,6 @@ MonoBehaviour:
   - {fileID: 2075240316572538295}
   - {fileID: -3941363796204331093}
   EditorEvents:
-  - {fileID: 6099111597573338898}
   - {fileID: -5827057257328099294}
   - {fileID: -1111582851314101040}
   - {fileID: 8970905826976995497}
@@ -1308,12 +1334,13 @@ MonoBehaviour:
   - {fileID: -6421638489237863448}
   - {fileID: -3378726307173014011}
   - {fileID: -7437519944603569972}
+  - {fileID: -6988238188934957169}
   EditorParameters: []
   MasterBanks:
   - {fileID: 2075240316572538295}
   StringsBanks:
   - {fileID: -3416080007908289716}
-  cacheTime: 638813951364643230
+  cacheTime: 638814001289177168
   cacheVersion: 131846
 --- !u!114 &97185130715282264
 MonoBehaviour:
@@ -1816,7 +1843,7 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638813951364555599
+  lastModified: 638814001289162050
   FileSizes:
   - Name: Desktop
     Value: 3470432
@@ -2199,33 +2226,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 1150
---- !u!114 &6099111597573338898
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/BGM/CrossXCrosser_MainTitleOst
-  m_EditorClassIdentifier: 
-  Path: event:/BGM/CrossXCrosser_MainTitleOst
-  Guid:
-    Data1: -1042066576
-    Data2: 1273016515
-    Data3: 5237671
-    Data4: -2087494845
-  Banks:
-  - {fileID: 2075240316572538295}
-  IsStream: 1
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 239999
 --- !u!114 &6142761934940943708
 MonoBehaviour:
   m_ObjectHideFlags: 0
