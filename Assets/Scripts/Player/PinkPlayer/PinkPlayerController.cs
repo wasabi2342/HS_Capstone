@@ -487,15 +487,44 @@ public class PinkPlayerController : ParentPlayerController
     {
         if (animator == null || currentState == PinkPlayerState.Death)
             return;
-        // 2) 키가 눌린 순간(started)만
+
         if (context.started)
         {
+            // 로컬 상태 세팅
             R_attackStack = 0;
             currentState = PinkPlayerState.R_Idle;
-            // R_idle 애니메이션 진입용 Bool/Trigger
             animator.SetBool("ultimate", true);
+
+            
+            Vector3 mousePos = GetMouseWorldPosition();
+            bool isRight = mousePos.x > transform.position.x;
+            animator.SetBool("Right", isRight);
+
+            
+            if (PhotonNetwork.IsConnected)
+            {
+                photonView.RPC(
+                    "SyncBoolParameter",
+                    RpcTarget.Others,
+                    "ultimate",
+                    true
+                );
+                photonView.RPC(
+                    "SyncIntParameter",
+                    RpcTarget.Others,
+                    "R_attackStack",
+                    R_attackStack
+                );
+                photonView.RPC(
+                    "SyncBoolParameter",
+                    RpcTarget.Others,
+                    "Right",
+                    isRight
+                );
+            }
         }
     }
+
 
     // 궁극기 시전 시작
     public void HandleUltimateStart()
