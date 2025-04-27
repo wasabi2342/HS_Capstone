@@ -1,5 +1,5 @@
 ﻿/*******************************************************
- * EnemyAI.cs – Shield 우선차감 + HPBar 제거 2025-04-25
+ * EnemyAI.cs – Shield 우선차감 + Hit-Stun 복귀 2025-04-28
  *******************************************************/
 using System.Collections;
 using System.Collections.Generic;
@@ -36,6 +36,14 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     bool waiting; float waitT, waitDur;
     Vector3 wanderTarget;
 
+    /* Hit-Stun */
+    bool stunned;
+    Vector3 storedDest;
+    bool hadPath;
+    private Vector3 knockbackVelocity;
+    private float knockbackTimer;
+    private const float KNOCKBACK_DURATION = 0.1f;
+
     /* HP & Shield */
     float maxHP, hp;
     float maxShield, shield;          // 실드
@@ -59,6 +67,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
 
         agent.updateRotation = false;
         agent.stoppingDistance = .1f;
+        agent.avoidancePriority = Random.Range(10, 90);
 
         /* 스탯 초기화 */
         maxHP = hp = status.hp;
@@ -89,7 +98,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     }
 
     /* ───────── SpawnArea 확보 ───────── */
-    void OnTransformParentChanged() { EnsureSpawnArea(); }
+    void OnTransformParentChanged() => EnsureSpawnArea();
     bool EnsureSpawnArea()
     {
         if (spawnArea) return true;
@@ -99,23 +108,36 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     public void SetSpawnArea(SpawnArea sa)
     {
         spawnArea = sa;
-
-        // 이미 NavMesh 위에 있고 살아 있으면 즉시 새 Wander 목적지 선택
-        if (agent != null && agent.enabled && agent.isOnNavMesh && !dead)
+        if (agent && agent.enabled && agent.isOnNavMesh && !dead)
             PickWanderPoint();
     }
+
     /* ───────────────────────── Update ───────────────────────── */
     void Update()
     {
-        if (!agent.enabled || dead) return;
-
-        /* 쿨타임 */
+        if (dead || stunned || !agent.enabled) return;
+        if (knockbackTimer > 0f)
+        {
+            transform.position += knockbackVelocity * Time.deltaTime;
+            knockbackTimer -= Time.deltaTime;
+            return; // 넉백 중에는 나머지 행동 중단
+        }
+        if (prepping || atkAnim)
+        {
+            if (!agent.isStopped)
+            {
+                agent.isStopped = true;
+                agent.ResetPath();
+                agent.velocity = Vector3.zero;
+            }
+        }
+        /* 공격 쿨다운 동안 정지 + Idle */
         if (!canAttack && !prepping && !atkAnim)
         {
-            agent.isStopped = true;                      // 이동 차단
+            agent.isStopped = true;
             agent.ResetPath();
             PlayAnim(lastMoveX >= 0 ? "Right_Idle" : "Left_Idle");
-    
+
             atkCoolT += Time.deltaTime;
             if (atkCoolT >= status.attackCool) { canAttack = true; atkCoolT = 0f; }
             return;
@@ -169,7 +191,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     {
         if (!canAttack || targetPlayer == null) return INode.NodeState.Failure;
         return Vector3.Distance(transform.position, targetPlayer.position) < status.attackRange
-             ? INode.NodeState.Success : INode.NodeState.Failure;
+               ? INode.NodeState.Success : INode.NodeState.Failure;
     }
 
     INode.NodeState DetectEnemy()
@@ -204,10 +226,9 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         if (!prepping)
         {
             prepping = true; prepT = 0f;
-            agent.isStopped = true;      // ← 정지
-            agent.ResetPath();
-            PlayAnim(targetPlayer.position.x >= transform.position.x
-                     ? "Right_Idle" : "Left_Idle");
+            agent.isStopped = true; agent.ResetPath(); agent.velocity = Vector3.zero;
+            lastMoveX = targetPlayer.position.x >= transform.position.x ? 1f : -1f;
+            PlayAnim(lastMoveX >= 0 ? "Right_Idle" : "Left_Idle");
             return INode.NodeState.Running;
         }
 
@@ -215,27 +236,21 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         prepT += Time.deltaTime;
         if (prepT < status.waitCool)
         {
-            PlayAnim(targetPlayer.position.x >= transform.position.x
-                     ? "Right_Idle" : "Left_Idle");
+            PlayAnim(lastMoveX >= 0 ? "Right_Idle" : "Left_Idle");
             return INode.NodeState.Running;
         }
 
         /* ─── 실제 공격 ─── */
         prepping = false;
-
-        string anim = targetPlayer.position.x >= transform.position.x
-                    ? "Attack_Right" : "Attack_Left";
-        PlayAnim(anim);
+        PlayAnim(lastMoveX >= 0 ? "Attack_Right" : "Attack_Left");
         attackStrategy.Attack(targetPlayer);
 
         atkAnim = true; atkT = 0f;
-        canAttack = false; atkCoolT = 0f;   
-        agent.isStopped = true;              
-        agent.ResetPath();
+        canAttack = false; atkCoolT = 0f;
+        agent.isStopped = true; agent.ResetPath();
 
         return INode.NodeState.Success;
     }
-
 
     INode.NodeState WanderInsideArea()
     {
@@ -301,18 +316,64 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
 
         /* 피격 연출 (실드가 없을 때만 경직) */
         if (shield <= 0)
+        {
             photonView.RPC(nameof(RPC_PlayAnim), RpcTarget.All,
                            lastMoveX >= 0 ? "Right_Hit" : "Left_Hit");
+
+            photonView.RPC(nameof(RPC_Stun), RpcTarget.All, status.hitRecoverTime);
+        }
 
         photonView.RPC(nameof(RPC_Flash), RpcTarget.All);
         SpawnDamageText(dmg);
 
         if (hp <= 0) Die();
+        else ApplyKnockback();  // 죽지 않은 경우에만 넉백
+
+    }
+    void ApplyKnockback()
+    {
+        if (targetPlayer == null) return;
+
+        Vector3 dir = (transform.position - targetPlayer.position).normalized;
+        dir.y = 0f; // 수평으로만 밀리게
+        knockbackVelocity = dir * 3f; // 밀리는 속도
+        knockbackTimer = KNOCKBACK_DURATION;
+    }
+
+    /* ───────── Stun / Recover ───────── */
+    [PunRPC]
+    void RPC_Stun(float t)
+    {
+        if (stunned || dead) return;
+        StartCoroutine(CoStun(t));
+    }
+    IEnumerator CoStun(float t)
+    {
+        stunned = true;
+
+        /* 추격 상태 보존 */
+        hadPath = agent.hasPath;
+        if (hadPath) storedDest = agent.destination;
+
+        agent.isStopped = true;
+        agent.ResetPath();
+
+        yield return new WaitForSeconds(t);
+
+        stunned = false;
+        if (dead) yield break;
+        agent.isStopped = false;
+
+        /* 즉시 재추격 */
+        if (hadPath && targetPlayer)
+            agent.SetDestination(storedDest);
+
+        PlayAnim(lastMoveX >= 0 ? "Right_Idle" : "Left_Idle");
     }
 
     /* ───────── UI RPC ───────── */
-    [PunRPC] public void UpdateHP(float n) { uiBar?.SetHP(n); }
-    [PunRPC] public void UpdateShield(float n) { uiBar?.SetShield(n); }
+    [PunRPC] public void UpdateHP(float n) => uiBar?.SetHP(n);
+    [PunRPC] public void UpdateShield(float n) => uiBar?.SetShield(n);
     [PunRPC] void RPC_ShieldBreakFx() { /* 파티클·사운드 */ }
 
     /* ───────── Death & Cleanup ───────── */
@@ -356,7 +417,8 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     void SpawnDamageText(float dmg)
     {
         if (!damageTextPrefab) return;
-        var g = Instantiate(damageTextPrefab, transform.position + Vector3.up * 1.5f, Quaternion.identity);
+        var g = Instantiate(damageTextPrefab,
+                            transform.position + Vector3.up * 1.5f, Quaternion.identity);
         if (g.TryGetComponent(out TextMesh tm)) tm.text = dmg.ToString("F0");
     }
 

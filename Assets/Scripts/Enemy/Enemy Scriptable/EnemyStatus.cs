@@ -15,7 +15,8 @@ public class EnemyStatus : ScriptableObject
     public float headOffset;
 
     [Header("Shield (0 = no)")]
-    public float maxShield = 0f;
+    public float maxShield;
+    public float hitRecoverTime;
 
     [Header("Attack")]
     public float waitCool;        // 공격 준비 시간
