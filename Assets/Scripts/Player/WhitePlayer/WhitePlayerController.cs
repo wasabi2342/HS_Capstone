@@ -437,7 +437,7 @@ public class WhitePlayerController : ParentPlayerController
     {
         if (!photonView.IsMine)
         {
-            attackStack = animator.GetInteger("AttackStack");
+            return;
         }
 
         float damage = (runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
@@ -446,17 +446,20 @@ public class WhitePlayerController : ParentPlayerController
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
         SkillEffect skillEffect = null;
-
+        Vector3 targetPos = transform.position + new Vector3(-8.5f, 0, 0);
+        string effectPath;
         if (animator.GetBool("Right"))
         {
-            string effectPath = $"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
-            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity);
+            effectPath = $"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
         }
         else
         {
-            string effectPath = $"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
-            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity);
+            effectPath = $"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
         }
+
+        photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.R].skillData.ID, this) : null);
         skillEffect.transform.parent = transform;
@@ -465,6 +468,11 @@ public class WhitePlayerController : ParentPlayerController
     // 평타 이펙트 생성
     public void CreateBasicAttackEffect()
     {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
         float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
         float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * coefficient * damageBuff;
 
@@ -472,17 +480,21 @@ public class WhitePlayerController : ParentPlayerController
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
         SkillEffect skillEffect = null;
+        Vector3 targetPos = transform.position;
+        string effectPath;
 
         if (animator.GetBool("Right"))
         {
-            string effectPath = $"SkillEffect/WhitePlayer/Attack{attackStack}_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}";
-            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
+            effectPath = $"SkillEffect/WhitePlayer/Attack{attackStack}_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}";
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
         }
         else
         {
-            string effectPath = $"SkillEffect/WhitePlayer/Attack{attackStack}_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}";
-            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
+            effectPath = $"SkillEffect/WhitePlayer/Attack{attackStack}_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}";
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
         }
+
+        photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this) : null);
         skillEffect.transform.parent = transform;
@@ -575,6 +587,13 @@ public class WhitePlayerController : ParentPlayerController
     }
 
     #endregion
+
+    [PunRPC]
+    public void CreateAnimation(string name, Vector3 pos)
+    {
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(name), pos, Quaternion.identity);
+        skillEffect.transform.parent = transform;
+    }
 
     public void GetUltimateBonus()
     {

@@ -17,7 +17,7 @@ public class SkillEffect : MonoBehaviourPun
     private float damage;
     private Action triggerEvent;
     private BoxCollider boxCollider;
-    private bool isMine;
+    private bool isMine = false;
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -29,7 +29,7 @@ public class SkillEffect : MonoBehaviourPun
     /// </summary>
     /// <param name="damage"> 데미지 </param>
     /// <param name="triggerEvent"> 역경직 이벤트 </param>
-    public void Init(float damage, Action triggerEvent,bool isMine, BaseSpecialEffect specialEffect = null)
+    public void Init(float damage, Action triggerEvent,bool isMine = false, BaseSpecialEffect specialEffect = null)
     {
         this.damage = damage;
         this.triggerEvent += triggerEvent;
