@@ -83,12 +83,12 @@ public class UISpaceInterationPanel : UIBase
         }
 
         // 0.5초마다 아이콘 색 전환
-        if (icon != null && blinkTimer <= 0f)
-        {
-            icon.color = isBright ? Color.gray : Color.white;
-            isBright = !isBright;
-            blinkTimer = 0.5f;
-        }
+        //if (icon != null && blinkTimer <= 0f)
+        //{
+        //    icon.color = isBright ? Color.gray : Color.white;
+        //    isBright = !isBright;
+        //    blinkTimer = 0.5f;
+        //}
 
         // 타이머 종료
         if (timeRemaining <= 0f)

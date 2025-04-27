@@ -8,9 +8,11 @@ public class SkillEffect : MonoBehaviourPun
     [SerializeField]
     private Animator animator;
     [SerializeField]
-    private float hitlagTime = 0.117f;
+    private float hitlagTime = 0.078f;
     [SerializeField]
     private AttackerType attackerType;
+    [SerializeField]
+    private float animationSpeed = 1f;
 
     private BaseSpecialEffect specialEffect;
 
@@ -22,6 +24,7 @@ public class SkillEffect : MonoBehaviourPun
     {
         animator = GetComponent<Animator>();
         boxCollider = GetComponent<BoxCollider>();
+        animator.speed = animationSpeed;
     }
 
     /// <summary>
