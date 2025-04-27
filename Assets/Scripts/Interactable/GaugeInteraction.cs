@@ -78,7 +78,7 @@ public class GaugeInteraction : MonoBehaviourPun, IInteractable
 
     protected virtual void OnPerformedEvent()
     {
-
+        canvas.gameObject.SetActive(false);
     }
     protected virtual void OnCanceledEvent()
     {

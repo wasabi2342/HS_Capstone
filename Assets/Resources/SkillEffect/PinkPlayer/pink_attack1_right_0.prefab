@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 3001658563436430858}
   - component: {fileID: 3455405301882519419}
   - component: {fileID: 7832027148815924152}
-  - component: {fileID: 2530632062885327307}
   m_Layer: 12
   m_Name: pink_attack1_right_0
   m_TagString: Untagged
@@ -132,7 +131,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
-  m_Size: {x: 14, y: 5, z: 0.5}
+  m_Size: {x: 14, y: 5, z: 2}
   m_Center: {x: 1, y: -2, z: 0}
 --- !u!114 &7832027148815924152
 MonoBehaviour:
@@ -149,25 +148,3 @@ MonoBehaviour:
   animator: {fileID: 0}
   hitlagTime: 0.117
   attackerType: 2
---- !u!114 &2530632062885327307
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 110812635041576018}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents: []
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0

@@ -61,15 +61,15 @@ public class UICoopOrBetrayPanel : UIBase
 
     public override void Init()
     {
-        // InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
+         InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
         
-        // // ���� ���� �ʱ�ȭ
-        // ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable
-        // {
-        //     { "coopChoice", null } // null�� �����ϸ� ��ǻ� �ʱ�ȭó�� ����
-        // };
+         // ���� ���� �ʱ�ȭ
+         ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable
+         {
+             { "coopChoice", null } // null�� �����ϸ� ��ǻ� �ʱ�ȭó�� ����
+         };
         
-        // PhotonNetwork.LocalPlayer.SetCustomProperties(resetProps);
+         PhotonNetwork.LocalPlayer.SetCustomProperties(resetProps);
 
         StartCoroutine(StartAnimation());
 
@@ -293,7 +293,7 @@ public class UICoopOrBetrayPanel : UIBase
                 }
                 else
                 {
-                    PhotonNetworkManager.Instance.photonView.RPC("PopupDialogPanel", pair.Key, "�������� ����߽��ϴ�.");
+                    PhotonNetworkManager.Instance.photonView.RPC("PopupDialogPanel", pair.Key, "누군가 배신했습니다.");
                 }
             }
         }

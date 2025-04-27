@@ -16,6 +16,20 @@ public class PinkPlayercontroller_event : Playercontroller_event
     public UnityEvent OnKeyboardShiftLEvent;
     public UnityEvent OnKeyboardREvent;
 
+    private Action<InputAction.CallbackContext> movePerformed;
+    private Action<InputAction.CallbackContext> moveCanceled;
+    private Action<InputAction.CallbackContext> dashPerformed;
+    private Action<InputAction.CallbackContext> dashCanceled;
+    private Action<InputAction.CallbackContext> interactionPerformed;
+    private Action<InputAction.CallbackContext> interactionCanceled;
+    private Action<InputAction.CallbackContext> interactionStarted;
+    private Action<InputAction.CallbackContext> basicAttackPerformed;
+    private Action<InputAction.CallbackContext> specialAttackStarted;
+    private Action<InputAction.CallbackContext> specialAttackCanceled;
+    private Action<InputAction.CallbackContext> specialAttackPerformed;
+    private Action<InputAction.CallbackContext> skillAttackPerformed;
+    private Action<InputAction.CallbackContext> ultimateAttackStarted;
+
     private void Start()
     {
         if (PhotonNetwork.InRoom && !photonView.IsMine)
@@ -24,19 +38,34 @@ public class PinkPlayercontroller_event : Playercontroller_event
             return;
         }
 
-        InputManager.Instance.PlayerInput.actions["Move"].performed += ctx => OnMove(ctx);
-        InputManager.Instance.PlayerInput.actions["Move"].canceled += ctx => OnMove(ctx);
-        InputManager.Instance.PlayerInput.actions["Dash"].performed += ctx => OnKeyboard_Spacebar(ctx);
-        InputManager.Instance.PlayerInput.actions["Dash"].canceled += ctx => OnKeyboard_Spacebar(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].performed += ctx => OnInteraction(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].canceled += ctx => OnInteraction(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].started += ctx => OnInteraction(ctx);
-        InputManager.Instance.PlayerInput.actions["BasicAttack"].performed += ctx => OnMouse_L(ctx);
-        InputManager.Instance.PlayerInput.actions["SpecialAttack"].started += ctx => OnMouse_R(ctx);
-        InputManager.Instance.PlayerInput.actions["SpecialAttack"].canceled += ctx => OnMouse_R(ctx);
-        InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed += ctx => OnMouse_R(ctx);
-        InputManager.Instance.PlayerInput.actions["SkillAttack"].performed += ctx => OnKeyboard_Shift_L(ctx);
-        InputManager.Instance.PlayerInput.actions["UltimateAttack"].started += ctx => OnKeyboard_R(ctx);
+        movePerformed = OnMove;
+        moveCanceled = OnMove;
+        dashPerformed = OnKeyboard_Spacebar;
+        dashCanceled = OnKeyboard_Spacebar;
+        interactionPerformed = OnInteraction;
+        interactionCanceled = OnInteraction;
+        interactionStarted = OnInteraction;
+        basicAttackPerformed = OnMouse_L;
+        specialAttackStarted = OnMouse_R;
+        specialAttackCanceled = OnMouse_R;
+        specialAttackPerformed = OnMouse_R;
+        skillAttackPerformed = OnKeyboard_Shift_L;
+        ultimateAttackStarted = OnKeyboard_R;
+
+        var actions = InputManager.Instance.PlayerInput.actions;
+        actions["Move"].performed += movePerformed;
+        actions["Move"].canceled += moveCanceled;
+        actions["Dash"].performed += dashPerformed;
+        actions["Dash"].canceled += dashCanceled;
+        actions["Interaction"].performed += interactionPerformed;
+        actions["Interaction"].canceled += interactionCanceled;
+        actions["Interaction"].started += interactionStarted;
+        actions["BasicAttack"].performed += basicAttackPerformed;
+        actions["SpecialAttack"].started += specialAttackStarted;
+        actions["SpecialAttack"].canceled += specialAttackCanceled;
+        actions["SpecialAttack"].performed += specialAttackPerformed;
+        actions["SkillAttack"].performed += skillAttackPerformed;
+        actions["UltimateAttack"].started += ultimateAttackStarted;
 
     }
     private void Awake()
@@ -157,18 +186,19 @@ public class PinkPlayercontroller_event : Playercontroller_event
         if (!photonView.IsMine)
             return;
 
-        InputManager.Instance.PlayerInput.actions["Move"].performed -= ctx => OnMove(ctx);
-        InputManager.Instance.PlayerInput.actions["Move"].canceled -= ctx => OnMove(ctx);
-        InputManager.Instance.PlayerInput.actions["Dash"].performed -= ctx => OnKeyboard_Spacebar(ctx);
-        InputManager.Instance.PlayerInput.actions["Dash"].canceled -= ctx => OnKeyboard_Spacebar(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].performed -= ctx => OnInteraction(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].canceled -= ctx => OnInteraction(ctx);
-        InputManager.Instance.PlayerInput.actions["Interaction"].started -= ctx => OnInteraction(ctx);
-        InputManager.Instance.PlayerInput.actions["BasicAttack"].performed -= ctx => OnMouse_L(ctx);
-        InputManager.Instance.PlayerInput.actions["SpecialAttack"].started += ctx => OnMouse_R(ctx);
-        InputManager.Instance.PlayerInput.actions["SpecialAttack"].canceled += ctx => OnMouse_R(ctx);
-        InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed -= ctx => OnMouse_R(ctx);
-        InputManager.Instance.PlayerInput.actions["SkillAttack"].performed -= ctx => OnKeyboard_Shift_L(ctx);
-        InputManager.Instance.PlayerInput.actions["UltimateAttack"].started -= ctx => OnKeyboard_R(ctx);
+        var actions = InputManager.Instance.PlayerInput.actions;
+        actions["Move"].performed -= movePerformed;
+        actions["Move"].canceled -= moveCanceled;
+        actions["Dash"].performed -= dashPerformed;
+        actions["Dash"].canceled -= dashCanceled;
+        actions["Interaction"].performed -= interactionPerformed;
+        actions["Interaction"].canceled -= interactionCanceled;
+        actions["Interaction"].started -= interactionStarted;
+        actions["BasicAttack"].performed -= basicAttackPerformed;
+        actions["SpecialAttack"].started -= specialAttackStarted;
+        actions["SpecialAttack"].canceled -= specialAttackCanceled;
+        actions["SpecialAttack"].performed -= specialAttackPerformed;
+        actions["SkillAttack"].performed -= skillAttackPerformed;
+        actions["UltimateAttack"].started -= ultimateAttackStarted;
     }
 }

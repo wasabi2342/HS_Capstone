@@ -16,10 +16,11 @@ public class UITitlePanel : UIBase
     private Image titleImage;
 
     private bool anyKeyInput = false;
+    private System.Action<InputAction.CallbackContext> anyKeyCallback;
 
     private void OnDisable()
     {
-        InputManager.Instance.PlayerInput.actions["AnyKey"].started -= ctx => AnyKeyInput(ctx);
+        InputManager.Instance.PlayerInput.actions["AnyKey"].started -= anyKeyCallback;
         InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
         //UIManager.Instance.SetCanvasSize(new Vector2(1920f, 1080f));
     }
@@ -27,7 +28,10 @@ public class UITitlePanel : UIBase
     void Start()
     {
         InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
-        InputManager.Instance.PlayerInput.actions["AnyKey"].started += ctx => AnyKeyInput(ctx);
+
+        anyKeyCallback = AnyKeyInput;
+
+        InputManager.Instance.PlayerInput.actions["AnyKey"].started += anyKeyCallback;
         //UIManager.Instance.SetCanvasSize(new Vector2(15040f, 4611.875f));
 
         StartCoroutine(FadeTitle());

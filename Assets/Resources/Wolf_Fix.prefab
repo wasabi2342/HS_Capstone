@@ -20,7 +20,6 @@ GameObject:
   - component: {fileID: 6080484080865822958}
   - component: {fileID: 8751130033872277833}
   - component: {fileID: 5571277871613166694}
-  - component: {fileID: 6964638574666940226}
   - component: {fileID: 9173683272888104936}
   m_Layer: 7
   m_Name: Wolf_Fix
@@ -282,20 +281,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d145df9c93b686142a943def3695fa55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &6964638574666940226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765914048162278020}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ce0d0fccb130564599ce7102728d41c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weaponColliderObject: {fileID: 2400343500577941846}
-  weaponCollider: {fileID: 3488631304666889451}
 --- !u!114 &9173683272888104936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -318,6 +303,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9122515514604926970}
   - component: {fileID: 3488631304666889451}
+  - component: {fileID: 5224006571048511831}
   m_Layer: 7
   m_Name: WeaponCollider
   m_TagString: Untagged
@@ -361,3 +347,15 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.72
   m_Center: {x: 1.5, y: 2.4, z: 0}
+--- !u!114 &5224006571048511831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2400343500577941846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ce0d0fccb130564599ce7102728d41c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

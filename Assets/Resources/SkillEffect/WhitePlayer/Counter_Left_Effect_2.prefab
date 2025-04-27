@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 3609125026848882081}
   - component: {fileID: 7743038799381395914}
   - component: {fileID: 8981559412890530611}
-  - component: {fileID: 6032632071522319100}
   - component: {fileID: 8650833557567206672}
   - component: {fileID: 5462593346242868395}
   m_Layer: 12
@@ -113,28 +112,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &6032632071522319100
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2808370052155906318}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents: []
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
 --- !u!114 &8650833557567206672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,5 +146,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
-  m_Size: {x: 17, y: 10, z: 0.5}
+  m_Size: {x: 17, y: 10, z: 2}
   m_Center: {x: -4, y: 0, z: 0}

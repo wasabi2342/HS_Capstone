@@ -91,7 +91,6 @@ GameObject:
   - component: {fileID: 7988644064927577358}
   - component: {fileID: 4455361394817998294}
   - component: {fileID: 4625028470099003885}
-  - component: {fileID: 1237900516238075229}
   m_Layer: 5
   m_Name: CancelButton
   m_TagString: Untagged
@@ -201,37 +200,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &1237900516238075229
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 665692679797975845}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollisionTag: 
-  EventReference:
-    Guid:
-      Data1: 1779947910
-      Data2: 1139663812
-      Data3: -447177284
-      Data4: -969076227
-    Path: event:/UI/hologram sound2
-  Event: 
-  EventPlayTrigger: 20
-  EventStopTrigger: 0
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
 --- !u!1 &750972675589080068
 GameObject:
   m_ObjectHideFlags: 0
@@ -916,7 +884,6 @@ GameObject:
   - component: {fileID: 7761299100741558669}
   - component: {fileID: 8298140346749932676}
   - component: {fileID: 6254906156652144991}
-  - component: {fileID: 4308143214610635400}
   m_Layer: 5
   m_Name: PreButton
   m_TagString: Untagged
@@ -1026,37 +993,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &4308143214610635400
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1878907610635219817}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollisionTag: 
-  EventReference:
-    Guid:
-      Data1: 1779947910
-      Data2: 1139663812
-      Data3: -447177284
-      Data4: -969076227
-    Path: event:/UI/hologram sound2
-  Event: 
-  EventPlayTrigger: 20
-  EventStopTrigger: 0
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  NonRigidbodyVelocity: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
 --- !u!1 &2307102053747697482
 GameObject:
   m_ObjectHideFlags: 0
@@ -1164,7 +1100,7 @@ MonoBehaviour:
   isVisibleToggle: {fileID: 8333898882896494773}
   confirmButton: {fileID: 6254906156652144991}
   cancelButton: {fileID: 4625028470099003885}
-  passwordInputField: {fileID: 0}
+  passwordInputField: {fileID: 3377358090396876795}
 --- !u!225 &1945459879884430540
 CanvasGroup:
   m_ObjectHideFlags: 0

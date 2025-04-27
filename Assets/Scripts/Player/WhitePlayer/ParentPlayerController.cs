@@ -426,4 +426,10 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         return characterBaseStats.name;
     }
 
+    [PunRPC]
+    public virtual void CreateAnimation(string name, Vector3 pos)
+    {
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(name), pos, Quaternion.identity);
+        skillEffect.transform.parent = transform;
+    }
 }

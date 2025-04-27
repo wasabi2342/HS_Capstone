@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 4264326579809478221}
   - component: {fileID: 1734728976639821693}
   - component: {fileID: 7402582756178341343}
-  - component: {fileID: 6708865084836201358}
   - component: {fileID: 6691259619962805239}
+  - component: {fileID: 3077701939788517954}
   m_Layer: 12
   m_Name: Attack4_Left_Effect_0
   m_TagString: Untagged
@@ -128,28 +128,6 @@ MonoBehaviour:
   animator: {fileID: 0}
   hitlagTime: 0.13
   attackerType: 1
---- !u!114 &6708865084836201358
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3770419539410130512}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents: []
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
 --- !u!65 &6691259619962805239
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -169,5 +147,21 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
-  m_Size: {x: 18, y: 8, z: 0.5}
+  m_Size: {x: 18, y: 8, z: 2}
   m_Center: {x: 0, y: -1, z: 0}
+--- !u!114 &3077701939788517954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3770419539410130512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 0
+  m_SynchronizeScale: 0
+  m_UseLocal: 1

@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+using UnityEngine.SceneManagement;
 
-public class UIMinimapPanel : MonoBehaviour
+public class UIMinimapPanel :UIBase
 {
     [Header("Refs")]
     [SerializeField] Camera minimapCamera;          // 미니맵 전용 카메라
@@ -15,8 +16,48 @@ public class UIMinimapPanel : MonoBehaviour
     [SerializeField] GameObject playerRemoteIconPrefab;  // 원격 플레이어용 초록 원
     [SerializeField] GameObject monsterIconPrefab;       // 몬스터용 빨강 원
 
+    [Header("Auto-Bind 옵션")]
+    [Tooltip("씬 안의 ‘MinimapCamera’ 태그를 가진 카메라를 자동으로 물고 옵니다.")]
+    [SerializeField] string minimapCameraTag = "MinimapCamera";
+
     // { 오브젝트 식별 ID → 아이콘 } 맵
     Dictionary<int, GameObject> iconPool = new Dictionary<int, GameObject>();
+    void Awake()
+    {
+        BindMinimapCamera();                           // 최초 1회
+        SceneManager.sceneLoaded += OnSceneLoaded;     // 씬 전환감시
+    }
+    void OnDestroy() => SceneManager.sceneLoaded -= OnSceneLoaded;
+    void OnSceneLoaded(Scene s, LoadSceneMode mode) => BindMinimapCamera();
+    void BindMinimapCamera()
+    {
+        // 인스펙터에서 직접 넣어뒀거나, 이미 바인딩돼 있으면 패스
+        if (minimapCamera != null) return;
+        if (!string.IsNullOrEmpty(minimapCameraTag))
+        {
+            var camGO = GameObject.FindGameObjectWithTag(minimapCameraTag);
+            if (camGO) minimapCamera = camGO.GetComponent<Camera>();
+        }
+        if (minimapCamera == null)
+        {
+            var camGO = GameObject.Find("MinimapCamera");
+            if (camGO) minimapCamera = camGO.GetComponent<Camera>();
+        }
+
+        if (minimapCamera == null)
+        {
+            foreach (var cam in FindObjectsOfType<Camera>())
+                if (cam.targetTexture != null) { minimapCamera = cam; break; }
+        }
+        if (minimapCamera != null)
+        {
+            minimapImage.texture = minimapCamera.targetTexture;
+        }
+        else
+        {
+            Debug.LogWarning("[UIMinimapPanel] MinimapCamera를 찾지 못했습니다.");
+        }
+    }
 
     void LateUpdate()
     {

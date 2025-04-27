@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 5087295170582735369}
   - component: {fileID: 1075010431749923148}
   - component: {fileID: 5330499134185825068}
-  - component: {fileID: 4553775939907507452}
   - component: {fileID: 2337421694715466372}
   m_Layer: 0
   m_Name: pink_R_hit0_right_front_0
@@ -128,28 +127,6 @@ MonoBehaviour:
   animator: {fileID: 1075010431749923148}
   hitlagTime: 0.117
   attackerType: 2
---- !u!114 &4553775939907507452
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3006440318416857968}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents: []
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
 --- !u!65 &2337421694715466372
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -165,9 +142,9 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
-  m_Size: {x: 21, y: 22, z: 0.5}
+  m_Size: {x: 21, y: 22, z: 2}
   m_Center: {x: 7.6, y: -2, z: 0}
