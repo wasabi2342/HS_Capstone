@@ -361,7 +361,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         photonView.RPC("RPC_ShowNextStageCountdown", RpcTarget.All, 0);
         PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
         // 이후 원하는 씬으로 이동
-        PhotonNetwork.LoadLevel("StageTest1");
+        PhotonNetwork.LoadLevel("Level1");
 
         finalRewardNextStageCoroutine = null;
     }
