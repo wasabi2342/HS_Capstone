@@ -2,6 +2,8 @@ using UnityEngine;
 using FMODUnity;
 using FMOD.Studio;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
+
 
 public class AudioManager : MonoBehaviour
 {
@@ -24,6 +26,25 @@ public class AudioManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name.StartsWith("Level"))
+        {
+            StopCurrentBGM();
+        }
+
     }
 
     // 1. OneShot 사운드 재생 (위치 적용)
