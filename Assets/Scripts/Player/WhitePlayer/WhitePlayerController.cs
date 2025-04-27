@@ -435,6 +435,11 @@ public class WhitePlayerController : ParentPlayerController
     // 궁극기 이펙트 생성
     public void CreateUltimateEffect()
     {
+        if (!photonView.IsMine)
+        {
+            attackStack = animator.GetInteger("AttackStack");
+        }
+
         float damage = (runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
 
         // Photon에 접속 중인지 확인하여 isMine 설정

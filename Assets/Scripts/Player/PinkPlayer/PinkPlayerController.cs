@@ -786,6 +786,11 @@ public class PinkPlayerController : ParentPlayerController
     // 평타 이펙트 생성
     public void CreateBasicAttackEffect()
     {
+        if (!photonView.IsMine)
+        {
+            attackStack = animator.GetInteger("AttackStack");
+        }
+
         // 평타 데미지 계산
         float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
         float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower +
