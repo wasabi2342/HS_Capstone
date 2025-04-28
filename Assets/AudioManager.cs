@@ -4,7 +4,6 @@ using FMOD.Studio;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
-
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
@@ -14,6 +13,7 @@ public class AudioManager : MonoBehaviour
 
     private Dictionary<string, EventInstance> loopingSounds = new Dictionary<string, EventInstance>();
     private string currentBGMPath = "";
+    private EventInstance currentBGMInstance; // 현재 재생 중인 BGM EventInstance 저장
 
     private void Awake()
     {
@@ -44,10 +44,8 @@ public class AudioManager : MonoBehaviour
         {
             StopCurrentBGM();
         }
-
     }
 
-    // 1. OneShot 사운드 재생 (위치 적용)
     public void PlayOneShot(string eventPath, Vector3 position)
     {
         var attributes = RuntimeUtils.To3DAttributes(position);
@@ -58,7 +56,6 @@ public class AudioManager : MonoBehaviour
         instance.release();
     }
 
-    // 2. 루프 사운드 재생
     public void PlayLoop(string eventPath, Vector3 position)
     {
         if (loopingSounds.ContainsKey(eventPath))
@@ -74,7 +71,6 @@ public class AudioManager : MonoBehaviour
         loopingSounds[eventPath] = instance;
     }
 
-    // 3. 루프 사운드 정지
     public void StopLoop(string eventPath)
     {
         if (loopingSounds.TryGetValue(eventPath, out EventInstance instance))
@@ -85,7 +81,6 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    // 4. 볼륨 변경
     public void SetMasterVolume(float volume)
     {
         masterVolume = Mathf.Clamp01(volume);
@@ -95,7 +90,6 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    // 경로 기반 헬퍼 메서드 (폴더 구조 반영)
     public void PlayCharacterSFX(string characterType, string actionName, Vector3 position)
     {
         PlayOneShot($"event:/Character/{characterType}/{actionName}", position);
@@ -116,47 +110,59 @@ public class AudioManager : MonoBehaviour
         PlayOneShot($"event:/UI/{sfxName}", position);
     }
 
-    // BGM 사운드 재생 (OneShot용)
     public void PlayBGM(string bgmName, Vector3 position)
     {
         PlayOneShot($"event:/BGM/{bgmName}", position);
     }
 
-    // BGM 루프 사운드 재생 (중복 재생 방지)
     public void PlayBGMLoop(string bgmName, Vector3 position)
     {
         string path = $"event:/BGM/{bgmName}";
 
-        // 이미 동일 BGM이 재생 중이면 무시
         if (currentBGMPath == path && loopingSounds.ContainsKey(path))
             return;
 
-        // 다른 BGM이 재생 중이면 정지
         if (!string.IsNullOrEmpty(currentBGMPath))
         {
             StopLoop(currentBGMPath);
+            if (currentBGMInstance.isValid())
+                currentBGMInstance.release();
         }
 
         currentBGMPath = path;
-        PlayLoop(path, position);
+        currentBGMInstance = RuntimeManager.CreateInstance(path); // BGM EventInstance 저장
+        currentBGMInstance.set3DAttributes(RuntimeUtils.To3DAttributes(position));
+        currentBGMInstance.setVolume(masterVolume);
+        currentBGMInstance.start();
+        loopingSounds[path] = currentBGMInstance;
     }
 
-    // BGM 루프 사운드 정지
     public void StopBGMLoop(string bgmName)
     {
         string path = $"event:/BGM/{bgmName}";
         StopLoop(path);
         if (currentBGMPath == path)
+        {
             currentBGMPath = "";
+            if (currentBGMInstance.isValid())
+                currentBGMInstance.release();
+        }
     }
 
-    // 현재 재생 중인 BGM 정지
     public void StopCurrentBGM()
     {
         if (!string.IsNullOrEmpty(currentBGMPath))
         {
             StopLoop(currentBGMPath);
+            if (currentBGMInstance.isValid())
+                currentBGMInstance.release();
             currentBGMPath = "";
         }
+    }
+
+    // 현재 재생 중인 BGM EventInstance를 반환하는 메서드
+    public EventInstance GetCurrentBGMInstance()
+    {
+        return currentBGMInstance;
     }
 }
