@@ -23,6 +23,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
     private bool isInVillage;
     [SerializeField]
     private Vector3 playerScale = new Vector3(0.375f, 0.525f, 0.375f);
+    [SerializeField]
+    private Vector3 spawnPoint = Vector3.zero;
 
     // ────────────────────────────────
     // 런타임 변수
@@ -88,12 +90,12 @@ public class RoomManager : MonoBehaviourPunCallbacks
             && val is string charName)
         {
             Debug.Log($"Loaded character name: {charName}");
-            CreateCharacter(charName, new Vector3(0, 1.5f, 0), Quaternion.identity, isInVillage);
+            CreateCharacter(charName, spawnPoint + new Vector3(0, 1.5f, 0), Quaternion.identity, isInVillage);
         }
         else
         {
             // 키가 없거나 오프라인 모드일 때 기본 플레이어로 생성
-            CreateCharacter(defaultPlayer.name, new Vector3(0, 1.5f, 0), Quaternion.identity, isInVillage);
+            CreateCharacter(defaultPlayer.name, spawnPoint + new Vector3(0, 1.5f, 0), Quaternion.identity, isInVillage);
         }
 
         UIManager.Instance.SetRenderCamera(Camera.main);
