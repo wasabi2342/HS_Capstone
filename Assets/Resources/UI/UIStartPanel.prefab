@@ -450,7 +450,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -255}
+  m_AnchoredPosition: {x: 0, y: 50}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2899187735479919894
@@ -467,20 +467,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eventPath: event:/BGM/MainTitleOST
   volume: 0
-  numBands: 64
+  numBands: 80
   barPrefab: {fileID: 8825358981127023402, guid: f0ce48cf78d4b6d43ab109a17edca773, type: 3}
   glowPrefab: {fileID: 0}
-  radius: 680
-  autoCalculateAngle: 1
-  heightMultiplier: 100
+  radius: 200
+  heightMultiplier: 150
   contentParent: {fileID: 7608271377834231955}
   startColor: {r: 0, g: 1, b: 1, a: 1}
+  middleColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 0, b: 1, a: 1}
-  colorIntensityMultiplier: 1
-  minFrequency: 20
-  maxFrequency: 14000
-  lowFrequencyScale: 0.01
-  highFrequencyScale: 96
+  colorIntensityMultiplier: 70.5
+  colorTransitionSpeed: 6.4
+  colorSensitivity: 3
+  minColorIntensity: 0.15
+  minFrequency: 5
+  maxFrequency: 1500
+  lowFrequencyScale: 1
+  highFrequencyScale: 100
 --- !u!1 &2143582743525268480
 GameObject:
   m_ObjectHideFlags: 0
