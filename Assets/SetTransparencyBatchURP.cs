@@ -1,79 +1,124 @@
-// File: Scripts/SetTransparencyBatchURP.cs
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections.Generic;
 using Photon.Pun;
 
 public class SetTransparencyBatchURP : MonoBehaviour
 {
-    [Header("Åõ¸íÇÏ°Ô ¸¸µé ¿ÀºêÁ§Æ® ¸®½ºÆ®")]
+    [Header("íˆ¬ëª…í•˜ê²Œ ë§Œë“¤ ì˜¤ë¸Œì íŠ¸ ë¦¬ìŠ¤íŠ¸")]
     [SerializeField]
     private List<GameObject> targetObjects = new List<GameObject>();
 
     [Range(0f, 1f)]
-    [Header("¾ËÆÄ°ª (0:¿ÏÀüÅõ¸í ~ 1:¿ÏÀüºÒÅõ¸í)")]
-    public float transparency = 0.5f;
+    [Header("ìµœëŒ€ ì•ŒíŒŒê°’ (0:ì™„ì „íˆ¬ëª… ~ 1:ì™„ì „ë¶ˆíˆ¬ëª…)")]
+    public float maxTransparency = 0.5f;
+
+    [Header("í”Œë ˆì´ì–´ì™€ 0ì´ ë˜ëŠ” ìµœì†Œ ê±°ë¦¬")]
+    public float minDistance = 1f;
+
+    [Header("í”Œë ˆì´ì–´ì™€ ìµœëŒ€ ì•ŒíŒŒê°€ ë˜ëŠ” ìµœëŒ€ ê±°ë¦¬")]
+    public float maxDistance = 5f;
 
     private Dictionary<GameObject, Material> originalMaterials = new Dictionary<GameObject, Material>();
+    private Transform playerTransform = null;
+
+    private void Update()
+    {
+        if (playerTransform != null)
+        {
+            float distance = Vector3.Distance(transform.position, playerTransform.position);
+
+            float t = Mathf.InverseLerp(minDistance, maxDistance, distance);
+            float currentAlpha = Mathf.Lerp(0f, maxTransparency, t);
+
+            UpdateTransparency(currentAlpha);
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Interactable") &&
-            (!PhotonNetwork.InRoom ||
-             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
+            (!PhotonNetwork.InRoom || (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
-            MakeAllTransparent();
+            playerTransform = other.transform;
+            MakeAllTransparent(maxTransparency);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Interactable") &&
-            (!PhotonNetwork.InRoom ||
-             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
+            (!PhotonNetwork.InRoom || (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
+            playerTransform = null;
             RestoreOriginalMaterials();
         }
     }
 
-    private void MakeAllTransparent()
+    private void ForceTransparentSettings(Material material)
+    {
+        // ì´ê²Œ ì§„ì§œ í•µì‹¬
+        material.SetFloat("_Surface", 1); // Transparent
+        material.SetOverrideTag("RenderType", "Transparent");
+        material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+
+        material.SetInt("_ZWrite", 0); // ZWrite Off
+        material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+        material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+
+        material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+        material.DisableKeyword("_SURFACE_TYPE_OPAQUE");
+    }
+
+    private void MakeAllTransparent(float alpha)
     {
         foreach (GameObject obj in targetObjects)
         {
             if (obj == null) continue;
 
             MeshRenderer meshRenderer = obj.GetComponent<MeshRenderer>();
-            if (meshRenderer == null)
-            {
-                Debug.LogWarning($"{obj.name} ¿¡ MeshRenderer°¡ ¾ø½À´Ï´Ù.");
-                continue;
-            }
+            if (meshRenderer == null) continue;
 
             if (!originalMaterials.ContainsKey(obj))
             {
-                originalMaterials[obj] = meshRenderer.sharedMaterial; // ¿øº» ÀúÀå
+                originalMaterials[obj] = meshRenderer.sharedMaterial;
             }
 
             Material originalMaterial = meshRenderer.sharedMaterial;
-            Material transparentMaterial = new Material(originalMaterial); // º¹Á¦
-
-            meshRenderer.material = transparentMaterial; // º¹Á¦º» Àû¿ë
+            Material transparentMaterial = new Material(originalMaterial);
+            meshRenderer.material = transparentMaterial;
 
             if (transparentMaterial.shader.name.Contains("Universal Render Pipeline/Lit"))
             {
-                transparentMaterial.SetFloat("_Surface", 1); // Transparent ¼³Á¤
-                transparentMaterial.SetOverrideTag("RenderType", "Transparent");
-                transparentMaterial.renderQueue = 3000;
-
-                transparentMaterial.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                transparentMaterial.DisableKeyword("_SURFACE_TYPE_OPAQUE");
+                ForceTransparentSettings(transparentMaterial);
 
                 Color color = transparentMaterial.color;
-                color.a = transparency;
+                color.a = alpha;
                 transparentMaterial.color = color;
             }
             else
             {
-                Debug.LogWarning($"{obj.name} ÀÇ Shader°¡ URP LitÀÌ ¾Æ´Õ´Ï´Ù.");
+                Debug.LogWarning($"{obj.name} ì˜ Shaderê°€ URP Litì´ ì•„ë‹™ë‹ˆë‹¤.");
+            }
+        }
+    }
+
+    private void UpdateTransparency(float alpha)
+    {
+        foreach (GameObject obj in targetObjects)
+        {
+            if (obj == null) continue;
+
+            MeshRenderer meshRenderer = obj.GetComponent<MeshRenderer>();
+            if (meshRenderer == null) continue;
+
+            Material material = meshRenderer.material;
+            if (material.shader.name.Contains("Universal Render Pipeline/Lit"))
+            {
+                Color color = material.color;
+                color.a = alpha;
+                material.color = color;
+
+                ForceTransparentSettings(material);
             }
         }
     }
@@ -87,13 +132,13 @@ public class SetTransparencyBatchURP : MonoBehaviour
             MeshRenderer meshRenderer = obj.GetComponent<MeshRenderer>();
             if (meshRenderer == null)
             {
-                Debug.LogWarning($"{obj.name} ¿¡ MeshRenderer°¡ ¾ø½À´Ï´Ù.");
+                Debug.LogWarning($"{obj.name} ì— MeshRendererê°€ ì—†ìŠµë‹ˆë‹¤.");
                 continue;
             }
 
             if (originalMaterials.ContainsKey(obj))
             {
-                meshRenderer.sharedMaterial = originalMaterials[obj]; // ¿øº» º¹±¸
+                meshRenderer.sharedMaterial = originalMaterials[obj]; // ì›ë³¸ ë³µêµ¬
             }
         }
 
