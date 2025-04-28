@@ -63,7 +63,11 @@
 			<destination>{dcef9976-f8e9-43a9-9c6c-ae1a81b3a2fa}</destination>
 		</relationship>
 	</object>
-	<object class="EventAutomatableProperties" id="{86b38480-506a-44ac-b64d-d2ffee05571b}" />
+	<object class="EventAutomatableProperties" id="{86b38480-506a-44ac-b64d-d2ffee05571b}">
+		<property name="maximumDistance">
+			<value>40</value>
+		</property>
+	</object>
 	<object class="MarkerTrack" id="{25d305ba-27fa-4c1e-9af0-d9d594d996a8}" />
 	<object class="GroupTrack" id="{1b4b962d-e211-4949-9195-c8904634e107}">
 		<relationship name="modules">
@@ -356,7 +360,7 @@
 	</object>
 	<object class="SingleSound" id="{24c7e614-c501-4ffd-ab96-84940b088f3d}">
 		<property name="start">
-			<value>1.4000000000000001</value>
+			<value>1.4399999999999999</value>
 		</property>
 		<property name="length">
 			<value>1.6319999999999999</value>
@@ -382,7 +386,7 @@
 	<object class="MixerBusEffectChain" id="{3ca7b128-53c7-4888-ac1d-4210c41f29e6}">
 		<relationship name="effects">
 			<destination>{7c64cc0d-8d89-4f0c-954b-5b3d91ad66e3}</destination>
-			<destination>{87ea314c-02cd-44ec-ba00-4f7c3375fc66}</destination>
+			<destination>{bbab4637-6177-4c32-a721-20b566c0c382}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{e3969f3c-3f8d-4125-87df-64fb20e4ef3b}" />
@@ -468,14 +472,7 @@
 	</object>
 	<object class="MixerBusPanner" id="{7a20a902-81eb-46c8-8a9a-ebeebbf241d7}" />
 	<object class="MixerBusFader" id="{7c64cc0d-8d89-4f0c-954b-5b3d91ad66e3}" />
-	<object class="SpatialiserEffect" id="{87ea314c-02cd-44ec-ba00-4f7c3375fc66}">
-		<property name="maximumDistance">
-			<value>30</value>
-		</property>
-		<property name="overrideRange">
-			<value>true</value>
-		</property>
-	</object>
+	<object class="SpatialiserEffect" id="{bbab4637-6177-4c32-a721-20b566c0c382}" />
 	<object class="MixerBusFader" id="{177cb1bc-a7d6-40e4-a1d2-6a27dee46ea4}" />
 	<object class="MixerBusFader" id="{5a07721a-3d27-4c60-be5b-d190a8476df2}" />
 	<object class="AutomationPoint" id="{fd6febad-441b-445c-952e-9ca88d8bac74}">
