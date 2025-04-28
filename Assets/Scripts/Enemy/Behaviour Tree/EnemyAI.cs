@@ -409,18 +409,12 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     [PunRPC]
     void RPC_SpawnBloodEffect(Vector3 pos, bool faceRight)
     {
-        // Facing 플래그로 프리팹 선택
-        GameObject prefabToUse = faceRight ? bloodEffectPrefab_Right : bloodEffectPrefab_Left;
-        if (prefabToUse == null)
-        {
-            Debug.LogError("[EnemyAI] BloodEffect prefab is null!");
-            return;
-        }
-
-        // 이펙트 생성
-        GameObject fx = Instantiate(prefabToUse, pos + Vector3.up * 1f, Quaternion.identity);
-
-        // 애니메이터 있으면 랜덤 애니 재생
+        GameObject fx = Instantiate(
+            faceRight ? bloodEffectPrefab_Right : bloodEffectPrefab_Left,
+            pos + Vector3.up * 1f,
+            Quaternion.identity,
+            /* parent = */ null
+        );
         if (fx.TryGetComponent<Animator>(out var fxAnim))
         {
             string[] animNames = { "BloodEffect_1", "BloodEffect_2", "BloodEffect_3" };
