@@ -14,9 +14,9 @@ public class StageManager : MonoBehaviour
 
     [Header("Stage Settings")]
     public StageSettings currentStageSettings; // 현재 스테이지에 해당하는 설정
-    public Quaternion spawnAreaRotation = Quaternion.identity; // 기본 회전 값
-
     private List<GameObject> spawnAreaInstances = new List<GameObject>();
+    private Quaternion spawnAreaRotation = Quaternion.Euler(0, 0, 0); // 기본 회전값 (0도)
+    private int currentWave = 0;
 
     [SerializeField]
     private Transform coopOrBetrayNPCPos;
@@ -30,9 +30,9 @@ public class StageManager : MonoBehaviour
 
         if (PhotonNetwork.IsMasterClient)
         {
-            SpawnStage();
+            SpawnWave(0);
             //PhotonNetwork.Instantiate(blessingNPCPrefabName, Vector3.zero, Quaternion.identity);
-            PhotonNetwork.Instantiate(doorPrefabName, new Vector3(10,0,0), Quaternion.identity);
+            //PhotonNetwork.Instantiate(doorPrefabName, new Vector3(10,0,0), Quaternion.identity);
             PhotonNetwork.Instantiate(CoopOrBetrayNPCPrefabName, coopOrBetrayNPCPos.position, Quaternion.identity);
 
         }
@@ -54,31 +54,49 @@ public class StageManager : MonoBehaviour
     {
         // 실제 프로젝트 로직에 맞춰 구현
     }
-    void SpawnStage()
+    void SpawnWave(int waveIdx)
     {
-        foreach (SpawnAreaSetting setting in currentStageSettings.spawnAreaSettings)
-        {
-            // 1) 스폰 영역 프리팹 생성
-            GameObject spawnAreaInstance = PhotonNetwork.Instantiate(
-                spawnAreaPrefabName,
-                setting.position,
-                spawnAreaRotation
-            );
-            spawnAreaInstances.Add(spawnAreaInstance);
+        currentWave = waveIdx;
 
-            // 2) 반경 설정
-            SpawnArea area = spawnAreaInstance.GetComponent<SpawnArea>();
-            if (area != null)
+        // --- 첫 웨이브(0)일 땐 SpawnArea 프리팹 생성 ---
+        if (waveIdx == 0)
+        {
+            foreach (var setting in currentStageSettings.waves[0].spawnAreaSettings)
             {
+                var areaGO = PhotonNetwork.Instantiate(
+                    spawnAreaPrefabName, setting.position, spawnAreaRotation);
+                spawnAreaInstances.Add(areaGO);
+
+                // 반경 설정
+                var area = areaGO.GetComponent<SpawnArea>();
                 area.SetRadius(setting.radius);
             }
+        }
 
-            // 3) MonsterSpawner 찾아서 몬스터 스폰
-            MonsterSpawner spawner = spawnAreaInstance.GetComponentInChildren<MonsterSpawner>();
+        // --- 해당 웨이브 몬스터만 스폰 ---
+        for (int i = 0; i < spawnAreaInstances.Count; i++)
+        {
+            var spawner = spawnAreaInstances[i]
+                .GetComponentInChildren<MonsterSpawner>();
             if (spawner != null)
             {
-                spawner.SpawnMonsters(setting.monsterSpawnInfos);
+                var infos = currentStageSettings
+                    .waves[waveIdx].spawnAreaSettings[i]
+                    .monsterSpawnInfos;
+                spawner.SpawnMonsters(infos);
             }
+        }
+    }
+    public void OnAllMonsterCleared()
+    {
+        if (!PhotonNetwork.IsMasterClient) return; // 마스터 클라이언트만 실행
+        if (currentWave < currentStageSettings.waves.Length - 1)
+        {
+            SpawnWave(currentWave + 1); // 다음 웨이브 스폰
+        }
+        else
+        {
+            AreAllMonstersCleared(); // 모든 몬스터 제거 확인
         }
     }
 
