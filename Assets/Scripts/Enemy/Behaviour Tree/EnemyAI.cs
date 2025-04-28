@@ -35,6 +35,12 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
 
     bool waiting; float waitT, waitDur;
     Vector3 wanderTarget;
+    Vector3 lastTargetPos;
+    float updateTargetThreshold = 0.5f;
+    float detectCooldown = 0.5f; 
+    float detectTimer = 0f;
+    float destinationUpdateInterval = 0.2f;
+    float destinationUpdateTimer = 0f;
 
     /* Hit-Stun */
     bool stunned;
@@ -43,6 +49,9 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     private Vector3 knockbackVelocity;
     private float knockbackTimer;
     private const float KNOCKBACK_DURATION = 0.1f;
+    [SerializeField] private GameObject bloodEffectPrefab_Left;
+    [SerializeField] private GameObject bloodEffectPrefab_Right;
+
 
     /* HP & Shield */
     float maxHP, hp;
@@ -118,9 +127,10 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         if (dead || stunned || !agent.enabled) return;
         if (knockbackTimer > 0f)
         {
-            transform.position += knockbackVelocity * Time.deltaTime;
+            float knockbackProgress = 1f - (knockbackTimer / KNOCKBACK_DURATION);
+            transform.position += knockbackVelocity * (1f - knockbackProgress) * Time.deltaTime;
             knockbackTimer -= Time.deltaTime;
-            return; // 넉백 중에는 나머지 행동 중단
+            return;
         }
         if (prepping || atkAnim)
         {
@@ -196,6 +206,12 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
 
     INode.NodeState DetectEnemy()
     {
+        detectTimer -= Time.deltaTime;
+        if (detectTimer > 0f && targetPlayer != null)
+            return INode.NodeState.Success; // 이미 타겟이 있을 때는 그대로 유지
+
+        detectTimer = detectCooldown;
+
         Transform near = null; float min = status.detectRange;
         foreach (var p in GameObject.FindGameObjectsWithTag("Player"))
         {
@@ -209,48 +225,94 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     INode.NodeState MoveToEnemy()
     {
         if (!targetPlayer) return INode.NodeState.Failure;
+
         agent.isStopped = false;
         agent.speed = status.chaseSpeed;
-        agent.SetDestination(new Vector3(targetPlayer.position.x,
-                                         transform.position.y,
-                                         targetPlayer.position.z));
+
+        destinationUpdateTimer -= Time.deltaTime;
+
+        if (destinationUpdateTimer <= 0f)
+        {
+            destinationUpdateTimer = destinationUpdateInterval;
+
+            if (Vector3.Distance(lastTargetPos, targetPlayer.position) > updateTargetThreshold)
+            {
+                agent.SetDestination(new Vector3(targetPlayer.position.x, transform.position.y, targetPlayer.position.z));
+                lastTargetPos = targetPlayer.position;
+            }
+        }
+
         return INode.NodeState.Running;
     }
 
     INode.NodeState DoAttack()
     {
         if (!canAttack || attackStrategy == null || !targetPlayer)
-            return INode.NodeState.Failure;
-
-        /* ─── 준비 단계 ─── */
-        if (!prepping)
         {
-            prepping = true; prepT = 0f;
-            agent.isStopped = true; agent.ResetPath(); agent.velocity = Vector3.zero;
+            ResetAttackState();
+            return INode.NodeState.Failure;
+        }
+
+        float distanceToPlayer = Vector3.Distance(transform.position, targetPlayer.position);
+
+        // 플레이어가 공격 범위를 벗어나면 공격 준비를 취소하고 초기화
+        if (distanceToPlayer > status.attackRange)
+        {
+            ResetAttackState();
+            targetPlayer = null; // 타겟도 초기화
+            agent.isStopped = false;
+            return INode.NodeState.Failure;
+        }
+
+        if (prepping)
+        {
+            prepT += Time.deltaTime;
+
+            if (prepT >= status.waitCool)
+            {
+                prepping = false;
+                prepT = 0f;
+                string anim = targetPlayer.position.x >= transform.position.x ? "Attack_Right" : "Attack_Left";
+                PlayAnim(anim);
+                attackStrategy.Attack(targetPlayer);
+
+                atkAnim = true;
+                atkT = 0f;
+                canAttack = false;
+                atkCoolT = 0f;
+
+                return INode.NodeState.Success;
+            }
+
             lastMoveX = targetPlayer.position.x >= transform.position.x ? 1f : -1f;
             PlayAnim(lastMoveX >= 0 ? "Right_Idle" : "Left_Idle");
             return INode.NodeState.Running;
         }
-
-        /* ─── 타이머 진행 ─── */
-        prepT += Time.deltaTime;
-        if (prepT < status.waitCool)
+        else if (distanceToPlayer <= status.attackRange)
         {
-            PlayAnim(lastMoveX >= 0 ? "Right_Idle" : "Left_Idle");
+            prepping = true;
+            prepT = 0f;
+            agent.isStopped = true;
+            agent.ResetPath();
             return INode.NodeState.Running;
         }
 
-        /* ─── 실제 공격 ─── */
-        prepping = false;
-        PlayAnim(lastMoveX >= 0 ? "Attack_Right" : "Attack_Left");
-        attackStrategy.Attack(targetPlayer);
-
-        atkAnim = true; atkT = 0f;
-        canAttack = false; atkCoolT = 0f;
-        agent.isStopped = true; agent.ResetPath();
-
-        return INode.NodeState.Success;
+        ResetAttackState();
+        return INode.NodeState.Failure;
     }
+
+    // 공격 상태 초기화 메소드 추가
+    void ResetAttackState()
+    {
+        prepping = false;
+        prepT = 0f;
+        atkAnim = false;
+        atkT = 0f;
+        agent.isStopped = false;
+        agent.ResetPath();
+    }
+
+
 
     INode.NodeState WanderInsideArea()
     {
@@ -276,6 +338,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     void PickWanderPoint()
     {
         if (!EnsureSpawnArea()) return;
+        bool found = false;
         for (int i = 0; i < 10; i++)
         {
             Vector3 p = spawnArea.GetRandomPointInsideArea();
@@ -284,11 +347,18 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
                 wanderTarget = hit.position;
                 agent.speed = status.wanderSpeed;
                 agent.SetDestination(wanderTarget);
-                return;
+                found = true;
+                break;
             }
         }
+        if (!found)
+        {
+            // 실패했을 때, SpawnArea 근처 랜덤 이동
+            Vector3 fallback = spawnArea.transform.position + Random.insideUnitSphere * 2f;
+            fallback.y = transform.position.y;
+            agent.SetDestination(fallback);
+        }
     }
-
     /* ───────── Damage & Shield ───────── */
     public void TakeDamage(float dmg, AttackerType attackerType = AttackerType.Default) =>
         photonView.RPC(nameof(DamageToMaster), RpcTarget.MasterClient, dmg);
@@ -314,6 +384,11 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         hp = Mathf.Max(0, hp - dmg);
         photonView.RPC(nameof(UpdateHP), RpcTarget.AllBuffered, hp / maxHP);
 
+        // 현재 facing 방향 결정
+        bool faceRight = lastMoveX >= 0f;
+        // blood effect용 RPC: 위치 + facing 정보 전달
+        photonView.RPC(nameof(RPC_SpawnBloodEffect), RpcTarget.All, transform.position, faceRight);
+
         /* 피격 연출 (실드가 없을 때만 경직) */
         if (shield <= 0)
         {
@@ -330,13 +405,38 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         else ApplyKnockback();  // 죽지 않은 경우에만 넉백
 
     }
+    // ───────── Helper / RPC ─────────
+    [PunRPC]
+    void RPC_SpawnBloodEffect(Vector3 pos, bool faceRight)
+    {
+        // Facing 플래그로 프리팹 선택
+        GameObject prefabToUse = faceRight ? bloodEffectPrefab_Right : bloodEffectPrefab_Left;
+        if (prefabToUse == null)
+        {
+            Debug.LogError("[EnemyAI] BloodEffect prefab is null!");
+            return;
+        }
+
+        // 이펙트 생성
+        GameObject fx = Instantiate(prefabToUse, pos + Vector3.up * 1f, Quaternion.identity);
+
+        // 애니메이터 있으면 랜덤 애니 재생
+        if (fx.TryGetComponent<Animator>(out var fxAnim))
+        {
+            string[] animNames = { "BloodEffect_1", "BloodEffect_2", "BloodEffect_3" };
+            fxAnim.Play(animNames[Random.Range(0, animNames.Length)]);
+        }
+
+        Destroy(fx, 2f);
+    }
+
     void ApplyKnockback()
     {
         if (targetPlayer == null) return;
 
         Vector3 dir = (transform.position - targetPlayer.position).normalized;
         dir.y = 0f; // 수평으로만 밀리게
-        knockbackVelocity = dir * 3f; // 밀리는 속도
+        knockbackVelocity = dir * 4.5f; // 밀리는 속도
         knockbackTimer = KNOCKBACK_DURATION;
     }
 
