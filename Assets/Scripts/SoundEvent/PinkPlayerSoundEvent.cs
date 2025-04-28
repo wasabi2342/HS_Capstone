@@ -7,8 +7,8 @@ public class PinkPlayerSoundEvent : MonoBehaviour
         AudioManager.Instance.PlayOneShot($"event:/Character/Character-pink/{source}", transform.position);
     }
 
-    public void PinkPlayerSoundMove()
+    public void PinkPlayerSoundMove(string source)
     {
-        AudioManager.Instance.PlayOneShot($"event:/Character/Common/walk sound", transform.position);
+        AudioManager.Instance.PlayOneShot($"event:/Character/Common/{source}", transform.position);
     }
 }

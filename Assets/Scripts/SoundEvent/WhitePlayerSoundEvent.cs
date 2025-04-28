@@ -7,8 +7,8 @@ public class WhitePlayerSoundEvent : MonoBehaviour
         AudioManager.Instance.PlayOneShot($"event:/Character/Character-sword/{source}", transform.position);
     }
 
-    public void WhitePlayerSoundMove()
+    public void WhitePlayerSoundMove(string source)
     {
-        AudioManager.Instance.PlayOneShot($"event:/Character/Common/walk sound", transform.position);
+        AudioManager.Instance.PlayOneShot($"event:/Character/Common/{source}", transform.position);
     } 
 }
