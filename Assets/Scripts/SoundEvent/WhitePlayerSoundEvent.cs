@@ -1,14 +1,23 @@
 using UnityEngine;
+using Photon.Pun;
 
-public class WhitePlayerSoundEvent : MonoBehaviour
+public class WhitePlayerSoundEvent : MonoBehaviourPun
 {
+    private void PlaySound(string fullPath)
+    {
+        if (photonView.IsMine)
+        {
+            AudioManager.Instance.PlayOneShot(fullPath, transform.position);
+        }
+    }
+
     public void WhitePlayerSoundEffect(string source)
     {
-        AudioManager.Instance.PlayOneShot($"event:/Character/Character-sword/{source}", transform.position);
+        PlaySound($"event:/Character/Character-sword/{source}");
     }
 
     public void WhitePlayerSoundMove(string source)
     {
-        AudioManager.Instance.PlayOneShot($"event:/Character/Common/{source}", transform.position);
-    } 
+        PlaySound($"event:/Character/Common/{source}");
+    }
 }
