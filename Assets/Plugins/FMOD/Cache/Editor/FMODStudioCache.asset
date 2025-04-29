@@ -107,7 +107,7 @@ MonoBehaviour:
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 500
+  Length: 400
 --- !u!114 &-6789657782409834959
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129,12 +129,39 @@ MonoBehaviour:
   Banks:
   - {fileID: -5749200132036131284}
   IsStream: 0
-  Is3D: 1
+  Is3D: 0
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
   Length: 2150
+--- !u!114 &-6285344057164941153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-pink/swoosh
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-pink/swoosh
+  Guid:
+    Data1: -647485059
+    Data2: 1131799405
+    Data3: 1053624210
+    Data4: 1308478681
+  Banks:
+  - {fileID: -5749200132036131284}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1620
 --- !u!114 &-5932170203070475626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,7 +188,7 @@ MonoBehaviour:
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 1280
+  Length: 2089
 --- !u!114 &-5749200132036131284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,11 +204,38 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/SFX.bank
   Name: SFX
   StudioPath: bank:/SFX
-  lastModified: 638815357399320366
+  lastModified: 638815482288831777
   FileSizes:
   - Name: Desktop
-    Value: 1998272
+    Value: 2713888
   Exists: 1
+--- !u!114 &-5712910688963151768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-sword/IAI_Sheathing
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-sword/IAI_Sheathing
+  Guid:
+    Data1: -485859129
+    Data2: 1322901374
+    Data3: -606491222
+    Data4: 995273199
+  Banks:
+  - {fileID: -5749200132036131284}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1000
 --- !u!114 &-5629912978284292868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -344,6 +398,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 750
+--- !u!114 &-3983394677612336206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-pink/PutDownWeapon
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-pink/PutDownWeapon
+  Guid:
+    Data1: -1463941099
+    Data2: 1082038199
+    Data3: 625395884
+    Data4: -2017118433
+  Banks:
+  - {fileID: -5749200132036131284}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 535
 --- !u!114 &-3653454074788607567
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -391,13 +472,13 @@ MonoBehaviour:
     Data4: 1047362417
   Banks:
   - {fileID: -5749200132036131284}
-  IsStream: 0
+  IsStream: 1
   Is3D: 1
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 3500
+  Length: 5300
 --- !u!114 &-3304474167308404038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -505,7 +586,7 @@ MonoBehaviour:
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 2057
+  Length: 3124
 --- !u!114 &-1689733945531993320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -554,7 +635,7 @@ MonoBehaviour:
   Banks:
   - {fileID: -5749200132036131284}
   IsStream: 0
-  Is3D: 1
+  Is3D: 0
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
@@ -635,7 +716,7 @@ MonoBehaviour:
   Banks:
   - {fileID: -5749200132036131284}
   IsStream: 0
-  Is3D: 1
+  Is3D: 0
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
@@ -689,7 +770,7 @@ MonoBehaviour:
   Banks:
   - {fileID: -5749200132036131284}
   IsStream: 0
-  Is3D: 1
+  Is3D: 0
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
@@ -818,12 +899,16 @@ MonoBehaviour:
   - {fileID: -2095406896027887347}
   - {fileID: 6505644286338637616}
   - {fileID: 7023457388795131689}
+  - {fileID: -3983394677612336206}
+  - {fileID: -6285344057164941153}
+  - {fileID: 7597543541683717130}
+  - {fileID: -5712910688963151768}
   EditorParameters: []
   MasterBanks:
   - {fileID: 7615206358843715136}
   StringsBanks:
   - {fileID: 937915744167907725}
-  cacheTime: 638815357399320366
+  cacheTime: 638815482288831777
   cacheVersion: 131846
 --- !u!114 &241547184550738655
 MonoBehaviour:
@@ -921,10 +1006,10 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638815025355642955
+  lastModified: 638815436013781874
   FileSizes:
   - Name: Desktop
-    Value: 3228
+    Value: 3414
   Exists: 1
 --- !u!114 &1284256337427851988
 MonoBehaviour:
@@ -1001,7 +1086,7 @@ MonoBehaviour:
   Banks:
   - {fileID: -5749200132036131284}
   IsStream: 0
-  Is3D: 1
+  Is3D: 0
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
@@ -1032,7 +1117,7 @@ MonoBehaviour:
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
-  MaxDistance: 20
+  MaxDistance: 40
   Length: 4078
 --- !u!114 &2575172453816698493
 MonoBehaviour:
@@ -1217,7 +1302,7 @@ MonoBehaviour:
   Banks:
   - {fileID: -5749200132036131284}
   IsStream: 0
-  Is3D: 1
+  Is3D: 0
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
@@ -1303,7 +1388,7 @@ MonoBehaviour:
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 1500
+  Length: 850
 --- !u!114 &7023457388795131689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1325,7 +1410,7 @@ MonoBehaviour:
   Banks:
   - {fileID: -5749200132036131284}
   IsStream: 0
-  Is3D: 1
+  Is3D: 0
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
@@ -1352,7 +1437,7 @@ MonoBehaviour:
   Banks:
   - {fileID: -5749200132036131284}
   IsStream: 0
-  Is3D: 1
+  Is3D: 0
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
@@ -1412,6 +1497,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 239999
+--- !u!114 &7597543541683717130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-pink/Charge_Pit
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-pink/Charge_Pit
+  Guid:
+    Data1: -690153730
+    Data2: 1149369180
+    Data3: 1826862772
+    Data4: -172768955
+  Banks:
+  - {fileID: -5749200132036131284}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 750
 --- !u!114 &7615206358843715136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1427,7 +1539,7 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638815025355642955
+  lastModified: 638815436013771872
   FileSizes:
   - Name: Desktop
     Value: 3470432
@@ -1512,7 +1624,7 @@ MonoBehaviour:
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 750
+  Length: 2500
 --- !u!114 &9058541493331265512
 MonoBehaviour:
   m_ObjectHideFlags: 0
