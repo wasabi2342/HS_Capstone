@@ -1031,4 +1031,14 @@ public class WhitePlayerController : ParentPlayerController
 
         playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID, this).ApplyEffect();
     }
+
+    public override void ShadowOff()
+    {
+        base.ShadowOff();
+    }
+
+    public override void ShadowOn()
+    {
+        base.ShadowOn();
+    }
 }
