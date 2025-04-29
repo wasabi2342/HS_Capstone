@@ -5,7 +5,7 @@
 			<value>knight spawn</value>
 		</property>
 		<property name="outputFormat">
-			<value>1</value>
+			<value>2</value>
 		</property>
 		<relationship name="folder">
 			<destination>{346fbd80-205e-4a70-bbd1-25aa2bbfc3ba}</destination>
@@ -116,6 +116,7 @@
 	<object class="MixerBusEffectChain" id="{66bbc07f-9a25-4f6b-b2d6-dea05dd648b7}">
 		<relationship name="effects">
 			<destination>{74a65c43-3174-45ee-ae2d-3f7d70b06a07}</destination>
+			<destination>{3bba2324-bec1-4896-951c-4c5003b4bf20}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{6a0204c7-0b22-404b-9152-08dd6a8cb23c}" />
@@ -127,5 +128,6 @@
 	</object>
 	<object class="MixerBusPanner" id="{104e8347-4cf8-4fdf-b5d8-02ff90531125}" />
 	<object class="MixerBusFader" id="{74a65c43-3174-45ee-ae2d-3f7d70b06a07}" />
+	<object class="SpatialiserEffect" id="{3bba2324-bec1-4896-951c-4c5003b4bf20}" />
 	<object class="MixerBusFader" id="{57bd9f9b-e982-4a3e-951d-bce011fd5d5d}" />
 </objects>
