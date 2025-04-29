@@ -22,7 +22,6 @@ public class EnemyStatus : ScriptableObject
     public float waitCool;        // 공격 준비 시간
     public float attackCool;      // 공격 쿨타임
     public float attackRange;     // 공격 거리
-    public float animDuration;    // 공격 애니메이션 길이
 
     [Header("AI Settings")]
     public float detectRange = 10f;     // 플레이어 탐지 거리

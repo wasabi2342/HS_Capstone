@@ -9,7 +9,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 {
     [SerializeField]
     protected float hitlagTime = 0.117f;
-    
+    [SerializeField]
+    protected SpriteRenderer shadow;
 
     public Transform footPivot;
 
@@ -431,5 +432,15 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     {
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(name), pos, Quaternion.identity);
         skillEffect.transform.parent = transform;
+    }
+
+    public virtual void ShadowOff()
+    {
+        shadow.enabled = false;
+    }
+
+    public virtual void ShadowOn()
+    {
+        shadow.enabled = true;
     }
 }

@@ -96,7 +96,9 @@ public class WhitePlayerController : ParentPlayerController
     public void SetMoveInput(Vector2 input)
     {
         moveInput = input;
-        Debug.Log(input + "이동 인풋값");
+        // x축 입력이 있을 때만 마지막 바라본 방향 갱신
+        if (Mathf.Abs(input.x) > 0.01f)
+            lastFacingDirection = new Vector3(Mathf.Sign(input.x), 0f, 0f);
     }
 
     // 이동 처리
@@ -193,32 +195,43 @@ public class WhitePlayerController : ParentPlayerController
         return idx;
     }
 
-    // 대쉬 처리
+    private Vector3 lastFacingDirection = Vector3.right;
 
+
+
+
+    // 대쉬 처리
     public void HandleDash()
     {
+        // 1) 상태 체크
         if (currentState == WhitePlayerState.Death || currentState == WhitePlayerState.Dash)
             return;
         if (currentState == WhitePlayerState.Stun)
             return;
         if (!cooldownCheckers[(int)Skills.Space].CanUse())
             return;
+
+        // 2) 상태 전환 & 애니메이터
         currentState = WhitePlayerState.Dash;
         animator.ResetTrigger("run");
-
         animator.SetBool("dash", true);
         if (PhotonNetwork.IsConnected)
-        {
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "dash", true);
+
+        // 3) 대쉬 방향 결정
+        if (Mathf.Abs(moveInput.x) > 0.01f)
+        {
+            // 입력이 있을 때
+            dashDirection = new Vector3(Mathf.Sign(moveInput.x), 0f, 0f);
         }
-        Vector3 dashDir = new Vector3(moveInput.x, 0, 0);
+        else
+        {
+            // 입력 없을 땐 마지막 바라본 방향 사용
+            dashDirection = lastFacingDirection;
+        }
 
-        dashDirection = new Vector3(Mathf.Sign(moveInput.x), 0f, 0f);
-        if (dashDirection == Vector3.zero)
-            dashDirection = Vector3.right;  // 기본 우측
-
-
-        //StartCoroutine(DoDash(dashDir));
+        // 4) 실제 이동 코루틴 호출 (필요에 따라 주석 해제)
+        // StartCoroutine(DoDash(dashDirection));
     }
 
     //private IEnumerator DoDash(Vector3 dashDir)
@@ -455,24 +468,23 @@ public class WhitePlayerController : ParentPlayerController
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
         SkillEffect skillEffect = null;
-        Vector3 targetPos = transform.position + new Vector3(-8.5f, 0, 0);
+        Vector3 targetPos = transform.position;
         string effectPath;
         if (animator.GetBool("Right"))
         {
             effectPath = $"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
-            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos + new Vector3(6f, 0, 0), Quaternion.identity);
         }
         else
         {
             effectPath = $"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
-            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos + new Vector3(-6f, 0, 0), Quaternion.identity);
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
             photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.R].skillData.ID, this) : null);
-        skillEffect.transform.parent = transform;
     }
 
     // 평타 이펙트 생성
@@ -733,6 +745,7 @@ public class WhitePlayerController : ParentPlayerController
         {
             return;
         }
+        AudioManager.Instance.PlayOneShot("event:/Character/Common/Character Hit", transform.position);
         if (isInvincible)
         {
             if (currentState == WhitePlayerState.Guard)
@@ -1018,5 +1031,15 @@ public class WhitePlayerController : ParentPlayerController
             return;
 
         playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID, this).ApplyEffect();
+    }
+
+    public override void ShadowOff()
+    {
+        base.ShadowOff();
+    }
+
+    public override void ShadowOn()
+    {
+        base.ShadowOn();
     }
 }

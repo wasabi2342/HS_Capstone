@@ -4,13 +4,20 @@ using System.Collections;
 public class WolfAttack : MonoBehaviour, IMonsterAttack
 {
     public float chargeSpeed = 10f;     // 돌진 속도
+
     private bool isCharging = false;
     private Transform target;
+    [Header("공격 콜라이더")]
     public GameObject weaponColliderObject;
     private Collider weaponCollider;
     private Vector3 defaultCenter;
+
+    private Animator animator;
+
     public void Attack(Transform target)
     {
+        animator = GetComponent<Animator>();
+
         if (!isCharging)
         {
             isCharging = true;
@@ -41,6 +48,14 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
     }
 
     // 애니메이션 이벤트용
+    public void SetAnimSpeed(float speed)
+    {
+        animator.speed = 0.8f;
+    }
+    public void ResetAnimSpeed()
+    {
+        animator.speed = 1f;
+    }
     public void EnableAttack()
     {
         if (weaponColliderObject != null)

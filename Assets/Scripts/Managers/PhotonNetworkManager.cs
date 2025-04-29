@@ -321,6 +321,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         // 최종 결과는 winningIndex 하나만 전달합니다.
         photonView.RPC("RPC_UpdateFinalReward", RpcTarget.All, winningIndex);
 
+        photonView.RPC("RPC_SaveRunTimeData", RpcTarget.All); // 게임 데이터 저장
+
         if (PhotonNetwork.IsMasterClient)
         {
             // 보관할 값을 담을 해시테이블 생성
@@ -344,6 +346,12 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         {
             finalRewardNextStageCoroutine = StartCoroutine(StartNextStageCountdown());
         }
+    }
+
+    [PunRPC]
+    public void RPC_SaveRunTimeData()
+    {
+        RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
     }
 
     private IEnumerator StartNextStageCountdown()
