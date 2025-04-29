@@ -1,14 +1,23 @@
 using UnityEngine;
+using Photon.Pun;
 
-public class PinkPlayerSoundEvent : MonoBehaviour
+public class PinkPlayerSoundEvent : MonoBehaviourPun
 {
-    public void PinkPlayerSoundEffect(string source)
+    private void PlaySound(string fullPath)
     {
-        AudioManager.Instance.PlayOneShot($"event:/Character/Character-pink/{source}", transform.position);
+        if (photonView.IsMine)
+        {
+            AudioManager.Instance.PlayOneShot(fullPath, transform.position);
+        }
     }
 
-    public void PinkPlayerSoundMove()
+    public void PinkPlayerSoundEffect(string source)
     {
-        AudioManager.Instance.PlayOneShot($"event:/Character/Common/walk sound", transform.position);
+        PlaySound($"event:/Character/Character-pink/{source}");
+    }
+
+    public void PinkPlayerSoundMove(string source)
+    {
+        PlaySound($"event:/Character/Common/{source}");
     }
 }

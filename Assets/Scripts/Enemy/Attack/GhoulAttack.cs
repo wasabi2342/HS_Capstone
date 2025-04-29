@@ -7,9 +7,10 @@ public class GhoulAttack : MonoBehaviour, IMonsterAttack
     public GameObject weaponColliderObject;
     private Collider weaponCollider;
     private Vector3 defaultCenter;
-
+    private Animator animator;
     public void Attack(Transform target)
     {
+        animator = GetComponent<Animator>();
         this.target = target;
     }
 
@@ -26,6 +27,14 @@ public class GhoulAttack : MonoBehaviour, IMonsterAttack
     }
 
     // 애니메이션 이벤트용
+    public void SetAnimSpeed()
+    {
+        animator.speed = 0.8f;
+    }
+    public void ResetAnimSpeed()
+    {
+        animator.speed = 1f;
+    }
     public void EnableAttack()
     {
         if (weaponColliderObject != null)

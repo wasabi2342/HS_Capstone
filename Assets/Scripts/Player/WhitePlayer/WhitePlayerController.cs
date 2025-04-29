@@ -455,17 +455,17 @@ public class WhitePlayerController : ParentPlayerController
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
         SkillEffect skillEffect = null;
-        Vector3 targetPos = transform.position + new Vector3(-8.5f, 0, 0);
+        Vector3 targetPos = transform.position;
         string effectPath;
         if (animator.GetBool("Right"))
         {
             effectPath = $"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
-            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos + new Vector3(8.5f, 0, 0), Quaternion.identity);
         }
         else
         {
             effectPath = $"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
-            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos + new Vector3(-8.5f, 0, 0), Quaternion.identity);
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
