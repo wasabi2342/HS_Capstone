@@ -745,6 +745,7 @@ public class WhitePlayerController : ParentPlayerController
         {
             return;
         }
+        AudioManager.Instance.PlayOneShot("event:/Character/Common/Character Hit", transform.position);
         if (isInvincible)
         {
             if (currentState == WhitePlayerState.Guard)

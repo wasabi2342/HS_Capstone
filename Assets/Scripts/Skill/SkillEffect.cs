@@ -81,7 +81,7 @@ public class SkillEffect : MonoBehaviourPun
                         AudioManager.Instance.PlayOneShot("event:/Character/Character-sword/katana_attack", transform.position);
                         break;
                     case AttackerType.PinkPlayer:
-
+                        AudioManager.Instance.PlayOneShot("event:/Character/Character-pink/mace_attack", transform.position);
                         break;
                 }
                 StartCoroutine(PauseForSeconds());

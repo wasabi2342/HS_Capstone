@@ -1123,6 +1123,7 @@ public class PinkPlayerController : ParentPlayerController
         {
             return;
         }
+        AudioManager.Instance.PlayOneShot("event:/Character/Common/Character Hit", transform.position);
         //if (isInvincible)
         //{
         //    if (currentState == PinkPlayerState.Guard)
