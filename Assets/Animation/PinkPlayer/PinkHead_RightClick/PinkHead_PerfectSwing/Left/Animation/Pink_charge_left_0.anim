@@ -49,7 +49,7 @@ AnimationClip:
     - time: 1.3
       value: {fileID: 21300000, guid: b0b0dca78c90b6a4f8a2767e711df421, type: 3}
     - time: 1.4
-      value: {fileID: 21300000, guid: 85d7cbffbb9b6424dbb2ef7947137822, type: 3}
+      value: {fileID: 21300000, guid: 018e966aa107ebf4fa68ae6e339d1410, type: 3}
     - time: 1.5
       value: {fileID: 21300000, guid: 3bf99922bc5bf3d4ca07e02756102f36, type: 3}
     - time: 1.6
@@ -57,7 +57,7 @@ AnimationClip:
     - time: 1.7
       value: {fileID: 21300000, guid: 40949155ae34efe4fb1ea3d35ec96011, type: 3}
     - time: 1.8
-      value: {fileID: 21300000, guid: bf6d60314a547ee42af30fe7b1c6eb19, type: 3}
+      value: {fileID: 21300000, guid: 018e966aa107ebf4fa68ae6e339d1410, type: 3}
     - time: 1.9
       value: {fileID: 21300000, guid: 241ec272ee0cfc3458607dc536e05a03, type: 3}
     attribute: m_Sprite
@@ -96,11 +96,11 @@ AnimationClip:
     - {fileID: 21300000, guid: 5d5d05f0d8f18514eb148dfbb50234b7, type: 3}
     - {fileID: 21300000, guid: 29548eb8e60dc0a49a652ba70e6efb7c, type: 3}
     - {fileID: 21300000, guid: b0b0dca78c90b6a4f8a2767e711df421, type: 3}
-    - {fileID: 21300000, guid: 85d7cbffbb9b6424dbb2ef7947137822, type: 3}
+    - {fileID: 21300000, guid: 018e966aa107ebf4fa68ae6e339d1410, type: 3}
     - {fileID: 21300000, guid: 3bf99922bc5bf3d4ca07e02756102f36, type: 3}
     - {fileID: 21300000, guid: dcf2a1326ad48ef47b57376cc39690d9, type: 3}
     - {fileID: 21300000, guid: 40949155ae34efe4fb1ea3d35ec96011, type: 3}
-    - {fileID: 21300000, guid: bf6d60314a547ee42af30fe7b1c6eb19, type: 3}
+    - {fileID: 21300000, guid: 018e966aa107ebf4fa68ae6e339d1410, type: 3}
     - {fileID: 21300000, guid: 241ec272ee0cfc3458607dc536e05a03, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
@@ -128,13 +128,6 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0
-    functionName: CreateChargeHitSkillEffect
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 0
     functionName: OnAttackPreAttckStart
     data: 
     objectReferenceParameter: {fileID: 0}
@@ -143,7 +136,21 @@ AnimationClip:
     messageOptions: 0
   - time: 0
     functionName: PinkPlayerSoundEffect
-    data: mace_smash
+    data: Charge_Pit
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0
+    functionName: CreateChargeHitSkillEffect
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.1
+    functionName: PinkPlayerSoundEffect
+    data: heavy mace
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
@@ -151,6 +158,13 @@ AnimationClip:
   - time: 0.4
     functionName: OnAttackPreAttckEnd
     data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.4
+    functionName: PinkPlayerSoundEffect
+    data: mace_smash
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
@@ -183,9 +197,23 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 1.9
+  - time: 1.3
+    functionName: PinkPlayerSoundEffect
+    data: Swoosh
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 1.8
     functionName: OnAttackAnimationEnd
-    data: 
+    data: PutDownWeapon
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 1.9
+    functionName: PinkPlayerSoundEffect
+    data: PutDownWeapon
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
