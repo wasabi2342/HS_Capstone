@@ -20,7 +20,8 @@ public class StageManager : MonoBehaviour
 
     [SerializeField]
     private Transform coopOrBetrayNPCPos;
-
+    public Transform rewardSpawn;
+    public Transform blessingSpawn;
     private void Awake()
     {
         Instance = this;
@@ -115,14 +116,17 @@ public class StageManager : MonoBehaviour
 
                 if (doorPrefab != null)
                 {
-                    // doorPrefab 생성 위치 설정 (예: 첫 번째 SpawnArea의 위치 또는 StageManager 위치)
-                    Vector3 doorSpawnPosition = spawnAreaInstances.Count > 0 ? spawnAreaInstances[0].transform.position : transform.position;
-                    PhotonNetwork.Instantiate(doorPrefabName, doorSpawnPosition, Quaternion.identity);
+                    PhotonNetwork.Instantiate(
+                    doorPrefabName,
+                    rewardSpawn.position,
+                    rewardSpawn.rotation);
                 }
                 if (blessingNPC != null)
                 {
-                    Vector3 blessingNPCSpawnPosition = spawnAreaInstances.Count > 1 ? spawnAreaInstances[1].transform.position : transform.position;
-                    PhotonNetwork.Instantiate(blessingNPCPrefabName, blessingNPCSpawnPosition, Quaternion.identity);
+                    PhotonNetwork.Instantiate(
+                    blessingNPCPrefabName,
+                    blessingSpawn.position,
+                    blessingSpawn.rotation);
                 }
                 if(MonsterStatusManager.instance != null)
                 {
