@@ -20,6 +20,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private CinemachineCamera minimapCinemachineCamera;
     [SerializeField]
+    private Camera UICamera;
+    [SerializeField]
     private bool isInVillage;
     [SerializeField]
     private Vector3 playerScale = new Vector3(0.375f, 0.525f, 0.375f);
@@ -98,7 +100,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
             CreateCharacter(defaultPlayer.name, spawnPoint + new Vector3(0, 1.5f, 0), Quaternion.identity, isInVillage);
         }
 
-        UIManager.Instance.SetRenderCamera(Camera.main);
+        UIManager.Instance.SetRenderCamera(UICamera);
 
     }
 
