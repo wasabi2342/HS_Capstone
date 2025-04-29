@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Photon.Pun;
+using NUnit.Framework;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyAI : MonoBehaviourPun, IDamageable
@@ -122,7 +123,11 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     void Update()
     {
         if (dead || stunned || !agent.enabled) return;
-
+        if (prepping)
+        {
+            float dist = targetPlayer ? Vector3.Distance(transform.position, targetPlayer.position) : float.MaxValue;
+            if (targetPlayer == null || dist > status.attackRange + 0.5f) ResetAttackState();
+        }
         // 1) 넉백 처리
         if (knockbackTimer > 0f)
         {
@@ -162,17 +167,13 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         if ((stateInfo.IsName("Right_Attack") || stateInfo.IsName("Left_Attack")))
         {
-            if (stateInfo.normalizedTime >= 1f && atkAnim)
-            {
-                atkAnim = false;
-                agent.isStopped = false;
-                PlayAnim(lastMoveX >= 0 ? "Right_Idle" : "Left_Idle");
-                return;
-            }
-            else if (stateInfo.normalizedTime < 1f)
+            if (stateInfo.normalizedTime < 1f)
             {
                 return;
             }
+            atkAnim = false;
+            PlayAnim(lastMoveX >= 0 ? "Right_Idle" : "Left_Idle");
+            ResetAttackState();
         }
 
         // 6) 이동 방향 갱신 (NavMeshAgent.desiredVelocity 사용)
@@ -312,7 +313,6 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
             return INode.NodeState.Running;
         }
     }
-
     // 공격 상태 초기화
     void ResetAttackState()
     {
@@ -382,35 +382,52 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     {
         if (!PhotonNetwork.IsMasterClient || dead) return;
 
-        float before = shield;
-        if (shield > 0)
+        float beforeShield = shield;
+        bool shieldWasPresent = shield > 0f;
+        if (shield > 0f)
         {
-            shield = Mathf.Max(0, shield - dmg);
-            dmg = Mathf.Max(0, dmg - before);
+            shield = Mathf.Max(0f, shield - dmg);
+            dmg = Mathf.Max(0f, dmg - beforeShield);
             photonView.RPC(nameof(UpdateShield), RpcTarget.AllBuffered, shield / maxShield);
 
-            if (shield == 0 && before > 0)
+            if (shield == 0f && beforeShield > 0f)
                 photonView.RPC(nameof(RPC_ShieldBreakFx), RpcTarget.All);
         }
 
-        hp = Mathf.Max(0, hp - dmg);
+        // 피격 방향 (공격자의 위치를 명시적으로 계산하여 정확한 넉백 방향)
+        Vector3 attackerPosition = targetPlayer ? targetPlayer.position : transform.position;
+        // Stun 및 넉백 명시적 동기화 처리
+        photonView.RPC(nameof(RPC_ApplyKnockback), RpcTarget.All, attackerPosition, shieldWasPresent);
+        // HP 감소 처리
+        hp = Mathf.Max(0f, hp - dmg);
         photonView.RPC(nameof(UpdateHP), RpcTarget.AllBuffered, hp / maxHP);
 
-        bool faceRight = lastMoveX >= 0f;
+        // Blood Effect 동기화
+        bool faceRight = (attackerPosition.x >= transform.position.x);
         photonView.RPC(nameof(RPC_SpawnBloodEffect), RpcTarget.All, transform.position, faceRight);
 
-        if (shield <= 0)
-        {
-            photonView.RPC(nameof(RPC_PlayAnim), RpcTarget.All,
+        photonView.RPC(nameof(RPC_PlayAnim), RpcTarget.All,
                            lastMoveX >= 0 ? "Right_Hit" : "Left_Hit");
-            photonView.RPC(nameof(RPC_Stun), RpcTarget.All, status.hitRecoverTime);
-        }
-
+        // Flash & Damage Text 처리
         photonView.RPC(nameof(RPC_Flash), RpcTarget.All);
         SpawnDamageText(dmg);
 
-        if (hp <= 0) Die();
-        else ApplyKnockback();
+        // HP가 0이면 사망 처리
+        if (hp <= 0f)
+        {
+            Die();
+        }
+    }
+    [PunRPC]
+    void RPC_ApplyKnockback(Vector3 attackerPosition, bool shieldWasPresent)
+    {
+        float baseStrength = 5f;
+        float strength = shieldWasPresent ? baseStrength * 0.75f : baseStrength;
+
+        Vector3 dir = (transform.position - attackerPosition).normalized;
+        dir.y = 0f;
+        knockbackVelocity = dir * strength;
+        knockbackTimer = KNOCKBACK_DURATION;
     }
 
     [PunRPC]
@@ -428,14 +445,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         Destroy(fx, 2f);
     }
 
-    void ApplyKnockback()
-    {
-        if (targetPlayer == null) return;
-        Vector3 dir = (transform.position - targetPlayer.position).normalized;
-        dir.y = 0f;
-        knockbackVelocity = dir * 4.5f;
-        knockbackTimer = KNOCKBACK_DURATION;
-    }
+
 
     [PunRPC]
     void RPC_Stun(float t)
