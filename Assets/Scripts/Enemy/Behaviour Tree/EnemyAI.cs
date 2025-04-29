@@ -449,14 +449,14 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
             Quaternion.identity, null);
         if (bloodFx.TryGetComponent<Animator>(out var bloodFXAnim))
         {
-            string[] animNames = { "BloodEffect_1", "BloodEffect_2", "BloodEffect_3" };
+            string[] animNames = { "Blood1", "Blood2", "Blood3" };
             bloodFXAnim.Play(animNames[Random.Range(0, animNames.Length)]);
         }
-        Destroy(bloodFx, 2f);
+        Destroy(bloodFx, 0.7f);
 
         GameObject slashFX = Instantiate(
             faceRight ? slashEffectPrefab_Right : slashEffectPrefab_Left,
-            pos,
+            pos + (Vector3.down * 3f),
             Quaternion.identity, null);
         if (slashFX.TryGetComponent<Animator>(out var slashFXAnim))
         {
