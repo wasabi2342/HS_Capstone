@@ -624,6 +624,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4996033826487575982, guid: 3519917cc842fbb4d97f64d063fab94a, type: 3}
   m_PrefabInstance: {fileID: 14820775}
   m_PrefabAsset: {fileID: 0}
+--- !u!20 &15248845 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 4917548862143934777, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
+  m_PrefabInstance: {fileID: 1555275786}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &18997120
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -35761,10 +35766,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 735814555934613854, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 32727
+      objectReference: {fileID: 0}
+    - target: {fileID: 3940310595297709668, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
+      propertyPath: OutputChannel
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 3940310595297709668, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
+      propertyPath: Lens.OrthographicSize
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 5779795693520866830, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
       propertyPath: m_Name
       value: Camera
       objectReference: {fileID: 0}
+    - target: {fileID: 6479545765476332409, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
+      propertyPath: m_RendererIndex
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6479545765476332409, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
+      propertyPath: m_Cameras.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6479545765476332409, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
+      propertyPath: 'm_Cameras.Array.data[0]'
+      value: 
+      objectReference: {fileID: 15248845}
     - target: {fileID: 7302974469561943800, guid: b0cf6b1532532d84ead0db7c4719732f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 5.360379
