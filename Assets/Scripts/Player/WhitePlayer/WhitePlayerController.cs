@@ -460,19 +460,18 @@ public class WhitePlayerController : ParentPlayerController
         if (animator.GetBool("Right"))
         {
             effectPath = $"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
-            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos + new Vector3(8.5f, 0, 0), Quaternion.identity);
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos + new Vector3(6f, 0, 0), Quaternion.identity);
         }
         else
         {
             effectPath = $"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
-            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos + new Vector3(-8.5f, 0, 0), Quaternion.identity);
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos + new Vector3(-6f, 0, 0), Quaternion.identity);
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
             photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.R].skillData.ID, this) : null);
-        skillEffect.transform.parent = transform;
     }
 
     // 평타 이펙트 생성
