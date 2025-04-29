@@ -160,17 +160,19 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
 
         // 5) 런타임 애니 상태 종료 감지
         var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        if ((stateInfo.IsName("Attack_Right") || stateInfo.IsName("Attack_Left")))
+        if ((stateInfo.IsName("Right_Attack") || stateInfo.IsName("Left_Attack")))
         {
-            if (stateInfo.normalizedTime < 1f)
+            if (stateInfo.normalizedTime >= 1f && atkAnim)
             {
-                // 공격 애니 아직 진행 중 → 나머지 로직 건너뛰기
+                atkAnim = false;
+                agent.isStopped = false;
+                PlayAnim(lastMoveX >= 0 ? "Right_Idle" : "Left_Idle");
                 return;
             }
-            // 애니가 완전히 끝난 시점
-            atkAnim = false;
-            PlayAnim(lastMoveX >= 0 ? "Right_Idle" : "Left_Idle");
-            // 이 뒤는 이동/Idle 분기 처리
+            else if (stateInfo.normalizedTime < 1f)
+            {
+                return;
+            }
         }
 
         // 6) 이동 방향 갱신 (NavMeshAgent.desiredVelocity 사용)
@@ -188,7 +190,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         // 7) 이동/Idle 애니메이션 분기
         if (agent.hasPath && agent.remainingDistance > agent.stoppingDistance + .1f)
         {
-            PlayAnim(lastMoveX >= 0 ? "Run_Right" : "Run_Left");
+            PlayAnim(lastMoveX >= 0 ? "Right_Run" : "Left_Run");
         }
         else
         {
@@ -296,7 +298,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
                 prepT = 0f;
                 // 공격 애니 실행
                 lastMoveX = (targetPlayer.position.x >= transform.position.x) ? 1f : -1f;
-                string anim = lastMoveX >= 0 ? "Attack_Right" : "Attack_Left";
+                string anim = lastMoveX >= 0 ? "Right_Attack" : "Left_Attack";
                 PlayAnim(anim);
                 attackStrategy.Attack(targetPlayer);
 
