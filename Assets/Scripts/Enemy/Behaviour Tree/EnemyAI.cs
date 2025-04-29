@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Photon.Pun;
-using NUnit.Framework;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyAI : MonoBehaviourPun, IDamageable
@@ -123,11 +122,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     void Update()
     {
         if (dead || stunned || !agent.enabled) return;
-        if (prepping)
-        {
-            float dist = targetPlayer ? Vector3.Distance(transform.position, targetPlayer.position) : float.MaxValue;
-            if (targetPlayer == null || dist > status.attackRange + 0.5f) ResetAttackState();
-        }
+
         // 1) 넉백 처리
         if (knockbackTimer > 0f)
         {
@@ -163,7 +158,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         // 4) Behavior Tree 실행
         bt.Operate();
 
-        // 5) 런타임 애니 상태 종료 감지
+        // 5) 런타임 애니 상태 종료 감지 (이제 Animation Event로도 처리되지만, 안전망으로 유지)
         var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         if ((stateInfo.IsName("Right_Attack") || stateInfo.IsName("Left_Attack")))
         {
@@ -171,12 +166,13 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
             {
                 return;
             }
+            // 애니가 완전히 끝난 시점
             atkAnim = false;
             PlayAnim(lastMoveX >= 0 ? "Right_Idle" : "Left_Idle");
             ResetAttackState();
         }
 
-        // 6) 이동 방향 갱신 (NavMeshAgent.desiredVelocity 사용)
+        // 6) 이동 방향 갱신
         if (agent.hasPath && !agent.isStopped)
         {
             Vector3 dv = agent.desiredVelocity;
@@ -313,6 +309,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
             return INode.NodeState.Running;
         }
     }
+
     // 공격 상태 초기화
     void ResetAttackState()
     {
@@ -321,6 +318,21 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         agent.isStopped = false;
         agent.ResetPath();
         PlayAnim(lastMoveX >= 0 ? "Right_Idle" : "Left_Idle");
+    }
+
+    // ───────── Animation Event 콜백 ─────────
+    // 애니메이터에서 Attack 클립 끝에 Animation Event로 이 함수를 호출하세요.
+    public void OnAttackAnimationEndEvent()
+    {
+        // 모든 클라이언트에서 공격 상태 해제 및 Idle 전환
+        photonView.RPC(nameof(RPC_HandleAttackEnd), RpcTarget.All);
+    }
+
+    [PunRPC]
+    void RPC_HandleAttackEnd()
+    {
+        atkAnim = false;
+        ResetAttackState();
     }
 
     INode.NodeState WanderInsideArea()
@@ -394,11 +406,11 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
                 photonView.RPC(nameof(RPC_ShieldBreakFx), RpcTarget.All);
         }
 
-        // 피격 방향 (공격자의 위치를 명시적으로 계산하여 정확한 넉백 방향)
+        // Stun 및 넉백 동기화
         Vector3 attackerPosition = targetPlayer ? targetPlayer.position : transform.position;
-        // Stun 및 넉백 명시적 동기화 처리
         photonView.RPC(nameof(RPC_ApplyKnockback), RpcTarget.All, attackerPosition, shieldWasPresent);
-        // HP 감소 처리
+
+        // HP 감소
         hp = Mathf.Max(0f, hp - dmg);
         photonView.RPC(nameof(UpdateHP), RpcTarget.AllBuffered, hp / maxHP);
 
@@ -407,17 +419,13 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         photonView.RPC(nameof(RPC_SpawnBloodEffect), RpcTarget.All, transform.position, faceRight);
 
         photonView.RPC(nameof(RPC_PlayAnim), RpcTarget.All,
-                           lastMoveX >= 0 ? "Right_Hit" : "Left_Hit");
-        // Flash & Damage Text 처리
+                       lastMoveX >= 0 ? "Right_Hit" : "Left_Hit");
         photonView.RPC(nameof(RPC_Flash), RpcTarget.All);
         SpawnDamageText(dmg);
 
-        // HP가 0이면 사망 처리
-        if (hp <= 0f)
-        {
-            Die();
-        }
+        if (hp <= 0f) Die();
     }
+
     [PunRPC]
     void RPC_ApplyKnockback(Vector3 attackerPosition, bool shieldWasPresent)
     {
@@ -444,8 +452,6 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
         }
         Destroy(fx, 2f);
     }
-
-
 
     [PunRPC]
     void RPC_Stun(float t)
