@@ -13,6 +13,7 @@ public class PinkPlayerController : ParentPlayerController
     [Header("대쉬 설정")]
     public float dashDistance = 2f;
     public float dashDoubleClickThreshold = 0.3f;
+    private Vector3 dashDirection;
     //private float lastDashClickTime = -Mathf.Infinity;
 
     [Header("중심점 설정")]
@@ -204,16 +205,16 @@ public class PinkPlayerController : ParentPlayerController
             dashDir = Vector3.right;
         }
 
-        StartCoroutine(DoDash(dashDir));
+        //StartCoroutine(DoDash(dashDir));
     }
 
-    private IEnumerator DoDash(Vector3 dashDir)
-    {
-        Vector3 startPos = transform.position;
-        Vector3 targetPos = startPos + dashDir.normalized * dashDistance;
-        yield return null;
-        transform.position = targetPos;
-    }
+    //private IEnumerator DoDash(Vector3 dashDir)
+    //{
+    //    Vector3 startPos = transform.position;
+    //    Vector3 targetPos = startPos + dashDir.normalized * dashDistance;
+    //    yield return null;
+    //    transform.position = targetPos;
+    //}
 
     // 평타
     public void HandleNormalAttack()
@@ -684,6 +685,15 @@ public class PinkPlayerController : ParentPlayerController
         }
 
         return Vector3.zero;
+    }
+
+    public void OnMoveFront2(float value)
+    {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
+        Vector3 movement = dashDirection * value;
+        rb.MovePosition(rb.position + movement);
     }
 
 
