@@ -52,6 +52,8 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     [SerializeField] private GameObject bloodEffectPrefab_Left;
     [SerializeField] private GameObject bloodEffectPrefab_Right;
 
+    [SerializeField] private GameObject slashEffectPrefab_Left;
+    [SerializeField] private GameObject slashEffectPrefab_Right;
     /* HP & Shield */
     float maxHP, hp;
     float maxShield, shield;
@@ -441,16 +443,27 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     [PunRPC]
     void RPC_SpawnBloodEffect(Vector3 pos, bool faceRight)
     {
-        GameObject fx = Instantiate(
+        GameObject bloodFx = Instantiate(
             faceRight ? bloodEffectPrefab_Right : bloodEffectPrefab_Left,
             pos + Vector3.up * 1f,
             Quaternion.identity, null);
-        if (fx.TryGetComponent<Animator>(out var fxAnim))
+        if (bloodFx.TryGetComponent<Animator>(out var bloodFXAnim))
         {
             string[] animNames = { "BloodEffect_1", "BloodEffect_2", "BloodEffect_3" };
-            fxAnim.Play(animNames[Random.Range(0, animNames.Length)]);
+            bloodFXAnim.Play(animNames[Random.Range(0, animNames.Length)]);
         }
-        Destroy(fx, 2f);
+        Destroy(bloodFx, 2f);
+
+        GameObject slashFX = Instantiate(
+            faceRight ? slashEffectPrefab_Right : slashEffectPrefab_Left,
+            pos,
+            Quaternion.identity, null);
+        if (slashFX.TryGetComponent<Animator>(out var slashFXAnim))
+        {
+            string[] animNames = { "Slash1", "Slash2", "Slash3", "Slash4" };
+            slashFXAnim.Play(animNames[Random.Range(0, animNames.Length)]);
+        }
+        Destroy(slashFX, 0.4f);
     }
 
     [PunRPC]
