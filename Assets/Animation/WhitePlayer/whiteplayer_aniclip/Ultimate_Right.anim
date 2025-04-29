@@ -64,8 +64,6 @@ AnimationClip:
       value: {fileID: 21300000, guid: 6f535c3619752c5468bc9bb5c58547a9, type: 3}
     - time: 2.4
       value: {fileID: 21300000, guid: ab83cf981ae6259438e9c412f85c18c5, type: 3}
-    - time: 2.5
-      value: {fileID: 21300000, guid: 8427fa93da0003641b5a949aa268a1ad, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -110,13 +108,12 @@ AnimationClip:
     - {fileID: 21300000, guid: c53c34428e269e548a158020f2a5584c, type: 3}
     - {fileID: 21300000, guid: 6f535c3619752c5468bc9bb5c58547a9, type: 3}
     - {fileID: 21300000, guid: ab83cf981ae6259438e9c412f85c18c5, type: 3}
-    - {fileID: 21300000, guid: 8427fa93da0003641b5a949aa268a1ad, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 2.6
+    m_StopTime: 2.5
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -144,13 +141,6 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 0
-    functionName: StartUltimateCoolDown
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 0
     functionName: EnterInvincibleState
     data: 
     objectReferenceParameter: {fileID: 0}
@@ -160,6 +150,13 @@ AnimationClip:
   - time: 0
     functionName: WhitePlayerSoundEffect
     data: katana_DashAttack
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0
+    functionName: StartUltimateCoolDown
+    data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
@@ -192,14 +189,14 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 2.4
+  - time: 2.3
     functionName: ExitInvincibleState
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 2.5
+  - time: 2.4
     functionName: GetUltimateBonus
     data: 
     objectReferenceParameter: {fileID: 0}
