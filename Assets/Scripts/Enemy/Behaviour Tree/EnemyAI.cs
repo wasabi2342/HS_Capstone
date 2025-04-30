@@ -445,7 +445,7 @@ public class EnemyAI : MonoBehaviourPun, IDamageable
     {
         GameObject bloodFx = Instantiate(
             faceRight ? bloodEffectPrefab_Right : bloodEffectPrefab_Left,
-            pos + Vector3.up * 1f,
+            pos + (Vector3.down * 3f),
             Quaternion.identity, null);
         if (bloodFx.TryGetComponent<Animator>(out var bloodFXAnim))
         {
