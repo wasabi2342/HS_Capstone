@@ -765,20 +765,32 @@ public class PinkPlayerController : ParentPlayerController
         // Photon에 접속 중인지 확인하여 isMine 설정
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
         Vector3 targetPos = transform.position;
+
+        // R_attackStack을 3으로 클램프
+        int maxR_attackStackEffect = Mathf.Min(R_attackStack, 2);
+
         // 이펙트 경로 및 위치 설정
         string effectPath;
 
         if (animator.GetBool("Right"))
         {
-            effectPath = $"SkillEffect/PinkPlayer/pink_R_hit{R_attackStack}_right_front_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
+            effectPath = $"SkillEffect/PinkPlayer/pink_R_hit{maxR_attackStackEffect}_right_front_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
         }
         else
         {
-            effectPath = $"SkillEffect/PinkPlayer/pink_R_hit{R_attackStack}_left_front_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
+            effectPath = $"SkillEffect/PinkPlayer/pink_R_hit{maxR_attackStackEffect}_left_front_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
             photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
+
+        var prefab = Resources.Load<SkillEffect>(effectPath);
+        if (prefab == null)
+        {
+            Debug.LogError($"[R-Effect] Prefab 로드 실패! 경로 확인하세요: {effectPath}");
+            return;
+        }
+        Debug.Log($"[R-Effect] Prefab 로드 성공: {prefab.name}");
 
         // Photon에 접속 중이든 아니든, 로컬에서 이펙트를 생성하는 코드
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
