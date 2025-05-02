@@ -257,7 +257,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     public void UpdateSortedPlayers()
     {
-        if (!isInVillage)
+        if (isInVillage)
         {
             return;
         }
