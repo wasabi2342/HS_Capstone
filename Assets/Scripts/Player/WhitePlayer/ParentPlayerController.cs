@@ -75,13 +75,13 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
                 runTimeData.LoadFromJsonFile();
                 photonView.RPC("UpdateHP", RpcTarget.Others, runTimeData.currentHealth);
                 nicknameText.text = PhotonNetwork.CurrentRoom.Players[photonView.Owner.ActorNumber].NickName;
-                nicknameText.color = new Color(102, 204, 255, 255);
+                nicknameText.color = new Color32(102, 204, 255, 255);
             }
             else
             {
                 RoomManager.Instance.AddPlayerDic(photonView.Owner.ActorNumber, gameObject);
                 nicknameText.text = PhotonNetwork.CurrentRoom.Players[photonView.Owner.ActorNumber].NickName;
-                nicknameText.color = new Color(102, 255, 102, 255);
+                nicknameText.color = new Color32(102, 255, 102, 255);
             }
         }
 

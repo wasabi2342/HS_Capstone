@@ -147,10 +147,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
             minimapCinemachineCamera.LookAt = playerInstance.transform;
         }
 
-        if (!isInVillage)
-        {
-            UpdateSortedPlayers();
-        }
+        UpdateSortedPlayers();
+
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
@@ -259,9 +257,13 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     public void UpdateSortedPlayers()
     {
+        if (!isInVillage)
+        {
+            return;
+        }
         sortedPlayers = players.OrderBy(p => p.Key == PhotonNetwork.LocalPlayer.ActorNumber ? 0 : 1)
-                               .Select(p => p.Value)
-                               .ToList();
+                           .Select(p => p.Value)
+                           .ToList();
 
         // 현재 따라가고 있는 플레이어가 리스트에서 몇 번째인지 찾기
         GameObject currentTarget = playerCinemachineCamera.Follow?.gameObject;
