@@ -22,6 +22,9 @@ public class UIRewardPanel : UIBase
 
     private void Start()
     {
+        // 플레이어 인풋 안받기
+        if (InputManager.Instance != null)
+            InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
         foreach (var btn in rewardButtons)
             btn.Init();
         if (rewardNameText != null)
