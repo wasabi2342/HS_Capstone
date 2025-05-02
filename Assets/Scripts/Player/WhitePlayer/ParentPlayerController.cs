@@ -5,12 +5,16 @@ using UnityEngine.Events;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
+using TMPro;
+
 public class ParentPlayerController : MonoBehaviourPun, IDamageable
 {
     [SerializeField]
     protected float hitlagTime = 0.117f;
     [SerializeField]
     protected SpriteRenderer shadow;
+    [SerializeField]
+    protected TextMeshProUGUI nicknameText;
 
     public Transform footPivot;
 
@@ -70,10 +74,14 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
             {
                 runTimeData.LoadFromJsonFile();
                 photonView.RPC("UpdateHP", RpcTarget.Others, runTimeData.currentHealth);
+                nicknameText.text = PhotonNetwork.CurrentRoom.Players[photonView.Owner.ActorNumber].NickName;
+                nicknameText.color = new Color(102, 204, 255, 255);
             }
             else
             {
                 RoomManager.Instance.AddPlayerDic(photonView.Owner.ActorNumber, gameObject);
+                nicknameText.text = PhotonNetwork.CurrentRoom.Players[photonView.Owner.ActorNumber].NickName;
+                nicknameText.color = new Color(102, 255, 102, 255);
             }
         }
 
