@@ -100,7 +100,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
             CreateCharacter(defaultPlayer.name, spawnPoint + new Vector3(0, 1.5f, 0), Quaternion.identity, isInVillage);
         }
 
-        UIManager.Instance.SetRenderCamera(UICamera);
+        if (UICamera != null)
+        {
+            UIManager.Instance.SetRenderCamera(UICamera);
+        }
 
     }
 
@@ -144,7 +147,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
             minimapCinemachineCamera.LookAt = playerInstance.transform;
         }
 
-        UpdateSortedPlayers();
+        if (!isInVillage)
+        {
+            UpdateSortedPlayers();
+        }
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
