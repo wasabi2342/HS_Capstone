@@ -299,4 +299,13 @@ public class RoomManager : MonoBehaviourPunCallbacks
         foreach (Transform child in obj.transform)
             SetLayerRecursively(child.gameObject, layer);
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player") &&(!PhotonNetwork.InRoom ||
+            (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
+        {
+            other.transform.position = spawnPoint;
+        }
+    }
 }
