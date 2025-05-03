@@ -100,7 +100,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
             CreateCharacter(defaultPlayer.name, spawnPoint + new Vector3(0, 1.5f, 0), Quaternion.identity, isInVillage);
         }
 
-        UIManager.Instance.SetRenderCamera(UICamera);
+        if (UICamera != null)
+        {
+            UIManager.Instance.SetRenderCamera(UICamera);
+        }
 
     }
 
@@ -145,6 +148,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
 
         UpdateSortedPlayers();
+
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
@@ -253,9 +257,13 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     public void UpdateSortedPlayers()
     {
+        if (isInVillage)
+        {
+            return;
+        }
         sortedPlayers = players.OrderBy(p => p.Key == PhotonNetwork.LocalPlayer.ActorNumber ? 0 : 1)
-                               .Select(p => p.Value)
-                               .ToList();
+                           .Select(p => p.Value)
+                           .ToList();
 
         // 현재 따라가고 있는 플레이어가 리스트에서 몇 번째인지 찾기
         GameObject currentTarget = playerCinemachineCamera.Follow?.gameObject;
