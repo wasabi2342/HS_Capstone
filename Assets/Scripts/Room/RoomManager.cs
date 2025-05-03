@@ -193,7 +193,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     public UIConfirmPanel InteractWithDungeonNPC()
     {
-        var panel = UIManager.Instance.OpenPopupPanel<UIConfirmPanel>();
+        var panel = UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIConfirmPanel>();
         panel.Init(
             () => WaitForEnterStage(),
             () => UIManager.Instance.ClosePeekUI(),

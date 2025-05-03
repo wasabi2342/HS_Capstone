@@ -52,7 +52,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
-        UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText(message);
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText(message);
     }
 
     public void CreateRoom(string roomName, RoomOptions roomOptions)
@@ -88,7 +88,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             stageEnterCoroutine = StartCoroutine(TimeCount());
         }
         RoomManager.Instance.isEnteringStage = true;
-        UIStageReadyPanel panel = UIManager.Instance.OpenPopupPanel<UIStageReadyPanel>();
+        UIStageReadyPanel panel = UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIStageReadyPanel>();
         panel.Init();
         OnUpdateReadyPlayer += panel.UpdateToggls;
     }
@@ -180,7 +180,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     public void RPC_OpenRewardUIForAll()
     {
         // 중앙 UIManager를 통해 UIRewardPanel 프리팹을 Instantiate
-        UIManager.Instance.OpenPopupPanel<UIRewardPanel>();
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIRewardPanel>();
     }
     [PunRPC]
     public void RPC_OpenUI()
@@ -403,7 +403,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             UIManager.Instance.ClosePeekUI();
         }
 
-        UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText($"모두가 협력해 피해량이{damageBuff}배 증가합니다.");
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText($"모두가 협력해 피해량이{damageBuff}배 증가합니다.");
     }
 
     [PunRPC]
@@ -419,7 +419,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             UIManager.Instance.ClosePeekUI();
         }
 
-        UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText($"모두가 배신해 몬스터의 피해량이{damageBuff}배 증가합니다.");
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText($"모두가 배신해 몬스터의 피해량이{damageBuff}배 증가합니다.");
     }
 
     [PunRPC]
@@ -430,9 +430,9 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             UIManager.Instance.ClosePeekUI();
         }
 
-        UIManager.Instance.OpenPopupPanel<UISelectBlessingPanel>();
+        UIManager.Instance.OpenPopupPanelInCameraCanvas<UISelectBlessingPanel>();
 
-        UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText($"배신에 성공해 가호를 획득합니다.");
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText($"배신에 성공해 가호를 획득합니다.");
     }
 
     [PunRPC]
@@ -443,6 +443,6 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             UIManager.Instance.ClosePeekUI();
         }
 
-        UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText(message);
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText(message);
     }
 }

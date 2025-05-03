@@ -34,7 +34,7 @@ public class UIChangeCharacterPanel : UIBase
             button.onClick.AddListener(() =>
             {
                 selectedCharacterIndex = index;
-                UIManager.Instance.OpenPopupPanel<UICharacterInfoPanel>().Init(characterDatas[index], SelcetCharacter);
+                UIManager.Instance.OpenPopupPanelInOverlayCanvas<UICharacterInfoPanel>().Init(characterDatas[index], SelcetCharacter);
             });
         }
         cancelButton.onClick.AddListener(OnClickedCancelButton);

@@ -57,7 +57,7 @@ public class UICreateRoomPanel : UIBase
     private void OnClickedCancelButton()
     {
         PhotonNetwork.Disconnect();
-        UIManager.Instance.OpenPanel<UiStartPanel>();
+        UIManager.Instance.OpenPanelInOverlayCanvas<UiStartPanel>();
     }
 
     private void OnClickedConfirmButton()
@@ -81,7 +81,7 @@ public class UICreateRoomPanel : UIBase
         }
         else
         {
-            UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("내용을 입력해 주세요.");
+            UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("내용을 입력해 주세요.");
         }
     }
 

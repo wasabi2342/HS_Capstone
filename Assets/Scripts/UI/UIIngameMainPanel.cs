@@ -178,7 +178,7 @@ public class UIIngameMainPanel : UIBase
 
     public void OpenBlessingInfoPanel(InputAction.CallbackContext ctx)
     {
-        UIManager.Instance.OpenPopupPanel<UISkillInfoPanel>();
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UISkillInfoPanel>();
         InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
     }
 

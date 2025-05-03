@@ -28,7 +28,7 @@ public class UISetNicknamePanel : UIBase
         }
         else
         {
-            UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("닉네임을 입력해 주세요");
+            UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("닉네임을 입력해 주세요");
         }
     }
 
