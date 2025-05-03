@@ -50,8 +50,9 @@ public class WhitePlayercontroller_event : Playercontroller_event
 
         InputManager.Instance.PlayerInput.actions["Move"].performed += movePerformedCallback;
         InputManager.Instance.PlayerInput.actions["Move"].canceled += moveCanceledCallback;
-        InputManager.Instance.PlayerInput.actions["Dash"].performed += dashPerformedCallback;
-        InputManager.Instance.PlayerInput.actions["Dash"].canceled += dashCanceledCallback;
+        //InputManager.Instance.PlayerInput.actions["Dash"].performed += dashPerformedCallback;
+        //InputManager.Instance.PlayerInput.actions["Dash"].canceled += dashCanceledCallback;
+        InputManager.Instance.PlayerInput.actions["Dash"].started += dashPerformedCallback;
         InputManager.Instance.PlayerInput.actions["Interaction"].performed += interactionPerformedCallback;
         InputManager.Instance.PlayerInput.actions["Interaction"].canceled += interactionCanceledCallback;
         InputManager.Instance.PlayerInput.actions["Interaction"].started += interactionStartedCallback;
@@ -149,7 +150,7 @@ public class WhitePlayercontroller_event : Playercontroller_event
     // Space¹Ù (È¸ÇÇ)
     public void OnKeyboard_Spacebar(InputAction.CallbackContext context)
     {
-        if (context.performed && !isInVillage)
+        if (context.started && !isInVillage)
         {
             whitePlayerController.HandleDash();
             OnKeyboardREvent?.Invoke();
@@ -163,8 +164,9 @@ public class WhitePlayercontroller_event : Playercontroller_event
 
         InputManager.Instance.PlayerInput.actions["Move"].performed -= movePerformedCallback;
         InputManager.Instance.PlayerInput.actions["Move"].canceled -= moveCanceledCallback;
-        InputManager.Instance.PlayerInput.actions["Dash"].performed -= dashPerformedCallback;
-        InputManager.Instance.PlayerInput.actions["Dash"].canceled -= dashCanceledCallback;
+        //InputManager.Instance.PlayerInput.actions["Dash"].performed -= dashPerformedCallback;
+        //InputManager.Instance.PlayerInput.actions["Dash"].canceled -= dashCanceledCallback;
+        InputManager.Instance.PlayerInput.actions["Dash"].started -= dashPerformedCallback;
         InputManager.Instance.PlayerInput.actions["Interaction"].performed -= interactionPerformedCallback;
         InputManager.Instance.PlayerInput.actions["Interaction"].canceled -= interactionCanceledCallback;
         InputManager.Instance.PlayerInput.actions["Interaction"].started -= interactionStartedCallback;
