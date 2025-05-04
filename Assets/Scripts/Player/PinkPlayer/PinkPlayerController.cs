@@ -279,11 +279,12 @@ public class PinkPlayerController : ParentPlayerController
             //    return;
             //}
 
-            if (nextState == PinkPlayerState.Idle)
+            if (nextState <= PinkPlayerState.BasicAttack)
             {
 
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
+                animator.SetBool("Pre-Input", true);
                 if (PhotonNetwork.IsConnected)
                 {
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
@@ -297,7 +298,7 @@ public class PinkPlayerController : ParentPlayerController
 
             }
 
-            if (attackStack >= 2)
+            if (attackStack > 2)
             {
                 animator.SetBool("Pre-Attack", false);
                 animator.SetBool("Pre-Input", false);
@@ -306,8 +307,8 @@ public class PinkPlayerController : ParentPlayerController
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", false);
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", false);
                 }
-                currentState = PinkPlayerState.Idle;
-                attackStack = 0;
+                //currentState = PinkPlayerState.Idle;
+                //attackStack = 0;
                 AttackStackUpdate?.Invoke(attackStack);
                 Debug.Log("공격 스택 2 도달: 콤보 종료 및 초기화");
                 return;
@@ -880,6 +881,7 @@ public class PinkPlayerController : ParentPlayerController
         }
 
         // Photon 연결 여부에 따른 이펙트 생성
+        Debug.Log(effectPath);
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
 
         // Init 메서드 호출
