@@ -240,7 +240,7 @@ public class PinkPlayerController : ParentPlayerController
             {
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-                animator.SetBool("basicattack", true);
+                animator.SetBool("basicattack", true);  
                 if (PhotonNetwork.IsConnected)
                 {
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
@@ -251,9 +251,10 @@ public class PinkPlayerController : ParentPlayerController
                 return;
             }
 
-            else if (currentState == PinkPlayerState.R_hit1)
+            if (currentState == PinkPlayerState.R_hit1 || currentState == PinkPlayerState.R_hit2 || currentState == PinkPlayerState.R_hit3)
             {
                 //animator.SetBool("basicattack", true);
+                animator.SetBool("Pre-Input", true);
                 //Vector3 mousePos = GetMouseWorldPosition();
                 //animator.SetBool("Right", mousePos.x > transform.position.x);
                 //if (PhotonNetwork.IsConnected)
@@ -262,7 +263,7 @@ public class PinkPlayerController : ParentPlayerController
                 //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
                 //}
                 //currentState = PinkPlayerState.R_hit2;
-                return;
+                //return;
             }
 
             //else if (currentState == PinkPlayerState.R_hit1 && animator.GetInteger("attackStack") > 2)

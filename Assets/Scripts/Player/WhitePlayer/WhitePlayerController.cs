@@ -17,7 +17,6 @@ public class WhitePlayerController : ParentPlayerController
     public float dashDuration = 0.2f;
     private Vector3 dashDirection;
     private Vector3 facingDirection = Vector3.right;
-    private bool isDashing = false;
     //private float lastDashClickTime = -Mathf.Infinity;
 
     [Header("중심점 설정")]
@@ -212,38 +211,36 @@ public class WhitePlayerController : ParentPlayerController
         if (!cooldownCheckers[(int)Skills.Space].CanUse())
             return;
 
-        isDashing = true;
-        currentState = WhitePlayerState.Dash;
-        animator.ResetTrigger("run");
-        animator.SetBool("dash", true);
-        if (PhotonNetwork.IsConnected)
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "dash", true);
+        nextState = WhitePlayerState.Dash;
+        //animator.ResetTrigger("run");
+        //animator.SetBool("dash", true);
+        //if (PhotonNetwork.IsConnected)
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "dash", true);
 
         // 여기서는 무조건 facingDirection 사용
         dashDirection = facingDirection;
 
-        StartCoroutine(DoDash());
+        //StartCoroutine(DoDash());
     }
 
 
-    private IEnumerator DoDash()
-    {
-        Vector3 startPos = transform.position;
-        Vector3 targetPos = startPos + dashDirection * dashDistance;
-        float elapsed = 0f;
+    //private IEnumerator DoDash()
+    //{
+    //    Vector3 startPos = transform.position;
+    //    Vector3 targetPos = startPos + dashDirection * dashDistance;
+    //    float elapsed = 0f;
 
-        while (elapsed < dashDuration)
-        {
-            transform.position = Vector3.Lerp(startPos, targetPos, elapsed / dashDuration);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
+    //    while (elapsed < dashDuration)
+    //    {
+    //        transform.position = Vector3.Lerp(startPos, targetPos, elapsed / dashDuration);
+    //        elapsed += Time.deltaTime;
+    //        yield return null;
+    //    }
 
-        transform.position = targetPos;
-        animator.SetBool("dash", false);
-        isDashing = false;
-        currentState = WhitePlayerState.Idle;
-    }
+    //    transform.position = targetPos;
+    //    animator.SetBool("dash", false);
+    //    currentState = WhitePlayerState.Idle;
+    //}
 
 
     public void HandleNormalAttack()

@@ -78,8 +78,10 @@ public class WhitePlayer_Idle : StateMachineBehaviour
                     whitePlayerController.SetBoolParameter("ultimate", true);
                 break;
             case WhitePlayerState.Dash:
-                animator.SetTrigger("dash");
+                animator.SetBool("dash",true);
                 whitePlayerController.currentState = WhitePlayerState.Dash;
+                if (PhotonNetwork.IsConnected)
+                    whitePlayerController.SetBoolParameter("dash", true);
                 break;
         }
 

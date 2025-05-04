@@ -8,6 +8,12 @@ public class Pink_R_Idle : StateMachineBehaviour
     {
         animator.SetBool("ultimate", false);
         animator.GetComponent<PinkPlayerController>().currentState = PinkPlayerState.R_Idle;
+        animator.SetBool("Pre-Attack", false);
+        animator.SetBool("Pre-Input", false);
+        animator.SetBool("CancleState", false);
+        animator.SetBool("FreeState", false);
+        animator.SetBool("run", false);
+        animator.SetBool("revive", false);
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
