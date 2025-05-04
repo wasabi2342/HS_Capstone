@@ -105,7 +105,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4400855640442987350}
   - component: {fileID: 735814555934613854}
-  - component: {fileID: 100296619114461719}
   - component: {fileID: 6479545765476332409}
   - component: {fileID: 775789873190684234}
   - component: {fileID: 4523043886693516075}
@@ -182,14 +181,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &100296619114461719
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4474893984382150583}
-  m_Enabled: 0
 --- !u!114 &6479545765476332409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -379,9 +370,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5302479046181779690}
   - component: {fileID: 4317830008186254538}
-  - component: {fileID: 476327565349467124}
   - component: {fileID: 8847968258659280695}
   - component: {fileID: 6134622949794146386}
+  - component: {fileID: 8995325561140284147}
   m_Layer: 0
   m_Name: MinimapRenderCamera
   m_TagString: Untagged
@@ -455,14 +446,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &476327565349467124
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5045896950518462427}
-  m_Enabled: 1
 --- !u!114 &8847968258659280695
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -539,6 +522,20 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   CustomBlends: {fileID: 0}
+--- !u!114 &8995325561140284147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5045896950518462427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86c6556701af9e04380698b89f691b6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nonRigidbodyVelocity: 0
+  attenuationObject: {fileID: 0}
 --- !u!1 &5779795693520866830
 GameObject:
   m_ObjectHideFlags: 0
