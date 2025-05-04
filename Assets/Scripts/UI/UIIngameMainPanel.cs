@@ -40,6 +40,8 @@ public class UIIngameMainPanel : UIBase
     private TextMeshProUGUI goldText;
     [SerializeField]
     private List<Image> playerIconList = new List<Image>();
+    [SerializeField]
+    private Image hitOverlay;
 
 
     private Dictionary<int, UIPartyHPContent> contentPairs = new Dictionary<int, UIPartyHPContent>();
