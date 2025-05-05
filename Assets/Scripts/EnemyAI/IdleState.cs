@@ -1,18 +1,18 @@
-// ========================= IdleState.cs
 using UnityEngine;
 using System.Collections;
 using Photon.Pun;
 
 public class IdleState : BaseState
 {
-    private Coroutine idleCo;
-    private float detectT;
+    Coroutine idleCo;
+    float detectT;
 
     public IdleState(EnemyFSM f) : base(f) { }
 
     public override void Enter()
     {
-        if (agent) agent.isStopped = true;
+        RefreshFacingToTarget();
+        SetAgentStopped(true);
         fsm.PlayDirectionalAnim("Idle");
 
         if (PhotonNetwork.IsMasterClient)
@@ -30,19 +30,17 @@ public class IdleState : BaseState
         {
             fsm.DetectPlayer();
             detectT = 0f;
-            if (fsm.Target != null)
-            {
-                fsm.TransitionToState(typeof(ChaseState));
-                return;
-            }
+            if (fsm.Target) { fsm.TransitionToState(typeof(ChaseState)); return; }
         }
+
+        RefreshFacingToTarget();
         fsm.PlayDirectionalAnim("Idle");
     }
 
-    private IEnumerator IdleTimer()
+    IEnumerator IdleTimer()
     {
         yield return new WaitForSeconds(Random.Range(1f, 2f));
-        if (PhotonNetwork.IsMasterClient)
+        if (PhotonNetwork.IsMasterClient && fsm.CurrentState == this)
             fsm.TransitionToState(typeof(WanderState));
     }
 

@@ -1,38 +1,42 @@
-// ========================= AttackCoolState.cs
 using UnityEngine;
 using System.Collections;
 using Photon.Pun;
 
 public class AttackCoolState : BaseState
 {
-    private Coroutine coolCo;
+    Coroutine coolCo;
     public AttackCoolState(EnemyFSM f) : base(f) { }
 
     public override void Enter()
     {
-        if (agent) agent.isStopped = true;
+        RefreshFacingToTarget();
+        SetAgentStopped(true);
         fsm.PlayDirectionalAnim("Idle");
 
         if (PhotonNetwork.IsMasterClient)
-            coolCo = fsm.StartCoroutine(CoolRoutine());
+            coolCo = fsm.StartCoroutine(CoolTime());
     }
 
-    private IEnumerator CoolRoutine()
+    public override void Execute()
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        RefreshFacingToTarget();
+        fsm.PlayDirectionalAnim("Idle");
+    }
+
+    IEnumerator CoolTime()
     {
         yield return new WaitForSeconds(status.attackCoolTime);
-
         if (!PhotonNetwork.IsMasterClient) yield break;
 
-        bool canReAttack = fsm.LastAttackSuccessful &&
-                           fsm.Target &&
-                           (fsm.Target.position - transform.position).sqrMagnitude <= status.attackRange * status.attackRange;
+        bool immediate =
+            fsm.LastAttackSuccessful &&
+            fsm.Target &&
+            (fsm.Target.position - transform.position).sqrMagnitude <=
+            status.attackRange * status.attackRange;
 
-        fsm.TransitionToState(canReAttack ? typeof(WaitCoolState) : typeof(WanderState));
-    }
-
-    public override void Execute() 
-    {
-        fsm.PlayDirectionalAnim("Idle");
+        fsm.TransitionToState(immediate ? typeof(WaitCoolState) : typeof(WanderState));
     }
 
     public override void Exit()

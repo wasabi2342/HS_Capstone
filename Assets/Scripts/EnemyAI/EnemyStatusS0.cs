@@ -14,8 +14,8 @@ public class EnemyStatusSO : ScriptableObject
     [Header("Damage / Stun")]
     public float hitStunTime = 0.3f;
 
-    public float detectRange = 3f; // 플레이어 감지 범위
-    public float attackRange = 2f; // 공격 범위
+    public float detectRange = 1f; // 플레이어 감지 범위
+    public float attackRange = .5f; // 공격 범위
     public LayerMask playerLayerMask; // 플레이어 감지를 위한 레이어 마스크 [2, 3]
     public Bounds spawnAreaBounds = new Bounds(Vector3.zero, Vector3.one * 10f); // 스폰 영역 Bounds (Wander 범위, 기본값 설정)
 

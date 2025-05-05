@@ -1,42 +1,53 @@
-// ========================= WaitCoolState.cs
 using UnityEngine;
 using System.Collections;
 using Photon.Pun;
 
 public class WaitCoolState : BaseState
 {
-    private Coroutine waitCo;
+    Coroutine waitCo;
     public WaitCoolState(EnemyFSM f) : base(f) { }
 
     public override void Enter()
     {
-        if (agent) agent.isStopped = true;
+        RefreshFacingToTarget();
+        SetAgentStopped(true);
         fsm.PlayDirectionalAnim("Idle");
 
         if (PhotonNetwork.IsMasterClient)
             waitCo = fsm.StartCoroutine(WaitRoutine());
     }
 
-    private IEnumerator WaitRoutine()
+    public override void Execute()
     {
-        yield return new WaitForSeconds(status.waitCoolTime);
-        if (!PhotonNetwork.IsMasterClient) yield break;
-
-        if (fsm.Target && (fsm.Target.position - transform.position).sqrMagnitude <= status.attackRange * status.attackRange)
-            fsm.TransitionToState(typeof(AttackState));
-        else
+        if (!PhotonNetwork.IsMasterClient) return;
+        if (!fsm.IsAlignedAndInRange())
+        {
+            if (fsm.debugMode) Debug.Log("[WaitCool] ▶ 정렬 해제 → Chase", fsm);
+            fsm.Agent.isStopped=false;                 // Agent 재시동
             fsm.TransitionToState(typeof(ChaseState));
-    }
-
-    public override void Execute() 
-    {
+            return;
+        }
+        RefreshFacingToTarget();
         fsm.PlayDirectionalAnim("Idle");
     }
+
+    IEnumerator WaitRoutine()
+    {
+        yield return new WaitForSeconds(status.waitCoolTime);
+
+        bool canAtk = fsm.IsAlignedAndInRange();
+        if (fsm.debugMode)
+            Debug.Log($"[WaitCool] time={status.waitCoolTime}s, "
+                    + $"dist={Mathf.Sqrt(fsm.GetTarget2DDistSq()):0.00}, "
+                    + $"result={(canAtk ? "Attack" : "Chase")}", fsm);
+
+        fsm.TransitionToState(canAtk ? typeof(AttackState) : typeof(ChaseState));
+    }
+
 
     public override void Exit()
     {
         if (waitCo != null && PhotonNetwork.IsMasterClient)
             fsm.StopCoroutine(waitCo);
     }
-
 }

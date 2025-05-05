@@ -1,44 +1,46 @@
-﻿// ========================= AttackState.cs
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using Photon.Pun;
 
 public class AttackState : BaseState
 {
-    private Coroutine atkCo;
+    Coroutine atkCo;
     public AttackState(EnemyFSM f) : base(f) { }
 
     public override void Enter()
     {
-        if (agent) agent.isStopped = true;
+        RefreshFacingToTarget();
+        SetAgentStopped(true);
 
         if (PhotonNetwork.IsMasterClient)
         {
-            fsm.photonView.RPC("PlayAttackAnimRPC", RpcTarget.All);
+            fsm.PlayDirectionalAnim("Attack");
             atkCo = fsm.StartCoroutine(AttackRoutine());
         }
     }
 
-    private IEnumerator AttackRoutine()
+    public override void Execute()
     {
-        yield return new WaitForSeconds(status.attackDuration * .5f);
+        if (!PhotonNetwork.IsMasterClient) return;
+        RefreshFacingToTarget();
+        fsm.PlayDirectionalAnim("Attack");
+    }
 
-        bool hit = false;
-        if (fsm.Target && (fsm.Target.position - transform.position).sqrMagnitude <= status.attackRange * status.attackRange)
-        {
-            // 실제 데미지 적용 로직, 콜 RPC 등
-            hit = true;
-        }
+    IEnumerator AttackRoutine()
+    {
+        float half = status.attackDuration * 0.5f;
+        yield return new WaitForSeconds(half);
+
+        bool hit = fsm.IsAlignedAndInRange();
         fsm.LastAttackSuccessful = hit;
 
-        yield return new WaitForSeconds(status.attackDuration * .5f);
+        if (fsm.debugMode)
+            Debug.Log($"[Attack] hit={hit}, dist={Mathf.Sqrt(fsm.GetTarget2DDistSq()):0.00}", fsm);
+
+        yield return new WaitForSeconds(half);
         fsm.TransitionToState(typeof(AttackCoolState));
     }
 
-    public override void Execute() 
-    {
-        fsm.PlayDirectionalAnim("Attack");
-    }
 
     public override void Exit()
     {

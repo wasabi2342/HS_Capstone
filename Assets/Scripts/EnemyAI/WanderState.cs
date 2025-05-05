@@ -1,15 +1,14 @@
-﻿// ========================= WanderState.cs
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 using Photon.Pun;
 
 public class WanderState : BaseState
 {
-    private const float IDLE_CHANCE = 0.5f;
-    private const float DETECT_INTERVAL = 0.2f; 
-    private const float MAX_SAMPLE_DISTANCE = 3f; // NavMesh.SamplePosition()에서 사용할 최대 거리
-    private float detectT, repathT;
+    const float IDLE_CHANCE = 0.5f;
+    const float DETECT_INTERVAL = 0.2f;
+    const float MAX_SAMPLE_DIST = 3f;
 
+    float detectT, repathT;
 
     public WanderState(EnemyFSM f) : base(f) { }
 
@@ -17,20 +16,20 @@ public class WanderState : BaseState
     {
         if (agent)
         {
-            agent.isStopped = false;
+            SetAgentStopped(false);
             agent.speed = status.moveSpeed;
         }
         fsm.PlayDirectionalAnim("Walk");
 
-        PickNewDestination();
-        detectT = repathT = Time.time + 3f;
+        PickDestination();
+        detectT = repathT = 0f;
     }
 
     public override void Execute()
     {
         if (!PhotonNetwork.IsMasterClient) return;
 
-        /* 1) 플레이어 탐지 */
+        /* 플레이어 탐지 */
         detectT += Time.deltaTime;
         if (detectT >= DETECT_INTERVAL)
         {
@@ -39,36 +38,40 @@ public class WanderState : BaseState
             if (fsm.Target) { fsm.TransitionToState(typeof(ChaseState)); return; }
         }
 
-        /* 2) 목적지 도착 or 멈춤 → 새 목적지 */
+        /* 목적지 도착 or 경로 막힘 */
+        repathT += Time.deltaTime;
         if ((!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance) ||
-            (Time.time >= repathT && agent.velocity.sqrMagnitude < 0.01f))
+            (repathT >= 3f && agent.velocity.sqrMagnitude < 0.01f))
         {
             if (Random.value < IDLE_CHANCE)
                 fsm.TransitionToState(typeof(IdleState));
             else
-                PickNewDestination();
+                PickDestination();
 
-            repathT = Time.time + 3f;
+            repathT = 0f;
         }
         fsm.PlayDirectionalAnim("Walk");
     }
 
     public override void Exit() { }
 
-    private void PickNewDestination()
+    void PickDestination()
     {
-        Vector3 rawTarget;
-        if (fsm.SpawnAreaRef)
-            rawTarget = fsm.SpawnAreaRef.GetRandomPointInsideArea();
-        else
+        Vector3 raw;
+
+        if (fsm.CurrentSpawnArea != null)                   // SpawnArea 우선
+            raw = fsm.CurrentSpawnArea.GetRandomPointInsideArea();
+        else if (status.spawnAreaBounds.size != Vector3.zero) // SO Bounds
         {
             Bounds b = status.spawnAreaBounds;
-            rawTarget = new Vector3(Random.Range(b.min.x, b.max.x),
-                                    transform.position.y,
-                                    Random.Range(b.min.z, b.max.z));
+            raw = new Vector3(Random.Range(b.min.x, b.max.x),
+                              transform.position.y,
+                              Random.Range(b.min.z, b.max.z));
         }
+        else                                                // 주변 임의 반경
+            raw = transform.position + Random.insideUnitSphere * 4f;
 
-        if (NavMesh.SamplePosition(rawTarget, out var hit, MAX_SAMPLE_DISTANCE, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(raw, out var hit, MAX_SAMPLE_DIST, NavMesh.AllAreas))
             agent.SetDestination(hit.position);
     }
 }
