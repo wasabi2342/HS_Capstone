@@ -31,6 +31,7 @@ public class DeadState : BaseState
         yield return new WaitForSeconds(len + DESTROY_DELAY);
         if (PhotonNetwork.IsMasterClient)
             PhotonNetwork.Destroy(fsm.gameObject);
+
     }
 
     public override void Exit() { }

@@ -27,21 +27,21 @@ public class ChaseState : BaseState
 
         float zDiff = fsm.GetZDiffAbs();
 
-        /* ───── ① Z 맞추기 단계 ───── */
+        /* ───── Z 맞추기 단계 ───── */
         if (zDiff > fsm.zAlignTolerance)
         {
-            /* (1) 멈추지 않도록 stopDist = 0 */
+            /* 멈추지 않도록 stopDist = 0 */
             if (agent.stoppingDistance != 0f)
                 agent.stoppingDistance = 0f;
 
-            /* (2) Z 만 동일한 지점으로 이동 */
+            /* Z 만 동일한 지점으로 이동 */
             Vector3 p = transform.position;
             p.z = fsm.Target.position.z;
             if (!agent.pathPending)
                 agent.SetDestination(p);
 
             fsm.PlayDirectionalAnim("Walk");
-            return;                      // 여기서 끝 — X 접근은 아직 하지 않음
+            return;                      
         }
 
         /* ───── X 접근 단계 ───── */

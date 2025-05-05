@@ -62,9 +62,6 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable
         Anim = GetComponentInChildren<Animator>();
 
         Agent.updateRotation = false;
-#if UNITY_2022_2_OR_NEWER
-        Agent.updateUpAxis = false;
-#endif
         Agent.updatePosition = PhotonNetwork.IsMasterClient;
         Agent.updateRotation = PhotonNetwork.IsMasterClient;
 
