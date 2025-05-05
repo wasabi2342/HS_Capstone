@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3237e443b654c6545937fc25af82f21a, type: 3}
+  m_Name: GhoulStatus
+  m_EditorClassIdentifier: 
+  enemyName: Generic Monster
+  maxHealth: 100
+  moveSpeed: 1.1
+  chaseSpeedMultiplier: 1.5
+  detectRange: 10
+  attackRange: 2
+  playerLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  spawnAreaBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 5, y: 5, z: 5}
+  waitCoolTime: 0.5
+  attackDuration: 1
+  attackCoolTime: 2
+  attackDamage: 10

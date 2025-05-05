@@ -25,16 +25,6 @@ public class GhoulAttack : MonoBehaviour, IMonsterAttack
                 defaultCenter = sphere.center;
         }
     }
-
-    // 애니메이션 이벤트용
-    public void SetAnimSpeed()
-    {
-        animator.speed = 0.8f;
-    }
-    public void ResetAnimSpeed()
-    {
-        animator.speed = 1f;
-    }
     public void EnableAttack()
     {
         if (weaponColliderObject != null)

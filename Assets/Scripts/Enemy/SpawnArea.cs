@@ -1,56 +1,55 @@
-﻿using UnityEngine;
+﻿// =========================================================== SpawnArea.cs
+using UnityEngine;
 using UnityEngine.AI;
 using Photon.Pun;
 
 /// <summary>
-/// 몬스터 배회·스폰 영역. 반경 값은 PUN RPC 로 모든 클라이언트에 동기화된다.
+/// ‘몬스터 배회 & 스폰’ 구역. 반경 값은 PUN RPC로 동기화된다.
 /// </summary>
+[RequireComponent(typeof(PhotonView))]
 public class SpawnArea : MonoBehaviourPun
 {
-    [SerializeField] private float spawnRadius = 8f;   // 기본 반경
+    [SerializeField] private float radius = 8f;
 
-    /* ───── public API ───── */
+    /* ------------ public API ------------ */
     public void SetRadius(float r)
     {
-        if (r <= 0.01f)
-        {
-            Debug.LogWarning(
-                $"[SpawnArea] radius({r}) ≤ 0  → 기본값 8로 대체 : {name}");
-            r = 8f;
-        }
+        r = Mathf.Max(0.1f, r);
+        radius = r;
 
-        spawnRadius = r;
-
-        // 룸 안일 때만 RPC 전송(오프라인 모드에서는 불필요)
         if (PhotonNetwork.InRoom)
             photonView.RPC(nameof(RPC_SetRadius), RpcTarget.OthersBuffered, r);
     }
 
-    [PunRPC] public void RPC_SetRadius(float r) => spawnRadius = r;
-    public float GetRadius() => spawnRadius;
+    public float GetRadius() => radius;
 
     public Vector3 GetRandomPointInsideArea()
     {
         for (int i = 0; i < 10; i++)
         {
-            Vector3 p = Random.insideUnitSphere * spawnRadius + transform.position;
+            var p = Random.insideUnitSphere * radius + transform.position;
             p.y = transform.position.y;
 
-            if (NavMesh.SamplePosition(p, out NavMeshHit hit, 3f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(p, out var hit, 3f, NavMesh.AllAreas))
                 return hit.position;
         }
-        return transform.position;   // 실패 시 원점
+        return transform.position; // 실패 시 중심 반환
     }
 
-    /* ───── Gizmos ───── */
+    /* ------------ RPC ------------ */
+    [PunRPC] void RPC_SetRadius(float r) => radius = r;
+
+    /* ------------ Gizmos ------------ */
+#if UNITY_EDITOR
     void OnDrawGizmos()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, spawnRadius);
+        Gizmos.color = new Color(1, 0.9f, 0, 0.25f);
+        Gizmos.DrawSphere(transform.position, radius);
     }
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, spawnRadius);
+        Gizmos.DrawWireSphere(transform.position, radius);
     }
+#endif
 }
