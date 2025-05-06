@@ -37,6 +37,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     public UnityEvent<float> AttackStackUpdate;
     public UnityEvent<float, float> ShieldUpdate;
     public UnityEvent<UIIcon, Color> SkillOutlineUpdate;
+    public UnityEvent OnHitEvent;
+
 
     public CooldownChecker[] cooldownCheckers = new CooldownChecker[(int)Skills.Max];
 
@@ -175,6 +177,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         {
             if (!photonView.IsMine) return;
 
+            OnHitEvent?.Invoke();
+
             while (damage > 0 && shields.Count > 0)
             {
                 if (shields[0].amount > damage)
@@ -219,6 +223,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
         else
         {
+            OnHitEvent?.Invoke();
+
             while (damage > 0 && shields.Count > 0)
             {
                 if (shields[0].amount > damage)
