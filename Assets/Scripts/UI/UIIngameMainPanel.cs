@@ -116,6 +116,7 @@ public class UIIngameMainPanel : UIBase
         {
             playerController.OnHealthChanged.RemoveAllListeners();
             playerController.OnHealthChanged.AddListener(content.UpdateHPImage);
+            playerController.UpdateHP();
         }
         contentPairs[actnum] = content;
     }
