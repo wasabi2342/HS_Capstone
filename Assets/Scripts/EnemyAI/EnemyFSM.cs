@@ -1,71 +1,91 @@
-﻿/************************************************
- * EnemyFSM.cs  –  NavMesh + PUN2 네트워크 FSM
- *   (2025‑05‑05 : 방향 API · RPC 애니 동기화 완성)
- ************************************************/
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Photon.Pun;
 
 [RequireComponent(typeof(NavMeshAgent), typeof(PhotonView))]
-public class EnemyFSM : MonoBehaviourPun, IPunObservable
+public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
 {
     /* ───────── Components ───────── */
     public NavMeshAgent Agent { get; private set; }
     public Animator Anim { get; private set; }
-
-    private PhotonView pv;
+    PhotonView pv;
 
     /* ───────── Data ───────── */
-    [SerializeField] private EnemyStatusSO enemyStatus;
+    [SerializeField] EnemyStatusSO enemyStatus;
     public EnemyStatusSO EnemyStatusRef => enemyStatus;
 
-    /* ───────── SpawnArea (Spawner RPC로 주입) ───────── */
-    private SpawnArea spawnArea;
-    public void SetSpawnArea(SpawnArea a) => spawnArea = a;
-    public SpawnArea CurrentSpawnArea => spawnArea;
-
-    /* ───────── FSM ───────── */
-    private readonly Dictionary<System.Type, IState> states = new();
-    public IState CurrentState { get; private set; }
-
-    /* ───────── Runtime ───────── */
-    public Transform Target { get; set; }
-    public bool LastAttackSuccessful { get; set; }
-    public float currentHP { get; private set; }
+    /* ───────── Status ───────── */
+    float maxHP, hp;
+    float maxShield, shield;
+    public float currentHP => hp;
 
     /* ───────── Facing ───────── */
     float lastMoveX = 1f;                       // +1 ⇒ Right , -1 ⇒ Left
     public float CurrentFacing => lastMoveX;
-    public void ForceFacing(float dirSign) => lastMoveX = dirSign >= 0 ? 1f : -1f;
+    public void ForceFacing(float s) => lastMoveX = s >= 0 ? 1f : -1f;
 
-    /* ───────── Network Lerp ───────── */
-    Vector3 netPos;
-    Quaternion netRot;
-    float netLastMoveX;
+    /* ───────── UI ───────── */
+    UIEnemyHealthBar uiHP;                      // ★ EnemyAI 식 Resources 스폰
+
+    /* ───────── Visual / FX ───────── */
+    [Header("Visual / FX")]
+    [SerializeField] SpriteRenderer sr;
+    [SerializeField] GameObject bloodFxRight, bloodFxLeft;
+    [SerializeField] GameObject slashFxRight, slashFxLeft;
+
+    public SpriteRenderer SR => sr;
+    public GameObject BloodFxRight => bloodFxRight;
+    public GameObject BloodFxLeft => bloodFxLeft;
+    public GameObject SlashFxRight => slashFxRight;
+    public GameObject SlashFxLeft => slashFxLeft;
+
+    /* ───────── Attack Helper ───────── */
+    public IMonsterAttack AttackComponent { get; private set; }
+
+    /* ───────── SpawnArea ───────── */
+    SpawnArea spawnArea;
+    public void SetSpawnArea(SpawnArea a) => spawnArea = a;
+    public SpawnArea CurrentSpawnArea => spawnArea;
+
+    /* ───────── FSM ───────── */
+    readonly Dictionary<System.Type, IState> states = new();
+    public IState CurrentState { get; private set; }
+    EnemyState currentEnum;
+
+    /* ───────── Runtime ───────── */
+    public Transform Target { get; set; }
+    public bool LastAttackSuccessful { get; set; }
+
+    /* ───────── Net Lerp ───────── */
+    Vector3 netPos; Quaternion netRot; float netFacing;
     const float NET_SMOOTH = 10f;
 
-    EnemyState currentEnum;
+    /* ───────── Knock‑back ───────── */
+    Vector3 knockVel; float knockTime;
+    const float KNOCK_DUR = .5f;
+
     /* ───────── Debug 옵션 ───────── */
-    [Header("Debug")]
-    [SerializeField] public bool debugMode = true;             // 필요 없으면 false
-    const float GIZMO_Y_OFFSET = 0.05f;                 // 겹침 방지
-    /* ───────── 공격 조건 ───────── */
-    [Header("Attack Alignment")]
-    [SerializeField] public float zAlignTolerance = 0.4f;   // 허용 Z 오차 (m)
-    /* ─────────────────────────────────────────── */
-    #region Unity Flow
+    [Header("Debug")] public bool debugMode = false;
+    const float GIZMO_Y = .05f;
+
+    /* ───────── Attack Alignment ───────── */
+    [Header("Attack Alignment")] public float zAlignTolerance = .4f;
+
+    /* ───────── Static Counter ───────── */
+    public static int ActiveMonsterCount = 0;
+
+    /* ───────────────────────── Unity Flow ───────────────────────── */
     void Awake()
     {
         Agent = GetComponent<NavMeshAgent>();
-        pv = GetComponent<PhotonView>();
         Anim = GetComponentInChildren<Animator>();
+        pv = GetComponent<PhotonView>();
 
         Agent.updateRotation = false;
-        Agent.updatePosition = PhotonNetwork.IsMasterClient;
-        Agent.updateRotation = PhotonNetwork.IsMasterClient;
+        Agent.updatePosition = Agent.updateRotation = PhotonNetwork.IsMasterClient;
 
-        /* 상태 인스턴스 등록 */
+        /* FSM 상태 등록 */
         states[typeof(WanderState)] = new WanderState(this);
         states[typeof(IdleState)] = new IdleState(this);
         states[typeof(ChaseState)] = new ChaseState(this);
@@ -74,12 +94,32 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable
         states[typeof(AttackCoolState)] = new AttackCoolState(this);
         states[typeof(HitState)] = new HitState(this);
         states[typeof(DeadState)] = new DeadState(this);
+
+        /* 스탯 초기화 */
+        maxHP = hp = enemyStatus.maxHealth;
+        maxShield = shield = enemyStatus.maxShield;
+
+        /* 캐싱 */
+        AttackComponent = GetComponent<IMonsterAttack>();
+        if (sr == null) sr = GetComponentInChildren<SpriteRenderer>(true);
+
+        /* ★ EnemyAI 방식 HP/Shield UI 스폰 */
+        var prefab = Resources.Load<GameObject>("UIEnemyHealthBar");
+        if (prefab)
+        {
+            var go = Instantiate(prefab);                       // 월드 공간에 독립 인스턴스
+            uiHP = go.GetComponent<UIEnemyHealthBar>();
+            float y = enemyStatus.headOffset;                    // SO에서 오프셋
+            uiHP.Init(transform, Vector3.up * y);
+            uiHP.SetHP(1f);
+            uiHP.SetShield(maxShield > 0 ? 1f : 0f);
+        }
+
+        if (PhotonNetwork.IsMasterClient) ActiveMonsterCount++;
     }
 
     void Start()
     {
-        currentHP = enemyStatus.maxHealth;
-
         if (PhotonNetwork.IsMasterClient)
         {
             ApplyStatusToAgent();
@@ -89,33 +129,37 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable
 
     void Update()
     {
-        if (PhotonNetwork.IsMasterClient)
-            CurrentState?.Execute();
+        /* 넉백 이동 */
+        if (knockTime > 0f)
+        {
+            float t = Time.deltaTime;
+            knockTime -= t;
+            transform.position += knockVel * t;
+        }
+
+        /* FSM 실행 / 네트워크 보간 */
+        if (PhotonNetwork.IsMasterClient) CurrentState?.Execute();
         else
         {
             transform.position = Vector3.Lerp(transform.position, netPos, Time.deltaTime * NET_SMOOTH);
             transform.rotation = Quaternion.Slerp(transform.rotation, netRot, Time.deltaTime * NET_SMOOTH);
-            lastMoveX = netLastMoveX;
+            lastMoveX = netFacing;
         }
 
         UpdateFacingFromVelocity();
     }
-    #endregion
 
-    #region Facing / Animation
+    /* ────────────────────────── Facing / Anim ───────────────────── */
     void UpdateFacingFromVelocity()
     {
         if (PhotonNetwork.IsMasterClient &&
-            Agent.enabled && Agent.velocity.sqrMagnitude > 0.0001f)
-        {
+            Agent.enabled && Agent.velocity.sqrMagnitude > .0001f)
             lastMoveX = Agent.velocity.x >= 0 ? 1f : -1f;
-        }
     }
 
     public void PlayDirectionalAnim(string action)
     {
         string clip = (lastMoveX >= 0 ? "Right_" : "Left_") + action;
-
         if (Anim.GetCurrentAnimatorStateInfo(0).IsName(clip)) return;
 
         if (pv.IsMine)
@@ -123,11 +167,9 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable
 
         Anim.Play(clip, 0);
     }
+    [PunRPC] void RPC_PlayClip(string c) => Anim.Play(c, 0);
 
-    [PunRPC] void RPC_PlayClip(string clip) => Anim.Play(clip, 0);
-    #endregion
-
-    #region FSM Helpers
+    /* ────────────────────────── FSM 핼퍼 ───────────────────────── */
     public void TransitionToState(System.Type t)
     {
         if (!states.TryGetValue(t, out var next)) return;
@@ -138,7 +180,6 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable
         CurrentState.Enter();
         currentEnum = TypeToEnum(t);
     }
-
     EnemyState TypeToEnum(System.Type t) => t switch
     {
         _ when t == typeof(WanderState) => EnemyState.Wander,
@@ -151,7 +192,6 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable
         _ when t == typeof(DeadState) => EnemyState.Dead,
         _ => EnemyState.Idle
     };
-
     System.Type EnumToType(EnemyState e) => e switch
     {
         EnemyState.Wander => typeof(WanderState),
@@ -164,38 +204,99 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable
         EnemyState.Dead => typeof(DeadState),
         _ => typeof(IdleState)
     };
-    #endregion
 
-    #region Detect Player (다른 상태에서 호출)
-    float detectT;
-    const float DETECT_INTERVAL = .2f;
-
+    /* ────────────────────────── Detect Player ──────────────────── */
+    float detT; const float DET_INT = .2f;
     public void DetectPlayer()
     {
-        detectT += Time.deltaTime;
-        if (detectT < DETECT_INTERVAL) return;
-        detectT = 0f;
+        detT += Time.deltaTime;
+        if (detT < DET_INT) return; detT = 0f;
 
         Collider[] cols = new Collider[8];
-        int n = Physics.OverlapSphereNonAlloc(transform.position,
-                                              enemyStatus.detectRange,
-                                              cols, enemyStatus.playerLayerMask,
-                                              QueryTriggerInteraction.Ignore);
-
-        Transform closest = null;
-        float minSq = float.PositiveInfinity;
+        int n = Physics.OverlapSphereNonAlloc(transform.position, enemyStatus.detectRange,
+                                              cols, enemyStatus.playerLayerMask, QueryTriggerInteraction.Ignore);
+        Transform closest = null; float minSq = float.PositiveInfinity;
         for (int i = 0; i < n; ++i)
             if (cols[i].CompareTag("Player"))
             {
                 float d = (cols[i].transform.position - transform.position).sqrMagnitude;
                 if (d < minSq) { minSq = d; closest = cols[i].transform; }
             }
-
         Target = closest;
     }
-    #endregion
 
-    #region Networking
+    /* ────────────────────────── IDamageable ─────────────────────── */
+    public void TakeDamage(float damage, AttackerType t = AttackerType.Default)
+        => pv.RPC(nameof(DamageToMaster), RpcTarget.MasterClient, damage);
+
+    [PunRPC]
+    public void DamageToMaster(float damage)
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        /* 실드 → HP 차감 */
+        if (shield > 0f)
+        {
+            float prev = shield;
+            shield = Mathf.Max(0f, shield - damage);
+            damage = Mathf.Max(0f, damage - prev);
+            pv.RPC(nameof(UpdateShield), RpcTarget.AllBuffered, maxShield == 0 ? 0 : shield / maxShield);
+            if (shield == 0f && prev > 0f)
+                pv.RPC(nameof(RPC_ShieldBreakFx), RpcTarget.All);
+        }
+
+        hp = Mathf.Max(0f, hp - damage);
+        pv.RPC(nameof(UpdateHP), RpcTarget.AllBuffered, hp / maxHP);
+
+        /* 넉백 & FX */
+        Vector3 atkPos = Target ? Target.position : transform.position;
+        bool fromRight = atkPos.x < transform.position.x;
+        pv.RPC(nameof(RPC_ApplyKnockback), RpcTarget.All, atkPos);
+        pv.RPC(nameof(RPC_SpawnHitFx), RpcTarget.All, transform.position, fromRight);
+
+        TransitionToState(hp <= 0f ? typeof(DeadState) : typeof(HitState));
+    }
+
+    /* ─ HP / Shield UI 동기화 ─ */
+    [PunRPC]
+    public void UpdateHP(float r)
+    { if (uiHP) { uiHP.SetHP(r); uiHP.CheckThreshold(r, false); } }
+
+    [PunRPC]
+    public void UpdateShield(float r)
+    { if (uiHP) { uiHP.SetShield(r); uiHP.CheckThreshold(r, true); } }
+
+    /* ─ 넉백 / FX ─ */
+    [PunRPC]
+    void RPC_ApplyKnockback(Vector3 atkPos)
+    {
+        Vector3 dir = (transform.position - atkPos).normalized;
+        dir.y = dir.z = 0f;
+        knockVel = dir * enemyStatus.hitKnockbackStrength;
+        knockTime = KNOCK_DUR;
+    }
+    [PunRPC]
+    void RPC_SpawnHitFx(Vector3 pos, bool spawnRight)
+    {
+        GameObject b = spawnRight ? bloodFxRight : bloodFxLeft;
+        GameObject s = spawnRight ? slashFxRight : slashFxLeft;
+        OneShotFx(b, pos, .7f); OneShotFx(s, pos, .4f);
+    }
+    void OneShotFx(GameObject prefab, Vector3 pos, float life)
+    {
+        if (!prefab) return;
+        var go = Instantiate(prefab, pos + Vector3.down * 3f, Quaternion.identity);
+        Destroy(go, life);
+    }
+    [PunRPC]
+    void RPC_ShieldBreakFx()
+    {
+        var fx = Resources.Load<GameObject>("ShieldBreakFx");
+        if (fx) Destroy(Instantiate(fx, transform.position + Vector3.up * 1.2f, Quaternion.identity), 2f);
+    }
+    public void DestroyUI() { if (uiHP) Destroy(uiHP.gameObject); }
+
+    /* ────────────────────────── Networking ─────────────────────── */
     public void OnPhotonSerializeView(PhotonStream s, PhotonMessageInfo i)
     {
         if (s.IsWriting)
@@ -207,84 +308,42 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable
         }
         else
         {
-            var incoming = (EnemyState)(int)s.ReceiveNext();
+            var inc = (EnemyState)(int)s.ReceiveNext();
             netPos = (Vector3)s.ReceiveNext();
             netRot = (Quaternion)s.ReceiveNext();
-            netLastMoveX = (float)s.ReceiveNext();
-
-            if (incoming != currentEnum)
-                TransitionToState(EnumToType(incoming));
+            netFacing = (float)s.ReceiveNext();
+            if (inc != currentEnum) TransitionToState(EnumToType(inc));
         }
     }
-    #endregion
 
+    /* ────────────────────────── 기타 유틸 ──────────────────────── */
     void ApplyStatusToAgent()
     {
         Agent.speed = enemyStatus.moveSpeed;
         Agent.stoppingDistance = enemyStatus.attackRange;
         Agent.enabled = true;
     }
-    /* ───────── 유틸: 평면‑거리 계산 ───────── */
-    public float GetZDiffAbs()
-    {
-        if (Target == null) return float.PositiveInfinity;
-        return Mathf.Abs(Target.position.z - transform.position.z);
-    }
-
+    public float GetZDiffAbs() => Target ? Mathf.Abs(Target.position.z - transform.position.z) : float.PositiveInfinity;
     public float GetTarget2DDistSq()
     {
-        if (Target == null) return float.PositiveInfinity;
-        Vector3 a = Target.position;
-        Vector3 b = transform.position;
-        a.y = b.y = 0f;                                 // 평면 거리
-        return (a - b).sqrMagnitude;
+        if (!Target) return float.PositiveInfinity;
+        Vector3 a = Target.position; Vector3 b = transform.position;
+        a.y = b.y = 0f; return (a - b).sqrMagnitude;
     }
-
     public bool IsTargetInAttackRange()
-    {
-        float range = enemyStatus.attackRange;
-        return GetTarget2DDistSq() <= range * range;
-    }
+        => GetTarget2DDistSq() <= enemyStatus.attackRange * enemyStatus.attackRange;
+    public bool IsAlignedAndInRange()
+        => IsTargetInAttackRange() && GetZDiffAbs() <= zAlignTolerance;
 
+    /* ───────── Scene Gizmo ───────── */
 #if UNITY_EDITOR
-    /* ───────── Scene 뷰 시각화 ───────── */
     void OnDrawGizmosSelected()
     {
         if (!debugMode || enemyStatus == null) return;
-
-        // 탐지 범위 = 노랑
-        Gizmos.color = new Color(1f, 0.9f, 0f, 0.4f);
-        Gizmos.DrawWireSphere(transform.position + Vector3.up * GIZMO_Y_OFFSET,
-                              enemyStatus.detectRange);
-
-        // 공격 범위 = 빨강 (Agent.radius 포함)
-        Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
-        float atkR = enemyStatus.attackRange;
-        Gizmos.DrawWireSphere(transform.position + Vector3.up * GIZMO_Y_OFFSET,
-                              atkR);
-
-        // 타깃까지 선 & 텍스트
-        if (Target)
-        {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawLine(transform.position + Vector3.up * GIZMO_Y_OFFSET,
-                            Target.position + Vector3.up * GIZMO_Y_OFFSET);
-            UnityEditor.Handles.Label(transform.position + Vector3.up * 0.2f,
-                $"dist={Mathf.Sqrt(GetTarget2DDistSq()):0.00}");
-        }
+        Gizmos.color = new Color(1f, .9f, 0f, .4f);
+        Gizmos.DrawWireSphere(transform.position + Vector3.up * GIZMO_Y, enemyStatus.detectRange);
+        Gizmos.color = new Color(1f, 0f, 0f, .4f);
+        Gizmos.DrawWireSphere(transform.position + Vector3.up * GIZMO_Y, enemyStatus.attackRange);
     }
 #endif
-    public Vector2 GetXZToTarget()
-    {
-        if (Target == null) return Vector2.positiveInfinity;
-        Vector3 d = Target.position - transform.position;
-        return new Vector2(d.x, d.z);                // (x, z)
-    }
-
-    /* 새 함수: 범위 + Z 맞춤 모두 만족? */
-    public bool IsAlignedAndInRange()
-    {
-        float zOk = GetZDiffAbs() <= zAlignTolerance ? 1f : 0f;
-        return IsTargetInAttackRange() && zOk > 0f;
-    }
 }

@@ -75,3 +75,4 @@ public class WanderState : BaseState
             agent.SetDestination(hit.position);
     }
 }
+

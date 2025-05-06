@@ -61,8 +61,16 @@ public class SkeletonAttack : MonoBehaviour, IMonsterAttack
         if (firePoint == null) return;
         firePoint.localPosition = rightAttackOffset;
     }
+    public void EnableAttack() { }   // 애니메이션 이벤트에서 호출
+    public void DisableAttack() { }  // 애니메이션 이벤트에서 호출
+    public void SetDirection(float sign)
+    {
+        if (sign > 0f) FirePointRight();
+        else FirePointLeft();
+    }
     // ─────────────────────────────
     // 내부
     // ─────────────────────────────
     private Transform cachedTarget;
 }
+

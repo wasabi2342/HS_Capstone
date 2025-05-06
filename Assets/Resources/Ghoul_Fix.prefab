@@ -103,12 +103,11 @@ GameObject:
   - component: {fileID: 7533604380446736302}
   - component: {fileID: 7763377542229407887}
   - component: {fileID: 1919888365771260053}
-  - component: {fileID: 1918373319551483883}
   - component: {fileID: 5100535631980958853}
   - component: {fileID: 838009920413138150}
   - component: {fileID: 7289110215044397794}
-  - component: {fileID: 7258404619438173730}
   - component: {fileID: -2160177845057009080}
+  - component: {fileID: 7258404619438173730}
   m_Layer: 7
   m_Name: Ghoul_Fix
   m_TagString: Enemy
@@ -314,26 +313,6 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &1918373319551483883
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765914048162278020}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18daacf0f7fb13b4fb2581914100d7ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  status: {fileID: 11400000, guid: 95c1f28374649404aacbc36b18792acf, type: 2}
-  spawnArea: {fileID: 0}
-  damageTextPrefab: {fileID: 3708835635005717868, guid: e5ebaf76c09f06746afe14fc96100072, type: 3}
-  animator: {fileID: 0}
-  bloodEffectPrefab_Left: {fileID: 2412206290288059151, guid: 45fba50147ab4e5499a4b4d5db4a2591, type: 3}
-  bloodEffectPrefab_Right: {fileID: 2412206290288059151, guid: c5857e56f3a4a2f43a473e65f121a850, type: 3}
-  slashEffectPrefab_Left: {fileID: 2412206290288059151, guid: 90467a4335a8c894ea6952cfb2759843, type: 3}
-  slashEffectPrefab_Right: {fileID: 2412206290288059151, guid: 0196f6e0c0a1b3e4ea40c3cc810325d9, type: 3}
 --- !u!114 &5100535631980958853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -341,13 +320,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1765914048162278020}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 27b8626b102ffcb448208d0c9fc3fbb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 10
-  weaponColliderObject: {fileID: 2400343500577941846}
+  weaponCollider: {fileID: 2400343500577941846}
 --- !u!114 &838009920413138150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -375,18 +353,6 @@ MonoBehaviour:
   monsterType: 0
   targetingCooldown: 3
   retargetingTimeThreshold: 5
---- !u!114 &7258404619438173730
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765914048162278020}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea5701a63c9167542a109c3ca4410808, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-2160177845057009080
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -400,8 +366,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyStatus: {fileID: 11400000, guid: 76bc9309206a3954192353895a39b007, type: 2}
+  sr: {fileID: 8731978092605240292}
+  bloodFxRight: {fileID: 2412206290288059151, guid: c5857e56f3a4a2f43a473e65f121a850, type: 3}
+  bloodFxLeft: {fileID: 2412206290288059151, guid: 45fba50147ab4e5499a4b4d5db4a2591, type: 3}
+  slashFxRight: {fileID: 2412206290288059151, guid: 0196f6e0c0a1b3e4ea40c3cc810325d9, type: 3}
+  slashFxLeft: {fileID: 2412206290288059151, guid: 90467a4335a8c894ea6952cfb2759843, type: 3}
   debugMode: 1
   zAlignTolerance: 0.4
+--- !u!114 &7258404619438173730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765914048162278020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea5701a63c9167542a109c3ca4410808, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2400343500577941846
 GameObject:
   m_ObjectHideFlags: 0

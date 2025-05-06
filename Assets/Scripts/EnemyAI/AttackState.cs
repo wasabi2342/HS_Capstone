@@ -12,11 +12,16 @@ public class AttackState : BaseState
         RefreshFacingToTarget();
         SetAgentStopped(true);
 
+        // ─ 방향 넘겨 주기 ─
+        if (fsm.AttackComponent != null)
+            fsm.AttackComponent.SetDirection(fsm.CurrentFacing);   // 🔸
+
+        // 애니메이션 재생 ― Enable/DisableAttack 은
+        //   애니메이션 이벤트에서 호출됨
+        fsm.PlayDirectionalAnim("Attack");
+
         if (PhotonNetwork.IsMasterClient)
-        {
-            fsm.PlayDirectionalAnim("Attack");
             atkCo = fsm.StartCoroutine(AttackRoutine());
-        }
     }
 
     public override void Execute()
@@ -29,18 +34,19 @@ public class AttackState : BaseState
     IEnumerator AttackRoutine()
     {
         float half = status.attackDuration * 0.5f;
+
+        /* 윈드업 구간 */
         yield return new WaitForSeconds(half);
 
-        bool hit = fsm.IsAlignedAndInRange();
-        fsm.LastAttackSuccessful = hit;
+        /* 중간 지점에서 맞았는지 체크만 */
+        fsm.LastAttackSuccessful = fsm.IsAlignedAndInRange();
 
-        if (fsm.debugMode)
-            Debug.Log($"[Attack] hit={hit}, dist={Mathf.Sqrt(fsm.GetTarget2DDistSq()):0.00}", fsm);
-
+        /* 후딜 구간 */
         yield return new WaitForSeconds(half);
+
+        /* 다음 상태로 */
         fsm.TransitionToState(typeof(AttackCoolState));
     }
-
 
     public override void Exit()
     {

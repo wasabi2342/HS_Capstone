@@ -87,4 +87,9 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
         else if (weaponCollider is SphereCollider sphere)
             sphere.center = new Vector3(-Mathf.Abs(defaultCenter.x), defaultCenter.y, defaultCenter.z);
     }
+    public void SetDirection(float sign)
+    {
+        if (sign > 0f) SetColliderRight();
+        else SetColliderLeft();
+    }
 }

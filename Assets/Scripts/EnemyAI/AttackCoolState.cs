@@ -27,14 +27,12 @@ public class AttackCoolState : BaseState
 
     IEnumerator CoolTime()
     {
+        // 공격 후 쿨타임 대기
         yield return new WaitForSeconds(status.attackCoolTime);
         if (!PhotonNetwork.IsMasterClient) yield break;
 
-        bool immediate =
-            fsm.LastAttackSuccessful &&
-            fsm.Target &&
-            (fsm.Target.position - transform.position).sqrMagnitude <=
-            status.attackRange * status.attackRange;
+        // 플레이어가 아직 정렬(거리 & Z) 조건을 만족하면 Wander로 가지 않고 바로 WaitCoolState로 전환
+        bool immediate = fsm.Target && fsm.IsAlignedAndInRange();
 
         fsm.TransitionToState(immediate ? typeof(WaitCoolState) : typeof(WanderState));
     }

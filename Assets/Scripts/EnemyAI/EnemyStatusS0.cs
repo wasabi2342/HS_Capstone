@@ -12,7 +12,10 @@ public class EnemyStatusSO : ScriptableObject
     public float chaseSpeedMultiplier = 1.1f; // 추격 시 이동 속도 배율 [1]
 
     [Header("Damage / Stun")]
+    public float headOffset = 1.8f;
     public float hitStunTime = 0.3f;
+    public float hitKnockbackStrength = 3f;
+    public float maxShield = 30f;
 
     public float detectRange = 1f; // 플레이어 감지 범위
     public float attackRange = .5f; // 공격 범위
