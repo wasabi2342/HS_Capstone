@@ -73,7 +73,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
             if (photonView.IsMine)
             {
                 runTimeData.LoadFromJsonFile();
-                photonView.RPC("UpdateHP", RpcTarget.Others, runTimeData.currentHealth);
+                photonView.RPC("UpdateHP", RpcTarget.OthersBuffered, runTimeData.currentHealth);
                 nicknameText.text = PhotonNetwork.CurrentRoom.Players[photonView.Owner.ActorNumber].NickName;
                 nicknameText.color = new Color32(102, 204, 255, 255);
             }
