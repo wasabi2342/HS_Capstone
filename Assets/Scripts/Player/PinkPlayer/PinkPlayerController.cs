@@ -13,7 +13,9 @@ public class PinkPlayerController : ParentPlayerController
     [Header("대쉬 설정")]
     public float dashDistance = 2f;
     public float dashDoubleClickThreshold = 0.3f;
+    public float dashDuration = 0.2f;
     private Vector3 dashDirection;
+    private Vector3 facingDirection = Vector3.right;
     //private float lastDashClickTime = -Mathf.Infinity;
 
     [Header("중심점 설정")]
@@ -38,6 +40,7 @@ public class PinkPlayerController : ParentPlayerController
     {
 
         base.Awake();
+        facingDirection = Vector3.right;
     }
 
     private void Start()
@@ -66,6 +69,13 @@ public class PinkPlayerController : ParentPlayerController
 
     private void Update()
     {
+    }
+
+    private void FixedUpdate()
+    {
+        if (!photonView.IsMine)
+            return;
+
         if (currentState == PinkPlayerState.Death)
         {
             if (Input.GetKeyDown(KeyCode.X))
@@ -75,20 +85,22 @@ public class PinkPlayerController : ParentPlayerController
             return;
         }
 
+
         //UpdateCenterPoint();
         HandleMovement();
+
     }
 
     // 입력 처리 관련
-    // WhitePlayercontroller_event.cs에서 호출하여 이동 입력을 설정
+
     public void SetMoveInput(Vector2 input)
     {
         moveInput = input;
-        // x축 입력이 있을 때만 마지막 바라본 방향 갱신
-        if (Mathf.Abs(input.x) > 0.01f)
-            lastFacingDirection = new Vector3(Mathf.Sign(input.x), 0f, 0f);
+     
     }
+ 
     // 이동 처리
+
     private void HandleMovement()
     {
         if (currentState == PinkPlayerState.Death || currentState == PinkPlayerState.Stun)
@@ -142,18 +154,27 @@ public class PinkPlayerController : ParentPlayerController
 
 
 
-        if (isMoving)
+        if (currentState == PinkPlayerState.Run)
         {
-            Vector3 moveDir;
-            moveDir = (Mathf.Abs(v) > 0.01f) ? new Vector3(h, 0, v).normalized : new Vector3(h, 0, 0).normalized;
-            transform.Translate(moveDir * runTimeData.moveSpeed * Time.deltaTime, Space.World);
-        }
+            // 여기서만 방향 고정 갱신
+            if (h > 0.01f) facingDirection = Vector3.right;
+            else if (h < -0.01f) facingDirection = Vector3.left;
 
-        if (animator != null)
-        {
+            // 이동
+            Vector3 moveDir = (Mathf.Abs(v) > 0.01f)
+                ? new Vector3(h, 0, v).normalized
+                : new Vector3(h, 0, 0).normalized;
+            rb.MovePosition(rb.position + moveDir * runTimeData.moveSpeed * Time.fixedDeltaTime);
+
             animator.SetFloat("moveX", h);
             animator.SetFloat("moveY", v);
         }
+
+        //if (animator != null)
+        //{
+        //    animator.SetFloat("moveX", h);
+        //    animator.SetFloat("moveY", v);
+        //}
     }
 
     private void UpdateCenterPoint()
@@ -176,58 +197,40 @@ public class PinkPlayerController : ParentPlayerController
     {
         if (input.magnitude < 0.01f)
             return currentDirectionIndex;
+
         float angle = Mathf.Atan2(input.x, input.y) * Mathf.Rad2Deg;
         if (angle < 0) angle += 360f;
-        int idx = Mathf.RoundToInt(angle / 45f) % 8;
-        return idx;
+        return Mathf.RoundToInt(angle / 45f) % 8;
     }
 
     private Vector3 lastFacingDirection = Vector3.right;
 
 
 
-
     // 대쉬 처리
+ 
     public void HandleDash()
     {
-        // 1) 상태 체크
-        if (currentState == PinkPlayerState.Death || currentState == PinkPlayerState.Dash)
+        if (currentState == PinkPlayerState.Death
+         || currentState == PinkPlayerState.Dash
+         || currentState == PinkPlayerState.Stun)
             return;
-        if (currentState == PinkPlayerState.Stun)
-            return;
+
         if (!cooldownCheckers[(int)Skills.Space].CanUse())
             return;
 
-        // 2) 상태 전환 & 애니메이터
-        currentState = PinkPlayerState.Dash;
-        animator.ResetTrigger("run");
-        animator.SetBool("dash", true);
-        if (PhotonNetwork.IsConnected)
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "dash", true);
+        nextState = PinkPlayerState.Dash;
+        //animator.ResetTrigger("run");
+        //animator.SetBool("dash", true);
+        //if (PhotonNetwork.IsConnected)
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "dash", true);
 
-        // 3) 대쉬 방향 결정
-        if (Mathf.Abs(moveInput.x) > 0.01f)
-        {
-            // 입력이 있을 때
-            dashDirection = new Vector3(Mathf.Sign(moveInput.x), 0f, 0f);
-        }
-        else
-        {
-            // 입력 없을 땐 마지막 바라본 방향 사용
-            dashDirection = lastFacingDirection;
-        }
+        // 여기서는 무조건 facingDirection 사용
+        dashDirection = facingDirection;
 
-        // 4) 실제 이동 코루틴 호출 (필요에 따라 주석 해제)
-        // StartCoroutine(DoDash(dashDirection));
+        //StartCoroutine(DoDash());
     }
 
-    //private IEnumerator DoDash(Vector3 dashDir)
-    //{
-    //    Vector3 startPos = transform.position;
-    //    Vector3 targetPos = startPos + dashDir.normalized * dashDistance;
-    //    yield return null;
-    //    transform.position = targetPos;
-    //}
 
     // 평타
     public void HandleNormalAttack()
