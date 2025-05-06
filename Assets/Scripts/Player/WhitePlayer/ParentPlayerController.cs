@@ -110,6 +110,11 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     #endregion
 
+    public void UpdateHP()
+    {
+        OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
+    }
+
     public virtual void BindCooldown()
     {
         cooldownCheckers[(int)Skills.Mouse_L] = new CooldownChecker(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Cooldown, OnAttackCooldownUpdate, runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Stack);

@@ -93,6 +93,7 @@ public class UIIngameMainPanel : UIBase
             playerController.stunSlider = stunSlider;
             playerController.ShieldUpdate.RemoveAllListeners();
             playerController.ShieldUpdate.AddListener(UpdateShieldImage);
+            playerController.UpdateHP();
         }
 
         if (Enum.TryParse<Characters>(playerController.ReturnCharacterName(), out var character))
