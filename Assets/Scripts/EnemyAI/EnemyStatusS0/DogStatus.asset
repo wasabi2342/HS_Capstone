@@ -10,15 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3237e443b654c6545937fc25af82f21a, type: 3}
-  m_Name: GhoulStatus
+  m_Name: DogStatus
   m_EditorClassIdentifier: 
-  enemyName: Generic Monster
-  maxHealth: 100
-  moveSpeed: 1.1
-  chaseSpeedMultiplier: 1.15
+  enemyName: Default Enemy
+  maxHealth: 50
+  moveSpeed: 2
+  chaseSpeedMultiplier: 1.1
+  headOffset: 1.5
   hitStunTime: 0.3
+  hitKnockbackStrength: 3
+  maxShield: 30
   detectRange: 4
-  attackRange: 1.5
+  attackRange: 3
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -26,6 +29,6 @@ MonoBehaviour:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 5, y: 5, z: 5}
   waitCoolTime: 0.5
-  attackDuration: 0.9
+  attackDuration: 1
   attackCoolTime: 2
   attackDamage: 10

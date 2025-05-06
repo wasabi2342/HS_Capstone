@@ -8,15 +8,10 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
     private bool isCharging = false;
     private Transform target;
     [Header("공격 콜라이더")]
-    public GameObject weaponColliderObject;
-    private Collider weaponCollider;
-    private Vector3 defaultCenter;
-
-    private Animator animator;
+    [SerializeField] GameObject weaponCollider;
 
     public void Attack(Transform target)
     {
-        animator = GetComponent<Animator>();
 
         if (!isCharging)
         {
@@ -47,49 +42,18 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
         isCharging = false;
     }
 
-    // 애니메이션 이벤트용
-    public void SetAnimSpeed(float speed)
+    public void SetColliderRight() => ShiftCollider(+1);
+    public void SetColliderLeft() => ShiftCollider(-1);
+    public void OnAttackAnimationEndEvent() => DisableAttack();
+
+    void ShiftCollider(int dir)     // +1 → 오른쪽, -1 → 왼쪽
     {
-        animator.speed = 0.8f;
-    }
-    public void ResetAnimSpeed()
-    {
-        animator.speed = 1f;
-    }
-    public void EnableAttack()
-    {
-        if (weaponColliderObject != null)
-            weaponColliderObject.SetActive(true);
+        var box = weaponCollider.GetComponent<BoxCollider>();
+        var c = box.center; c.x = Mathf.Abs(c.x) * dir; box.center = c;
     }
 
-    public void DisableAttack()
-    {
-        if (weaponColliderObject != null)
-            weaponColliderObject.SetActive(false);
-    }
-
-    public void SetColliderRight()
-    {
-        if (weaponCollider == null) return;
-
-        if (weaponCollider is BoxCollider box)
-            box.center = new Vector3(Mathf.Abs(defaultCenter.x), defaultCenter.y, defaultCenter.z);
-        else if (weaponCollider is SphereCollider sphere)
-            sphere.center = new Vector3(Mathf.Abs(defaultCenter.x), defaultCenter.y, defaultCenter.z);
-    }
-
-    public void SetColliderLeft()
-    {
-        if (weaponCollider == null) return;
-
-        if (weaponCollider is BoxCollider box)
-            box.center = new Vector3(-Mathf.Abs(defaultCenter.x), defaultCenter.y, defaultCenter.z);
-        else if (weaponCollider is SphereCollider sphere)
-            sphere.center = new Vector3(-Mathf.Abs(defaultCenter.x), defaultCenter.y, defaultCenter.z);
-    }
-    public void SetDirection(float sign)
-    {
-        if (sign > 0f) SetColliderRight();
-        else SetColliderLeft();
-    }
+    /* IMonsterAttack 구현 */
+    public void EnableAttack() => weaponCollider.SetActive(true);
+    public void DisableAttack() => weaponCollider.SetActive(false);
+    public void SetDirection(float s) { /* AttackState에서 미리 호출 */ }
 }

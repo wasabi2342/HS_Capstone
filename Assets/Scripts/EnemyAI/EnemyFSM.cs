@@ -104,12 +104,14 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         if (sr == null) sr = GetComponentInChildren<SpriteRenderer>(true);
 
         /* ★ EnemyAI 방식 HP/Shield UI 스폰 */
-        var prefab = Resources.Load<GameObject>("UIEnemyHealthBar");
+        var prefab = Resources.Load<GameObject>("UI/UIEnemyHealthBar");
         if (prefab)
         {
             var go = Instantiate(prefab);                       // 월드 공간에 독립 인스턴스
             uiHP = go.GetComponent<UIEnemyHealthBar>();
-            float y = enemyStatus.headOffset;                    // SO에서 오프셋
+            float y = enemyStatus.headOffset;
+            if (Mathf.Approximately(y, 0f) && sr)
+                y = sr.bounds.size.y * 0.9f;                  
             uiHP.Init(transform, Vector3.up * y);
             uiHP.SetHP(1f);
             uiHP.SetShield(maxShield > 0 ? 1f : 0f);
