@@ -321,7 +321,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         // 최종 결과는 winningIndex 하나만 전달합니다.
         photonView.RPC("RPC_UpdateFinalReward", RpcTarget.All, winningIndex);
 
-        photonView.RPC("RPC_SaveRunTimeData", RpcTarget.All); // 게임 데이터 저장
+        //photonView.RPC("RPC_SaveRunTimeData", RpcTarget.All); // 게임 데이터 저장
 
         if (PhotonNetwork.IsMasterClient)
         {
