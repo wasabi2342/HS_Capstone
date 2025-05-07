@@ -1026,13 +1026,9 @@ public class PinkPlayerController : ParentPlayerController
         skillEffect.transform.parent = transform;
     }
 
-    // 패링 이펙트 생성
-    public void CreateParrySkillEffect()
+    // 태클 이펙트 생성
+    public void CreateTackleSkillEffect()
     {
-        if (!photonView.IsMine)
-        {
-            attackStack = animator.GetInteger("AttackStack");
-        }
 
         // 패링 스킬 데미지 계산
         float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
@@ -1047,11 +1043,11 @@ public class PinkPlayerController : ParentPlayerController
 
         if (animator.GetBool("Right"))
         {
-            effectPath = $"SkillEffect/WhitePlayer/Parry_Right_Effect";
+            effectPath = $"SkillEffect/PinkPlayer/pink_tackle_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
         }
         else
         {
-            effectPath = $"SkillEffect/WhitePlayer/Parry_Left_Effect";
+            effectPath = $"SkillEffect/PinkPlayer/pink_tackle_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
         }
 
         // 다른 클라이언트에게도 이펙트를 생성하도록 RPC 호출
