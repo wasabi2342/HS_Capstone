@@ -13,6 +13,8 @@ public class SkillEffect : MonoBehaviourPun
     private AttackerType attackerType;
     [SerializeField]
     private float animationSpeed = 1f;
+    [SerializeField]
+    private GameObject childEffect;
 
     private BaseSpecialEffect specialEffect;
 
@@ -43,6 +45,11 @@ public class SkillEffect : MonoBehaviourPun
         {
             specialEffect.ApplyEffect();
         }
+    }
+
+    public void CreateChildEffect()
+    {
+        Instantiate(childEffect, transform.position, transform.rotation, transform);
     }
 
     public void OnAttackCollider()
