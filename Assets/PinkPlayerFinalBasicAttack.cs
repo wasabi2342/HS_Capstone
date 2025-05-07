@@ -1,20 +1,12 @@
-using System.Resources;
 using UnityEngine;
 
-public class Pink_R_Idle : StateMachineBehaviour
+public class PinkPlayerFinalBasicAttack : StateMachineBehaviour
 {
-    //OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
-    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        animator.SetBool("ultimate", false);
-        animator.GetComponent<PinkPlayerController>().currentState = PinkPlayerState.R_Idle;
-        animator.SetBool("Pre-Attack", false);
-        animator.SetBool("Pre-Input", false);
-        animator.SetBool("CancleState", false);
-        animator.SetBool("FreeState", false);
-        animator.SetBool("run", false);
-        animator.SetBool("revive", false);
-    }
+    // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
+    //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    //{
+    //    
+    //}
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -23,10 +15,10 @@ public class Pink_R_Idle : StateMachineBehaviour
     //}
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-    //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
+    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        animator.GetComponent<PinkPlayerController>().attackStack = 0;
+    }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
     //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

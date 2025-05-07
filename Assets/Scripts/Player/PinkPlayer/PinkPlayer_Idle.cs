@@ -72,7 +72,11 @@ public class PinkPlayer_Idle : StateMachineBehaviour
                 pinkPlayerController.currentState = PinkPlayerState.Dash;
                 break;
 
+
+
         }
+        pinkPlayerController.nextState = PinkPlayerState.Idle;
+
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state

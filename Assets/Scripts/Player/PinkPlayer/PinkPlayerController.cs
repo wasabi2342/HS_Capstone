@@ -13,7 +13,9 @@ public class PinkPlayerController : ParentPlayerController
     [Header("대쉬 설정")]
     public float dashDistance = 2f;
     public float dashDoubleClickThreshold = 0.3f;
+    public float dashDuration = 0.2f;
     private Vector3 dashDirection;
+    private Vector3 facingDirection = Vector3.right;
     //private float lastDashClickTime = -Mathf.Infinity;
 
     [Header("중심점 설정")]
@@ -38,6 +40,7 @@ public class PinkPlayerController : ParentPlayerController
     {
 
         base.Awake();
+        facingDirection = Vector3.right;
     }
 
     private void Start()
@@ -66,6 +69,13 @@ public class PinkPlayerController : ParentPlayerController
 
     private void Update()
     {
+    }
+
+    private void FixedUpdate()
+    {
+        if (!photonView.IsMine)
+            return;
+
         if (currentState == PinkPlayerState.Death)
         {
             if (Input.GetKeyDown(KeyCode.X))
@@ -75,20 +85,22 @@ public class PinkPlayerController : ParentPlayerController
             return;
         }
 
+
         //UpdateCenterPoint();
         HandleMovement();
+
     }
 
     // 입력 처리 관련
-    // WhitePlayercontroller_event.cs에서 호출하여 이동 입력을 설정
+
     public void SetMoveInput(Vector2 input)
     {
         moveInput = input;
-        // x축 입력이 있을 때만 마지막 바라본 방향 갱신
-        if (Mathf.Abs(input.x) > 0.01f)
-            lastFacingDirection = new Vector3(Mathf.Sign(input.x), 0f, 0f);
+     
     }
+ 
     // 이동 처리
+
     private void HandleMovement()
     {
         if (currentState == PinkPlayerState.Death || currentState == PinkPlayerState.Stun)
@@ -142,18 +154,27 @@ public class PinkPlayerController : ParentPlayerController
 
 
 
-        if (isMoving)
+        if (currentState == PinkPlayerState.Run)
         {
-            Vector3 moveDir;
-            moveDir = (Mathf.Abs(v) > 0.01f) ? new Vector3(h, 0, v).normalized : new Vector3(h, 0, 0).normalized;
-            transform.Translate(moveDir * runTimeData.moveSpeed * Time.deltaTime, Space.World);
-        }
+            // 여기서만 방향 고정 갱신
+            if (h > 0.01f) facingDirection = Vector3.right;
+            else if (h < -0.01f) facingDirection = Vector3.left;
 
-        if (animator != null)
-        {
+            // 이동
+            Vector3 moveDir = (Mathf.Abs(v) > 0.01f)
+                ? new Vector3(h, 0, v).normalized
+                : new Vector3(h, 0, 0).normalized;
+            rb.MovePosition(rb.position + moveDir * runTimeData.moveSpeed * Time.fixedDeltaTime);
+
             animator.SetFloat("moveX", h);
             animator.SetFloat("moveY", v);
         }
+
+        //if (animator != null)
+        //{
+        //    animator.SetFloat("moveX", h);
+        //    animator.SetFloat("moveY", v);
+        //}
     }
 
     private void UpdateCenterPoint()
@@ -176,58 +197,40 @@ public class PinkPlayerController : ParentPlayerController
     {
         if (input.magnitude < 0.01f)
             return currentDirectionIndex;
+
         float angle = Mathf.Atan2(input.x, input.y) * Mathf.Rad2Deg;
         if (angle < 0) angle += 360f;
-        int idx = Mathf.RoundToInt(angle / 45f) % 8;
-        return idx;
+        return Mathf.RoundToInt(angle / 45f) % 8;
     }
 
     private Vector3 lastFacingDirection = Vector3.right;
 
 
 
-
     // 대쉬 처리
+ 
     public void HandleDash()
     {
-        // 1) 상태 체크
-        if (currentState == PinkPlayerState.Death || currentState == PinkPlayerState.Dash)
+        if (currentState == PinkPlayerState.Death
+         || currentState == PinkPlayerState.Dash
+         || currentState == PinkPlayerState.Stun)
             return;
-        if (currentState == PinkPlayerState.Stun)
-            return;
+
         if (!cooldownCheckers[(int)Skills.Space].CanUse())
             return;
 
-        // 2) 상태 전환 & 애니메이터
-        currentState = PinkPlayerState.Dash;
-        animator.ResetTrigger("run");
-        animator.SetBool("dash", true);
-        if (PhotonNetwork.IsConnected)
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "dash", true);
+        nextState = PinkPlayerState.Dash;
+        //animator.ResetTrigger("run");
+        //animator.SetBool("dash", true);
+        //if (PhotonNetwork.IsConnected)
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "dash", true);
 
-        // 3) 대쉬 방향 결정
-        if (Mathf.Abs(moveInput.x) > 0.01f)
-        {
-            // 입력이 있을 때
-            dashDirection = new Vector3(Mathf.Sign(moveInput.x), 0f, 0f);
-        }
-        else
-        {
-            // 입력 없을 땐 마지막 바라본 방향 사용
-            dashDirection = lastFacingDirection;
-        }
+        // 여기서는 무조건 facingDirection 사용
+        dashDirection = facingDirection;
 
-        // 4) 실제 이동 코루틴 호출 (필요에 따라 주석 해제)
-        // StartCoroutine(DoDash(dashDirection));
+        //StartCoroutine(DoDash());
     }
 
-    //private IEnumerator DoDash(Vector3 dashDir)
-    //{
-    //    Vector3 startPos = transform.position;
-    //    Vector3 targetPos = startPos + dashDir.normalized * dashDistance;
-    //    yield return null;
-    //    transform.position = targetPos;
-    //}
 
     // 평타
     public void HandleNormalAttack()
@@ -240,7 +243,7 @@ public class PinkPlayerController : ParentPlayerController
             {
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-                animator.SetBool("basicattack", true);
+                animator.SetBool("basicattack", true);  
                 if (PhotonNetwork.IsConnected)
                 {
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
@@ -251,9 +254,10 @@ public class PinkPlayerController : ParentPlayerController
                 return;
             }
 
-            else if (currentState == PinkPlayerState.R_hit1)
+            if (currentState == PinkPlayerState.R_hit1 || currentState == PinkPlayerState.R_hit2 || currentState == PinkPlayerState.R_hit3)
             {
                 //animator.SetBool("basicattack", true);
+                animator.SetBool("Pre-Input", true);
                 //Vector3 mousePos = GetMouseWorldPosition();
                 //animator.SetBool("Right", mousePos.x > transform.position.x);
                 //if (PhotonNetwork.IsConnected)
@@ -262,7 +266,7 @@ public class PinkPlayerController : ParentPlayerController
                 //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
                 //}
                 //currentState = PinkPlayerState.R_hit2;
-                return;
+                //return;
             }
 
             //else if (currentState == PinkPlayerState.R_hit1 && animator.GetInteger("attackStack") > 2)
@@ -279,11 +283,12 @@ public class PinkPlayerController : ParentPlayerController
             //    return;
             //}
 
-            if (nextState == PinkPlayerState.Idle)
+            if (nextState <= PinkPlayerState.BasicAttack)
             {
 
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
+                animator.SetBool("Pre-Input", true);
                 if (PhotonNetwork.IsConnected)
                 {
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
@@ -297,7 +302,7 @@ public class PinkPlayerController : ParentPlayerController
 
             }
 
-            if (attackStack >= 2)
+            if (attackStack > 2)
             {
                 animator.SetBool("Pre-Attack", false);
                 animator.SetBool("Pre-Input", false);
@@ -306,8 +311,8 @@ public class PinkPlayerController : ParentPlayerController
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", false);
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", false);
                 }
-                currentState = PinkPlayerState.Idle;
-                attackStack = 0;
+                //currentState = PinkPlayerState.Idle;
+                //attackStack = 0;
                 AttackStackUpdate?.Invoke(attackStack);
                 Debug.Log("공격 스택 2 도달: 콤보 종료 및 초기화");
                 return;
@@ -765,20 +770,32 @@ public class PinkPlayerController : ParentPlayerController
         // Photon에 접속 중인지 확인하여 isMine 설정
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
         Vector3 targetPos = transform.position;
+
+        // R_attackStack을 3으로 클램프
+        int maxR_attackStackEffect = Mathf.Min(R_attackStack, 2);
+
         // 이펙트 경로 및 위치 설정
         string effectPath;
 
         if (animator.GetBool("Right"))
         {
-            effectPath = $"SkillEffect/PinkPlayer/pink_R_hit{R_attackStack}_right_front_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
+            effectPath = $"SkillEffect/PinkPlayer/pink_R_hit{maxR_attackStackEffect}_right_front_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
         }
         else
         {
-            effectPath = $"SkillEffect/PinkPlayer/pink_R_hit{R_attackStack}_left_front_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
+            effectPath = $"SkillEffect/PinkPlayer/pink_R_hit{maxR_attackStackEffect}_left_front_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
             photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
+
+        var prefab = Resources.Load<SkillEffect>(effectPath);
+        if (prefab == null)
+        {
+            Debug.LogError($"[R-Effect] Prefab 로드 실패! 경로 확인하세요: {effectPath}");
+            return;
+        }
+        Debug.Log($"[R-Effect] Prefab 로드 성공: {prefab.name}");
 
         // Photon에 접속 중이든 아니든, 로컬에서 이펙트를 생성하는 코드
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
@@ -868,6 +885,7 @@ public class PinkPlayerController : ParentPlayerController
         }
 
         // Photon 연결 여부에 따른 이펙트 생성
+        Debug.Log(effectPath);
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
 
         // Init 메서드 호출
@@ -1008,13 +1026,9 @@ public class PinkPlayerController : ParentPlayerController
         skillEffect.transform.parent = transform;
     }
 
-    // 패링 이펙트 생성
-    public void CreateParrySkillEffect()
+    // 태클 이펙트 생성
+    public void CreateTackleSkillEffect()
     {
-        if (!photonView.IsMine)
-        {
-            attackStack = animator.GetInteger("AttackStack");
-        }
 
         // 패링 스킬 데미지 계산
         float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
@@ -1029,11 +1043,11 @@ public class PinkPlayerController : ParentPlayerController
 
         if (animator.GetBool("Right"))
         {
-            effectPath = $"SkillEffect/WhitePlayer/Parry_Right_Effect";
+            effectPath = $"SkillEffect/PinkPlayer/pink_tackle_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
         }
         else
         {
-            effectPath = $"SkillEffect/WhitePlayer/Parry_Left_Effect";
+            effectPath = $"SkillEffect/PinkPlayer/pink_tackle_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
         }
 
         // 다른 클라이언트에게도 이펙트를 생성하도록 RPC 호출

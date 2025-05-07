@@ -18,6 +18,7 @@ public class FinalBasicAttack : StateMachineBehaviour
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.GetComponent<WhitePlayerController>().attackStack = 0;
+
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

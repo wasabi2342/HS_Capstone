@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections;
 using Photon.Pun;
 using UnityEngine.UI;
@@ -11,21 +11,23 @@ public enum WhitePlayerState { Idle, Run, BasicAttack, Hit, Dash, Skill, Ultimat
 
 public class WhitePlayerController : ParentPlayerController
 {
-    [Header("´ë½¬ ¼³Á¤")]
+    [Header("ëŒ€ì‰¬ ì„¤ì •")]
     public float dashDistance = 2f;
     public float dashDoubleClickThreshold = 0.3f;
+    public float dashDuration = 0.2f;
     private Vector3 dashDirection;
+    private Vector3 facingDirection = Vector3.right;
     //private float lastDashClickTime = -Mathf.Infinity;
 
-    [Header("Áß½ÉÁ¡ ¼³Á¤")]
-    [Tooltip("±âº» CenterPoint (¾Ö´Ï¸ŞÀÌ¼Ç ÀÌº¥Æ® µî¿¡¼­ »ç¿ë)")]
+    [Header("ì¤‘ì‹¬ì  ì„¤ì •")]
+    [Tooltip("ê¸°ë³¸ CenterPoint (ì• ë‹ˆë©”ì´ì…˜ ì´ë²¤íŠ¸ ë“±ì—ì„œ ì‚¬ìš©)")]
     public Transform centerPoint;
     public float centerPointOffsetDistance = 0.5f;
-    [Tooltip("8¹æÇâ CenterPoint ¹è¿­ (¼ø¼­: 0=À§, 1=¿ì»ó, 2=¿À¸¥ÂÊ, 3=¿ìÇÏ, 4=¾Æ·¡, 5=ÁÂÇÏ, 6=¿ŞÂÊ, 7=ÁÂ»ó)")]
+    [Tooltip("8ë°©í–¥ CenterPoint ë°°ì—´ (ìˆœì„œ: 0=ìœ„, 1=ìš°ìƒ, 2=ì˜¤ë¥¸ìª½, 3=ìš°í•˜, 4=ì•„ë˜, 5=ì¢Œí•˜, 6=ì™¼ìª½, 7=ì¢Œìƒ)")]
     public Transform[] centerPoints = new Transform[8];
     private int currentDirectionIndex = 0;
 
-    // ÀÌµ¿ ÀÔ·Â ¹× »óÅÂ
+    // ì´ë™ ì…ë ¥ ë° ìƒíƒœ
     private Vector2 moveInput;
     public WhitePlayerState currentState = WhitePlayerState.Idle;
     public WhitePlayerState nextState = WhitePlayerState.Idle;
@@ -36,6 +38,7 @@ public class WhitePlayerController : ParentPlayerController
         //AttackCollider = GetComponentInChildren<WhitePlayerAttackZone>();
 
         base.Awake();
+        facingDirection = Vector3.right;
     }
 
     protected override void Start()
@@ -62,17 +65,6 @@ public class WhitePlayerController : ParentPlayerController
 
     private void Update()
     {
-        //if (currentState == WhitePlayerState.Death)
-        //{
-        //    if (Input.GetKeyDown(KeyCode.X))
-        //    {
-        //        RoomManager.Instance.SwitchCameraToNextPlayer();
-        //    }
-        //    return;
-        //}
-
-        //UpdateCenterPoint();
-        //Handle    Movement();
     }
 
     private void FixedUpdate()
@@ -89,21 +81,20 @@ public class WhitePlayerController : ParentPlayerController
             return;
         }
 
+
         UpdateCenterPoint();
         HandleMovement();
+
     }
 
-    // ÀÔ·Â Ã³¸® °ü·Ã
-    // WhitePlayercontroller_event.cs¿¡¼­ È£ÃâÇÏ¿© ÀÌµ¿ ÀÔ·ÂÀ» ¼³Á¤
+    // ì…ë ¥ ì²˜ë¦¬ ê´€ë ¨
     public void SetMoveInput(Vector2 input)
     {
         moveInput = input;
-        // xÃà ÀÔ·ÂÀÌ ÀÖÀ» ¶§¸¸ ¸¶Áö¸· ¹Ù¶óº» ¹æÇâ °»½Å
-        if (Mathf.Abs(input.x) > 0.01f)
-            lastFacingDirection = new Vector3(Mathf.Sign(input.x), 0f, 0f);
+      
     }
 
-    // ÀÌµ¿ Ã³¸®
+    // ì´ë™ ì²˜ë¦¬
     private void HandleMovement()
     {
         if (currentState == WhitePlayerState.Death || currentState == WhitePlayerState.Stun)
@@ -157,18 +148,27 @@ public class WhitePlayerController : ParentPlayerController
 
 
 
-        if (isMoving)
+        if (currentState == WhitePlayerState.Run)
         {
-            Vector3 moveDir;
-            moveDir = (Mathf.Abs(v) > 0.01f) ? new Vector3(h, 0, v).normalized : new Vector3(h, 0, 0).normalized;
-            rb.MovePosition(rb.position + moveDir * runTimeData.moveSpeed * Time.fixedDeltaTime);
-        }
+            // ì—¬ê¸°ì„œë§Œ ë°©í–¥ ê³ ì • ê°±ì‹ 
+            if (h > 0.01f) facingDirection = Vector3.right;
+            else if (h < -0.01f) facingDirection = Vector3.left;
 
-        if (animator != null)
-        {
+            // ì´ë™
+            Vector3 moveDir = (Mathf.Abs(v) > 0.01f)
+                ? new Vector3(h, 0, v).normalized
+                : new Vector3(h, 0, 0).normalized;
+            rb.MovePosition(rb.position + moveDir * runTimeData.moveSpeed * Time.fixedDeltaTime);
+
             animator.SetFloat("moveX", h);
             animator.SetFloat("moveY", v);
         }
+
+        //if (animator != null)
+        //{
+        //    animator.SetFloat("moveX", h);
+        //    animator.SetFloat("moveY", v);
+        //}
     }
 
     private void UpdateCenterPoint()
@@ -187,14 +187,15 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
+
     private int DetermineDirectionIndex(Vector2 input)
     {
         if (input.magnitude < 0.01f)
             return currentDirectionIndex;
+
         float angle = Mathf.Atan2(input.x, input.y) * Mathf.Rad2Deg;
         if (angle < 0) angle += 360f;
-        int idx = Mathf.RoundToInt(angle / 45f) % 8;
-        return idx;
+        return Mathf.RoundToInt(angle / 45f) % 8;
     }
 
     private Vector3 lastFacingDirection = Vector3.right;
@@ -202,46 +203,45 @@ public class WhitePlayerController : ParentPlayerController
 
 
 
-    // ´ë½¬ Ã³¸®
     public void HandleDash()
     {
-        // 1) »óÅÂ Ã¼Å©
-        if (currentState == WhitePlayerState.Death || currentState == WhitePlayerState.Dash)
+        if (currentState == WhitePlayerState.Death
+         || currentState == WhitePlayerState.Dash
+         || currentState == WhitePlayerState.Stun)
             return;
-        if (currentState == WhitePlayerState.Stun)
-            return;
+
         if (!cooldownCheckers[(int)Skills.Space].CanUse())
             return;
 
-        // 2) »óÅÂ ÀüÈ¯ & ¾Ö´Ï¸ŞÀÌÅÍ
-        currentState = WhitePlayerState.Dash;
-        animator.ResetTrigger("run");
-        animator.SetBool("dash", true);
-        if (PhotonNetwork.IsConnected)
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "dash", true);
+        nextState = WhitePlayerState.Dash;
+        //animator.ResetTrigger("run");
+        //animator.SetBool("dash", true);
+        //if (PhotonNetwork.IsConnected)
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "dash", true);
 
-        // 3) ´ë½¬ ¹æÇâ °áÁ¤
-        if (Mathf.Abs(moveInput.x) > 0.01f)
-        {
-            // ÀÔ·ÂÀÌ ÀÖÀ» ¶§
-            dashDirection = new Vector3(Mathf.Sign(moveInput.x), 0f, 0f);
-        }
-        else
-        {
-            // ÀÔ·Â ¾øÀ» ¶© ¸¶Áö¸· ¹Ù¶óº» ¹æÇâ »ç¿ë
-            dashDirection = lastFacingDirection;
-        }
+        // ì—¬ê¸°ì„œëŠ” ë¬´ì¡°ê±´ facingDirection ì‚¬ìš©
+        dashDirection = facingDirection;
 
-        // 4) ½ÇÁ¦ ÀÌµ¿ ÄÚ·çÆ¾ È£Ãâ (ÇÊ¿ä¿¡ µû¶ó ÁÖ¼® ÇØÁ¦)
-        // StartCoroutine(DoDash(dashDirection));
+        //StartCoroutine(DoDash());
     }
 
-    //private IEnumerator DoDash(Vector3 dashDir)
+
+    //private IEnumerator DoDash()
     //{
     //    Vector3 startPos = transform.position;
-    //    Vector3 targetPos = startPos + dashDir.normalized * dashDistance;
-    //    yield return null;
+    //    Vector3 targetPos = startPos + dashDirection * dashDistance;
+    //    float elapsed = 0f;
+
+    //    while (elapsed < dashDuration)
+    //    {
+    //        transform.position = Vector3.Lerp(startPos, targetPos, elapsed / dashDuration);
+    //        elapsed += Time.deltaTime;
+    //        yield return null;
+    //    }
+
     //    transform.position = targetPos;
+    //    animator.SetBool("dash", false);
+    //    currentState = WhitePlayerState.Idle;
     //}
 
 
@@ -304,7 +304,7 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
-    // Æ¯¼ö °ø°İ
+    // íŠ¹ìˆ˜ ê³µê²©
     public void HandleSpecialAttack()
     {
         if (currentState != WhitePlayerState.Death)
@@ -328,7 +328,7 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
-    // ±Ã±Ø±â °ø°İ 
+    // ê¶ê·¹ê¸° ê³µê²© 
     public void HandleUltimateAttack()
     {
         if (currentState != WhitePlayerState.Death)
@@ -355,7 +355,7 @@ public class WhitePlayerController : ParentPlayerController
 
     //public WhitePlayerAttackZone AttackCollider;
 
-    // °ø°İ ¾Ö´Ï¸ŞÀÌ¼Ç ÀÌº¥Æ®¿ë ½ºÅÓ (WhitePlayerController_AttackStack¿¡¼­ È£Ãâ) 
+    // ê³µê²© ì• ë‹ˆë©”ì´ì…˜ ì´ë²¤íŠ¸ìš© ìŠ¤í… (WhitePlayerController_AttackStackì—ì„œ í˜¸ì¶œ) 
 
     public override void StartMouseRCoolDown()
     {
@@ -407,7 +407,7 @@ public class WhitePlayerController : ParentPlayerController
         {
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", true);
         }
-        Debug.Log("¼±µô ½ÃÀÛ");
+        Debug.Log("ì„ ë”œ ì‹œì‘");
     }
 
     public void OnAttackPreAttckEnd()
@@ -420,7 +420,7 @@ public class WhitePlayerController : ParentPlayerController
         {
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
         }
-        Debug.Log("¼±µô Á¾·á");
+        Debug.Log("ì„ ë”œ ì¢…ë£Œ");
     }
 
     public void OnMoveFront(float value)
@@ -454,9 +454,9 @@ public class WhitePlayerController : ParentPlayerController
         return Vector3.zero;
     }
 
-    #region ½ºÅ³ ÀÌÆåÆ® »ı¼º
+    #region ìŠ¤í‚¬ ì´í™íŠ¸ ìƒì„±
 
-    // ±Ã±Ø±â ÀÌÆåÆ® »ı¼º
+    // ê¶ê·¹ê¸° ì´í™íŠ¸ ìƒì„±
     public void CreateUltimateEffect()
     {
         if (!photonView.IsMine)
@@ -466,7 +466,7 @@ public class WhitePlayerController : ParentPlayerController
 
         float damage = (runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
 
-        // Photon¿¡ Á¢¼Ó ÁßÀÎÁö È®ÀÎÇÏ¿© isMine ¼³Á¤
+        // Photonì— ì ‘ì† ì¤‘ì¸ì§€ í™•ì¸í•˜ì—¬ isMine ì„¤ì •
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
         SkillEffect skillEffect = null;
@@ -489,7 +489,7 @@ public class WhitePlayerController : ParentPlayerController
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.R].skillData.ID, this) : null);
     }
 
-    // ÆòÅ¸ ÀÌÆåÆ® »ı¼º
+    // í‰íƒ€ ì´í™íŠ¸ ìƒì„±
     public void CreateBasicAttackEffect()
     {
         if (!photonView.IsMine)
@@ -500,7 +500,7 @@ public class WhitePlayerController : ParentPlayerController
         float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
         float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * coefficient * damageBuff;
 
-        // Photon¿¡ Á¢¼Ó ÁßÀÎÁö È®ÀÎÇÏ¿© isMine ¼³Á¤
+        // Photonì— ì ‘ì† ì¤‘ì¸ì§€ í™•ì¸í•˜ì—¬ isMine ì„¤ì •
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
         SkillEffect skillEffect = null;
@@ -525,7 +525,7 @@ public class WhitePlayerController : ParentPlayerController
         skillEffect.transform.parent = transform;
     }
 
-    // ½ÃÇÁÆ® ½ºÅ³ ÀÌÆåÆ® »ı¼º
+    // ì‹œí”„íŠ¸ ìŠ¤í‚¬ ì´í™íŠ¸ ìƒì„±
     public void CreateShiftSkillEffect()
     {
         if (!photonView.IsMine)
@@ -535,7 +535,7 @@ public class WhitePlayerController : ParentPlayerController
 
         float damage = (runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
 
-        // Photon¿¡ Á¢¼Ó ÁßÀÎÁö È®ÀÎÇÏ¿© isMine ¼³Á¤
+        // Photonì— ì ‘ì† ì¤‘ì¸ì§€ í™•ì¸í•˜ì—¬ isMine ì„¤ì •
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
         SkillEffect skillEffect = null;
@@ -560,7 +560,7 @@ public class WhitePlayerController : ParentPlayerController
         skillEffect.transform.parent = transform;
     }
 
-    // Ä«¿îÅÍ ÀÌÆåÆ® »ı¼º
+    // ì¹´ìš´í„° ì´í™íŠ¸ ìƒì„±
     public void CreateCounterSkillEffect()
     {
         if (!photonView.IsMine)
@@ -570,7 +570,7 @@ public class WhitePlayerController : ParentPlayerController
 
         float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
 
-        // Photon¿¡ Á¢¼Ó ÁßÀÎÁö È®ÀÎÇÏ¿© isMine ¼³Á¤
+        // Photonì— ì ‘ì† ì¤‘ì¸ì§€ í™•ì¸í•˜ì—¬ isMine ì„¤ì •
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
         SkillEffect skillEffect = null;
@@ -595,7 +595,7 @@ public class WhitePlayerController : ParentPlayerController
         skillEffect.transform.parent = transform;
     }
 
-    // ÆĞ¸µ ÀÌÆåÆ® »ı¼º
+    // íŒ¨ë§ ì´í™íŠ¸ ìƒì„±
     public void CreateParrySkillEffect()
     {
         if (!photonView.IsMine)
@@ -605,7 +605,7 @@ public class WhitePlayerController : ParentPlayerController
 
         float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
 
-        // Photon¿¡ Á¢¼Ó ÁßÀÎÁö È®ÀÎÇÏ¿© isMine ¼³Á¤
+        // Photonì— ì ‘ì† ì¤‘ì¸ì§€ í™•ì¸í•˜ì—¬ isMine ì„¤ì •
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
         SkillEffect skillEffect = null;
@@ -630,7 +630,7 @@ public class WhitePlayerController : ParentPlayerController
         skillEffect.transform.parent = transform;
     }
 
-    // ½ºÆäÀÌ½º ÀÌÆåÆ® ÄÁÅ×ÀÌ³Ê¿¡ È¿°ú¸¸ ³ªÅ¸³ªµµ·Ï
+    // ìŠ¤í˜ì´ìŠ¤ ì´í™íŠ¸ ì»¨í…Œì´ë„ˆì— íš¨ê³¼ë§Œ ë‚˜íƒ€ë‚˜ë„ë¡
     public void CreateSpaceSkillEffect()
     {
         if (!photonView.IsMine)
@@ -638,7 +638,7 @@ public class WhitePlayerController : ParentPlayerController
             return;
         }
 
-        // Photon¿¡ Á¢¼Ó ÁßÀÌ ¾Æ´Ò ¶§ photonView.IsMine °ªÀº false·Î Ã³¸®
+        // Photonì— ì ‘ì† ì¤‘ì´ ì•„ë‹ ë•Œ photonView.IsMine ê°’ì€ falseë¡œ ì²˜ë¦¬
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/EffectContainer"), transform.position, Quaternion.identity);
@@ -659,7 +659,7 @@ public class WhitePlayerController : ParentPlayerController
         if (!photonView.IsMine && PhotonNetwork.IsConnected)
             return;
 
-        Debug.Log("±Ã±Ø±â ³³µµ ¹öÇÁ");
+        Debug.Log("ê¶ê·¹ê¸° ë‚©ë„ ë²„í”„");
     }
 
     public void UltimateMove(float distance)
@@ -682,7 +682,7 @@ public class WhitePlayerController : ParentPlayerController
         {
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", true);
         }
-        Debug.Log("ÀÚÀ¯»óÅÂ");
+        Debug.Log("ììœ ìƒíƒœ");
     }
 
     public void OnAttackAnimationEnd()
@@ -701,7 +701,7 @@ public class WhitePlayerController : ParentPlayerController
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", false);
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
         }
-        Debug.Log(" ¾Ö´Ï¸ŞÀÌ¼Ç Á¾·á");
+        Debug.Log(" ì• ë‹ˆë©”ì´ì…˜ ì¢…ë£Œ");
     }
 
     public void InitAttackStak()
@@ -713,7 +713,7 @@ public class WhitePlayerController : ParentPlayerController
         AttackStackUpdate?.Invoke(attackStack);
     }
 
-    // °¡µå/ÆĞ¸µ Ã³¸®
+    // ê°€ë“œ/íŒ¨ë§ ì²˜ë¦¬
     public void HandleGuard()
     {
         if (currentState != WhitePlayerState.Death)
@@ -736,7 +736,7 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
-    // ÇÇ°İ ¹× »ç¸Á Ã³¸®
+    // í”¼ê²© ë° ì‚¬ë§ ì²˜ë¦¬
     public override void TakeDamage(float damage, AttackerType attackerType = AttackerType.Default)
     {
         if (PhotonNetwork.IsConnected && !photonView.IsMine)
@@ -768,7 +768,7 @@ public class WhitePlayerController : ParentPlayerController
 
         base.TakeDamage(damage);
 
-        Debug.Log("ÇÃ·¹ÀÌ¾î Ã¼·Â: " + runTimeData.currentHealth);
+        Debug.Log("í”Œë ˆì´ì–´ ì²´ë ¥: " + runTimeData.currentHealth);
 
         if (runTimeData.currentHealth <= 0)
         {
@@ -809,7 +809,7 @@ public class WhitePlayerController : ParentPlayerController
     public override void UpdateHP(float hp)
     {
         base.UpdateHP(hp);
-        Debug.Log(photonView.ViewID + "ÇÃ·¹ÀÌ¾î Ã¼·Â: " + runTimeData.currentHealth);
+        Debug.Log(photonView.ViewID + "í”Œë ˆì´ì–´ ì²´ë ¥: " + runTimeData.currentHealth);
 
         if (runTimeData.currentHealth <= 0)
         {
@@ -819,19 +819,19 @@ public class WhitePlayerController : ParentPlayerController
             }
         }
 
-        Debug.Log(photonView.ViewID + " ÇÃ·¹ÀÌ¾î Ã¼·Â ¾÷µ¥ÀÌÆ®µÊ: " + runTimeData.currentHealth);
+        Debug.Log(photonView.ViewID + " í”Œë ˆì´ì–´ ì²´ë ¥ ì—…ë°ì´íŠ¸ë¨: " + runTimeData.currentHealth);
     }
 
-    // ±âÀı
+    // ê¸°ì ˆ
 
-    // GaugeInteraction Å¬·¡½º ÂüÁ¶
+    // GaugeInteraction í´ë˜ìŠ¤ ì°¸ì¡°
     private GaugeInteraction gaugeInteraction;
 
     private Coroutine stunCoroutine;
     private void EnterStunState()
     {
         currentState = WhitePlayerState.Stun;
-        Debug.Log("ÇÃ·¹ÀÌ¾î ±âÀı");
+        Debug.Log("í”Œë ˆì´ì–´ ê¸°ì ˆ");
         animator.SetBool("stun", true);
         if (PhotonNetwork.IsConnected)
         {
@@ -854,7 +854,7 @@ public class WhitePlayerController : ParentPlayerController
             stunOverlay.enabled = true;
             stunSlider.enabled = true;
             stunSlider.fillAmount = 1f;
-            hpBar.enabled = false;  // ±âÀı »óÅÂ¿¡¼± Ã¼·Â¹Ù ºñÈ°¼ºÈ­
+            hpBar.enabled = false;  // ê¸°ì ˆ ìƒíƒœì—ì„  ì²´ë ¥ë°” ë¹„í™œì„±í™”
         }
 
         while (elapsed < stunDuration && currentState == WhitePlayerState.Stun)
@@ -869,7 +869,7 @@ public class WhitePlayerController : ParentPlayerController
             yield return null;
         }
 
-        if (currentState == WhitePlayerState.Stun)  // ¿©ÀüÈ÷ ±âÀı»óÅÂ¶ó¸é
+        if (currentState == WhitePlayerState.Stun)  // ì—¬ì „íˆ ê¸°ì ˆìƒíƒœë¼ë©´
         {
             TransitionToDeath();
         }
@@ -883,7 +883,7 @@ public class WhitePlayerController : ParentPlayerController
 
     public void Revive()
     {
-        Debug.Log("Revive ½ÇÇàµÊ");
+        Debug.Log("Revive ì‹¤í–‰ë¨");
 
         if (!photonView.IsMine)
         {
@@ -913,8 +913,8 @@ public class WhitePlayerController : ParentPlayerController
                 photonView.RPC("SyncBoolParameter", RpcTarget.Others, "revive", true);
             }
 
-            photonView.RPC("UpdateHP", RpcTarget.All, 20f); // ¿©±â¼­ Ã¼·Â ¾÷µ¥ÀÌÆ®
-            Debug.Log("ÇÃ·¹ÀÌ¾î ºÎÈ°");
+            photonView.RPC("UpdateHP", RpcTarget.All, 20f); // ì—¬ê¸°ì„œ ì²´ë ¥ ì—…ë°ì´íŠ¸
+            Debug.Log("í”Œë ˆì´ì–´ ë¶€í™œ");
         }
     }
 
@@ -928,12 +928,12 @@ public class WhitePlayerController : ParentPlayerController
     private void TransitionToDeath()
     {
         currentState = WhitePlayerState.Death;
-        Debug.Log("ÇÃ·¹ÀÌ¾î »ç¸Á");
+        Debug.Log("í”Œë ˆì´ì–´ ì‚¬ë§");
         if (photonView.IsMine)
         {
             stunSlider.enabled = false;
             stunOverlay.enabled = false;
-            hpBar.enabled = false;  // »ç¸Á½Ã Ã¼·Â¹Ù ºñÈ°¼ºÈ­
+            hpBar.enabled = false;  // ì‚¬ë§ì‹œ ì²´ë ¥ë°” ë¹„í™œì„±í™”
         }
 
         if (animator != null)
