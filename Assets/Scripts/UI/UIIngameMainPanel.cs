@@ -231,7 +231,7 @@ public class UIIngameMainPanel : UIBase
         // 이미지 활성화 및 알파 1로 설정
         hitOverlay.gameObject.SetActive(true);
         Color color = hitOverlay.color;
-        color.a = 0.5f;
+        color.a = 1f;
         hitOverlay.color = color;
 
         float duration = 1f;
@@ -240,7 +240,7 @@ public class UIIngameMainPanel : UIBase
         while (elapsed < duration)
         {
             elapsed += Time.fixedDeltaTime;
-            color.a = Mathf.Lerp(0.5f, 0f, elapsed / duration);
+            color.a = Mathf.Lerp(1f, 0f, elapsed / duration);
             hitOverlay.color = color;
             yield return new WaitForFixedUpdate();
         }
