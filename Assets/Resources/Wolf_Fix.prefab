@@ -162,7 +162,7 @@ NavMeshAgent:
   m_Height: 1.74
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 2
+  m_ObstacleAvoidanceType: 1
 --- !u!136 &2690218350716682373
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -238,8 +238,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ba0b9e8e6acfb941b5b0ed3ee7bdc52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chargeSpeed: 10
-  weaponCollider: {fileID: 2400343500577941846}
+  chargeSpeed: 7
+  maxChargeDistance: 3
+  weaponColliderObject: {fileID: 2400343500577941846}
 --- !u!114 &8751130033872277833
 MonoBehaviour:
   m_ObjectHideFlags: 0

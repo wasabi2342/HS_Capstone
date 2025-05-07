@@ -37,10 +37,8 @@ public class AttackState : BaseState
 
         /* 윈드업 구간 */
         yield return new WaitForSeconds(half);
-
-        /* 중간 지점에서 맞았는지 체크만 */
-        fsm.LastAttackSuccessful = fsm.IsAlignedAndInRange();
-
+        /* 실제 공격 활성화 */
+        fsm.AttackComponent?.Attack(fsm.Target);
         /* 후딜 구간 */
         yield return new WaitForSeconds(half);
 
