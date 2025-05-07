@@ -3,14 +3,14 @@ using Photon.Pun;
 
 [RequireComponent(typeof(Collider))]
 public class MonsterAttackCollider : MonoBehaviourPun
-{   
-    private EnemyAI enemyAI;
+{
+    private EnemyFSM fsm;
     private Vector3 defaultCenter;    // 기본 Center 저장
 
     private void Awake()
     {
-        if (enemyAI == null)
-            enemyAI = GetComponentInParent<EnemyAI>();
+        if (fsm == null)
+            fsm = GetComponentInParent<EnemyFSM>();
     }
 
     // ─────────────────────────────
@@ -23,9 +23,9 @@ public class MonsterAttackCollider : MonoBehaviourPun
             return;
 
         IDamageable damageable = other.GetComponentInParent<IDamageable>();
-        if (damageable != null && enemyAI != null)
+        if (damageable != null && fsm != null)
         {
-            damageable.TakeDamage(enemyAI.status.damage);
+            damageable.TakeDamage(fsm.EnemyStatusRef.attackDamage);
         }
     }
 }
