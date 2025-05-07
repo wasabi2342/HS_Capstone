@@ -30,7 +30,7 @@ public class CoopOrBetray : MonoBehaviourPun, IInteractable
             }
             else
             {
-                UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("상호작용이 불가능합니다.");
+                UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("상호작용이 불가능합니다.");
             }
         }
     }
@@ -39,7 +39,7 @@ public class CoopOrBetray : MonoBehaviourPun, IInteractable
     public void Interact()
     {
         canInteract = false;
-        UIManager.Instance.OpenPopupPanel<UICoopOrBetrayPanel>();
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UICoopOrBetrayPanel>();
     }
 
     private void OnTriggerEnter(Collider other)

@@ -78,7 +78,7 @@ public class UITitlePanel : UIBase
         // 1초 대기 후 UI 패널 열기
         yield return new WaitForSeconds(0.5f);
 
-        UIManager.Instance.OpenPanel<UiStartPanel>();
+        UIManager.Instance.OpenPanelInOverlayCanvas<UiStartPanel>();
     }
 
     IEnumerator FadeImageAlpha(Image image, float from, float to, float duration)

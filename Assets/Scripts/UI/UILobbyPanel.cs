@@ -126,7 +126,7 @@ public class UILobbyPanel : UIBase
         // 비밀번호가 있는지 확인
         if (room.CustomProperties.ContainsKey("Password"))
         {
-            UIManager.Instance.OpenPopupPanel<UICheckPasswordPanel>().Init(room, isCorrect =>
+            UIManager.Instance.OpenPopupPanelInOverlayCanvas<UICheckPasswordPanel>().Init(room, isCorrect =>
             {
                 if (isCorrect)
                 {
@@ -134,7 +134,7 @@ public class UILobbyPanel : UIBase
                 }
                 else
                 {
-                    UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("비밀번호가 틀렸습니다.");
+                    UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("비밀번호가 틀렸습니다.");
                 }
             });
         }
@@ -149,7 +149,7 @@ public class UILobbyPanel : UIBase
     public override void OnJoinedRoom()
     {
         UIManager.Instance.CloseAllUI();
-        UIManager.Instance.OpenPopupPanel<UIRoomPanel>();
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIRoomPanel>();
     }
 
     private void OnClickedCreateRoomButton()
@@ -160,7 +160,7 @@ public class UILobbyPanel : UIBase
     private void OnClickedPreButton()
     {
         PhotonNetwork.Disconnect();
-        UIManager.Instance.OpenPanel<UiStartPanel>();
+        UIManager.Instance.OpenPanelInOverlayCanvas<UiStartPanel>();
     }
 
     private void OnClickedSearchRoomButton()
@@ -197,7 +197,7 @@ public class UILobbyPanel : UIBase
 
         if (string.IsNullOrEmpty(targetName))
         {
-            UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("방 이름을 입력해주세요.");
+            UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("방 이름을 입력해주세요.");
 
             return;
         }
@@ -208,7 +208,7 @@ public class UILobbyPanel : UIBase
         }
         else
         {
-            UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("해당 이름의 방이 존재하지 않습니다.");
+            UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("해당 이름의 방이 존재하지 않습니다.");
         }
     }
 }

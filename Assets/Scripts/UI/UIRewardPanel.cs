@@ -31,6 +31,9 @@ public class UIRewardPanel : UIBase
             rewardNameText.text = "(보상 이름)";
         if (detailText != null)
             detailText.text = "(보상 설명)";
+
+        // 게임데이터 저장 하기
+        RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData(); 
     }
 
     public void OpenRewardUI()

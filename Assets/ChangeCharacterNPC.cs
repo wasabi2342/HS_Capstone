@@ -14,7 +14,7 @@ public class ChangeCharacterNPC : MonoBehaviour, IInteractable
     {
         if (ctx.started)
         {
-            UIManager.Instance.OpenPopupPanel<UIChangeCharacterPanel>().GetCharacter(player);
+            UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIChangeCharacterPanel>().GetCharacter(player);
         }
     }
 

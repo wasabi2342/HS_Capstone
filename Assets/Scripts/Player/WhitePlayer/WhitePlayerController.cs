@@ -38,8 +38,10 @@ public class WhitePlayerController : ParentPlayerController
         base.Awake();
     }
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         currentState = WhitePlayerState.Idle;
 
         if (photonView.IsMine || !PhotonNetwork.IsConnected)

@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class UIMinimapPanel :UIBase
 {
@@ -59,9 +60,24 @@ public class UIMinimapPanel :UIBase
         }
     }
 
-    void LateUpdate()
+    private void Start()
     {
-        RefreshIcons();
+        StartCoroutine(CoRefreshIcons());
+    }
+
+    //void LateUpdate()
+    //{
+    //    RefreshIcons();
+    //}
+
+
+    private IEnumerator CoRefreshIcons()
+    {
+        while (true)
+        {
+            RefreshIcons();
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 
     void RefreshIcons()

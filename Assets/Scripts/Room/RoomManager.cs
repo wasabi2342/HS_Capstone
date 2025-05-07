@@ -193,7 +193,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     public UIConfirmPanel InteractWithDungeonNPC()
     {
-        var panel = UIManager.Instance.OpenPopupPanel<UIConfirmPanel>();
+        var panel = UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIConfirmPanel>();
         panel.Init(
             () => WaitForEnterStage(),
             () => UIManager.Instance.ClosePeekUI(),
@@ -298,5 +298,14 @@ public class RoomManager : MonoBehaviourPunCallbacks
         obj.layer = layer;
         foreach (Transform child in obj.transform)
             SetLayerRecursively(child.gameObject, layer);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player") &&(!PhotonNetwork.InRoom ||
+            (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
+        {
+            other.transform.position = spawnPoint;
+        }
     }
 }

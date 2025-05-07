@@ -16,7 +16,7 @@ public class SelectBlessingNPC : MonoBehaviour, IInteractable
         {
             Debug.Log("상호작용 함수 호출 if문 실행");
             canIneract = false;
-            UIManager.Instance.OpenPopupPanel<UISelectBlessingPanel>();
+            UIManager.Instance.OpenPopupPanelInCameraCanvas<UISelectBlessingPanel>();
             InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
         }
     }
