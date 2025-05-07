@@ -4,8 +4,12 @@ using Photon.Pun;
 
 public class WanderState : BaseState
 {
-    const float IDLE_CHANCE = 0.5f;
-    const float DETECT_INTERVAL = 0.2f;
+    // ───────── 배회 전환/탐지 파라미터 ─────────
+    const float IDLE_CHANCE = 0.5f;  // Idle로 전환할 확률
+    const float DETECT_INTERVAL = 0.2f;  // 플레이어 탐지 주기
+
+    // ───────── 최소 배회 이동 시간 ─────────
+    const float MIN_WANDER_TIME = 0.2f;  // 최소 n초 이동하도록 강제
 
     float detectT, repathT;
 
@@ -43,8 +47,15 @@ public class WanderState : BaseState
 
         // 목적지 도달 또는 막힘 처리
         repathT += Time.deltaTime;
-        if ((!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance) ||
-            (repathT >= 3f && agent.velocity.sqrMagnitude < 0.01f))
+
+        bool arrived = !agent.pathPending
+                        && agent.remainingDistance <= agent.stoppingDistance
+                        && repathT >= MIN_WANDER_TIME;   // ★ 최소 시간 경과했을 때만
+
+        bool blocked = repathT >= 3f
+                        && agent.velocity.sqrMagnitude < 0.01f;
+
+        if (arrived || blocked)
         {
             if (Random.value < IDLE_CHANCE)
                 fsm.TransitionToState(typeof(IdleState));

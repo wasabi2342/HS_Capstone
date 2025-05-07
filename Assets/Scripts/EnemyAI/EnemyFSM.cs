@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using Photon.Pun;
+using Unity.AppUI.UI;
 
 [RequireComponent(typeof(NavMeshAgent), typeof(PhotonView))]
 public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
@@ -16,9 +17,10 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     public EnemyStatusSO EnemyStatusRef => enemyStatus;
 
     /* ───────── Status ───────── */
-    float maxHP, hp;
-    float maxShield, shield;
+    float maxHP, hp;    
     public float currentHP => hp;
+    float maxShield, shield;
+
 
     /* ───────── Facing ───────── */
     float lastMoveX = 1f;                       // +1 ⇒ Right , -1 ⇒ Left
@@ -229,10 +231,10 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
 
     /* ────────────────────────── IDamageable ─────────────────────── */
     public void TakeDamage(float damage, AttackerType t = AttackerType.Default)
-        => pv.RPC(nameof(DamageToMaster), RpcTarget.MasterClient, damage);
+        => pv.RPC(nameof(DamageToMaster), RpcTarget.MasterClient, damage, PhotonNetwork.LocalPlayer.ActorNumber);
 
     [PunRPC]
-    public void DamageToMaster(float damage)
+    public void DamageToMaster(float damage, int attackerActor)
     {
         if (!PhotonNetwork.IsMasterClient) return;
 
@@ -246,8 +248,10 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
             if (shield == 0f && prev > 0f)
                 pv.RPC(nameof(RPC_ShieldBreakFx), RpcTarget.All);
         }
-
+        
+        float prevHP = hp;
         hp = Mathf.Max(0f, hp - damage);
+        float deltaHP = prevHP - hp;
         pv.RPC(nameof(UpdateHP), RpcTarget.AllBuffered, hp / maxHP);
 
         /* 넉백 & FX */
@@ -255,15 +259,22 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         bool fromRight = atkPos.x < transform.position.x;
         pv.RPC(nameof(RPC_ApplyKnockback), RpcTarget.All, atkPos);
         pv.RPC(nameof(RPC_SpawnHitFx), RpcTarget.All, transform.position, fromRight);
-
+        pv.RPC(nameof(RPC_ShowDamage), RpcTarget.All, deltaHP);
         TransitionToState(hp <= 0f ? typeof(DeadState) : typeof(HitState));
     }
 
     /* ─ HP / Shield UI 동기화 ─ */
     [PunRPC]
     public void UpdateHP(float r)
-    { if (uiHP) { uiHP.SetHP(r); uiHP.CheckThreshold(r, false); } }
-
+    { if (uiHP != null) uiHP.SetHP(r); }
+    [PunRPC]
+    void RPC_ShowDamage(float damage)
+    {
+        if (uiHP != null)
+        {
+            uiHP.ShowDamage((int)damage);
+        }
+    }
     [PunRPC]
     public void UpdateShield(float r)
     { if (uiHP) { uiHP.SetShield(r); uiHP.CheckThreshold(r, true); } }

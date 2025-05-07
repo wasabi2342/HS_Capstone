@@ -23,7 +23,7 @@ public enum PlayerState
 /// 체력, 쿨타임, 네트워크 동기화 로직을 여기서 처리하고
 /// 각 파생 클래스는 스킬·애니메이션만 구현합니다.
 /// </summary>
-public class PlayerController : MonoBehaviourPun, IDamageable
+public class PlayerController : MonoBehaviourPun
 {
     // ───────────────────────────────────────── I N S P E C T O R ──────
     [Header("Hit‑lag Settings")]
