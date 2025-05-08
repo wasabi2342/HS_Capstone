@@ -43,8 +43,10 @@ public class PinkPlayerController : ParentPlayerController
         facingDirection = Vector3.right;
     }
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         currentState = PinkPlayerState.Idle;
 
         if (photonView.IsMine)
@@ -53,7 +55,7 @@ public class PinkPlayerController : ParentPlayerController
             {
 
                 if (stunOverlay != null) stunOverlay.enabled = false;
-                if (stunSlider != null) stunSlider.enabled = false;
+                if (stunSlider != null) stunSlider.gameObject.SetActive(false);
                 if (hpBar != null) hpBar.enabled = true;
 
                 gaugeInteraction = GetComponentInChildren<GaugeInteraction>();
@@ -1242,7 +1244,7 @@ public class PinkPlayerController : ParentPlayerController
         if (photonView.IsMine)
         {
             stunOverlay.enabled = true;
-            stunSlider.enabled = true;
+            stunSlider.gameObject.SetActive(true);
             stunSlider.fillAmount = 1f;
             hpBar.enabled = false;  // 기절 상태에선 체력바 비활성화
         }
@@ -1266,7 +1268,7 @@ public class PinkPlayerController : ParentPlayerController
 
         if (photonView.IsMine)
         {
-            stunSlider.enabled = false;
+            stunSlider.gameObject.SetActive(false);
             stunOverlay.enabled = false;
         }
     }
@@ -1290,7 +1292,7 @@ public class PinkPlayerController : ParentPlayerController
 
             if (photonView.IsMine)
             {
-                stunSlider.enabled = false;
+                stunSlider.gameObject.SetActive(false);
                 stunOverlay.enabled = false;
                 hpBar.enabled = true;
             }
@@ -1319,7 +1321,7 @@ public class PinkPlayerController : ParentPlayerController
         Debug.Log("플레이어 사망");
         if (photonView.IsMine)
         {
-            stunSlider.enabled = false;
+            stunSlider.gameObject.SetActive(false);
             stunOverlay.enabled = false;
             hpBar.enabled = false;  // 사망시 체력바 비활성화
         }

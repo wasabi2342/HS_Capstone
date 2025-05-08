@@ -629,7 +629,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2714852837274069670, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 2.4
       objectReference: {fileID: 0}
     - target: {fileID: 2714852837274069670, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
       propertyPath: m_LocalPosition.y
@@ -670,10 +670,6 @@ PrefabInstance:
     - target: {fileID: 4131734313779836671, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
       propertyPath: m_Name
       value: WhitePlayer
-      objectReference: {fileID: 0}
-    - target: {fileID: 4131734313779836671, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7687062139411390392, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
       propertyPath: sceneViewId
@@ -1520,6 +1516,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitlagTime: 0.117
+  shadow: {fileID: 0}
+  nicknameText: {fileID: 0}
   footPivot: {fileID: 0}
   stunOverlay: {fileID: 0}
   stunSlider: {fileID: 0}
@@ -1549,6 +1547,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   SkillOutlineUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHitEvent:
     m_PersistentCalls:
       m_Calls: []
   characterBaseStats: {fileID: 11400000, guid: 61ca03da317d77c45b67a57d535d6138, type: 2}
