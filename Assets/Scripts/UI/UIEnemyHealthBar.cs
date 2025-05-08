@@ -105,15 +105,16 @@ public class UIEnemyHealthBar : MonoBehaviour
         if (damageTextPrefab == null) return;
 
         // 1) 텍스트 인스턴스 생성
-        var go = Instantiate(damageTextPrefab, transform.parent);
-        var txt = go.GetComponent<Text>();
-        txt.text = Mathf.RoundToInt(damage).ToString();
-
+        var go = Instantiate(damageTextPrefab, Vector3.zero, Quaternion.identity, this.transform);
         // 2) 위치: HP바 바로 위
         go.transform.position = transform.position + Vector3.up * 0.2f;
-        go.transform.forward = cam.transform.forward;
-
-        // 3) 위로 떠오르며 페이드아웃
+        Vector3 ps = this.transform.lossyScale;
+        go.transform.localScale = Vector3.one * 0.01f;
+        go.transform.rotation = Quaternion.LookRotation(cam.transform.forward);
+        // 3) 텍스트 세팅
+        Text txt = go.GetComponentInChildren<Text>();
+        txt.text = Mathf.RoundToInt(damage).ToString();
+        // 4) 위로 떠오르며 페이드아웃
         StartCoroutine(CoFloatAndFade(go, txt));
     }
 
