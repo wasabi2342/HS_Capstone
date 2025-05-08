@@ -34,7 +34,7 @@ public class UIChangeCharacterPanel : UIBase
             button.onClick.AddListener(() =>
             {
                 selectedCharacterIndex = index;
-                UIManager.Instance.OpenPopupPanel<UICharacterInfoPanel>().Init(characterDatas[index], SelcetCharacter);
+                UIManager.Instance.OpenPopupPanelInOverlayCanvas<UICharacterInfoPanel>().Init(characterDatas[index], SelcetCharacter);
             });
         }
         cancelButton.onClick.AddListener(OnClickedCancelButton);
@@ -49,10 +49,10 @@ public class UIChangeCharacterPanel : UIBase
     {
         if (PhotonNetwork.InRoom)
         {
-            if (!(characterDatas[selectedCharacterIndex].name == player.GetComponent<ParentPlayerController>().ReturnCharacterName()))
+            if (!(characterDatas[selectedCharacterIndex].name == player.GetComponentInParent<ParentPlayerController>().ReturnCharacterName()))
             {
                 RoomManager.Instance.CreateCharacter(characterDatas[selectedCharacterIndex].name, player.transform.position, player.transform.rotation, true);
-                PhotonNetwork.Destroy(player);
+                PhotonNetwork.Destroy(player.transform.root.gameObject);
             }
             UIManager.Instance.ClosePeekUI();
         }
@@ -61,7 +61,7 @@ public class UIChangeCharacterPanel : UIBase
             if (!(characterDatas[selectedCharacterIndex].name == player.GetComponent<ParentPlayerController>().ReturnCharacterName()))
             {
                 RoomManager.Instance.CreateCharacter(characterDatas[selectedCharacterIndex].name, player.transform.position, player.transform.rotation, true);
-                Destroy(player);
+                Destroy(player.transform.root.gameObject);
             }
         }
 

@@ -34,7 +34,7 @@ public class UILogoPanel : UIBase
 
         yield return StartCoroutine(FadeImageAlpha(fadeImage, 0f, 1f, 0.5f));
 
-        UIManager.Instance.OpenPanel<UITitlePanel>();
+        UIManager.Instance.OpenPanelInOverlayCanvas<UITitlePanel>();
     }
 
     IEnumerator FadeImageAlpha(Image image, float from, float to, float duration)

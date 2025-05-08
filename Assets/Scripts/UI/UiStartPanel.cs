@@ -27,19 +27,19 @@ public class UiStartPanel : UIBase
     private void OnClikedMultiPlayButton()
     {
         PhotonNetworkManager.Instance.ConnectPhoton();
-        UIManager.Instance.OpenPanel<UILobbyPanel>();
+        UIManager.Instance.OpenPanelInOverlayCanvas<UILobbyPanel>();
     }
 
     public override void Init()
     {
         multiPlayButton.onClick.AddListener(OnClikedMultiPlayButton);
         quitButton.onClick.AddListener(QuitGame);
-        settingButton.onClick.AddListener(() => UIManager.Instance.OpenPopupPanel<UISettingPanel>());
+        settingButton.onClick.AddListener(() => UIManager.Instance.OpenPopupPanelInOverlayCanvas<UISettingPanel>());
 
         singlePlayButton.onClick.AddListener(() =>
         {
             UIManager.Instance.CloseAllUI();
-            UIManager.Instance.OpenPanel<UIRoomPanel>();
+            UIManager.Instance.OpenPanelInOverlayCanvas<UIRoomPanel>();
         }
         );
     }

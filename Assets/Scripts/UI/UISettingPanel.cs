@@ -10,7 +10,7 @@ public class UISettingPanel : UIBase
 
     public override void Init()
     {
-        changeNicknameButton.onClick.AddListener(() => UIManager.Instance.OpenPopupPanel<UISetNicknamePanel>());
+        changeNicknameButton.onClick.AddListener(() => UIManager.Instance.OpenPopupPanelInOverlayCanvas<UISetNicknamePanel>());
         confirmButton.onClick.AddListener(() => UIManager.Instance.ClosePeekUI());
     }
 

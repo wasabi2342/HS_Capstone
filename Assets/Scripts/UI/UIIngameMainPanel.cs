@@ -1,6 +1,7 @@
 using Photon.Pun;
 using Photon.Realtime;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -40,8 +41,13 @@ public class UIIngameMainPanel : UIBase
     private TextMeshProUGUI goldText;
     [SerializeField]
     private List<Image> playerIconList = new List<Image>();
-
-
+    [SerializeField]
+    private Image hitOverlay;
+    [SerializeField] 
+    private float hitOverlayDuration = 0.5f;
+    
+    private Coroutine hitOverlayCoroutine;
+    
     private Dictionary<int, UIPartyHPContent> contentPairs = new Dictionary<int, UIPartyHPContent>();
 
     private System.Action<InputAction.CallbackContext> openBlessingInfoAction;
@@ -91,6 +97,9 @@ public class UIIngameMainPanel : UIBase
             playerController.stunSlider = stunSlider;
             playerController.ShieldUpdate.RemoveAllListeners();
             playerController.ShieldUpdate.AddListener(UpdateShieldImage);
+            playerController.OnHitEvent.RemoveAllListeners();
+            playerController.OnHitEvent.AddListener(OnHitOverlay);
+            playerController.UpdateHP();
         }
 
         if (Enum.TryParse<Characters>(playerController.ReturnCharacterName(), out var character))
@@ -113,6 +122,7 @@ public class UIIngameMainPanel : UIBase
         {
             playerController.OnHealthChanged.RemoveAllListeners();
             playerController.OnHealthChanged.AddListener(content.UpdateHPImage);
+            playerController.UpdateHP();
         }
         contentPairs[actnum] = content;
     }
@@ -178,7 +188,7 @@ public class UIIngameMainPanel : UIBase
 
     public void OpenBlessingInfoPanel(InputAction.CallbackContext ctx)
     {
-        UIManager.Instance.OpenPopupPanel<UISkillInfoPanel>();
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UISkillInfoPanel>();
         InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
     }
 
@@ -202,5 +212,43 @@ public class UIIngameMainPanel : UIBase
     {
         shieldImage.fillAmount = shieldAmount / maxShield;
         shieldText.text = $"{shieldAmount}/{maxShield}";
+    }
+
+    public void OnHitOverlay()
+    {
+        // 이전 코루틴이 실행 중이면 중단
+        if (hitOverlayCoroutine != null)
+        {
+            StopCoroutine(hitOverlayCoroutine);
+        }
+
+        // 새 코루틴 시작
+        hitOverlayCoroutine = StartCoroutine(HitOverlayFade());
+    }
+
+    private IEnumerator HitOverlayFade()
+    {
+        // 이미지 활성화 및 알파 1로 설정
+        hitOverlay.gameObject.SetActive(true);
+        Color color = hitOverlay.color;
+        color.a = 1f;
+        hitOverlay.color = color;
+
+        float duration = 1f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.fixedDeltaTime;
+            color.a = Mathf.Lerp(1f, 0f, elapsed / duration);
+            hitOverlay.color = color;
+            yield return new WaitForFixedUpdate();
+        }
+
+        // 완전히 투명해진 후 비활성화
+        color.a = 0f;
+        hitOverlay.color = color;
+        hitOverlay.gameObject.SetActive(false);
+        hitOverlayCoroutine = null;
     }
 }

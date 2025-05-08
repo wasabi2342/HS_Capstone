@@ -37,6 +37,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     public UnityEvent<float> AttackStackUpdate;
     public UnityEvent<float, float> ShieldUpdate;
     public UnityEvent<UIIcon, Color> SkillOutlineUpdate;
+    public UnityEvent OnHitEvent;
+
 
     public CooldownChecker[] cooldownCheckers = new CooldownChecker[(int)Skills.Max];
 
@@ -68,14 +70,36 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     {
         runTimeData = new PlayerRunTimeData(characterBaseStats);
 
+        BindCooldown();
+
+        playerBlessing = GetComponent<PlayerBlessing>();
+        rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
+
+        if (animator == null)
+        {
+            Debug.LogError("Animator 컴포넌트를 찾을 수 없습니다! (WhitePlayerController)");
+        }
+
+        // 애니메이터 속도는 미리 설정
+        animator.speed = runTimeData.attackSpeed;
+    }
+
+    protected virtual void Start()
+    {
         if (PhotonNetwork.IsConnected)
         {
             if (photonView.IsMine)
             {
                 runTimeData.LoadFromJsonFile();
-                photonView.RPC("UpdateHP", RpcTarget.Others, runTimeData.currentHealth);
+
+                // 내 체력으로 동기화
+                photonView.RPC("UpdateHP", RpcTarget.OthersBuffered, runTimeData.currentHealth);
                 nicknameText.text = PhotonNetwork.CurrentRoom.Players[photonView.Owner.ActorNumber].NickName;
                 nicknameText.color = new Color32(102, 204, 255, 255);
+
+                // UI 갱신용 invoke
+                OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
             }
             else
             {
@@ -84,27 +108,14 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
                 nicknameText.color = new Color32(102, 255, 102, 255);
             }
         }
-
-        BindCooldown();
-
-        runTimeData.currentHealth = characterBaseStats.maxHP;
-        // 시작 시 체력 UI 업데이트
-        OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
-
-        playerBlessing = GetComponent<PlayerBlessing>();
-
-        rb = GetComponent<Rigidbody>();
-
-        animator = GetComponent<Animator>();
-        if (animator == null)
-        {
-            Debug.LogError("Animator 컴포넌트를 찾을 수 없습니다! (WhitePlayerController)");
-        }
-
-        animator.speed = runTimeData.attackSpeed;
     }
 
     #endregion
+
+    public void UpdateHP()
+    {
+        OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
+    }
 
     public virtual void BindCooldown()
     {
@@ -166,6 +177,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         {
             if (!photonView.IsMine) return;
 
+            OnHitEvent?.Invoke();
+
             while (damage > 0 && shields.Count > 0)
             {
                 if (shields[0].amount > damage)
@@ -210,6 +223,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
         else
         {
+            OnHitEvent?.Invoke();
+
             while (damage > 0 && shields.Count > 0)
             {
                 if (shields[0].amount > damage)

@@ -28,7 +28,7 @@ public class UISelectCharacterPanel : UIBase
             Button button = Instantiate(characterButton);
             button.transform.SetParent(content.transform, false);
             button.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprite/" + characterDatas[index].name);
-            button.onClick.AddListener(() => UIManager.Instance.OpenPopupPanel<UICharacterInfoPanel>().Init(characterDatas[index], SelcetCharacter));
+            button.onClick.AddListener(() => UIManager.Instance.OpenPopupPanelInOverlayCanvas<UICharacterInfoPanel>().Init(characterDatas[index], SelcetCharacter));
         }
     }
 

@@ -11,7 +11,11 @@ public class UIManager : MonoBehaviour
 
     private Stack<UIBase> uiStack = new Stack<UIBase>();
 
-    private Canvas canvas;
+    [SerializeField]
+    private Canvas overlayCanvas;
+    [SerializeField]
+    private Canvas cameraCanvas;
+
     private CanvasScaler scaler;
 
     private void Awake()
@@ -21,9 +25,6 @@ public class UIManager : MonoBehaviour
         else
             Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
-
-        canvas = GetComponent<Canvas>();
-        scaler = GetComponent<CanvasScaler>();
     }
     private void OnEnable()
     {
@@ -37,13 +38,13 @@ public class UIManager : MonoBehaviour
 
     public void SetRenderCamera(Camera camera)
     {
-        canvas.worldCamera = camera;
+        cameraCanvas.worldCamera = camera;
     }
 
     void Start()
     {
         //OpenPanel<UiStartPanel>();
-        OpenPanel<UILogoPanel>();
+        OpenPanelInOverlayCanvas<UILogoPanel>();
 
         string nickname = PlayerPrefs.GetString("Nickname");
 
@@ -53,16 +54,30 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            OpenPopupPanel<UISetNicknamePanel>();
+            OpenPopupPanelInOverlayCanvas<UISetNicknamePanel>();
         }
     }
 
-    public T OpenPanel<T>(bool additive = false) where T : UIBase
+    public T OpenPanelInOverlayCanvas<T>(bool additive = false) where T : UIBase
     {
         string prefabName = typeof(T).Name;
         GameObject prefab = Resources.Load<GameObject>($"UI/{prefabName}");
 
-        GameObject panelInstance = Instantiate(prefab, transform, false);
+        GameObject panelInstance = Instantiate(prefab, overlayCanvas.transform, false);
+        T panel = panelInstance.GetComponent<T>();
+
+        if (!additive) ClosePeekUI();
+
+        uiStack.Push(panel);
+        return panel;
+    }
+
+    public T OpenPanelInCameraCanvas<T>(bool additive = false) where T : UIBase
+    {
+        string prefabName = typeof(T).Name;
+        GameObject prefab = Resources.Load<GameObject>($"UI/{prefabName}");
+
+        GameObject panelInstance = Instantiate(prefab, cameraCanvas.transform, false);
         T panel = panelInstance.GetComponent<T>();
 
         if (!additive) ClosePeekUI();
@@ -93,7 +108,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public T OpenPopupPanel<T>() where T : UIBase
+    public T OpenPopupPanelInOverlayCanvas<T>() where T : UIBase
     {
         if (uiStack.Count > 0)
             uiStack.Peek().gameObject.GetComponent<CanvasGroup>().interactable = false;
@@ -102,7 +117,24 @@ public class UIManager : MonoBehaviour
         GameObject prefab = Resources.Load<GameObject>($"UI/{prefabName}");
 
         GameObject panelInstance = Instantiate(prefab);
-        panelInstance.transform.SetParent(transform, false);
+        panelInstance.transform.SetParent(overlayCanvas.transform, false);
+
+        T popup = panelInstance.GetComponent<T>();
+        uiStack.Push(popup);
+
+        return popup;
+    }
+
+    public T OpenPopupPanelInCameraCanvas<T>() where T : UIBase
+    {
+        if (uiStack.Count > 0)
+            uiStack.Peek().gameObject.GetComponent<CanvasGroup>().interactable = false;
+
+        string prefabName = typeof(T).Name;
+        GameObject prefab = Resources.Load<GameObject>($"UI/{prefabName}");
+
+        GameObject panelInstance = Instantiate(prefab);
+        panelInstance.transform.SetParent(cameraCanvas.transform, false);
 
         T popup = panelInstance.GetComponent<T>();
         uiStack.Push(popup);
@@ -114,7 +146,7 @@ public class UIManager : MonoBehaviour
     {
         if (uiStack.Peek() is UIIngameMainPanel)
         {
-            OpenPopupPanel<UISkillInfoPanel>();
+            OpenPopupPanelInOverlayCanvas<UISkillInfoPanel>();
         }
         else if (uiStack.Peek() is UISkillInfoPanel)
         {
@@ -135,19 +167,14 @@ public class UIManager : MonoBehaviour
         CloseAllUI();
         if (scene.name.StartsWith("Level")||scene.name=="StageTest1")
         {
-            OpenPanel<UIIngameMainPanel>();
-            OpenPanel<UIMinimapPanel>(additive: true);
+            OpenPanelInOverlayCanvas<UIIngameMainPanel>();
+            OpenPanelInOverlayCanvas<UIMinimapPanel>(additive: true);
         }
     }
 
     public void CloseAllAndOpen<T>() where T : UIBase
     {
         CloseAllUI();
-        OpenPanel<T>();
-    }
-
-    public void SetCanvasSize(Vector2 scale)
-    {
-        scaler.referenceResolution = scale;
+        OpenPanelInOverlayCanvas<T>();
     }
 }

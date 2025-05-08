@@ -126,7 +126,7 @@ public class UIRoomPanel : UIBase
 
     public void OnClickedSelectCharacterButton()
     {
-        container.DOAnchorPos(container.anchoredPosition + new Vector2(-2000f, 0f), 0.5f).OnComplete(() => UIManager.Instance.OpenPopupPanel<UISelectCharacterPanel>().SetRoomPanelContainer(container));
+        container.DOAnchorPos(container.anchoredPosition + new Vector2(-2000f, 0f), 0.5f).OnComplete(() => UIManager.Instance.OpenPopupPanelInOverlayCanvas<UISelectCharacterPanel>().SetRoomPanelContainer(container));
     }
 
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
@@ -170,7 +170,7 @@ public class UIRoomPanel : UIBase
         }
         else
         {
-            UIManager.Instance.OpenPanel<UiStartPanel>();
+            UIManager.Instance.OpenPanelInOverlayCanvas<UiStartPanel>();
         }
     }
 
@@ -205,7 +205,7 @@ public class UIRoomPanel : UIBase
     public override void OnLeftRoom()
     {
         PhotonNetwork.JoinLobby();
-        UIManager.Instance.OpenPanel<UILobbyPanel>();
+        UIManager.Instance.OpenPanelInOverlayCanvas<UILobbyPanel>();
     }
 
     private void CheckCanStart()
