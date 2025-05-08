@@ -14,7 +14,6 @@ public class HitState : BaseState
 
     public override void Enter()
     {
-        float dx = fsm.LastAttackerPos.x - fsm.transform.position.x;
         RefreshFacingToTarget();
         SetAgentStopped(true);
         FlashSprite();

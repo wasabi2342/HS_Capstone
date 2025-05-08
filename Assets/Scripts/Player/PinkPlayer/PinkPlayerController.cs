@@ -1190,9 +1190,9 @@ public class PinkPlayerController : ParentPlayerController
 
     }
     [PunRPC]
-    public override void DamageToMaster(float damage, int attackerActor, Vector3 attackerPos)
+    public override void DamageToMaster(float damage, int attackerActor)
     {
-        base.DamageToMaster(damage, attackerActor, attackerPos);
+        base.DamageToMaster(damage, attackerActor);
     }
 
     [PunRPC]
