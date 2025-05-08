@@ -257,7 +257,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
 
     [PunRPC]
-    public virtual void DamageToMaster(float damage, int attackerActor)
+    public virtual void DamageToMaster(float damage, int attackerActor, Vector3 attackerPos)
     {
         if (!PhotonNetwork.IsMasterClient)
             return;

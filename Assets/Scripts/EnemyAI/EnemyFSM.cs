@@ -66,6 +66,8 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     /* ───────── Knock‑back ───────── */
     Vector3 knockVel; float knockTime;
     const float KNOCK_DUR = .5f;
+    private Vector3 lastAttackerPos;
+    public Vector3 LastAttackerPos => lastAttackerPos;
 
     /* ───────── Debug 옵션 ───────── */
     [Header("Debug")] public bool debugMode = false;
@@ -231,13 +233,13 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
 
     /* ────────────────────────── IDamageable ─────────────────────── */
     public void TakeDamage(float damage, AttackerType t = AttackerType.Default)
-        => pv.RPC(nameof(DamageToMaster), RpcTarget.MasterClient, damage, PhotonNetwork.LocalPlayer.ActorNumber);
+        => pv.RPC(nameof(DamageToMaster), RpcTarget.MasterClient, damage, PhotonNetwork.LocalPlayer.ActorNumber, transform.position);
 
     [PunRPC]
-    public void DamageToMaster(float damage, int attackerActor)
+    public void DamageToMaster(float damage, int attackerActor, Vector3 attackerPos)
     {
         if (!PhotonNetwork.IsMasterClient) return;
-
+        lastAttackerPos = attackerPos;
         float rawDamage = damage;
         /* 실드 → HP 차감 */
         if (shield > 0f)
@@ -261,7 +263,8 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         bool fromRight = atkPos.x < transform.position.x;
         pv.RPC(nameof(RPC_ApplyKnockback), RpcTarget.All, atkPos);
         pv.RPC(nameof(RPC_SpawnHitFx), RpcTarget.All, transform.position, fromRight);
-        pv.RPC(nameof(RPC_ShowDamage), RpcTarget.All, rawDamage);
+        var targetPlayer = PhotonNetwork.CurrentRoom.GetPlayer(attackerActor);
+        pv.RPC(nameof(RPC_ShowDamage), targetPlayer, rawDamage);
         TransitionToState(hp <= 0f ? typeof(DeadState) : typeof(HitState));
     }
 

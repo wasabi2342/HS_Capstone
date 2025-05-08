@@ -800,9 +800,9 @@ public class WhitePlayerController : ParentPlayerController
 
     }
     [PunRPC]
-    public override void DamageToMaster(float damage, int attackerActor)
+    public override void DamageToMaster(float damage, int attackerActor, Vector3 attackerPos)
     {
-        base.DamageToMaster(damage, attackerActor);
+        base.DamageToMaster(damage, attackerActor, attackerPos);
     }
 
     [PunRPC]
