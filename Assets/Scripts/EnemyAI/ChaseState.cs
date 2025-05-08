@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Photon.Pun;
+using UnityEngine.AI;
 
 public class ChaseState : BaseState
 {
@@ -15,7 +16,6 @@ public class ChaseState : BaseState
                           (status.chaseSpeedMultiplier > 0 ? status.chaseSpeedMultiplier : 1f);
         }
         fsm.PlayDirectionalAnim("Walk");
-
         atkChkT = destT = 0f;
     }
 
@@ -23,54 +23,69 @@ public class ChaseState : BaseState
     {
         if (!PhotonNetwork.IsMasterClient) return;
         if (!fsm.Target || !fsm.Target.gameObject.activeInHierarchy)
-        { fsm.TransitionToState(typeof(WanderState)); return; }
-
-        float zDiff = fsm.GetZDiffAbs();
-
-        /* ───── Z 맞추기 단계 ───── */
-        if (zDiff > fsm.zAlignTolerance)
         {
-            /* 멈추지 않도록 stopDist = 0 */
+            fsm.TransitionToState(typeof(WanderState));
+            return;
+        }
+
+        // 1) 거리 계산
+        float xDiff = fsm.Target.position.x - transform.position.x;
+        float xAbs = Mathf.Abs(xDiff);
+        float zDiff = fsm.GetZDiffAbs();
+        float tol = fsm.zAlignTolerance;
+        float atkR = status.attackRange;
+
+        // 2) Z 정렬 단계: Z가 벌어져 있을 때만 시도
+        if (zDiff > tol)
+        {
+            // 2-1) X 차이가 너무 작으면 우회 경로 설정
+            if (xAbs <= tol)
+            {
+                float detourOffset = atkR * 4f * Mathf.Sign(fsm.CurrentFacing);
+                // 횡방향으로 한 칸(attackRange) 만큼 비켜서 Z로 이동
+                Vector3 detour = transform.position;
+                detour.x += detourOffset;
+                detour.z = fsm.Target.position.z;
+
+                if (!agent.pathPending)
+                    agent.SetDestination(detour);
+
+                fsm.PlayDirectionalAnim("Walk");
+                return;
+            }
+            RefreshFacingToTarget();
+            // 2-2) X 차이가 충분히 크면 기존 Z 정렬
             if (agent.stoppingDistance != 0f)
                 agent.stoppingDistance = 0f;
 
-            /* Z 만 동일한 지점으로 이동 */
-            Vector3 p = transform.position;
-            p.z = fsm.Target.position.z;
+            Vector3 mid = transform.position;
+            mid.z = fsm.Target.position.z;
             if (!agent.pathPending)
-                agent.SetDestination(p);
+                agent.SetDestination(mid);
 
             fsm.PlayDirectionalAnim("Walk");
-            return;                      
+            return;
         }
 
-        /* ───── X 접근 단계 ───── */
-        /* 이제 stopDist 을 attackRange 로 되돌림 */
-        if (agent.stoppingDistance != fsm.EnemyStatusRef.attackRange)
-            agent.stoppingDistance = fsm.EnemyStatusRef.attackRange;
+        // 3) X 접근 단계 (사거리 기준)
+        if (agent.stoppingDistance != atkR)
+            agent.stoppingDistance = atkR;
 
-        /* Z 고정, X 타깃으로 경로 지정 */
         Vector3 dest = fsm.Target.position;
         dest.z = transform.position.z;
         if (!agent.pathPending)
             agent.SetDestination(dest);
 
-        /* 사정거리 안이면 멈추고 WaitCool */
-        if (fsm.GetTarget2DDistSq() <=
-            fsm.EnemyStatusRef.attackRange * fsm.EnemyStatusRef.attackRange)
+        // 4) 사거리 안 도달 시 공격 준비 단계
+        if (fsm.GetTarget2DDistSq() <= atkR * atkR)
         {
-            if (fsm.debugMode)
-                Debug.Log($"[Chase→WaitCool] dist={Mathf.Sqrt(fsm.GetTarget2DDistSq()):0.00}", fsm);
-
-            fsm.Agent.isStopped=true;
+            fsm.Agent.isStopped = true;
             fsm.TransitionToState(typeof(WaitCoolState));
             return;
         }
 
         fsm.PlayDirectionalAnim("Walk");
     }
-
-
 
     public override void Exit() { }
 }

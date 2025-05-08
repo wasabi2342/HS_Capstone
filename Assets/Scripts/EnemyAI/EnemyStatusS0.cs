@@ -12,6 +12,7 @@ public class EnemyStatusSO : ScriptableObject
     public float chaseSpeedMultiplier = 1.1f; // 추격 시 이동 속도 배율 [1]
     public float navMeshSampleDistance = 3f; // NavMesh 샘플링 거리 (이동 시)
 
+
     [Header("Damage / Stun")]
     public float headOffset = 1.8f;
     public float hitStunTime = 0.3f;
