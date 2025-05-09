@@ -1,5 +1,6 @@
 using Photon.Pun;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Cinemachine;
@@ -302,7 +303,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") &&(!PhotonNetwork.InRoom ||
+        if (other.CompareTag("Player") && (!PhotonNetwork.InRoom ||
             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
             other.transform.position = spawnPoint;
