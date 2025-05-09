@@ -34,9 +34,13 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
-        PhotonNetwork.JoinLobby();
+        Debug.Log("포톤 마스터 서버에 연결됨");
 
-        Debug.Log("포톤서버 로비 접속");
+        if (!PhotonNetwork.OfflineMode)  // 온라인일 경우에만 로비 접속
+        {
+            PhotonNetwork.JoinLobby();
+            Debug.Log("포톤 로비 접속 시도");
+        }
     }
 
     public void ConnectPhoton()
@@ -44,10 +48,42 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsConnected)
             return;
 
+        PhotonNetwork.OfflineMode = false; // 온라인 모드
         PhotonNetwork.GameVersion = gameVersion;
         PhotonNetwork.ConnectUsingSettings();
 
-        Debug.Log("포톤서버 접속");
+        Debug.Log("포톤서버 접속 시도 (온라인)");
+    }
+
+    public void ConnectPhotonToSinglePlay()
+    {
+        if (PhotonNetwork.IsConnected)
+            return;
+
+
+        PhotonNetwork.OfflineMode = true;
+        PhotonNetwork.GameVersion = gameVersion;
+
+        RoomOptions roomOptions = new RoomOptions();
+        roomOptions.MaxPlayers = 1;
+
+        PhotonNetwork.CreateRoom("싱글플레이", roomOptions);
+
+        Debug.Log("싱글 플레이 (오프라인 모드)로 포톤 접속 및 방 생성");
+    }
+
+    public override void OnJoinedRoom()
+    {
+        if (PhotonNetwork.OfflineMode)
+        {
+            Debug.Log("싱글 플레이 모드 - 씬 로드");
+            PhotonNetwork.LoadLevel("room");
+        }
+        else
+        {
+            Debug.Log("멀티플레이 모드 - 씬 로드는 마스터 클라이언트에서 수행해야 함");
+            // 예: if (PhotonNetwork.IsMasterClient) PhotonNetwork.LoadLevel(sceneToLoad);
+        }
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
