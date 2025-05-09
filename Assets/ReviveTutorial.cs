@@ -1,16 +1,40 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ReviveTutorial : GaugeInteraction
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField]
+    private Animator animator;
+
+    public override void OnInteract(InputAction.CallbackContext ctx)
     {
-        
+        base.OnInteract(ctx);
     }
 
-    // Update is called once per frame
-    void Update()
+    protected override void OnCanceledEvent()
     {
-        
+        base.OnCanceledEvent();
+    }
+
+    protected override void OnPerformedEvent()
+    {
+        base.OnPerformedEvent();
+        animator.SetTrigger("Revive");
+        canvas.gameObject.SetActive(false);
+    }
+
+    protected override void OnStartedEvent()
+    {
+        base.OnStartedEvent();
+    }
+
+    protected override void OnTriggerEnter(Collider other)
+    {
+        base.OnTriggerEnter(other);
+    }
+
+    protected override void OnTriggerExit(Collider other)
+    {
+        base.OnTriggerExit(other);
     }
 }

@@ -7,6 +7,8 @@ public class CoopOrBetray : MonoBehaviourPun, IInteractable
     [SerializeField]
     private Canvas canvas;
 
+    public bool isInTutorial = false;
+
     private bool canInteract = true;
 
     private void Start()
@@ -23,7 +25,7 @@ public class CoopOrBetray : MonoBehaviourPun, IInteractable
     {
         if (ctx.started)
         {
-            if (canInteract)
+            if (canInteract || isInTutorial)
             {
                 canInteract = false;
                 photonView.RPC("Interact", RpcTarget.All);

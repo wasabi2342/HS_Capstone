@@ -26,8 +26,10 @@ public class TutorialController : MonoBehaviour
 	{
 		SetNextTutorial();
 
-		PhotonNetwork.Instantiate(selectCoop.name, coopOrBetrayPos.position, Quaternion.identity);
-		PhotonNetwork.Instantiate(selectBlessing.name, blessingPos.position, Quaternion.identity);
+		GameObject obj = PhotonNetwork.Instantiate(selectCoop.name, coopOrBetrayPos.position, Quaternion.identity);
+		obj.GetComponent<CoopOrBetray>().isInTutorial = true;
+
+        PhotonNetwork.Instantiate(selectBlessing.name, blessingPos.position, Quaternion.identity);
     }
 
 	private void Update()
