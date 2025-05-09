@@ -49,7 +49,7 @@ public class Mannequin : GaugeInteraction
         }
         base.OnPerformedEvent();
         CancelGaugeCoroutine(true);
-        RoomManager.Instance.CreateCharacter(characterPrefab.name, transform.position, Quaternion.identity, true);
+        RoomManager.Instance.CreateCharacter(characterPrefab.name, player.transform.position, Quaternion.identity, true);
         if (PhotonNetwork.InRoom)
         {
             PhotonNetwork.Destroy(player);
