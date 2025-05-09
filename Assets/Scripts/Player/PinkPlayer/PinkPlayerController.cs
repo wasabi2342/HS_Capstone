@@ -805,7 +805,7 @@ public class PinkPlayerController : ParentPlayerController
         // Photon에 접속 중이든 아니든, 로컬에서 이펙트를 생성하는 코드
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
 
-        // Init 메서드 호출
+        // Init 메서드 호출, 여기서 다시 호출할지 말지 고민중 --> 아마 기획 나오면 더 고칠 예정
         //skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine);
         skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
 
@@ -847,7 +847,7 @@ public class PinkPlayerController : ParentPlayerController
         // Photon에 접속 중이든 아니든, 로컬에서 이펙트를 생성하는 코드
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
 
-        // Init 메서드 호출
+        // Init 메서드 호출, 여기서 다시 호출할지 말지 고민중 --> 아마 기획 나오면 더 고칠 예정
         //skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine);
         skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID, this));
 
