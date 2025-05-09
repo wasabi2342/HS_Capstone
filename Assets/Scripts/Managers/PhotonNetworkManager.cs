@@ -162,6 +162,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
 
             PhotonNetwork.CurrentRoom.IsOpen = false;
+            readyPlayers.Clear();
             PhotonNetwork.LoadLevel("Level0");
         }
     }
