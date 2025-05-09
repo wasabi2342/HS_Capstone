@@ -34,7 +34,10 @@ public class StageManager : MonoBehaviour
             SpawnWave(0);
             //PhotonNetwork.Instantiate(blessingNPCPrefabName, Vector3.zero, Quaternion.identity);
             //PhotonNetwork.Instantiate(doorPrefabName, new Vector3(10,0,0), Quaternion.identity);
-            PhotonNetwork.Instantiate(CoopOrBetrayNPCPrefabName, coopOrBetrayNPCPos.position, Quaternion.identity);
+            if (coopOrBetrayNPCPos != null)
+            {
+                PhotonNetwork.Instantiate(CoopOrBetrayNPCPrefabName, coopOrBetrayNPCPos.position, Quaternion.identity);
+            }
 
         }
         // RoomProperties에서 인덱스 읽기
@@ -128,7 +131,7 @@ public class StageManager : MonoBehaviour
                     blessingSpawn.position,
                     blessingSpawn.rotation);
                 }
-                if(MonsterStatusManager.instance != null)
+                if (MonsterStatusManager.instance != null)
                 {
                     MonsterStatusManager.instance.ResetEnemyDamage();
                 }

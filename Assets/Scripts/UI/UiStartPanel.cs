@@ -30,18 +30,20 @@ public class UiStartPanel : UIBase
         UIManager.Instance.OpenPanelInOverlayCanvas<UILobbyPanel>();
     }
 
+    private void OnClikedSinglePlayButton()
+    {
+        PhotonNetworkManager.Instance.ConnectPhotonToSinglePlay();
+        UIManager.Instance.CloseAllUI();
+        //UIManager.Instance.OpenPanelInOverlayCanvas<UIRoomPanel>(); 나중에 넣기
+    }
+
     public override void Init()
     {
         multiPlayButton.onClick.AddListener(OnClikedMultiPlayButton);
         quitButton.onClick.AddListener(QuitGame);
         settingButton.onClick.AddListener(() => UIManager.Instance.OpenPopupPanelInOverlayCanvas<UISettingPanel>());
 
-        singlePlayButton.onClick.AddListener(() =>
-        {
-            UIManager.Instance.CloseAllUI();
-            UIManager.Instance.OpenPanelInOverlayCanvas<UIRoomPanel>();
-        }
-        );
+        singlePlayButton.onClick.AddListener(OnClikedSinglePlayButton);
 
         string nickname = PlayerPrefs.GetString("Nickname");
 
