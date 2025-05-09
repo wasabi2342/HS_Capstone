@@ -15,10 +15,10 @@ public class Mannequin : GaugeInteraction
 
     protected override void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && (!PhotonNetwork.InRoom ||
-            (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
+        if (other.CompareTag("Interactable") && (!PhotonNetwork.InRoom ||
+                   (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
-            if (/*other.GetComponentInParent<ParentPlayerController>()*/ true) // 프리펩에서 이름 가져와야 함
+            if (other.GetComponentInParent<ParentPlayerController>().ReturnCharacterName() != characterPrefab.name) // 프리펩에서 이름 가져와야 함
             {
                 player = other.transform.root.gameObject;
                 base.OnTriggerEnter(other);
@@ -28,7 +28,7 @@ public class Mannequin : GaugeInteraction
 
     protected override void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player") && (!PhotonNetwork.InRoom ||
+        if (other.CompareTag("Interactable") && (!PhotonNetwork.InRoom ||
             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
             player = null;
@@ -43,6 +43,10 @@ public class Mannequin : GaugeInteraction
 
     protected override void OnPerformedEvent()
     {
+        if (player == null)
+        {
+            return;
+        }
         base.OnPerformedEvent();
         CancelGaugeCoroutine(true);
         RoomManager.Instance.CreateCharacter(characterPrefab.name, transform.position, Quaternion.identity, true);
@@ -53,6 +57,19 @@ public class Mannequin : GaugeInteraction
         else
         {
             Destroy(player);
+        }
+
+        if (PhotonNetwork.InRoom)
+        {
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
+            {
+                { "SelectCharacter", characterPrefab.name }
+            });
+        }
+        else
+        {
+            PlayerPrefs.SetString("SelectCharacter", characterPrefab.name);
+            PlayerPrefs.Save();
         }
     }
 
