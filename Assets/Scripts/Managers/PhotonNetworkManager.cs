@@ -121,6 +121,9 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void OpenReadyPanel()
     {
+        readyPlayers.Clear();
+        OnUpdateReadyPlayer = null;
+
         if (PhotonNetwork.IsMasterClient)
         {
             stageEnterCoroutine = StartCoroutine(TimeCount());
@@ -163,7 +166,6 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
 
             PhotonNetwork.CurrentRoom.IsOpen = false;
-            readyPlayers.Clear();
             PhotonNetwork.LoadLevel("Level0");
         }
     }
