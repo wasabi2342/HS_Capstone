@@ -42,6 +42,17 @@ public class UiStartPanel : UIBase
             UIManager.Instance.OpenPanelInOverlayCanvas<UIRoomPanel>();
         }
         );
+
+        string nickname = PlayerPrefs.GetString("Nickname");
+
+        if (nickname != "")
+        {
+            PhotonNetworkManager.Instance.SetNickname(nickname);
+        }
+        else
+        {
+            UIManager.Instance.OpenPopupPanelInOverlayCanvas<UISetNicknamePanel>();
+        }
     }
 
     private void QuitGame()
