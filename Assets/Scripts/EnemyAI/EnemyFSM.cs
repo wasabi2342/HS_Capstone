@@ -231,10 +231,10 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
 
     /* ────────────────────────── IDamageable ─────────────────────── */
     public void TakeDamage(float damage, AttackerType t = AttackerType.Default)
-        => pv.RPC(nameof(DamageToMaster), RpcTarget.MasterClient, damage, PhotonNetwork.LocalPlayer.ActorNumber);
+        => pv.RPC(nameof(DamageToMaster), RpcTarget.MasterClient, damage);
 
     [PunRPC]
-    public void DamageToMaster(float damage, int attackerActor)
+    public void DamageToMaster(float damage)
     {
         if (!PhotonNetwork.IsMasterClient) return;
 
