@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Unity.VisualScripting;
 using System;
+using System.Collections.Generic;
 
 public enum PinkPlayerState { Idle, Run, tackle, BasicAttack, Hit, Dash, Skill, Ultimate, R_Idle, R_hit1, R_hit2, R_hit3, R_finish, Charge1, Charge2, Charge3, Stun, Revive, Death }
 
@@ -29,11 +30,20 @@ public class PinkPlayerController : ParentPlayerController
     [Header("서번트 소환 설정")]
     [SerializeField] private GameObject servantPrefab;
     [SerializeField] private Vector3 servantSpawnOffset = new Vector3(0f, 0.5f, 0f);
+    [SerializeField] private int maxServants = 8;
+
+    private List<ServantFSM> summonedServants = new List<ServantFSM>();
+    [Header("궁극기 설정")]
+    [SerializeField] private float ultimateDuration = 5f;
+    private bool isUltimateActive = false;
 
     // 이동 입력 및 상태
     private Vector2 moveInput;
     public PinkPlayerState currentState = PinkPlayerState.Idle;
     public PinkPlayerState nextState = PinkPlayerState.Idle;
+
+    private List<ServantFSM> myServants = new List<ServantFSM>();
+    private const int MAX_SERVANTS = 8;
 
     protected override void Awake()
 
@@ -461,6 +471,12 @@ public class PinkPlayerController : ParentPlayerController
         {
             if (cooldownCheckers[(int)Skills.Shift_L].CanUse() && nextState < PinkPlayerState.Skill)
             {
+                if (myServants.Count >= MAX_SERVANTS)
+                {
+                    Debug.Log("최대 소환수 개수에 도달했습니다.");
+                    return;
+                }
+
                 nextState = PinkPlayerState.Skill;
                 animator.SetBool("Pre-Attack", true);
                 animator.SetBool("Pre-Input", true);
@@ -472,8 +488,7 @@ public class PinkPlayerController : ParentPlayerController
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                    // 소환수 소환 RPC 호출
-                    photonView.RPC("RPC_SpawnServant", RpcTarget.All);
+                    photonView.RPC("RPC_SpawnServant", RpcTarget.MasterClient, photonView.ViewID);
                 }
             }
 
@@ -481,25 +496,47 @@ public class PinkPlayerController : ParentPlayerController
     }
 
     // 실제 소환수 소환 로직 분리
-    private void SpawnServant()
+    [PunRPC]
+    private void RPC_SpawnServant(int ownerViewID)
     {
         Vector3 spawnPos = transform.position + servantSpawnOffset;
-        Instantiate(servantPrefab, spawnPos, Quaternion.identity);
-    }
+        GameObject servant = PhotonNetwork.Instantiate(servantPrefab.name, spawnPos, Quaternion.identity);
+        ServantFSM servantFSM = servant.GetComponent<ServantFSM>();
 
-    // PUN RPC: 모든 클라이언트에서 호출되어 로컬 Instantiate 수행
+        servantFSM.photonView.RPC("RPC_SetOwner", RpcTarget.AllBuffered, ownerViewID);
+        photonView.RPC("RPC_RegisterServant", RpcTarget.AllBuffered, servantFSM.photonView.ViewID, ownerViewID);
+    }
     [PunRPC]
-    private void RPC_SpawnServant()
+    private void RPC_RegisterServant(int servantViewID, int ownerViewID)
     {
-        SpawnServant();
+        if (photonView.ViewID == ownerViewID)
+        {
+            PhotonView servantPV = PhotonView.Find(servantViewID);
+            if (servantPV != null)
+            {
+                ServantFSM servantFSM = servantPV.GetComponent<ServantFSM>();
+                if (servantFSM != null)
+                    myServants.Add(servantFSM);
+            }
+        }
+    }
+    /// <summary>ServantFSM 인스턴스를 리스트에 등록합니다.</summary>
+    public void AddServantToList(ServantFSM servant)
+    {
+        if (servant != null && !summonedServants.Contains(servant))
+            summonedServants.Add(servant);
     }
 
+    /// <summary>ServantFSM 인스턴스를 리스트에서 해제합니다.</summary>
+    public void RemoveServantFromList(ServantFSM servant)
+    {
+        if (servant != null)
+            summonedServants.Remove(servant);
+    }
     private int servantCount = 0;
     private const int maxUltimateStacks = 8;
 
-
     // 궁극기
-
     /// <summary>
     /// R 키 입력이 들어왔을 때,
     /// 현재 상태에 따라 궁극기 시작 or 마지막 일격 실행
@@ -508,7 +545,13 @@ public class PinkPlayerController : ParentPlayerController
     {
         if (animator == null || currentState == PinkPlayerState.Death)
             return;
-
+        if (!photonView.IsMine) return;
+        // 버튼 눌린 시점에만
+        if (context.started && !isUltimateActive && cooldownCheckers[(int)Skills.R].CanUse())
+        {
+            // MasterClient 권한으로 실제 궁극기 실행
+            photonView.RPC(nameof(RPC_UseUltimate), RpcTarget.MasterClient);
+        }
         if (context.started)
         {
             // 로컬 상태 세팅
@@ -546,7 +589,38 @@ public class PinkPlayerController : ParentPlayerController
         }
     }
 
+    [PunRPC]
+    private void RPC_UseUltimate()
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
 
+        // 1) myServants 를 돌며 ForceKill RPC 호출
+        foreach (var s in myServants)
+        {
+            if (s != null && s.photonView != null)
+                s.photonView.RPC("ForceKill", RpcTarget.AllBuffered);
+        }
+        myServants.Clear();
+
+        // 2) (버프 로직은 빈 함수로 두었습니다)
+        ApplyUltimateBuff();
+
+        // 3) 궁극기 애니/상태 진입
+        if (photonView.IsMine)
+        {
+            currentState = PinkPlayerState.Ultimate;
+            animator.SetTrigger("ultimate");
+            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "ultimate", true);
+        }
+    }
+    /// <summary>
+    /// 희생된 소환수 개수에 따른 강화 효과 로직
+    /// (현재 빈 함수 - 필요시 여기에 버프 코드를 추가하세요)
+    /// </summary>
+    private void ApplyUltimateBuff()
+    {
+        // TODO: 궁극기 버프 로직
+    }
     // 궁극기 시전 시작
     public void HandleUltimateStart()
     {
@@ -570,6 +644,16 @@ public class PinkPlayerController : ParentPlayerController
     // 궁극기 지속시간이 다 되거나 R을 다시 누를 때 호출
     public void HandleUltimateEndOrFinal()
     {
+        int servantCount = myServants.Count;
+        foreach(var servant in myServants)
+        {
+            if (servant != null)
+            {
+                servant.photonView.RPC("ForceKill", RpcTarget.MasterClient);
+            }
+        }
+        myServants.Clear();
+        ApplyUltimateBuff(servantCount);
         // 애니메이터에서 마지막 일격(FinalStrike) 상태로 전이
         currentState = PinkPlayerState.Ultimate;
         animator.SetTrigger("FinalStrike");
@@ -577,16 +661,10 @@ public class PinkPlayerController : ParentPlayerController
         if (PhotonNetwork.IsConnected)
             photonView.RPC("PlayAnimation", RpcTarget.Others, "FinalStrike");
     }
-
-    [PunRPC]
-    public void RPC_SpawnServant_Stack()
+    void ApplyUltimateBuff(int servantCount)
     {
-        SpawnServant();
-        // 스택 갱신
-        servantCount = Mathf.Min(servantCount + 1, maxUltimateStacks);
-        Debug.Log($"서번트 소환! 현재 스택: {servantCount}");
+        //희생된 소환수 개수에 따른 강화 효과
     }
-
     public int R_attackStack;
 
     // 애니메이션 이벤트로 평타 스택 설정해주기

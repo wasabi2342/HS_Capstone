@@ -429,12 +429,16 @@ MonoBehaviour:
   SkillOutlineUpdate:
     m_PersistentCalls:
       m_Calls: []
+  OnHitEvent:
+    m_PersistentCalls:
+      m_Calls: []
   characterBaseStats: {fileID: 11400000, guid: 61ca03da317d77c45b67a57d535d6138, type: 2}
   animator: {fileID: 0}
   attackStack: 0
   damageBuff: 1
   dashDistance: 2
   dashDoubleClickThreshold: 0.3
+  dashDuration: 0.2
   centerPoint: {fileID: 510806922216563194}
   centerPointOffsetDistance: 0.5
   centerPoints:
@@ -446,8 +450,10 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  servantPrefab: {fileID: 624602654739490362, guid: 078c9b073e78c6b4ea9ffcac1ecc7baf, type: 3}
+  servantPrefab: {fileID: 1765914048162278020, guid: 390e2e1b022db20438208f07336db662, type: 3}
   servantSpawnOffset: {x: 0, y: 0, z: 0}
+  maxServants: 8
+  ultimateDuration: 5
   currentState: 0
   nextState: 0
   physicalAtk: 0
