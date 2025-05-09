@@ -5,7 +5,7 @@ using UnityEngine.AI;
 using Photon.Pun;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyAI : MonoBehaviourPun, IDamageable
+public class EnemyAI : MonoBehaviourPun
 {
     /* ───── Inspector ───── */
     public EnemyStatus status;                         // hp, damage, headOffset, maxShield…

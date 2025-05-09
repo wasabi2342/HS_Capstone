@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Photon.Pun;
-using static UnityEditor.PlayerSettings;
 
 public class HitState : BaseState
 {
