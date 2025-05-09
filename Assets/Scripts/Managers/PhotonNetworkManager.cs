@@ -19,6 +19,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     private Coroutine finalRewardCountdownCoroutine;
     private Coroutine finalRewardNextStageCoroutine;
 
+    private HashSet<int> deadPlayers = new HashSet<int>();
+
     private void Awake()
     {
         if (Instance == null)
@@ -480,5 +482,94 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         }
 
         UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText(message);
+    }
+
+    /// <summary>
+    /// 플레이어 사망 시 호출
+    /// </summary>
+    public void ReportPlayerDeath(int actorNumber)
+    {
+        if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
+        {
+            if (!deadPlayers.Contains(actorNumber))
+            {
+                deadPlayers.Add(actorNumber);
+                Debug.Log($"플레이어 {actorNumber} 사망. 현재 사망자 수: {deadPlayers.Count}");
+
+                CheckAllPlayersDead();
+            }
+        }
+        else
+        {
+            photonView.RPC(nameof(RPC_ReportPlayerDeath), RpcTarget.MasterClient, actorNumber);
+        }
+    }
+
+    /// <summary>
+    /// 플레이어 부활 시 호출
+    /// </summary>
+    public void ReportPlayerRevive(int actorNumber)
+    {
+        if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
+        {
+            if (deadPlayers.Contains(actorNumber))
+            {
+                deadPlayers.Remove(actorNumber);
+                Debug.Log($"플레이어 {actorNumber} 부활. 현재 사망자 수: {deadPlayers.Count}");
+            }
+        }
+        else
+        {
+            photonView.RPC(nameof(RPC_ReportPlayerRevive), RpcTarget.MasterClient, actorNumber);
+        }
+    }
+
+    [PunRPC]
+    private void RPC_ReportPlayerDeath(int actorNumber)
+    {
+        ReportPlayerDeath(actorNumber);
+    }
+
+    [PunRPC]
+    private void RPC_ReportPlayerRevive(int actorNumber)
+    {
+        ReportPlayerRevive(actorNumber);
+    }
+
+    /// <summary>
+    /// 모든 플레이어가 사망했는지 확인
+    /// </summary>
+    private void CheckAllPlayersDead()
+    {
+        int totalPlayers = PhotonNetwork.OfflineMode ? 1 : PhotonNetwork.CurrentRoom.PlayerCount;
+
+        if (deadPlayers.Count >= totalPlayers)
+        {
+            Debug.Log("모든 플레이어가 사망했습니다. 마을 씬으로 전환합니다.");
+
+            if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
+            {
+                StartCoroutine(ResetGame());
+            }
+        }
+    }
+
+    [PunRPC]
+    private void RPC_ResetGame()
+    {
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("모든 플레이어가 사망해 잠시 뒤 마을로 복귀합니다......");
+        RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().DeleteRuntimeData();
+    }
+
+    IEnumerator ResetGame()
+    {
+        photonView.RPC("RPC_ResetGame", RpcTarget.All);
+
+        yield return new WaitForSeconds(3f);
+
+        UIManager.Instance.CloseAllUI();
+
+        if (PhotonNetwork.IsMasterClient)
+            PhotonNetwork.LoadLevel("room");
     }
 }

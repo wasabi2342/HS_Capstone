@@ -912,9 +912,9 @@ public class WhitePlayerController : ParentPlayerController
             photonView.RPC("UpdateHP", RpcTarget.All, 20f); // 여기서 체력 업데이트
             Debug.Log("플레이어 부활");
 
-            if (RoomManager.Instance != null)
+            if (PhotonNetworkManager.Instance != null)
             {
-                RoomManager.Instance.ReportPlayerRevive(photonView.Owner.ActorNumber);
+                PhotonNetworkManager.Instance.ReportPlayerRevive(photonView.Owner.ActorNumber);
             }
         }
     }
@@ -931,9 +931,9 @@ public class WhitePlayerController : ParentPlayerController
         currentState = WhitePlayerState.Death;
         Debug.Log("플레이어 사망");
 
-        if(RoomManager.Instance != null)
+        if(PhotonNetworkManager.Instance != null)
         {
-            RoomManager.Instance.ReportPlayerDeath(photonView.Owner.ActorNumber);
+            PhotonNetworkManager.Instance.ReportPlayerDeath(photonView.Owner.ActorNumber);
         }
 
         if (photonView.IsMine)
