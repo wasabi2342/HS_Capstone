@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,10 +13,22 @@ public class TutorialController : MonoBehaviour
 	private TutorialBase		currentTutorial = null;
 	private	int					currentIndex = -1;
 
+	[SerializeField]
+	private Transform blessingPos;
+	[SerializeField]
+	private Transform coopOrBetrayPos;
+	[SerializeField]
+	private GameObject selectBlessing;
+	[SerializeField]
+	private GameObject selectCoop;
+
 	private void Start()
 	{
 		SetNextTutorial();
-	}
+
+		PhotonNetwork.Instantiate(selectCoop.name, coopOrBetrayPos.position, Quaternion.identity);
+		PhotonNetwork.Instantiate(selectBlessing.name, blessingPos.position, Quaternion.identity);
+    }
 
 	private void Update()
 	{

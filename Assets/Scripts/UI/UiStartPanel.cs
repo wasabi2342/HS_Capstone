@@ -9,6 +9,8 @@ public class UiStartPanel : UIBase
     [SerializeField]
     private Button singlePlayButton;
     [SerializeField]
+    private Button tutoPlayButton;
+    [SerializeField]
     private Button multiPlayButton;
     [SerializeField]
     private Button settingButton;

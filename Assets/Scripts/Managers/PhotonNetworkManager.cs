@@ -22,10 +22,12 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     private void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
         else
-            Destroy(gameObject);
-        DontDestroyOnLoad(gameObject);
+            Destroy(this);
 
         PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.SendRate = 60;
@@ -44,10 +46,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     }
 
     public void ConnectPhoton()
-    {
-        if (PhotonNetwork.IsConnected)
-            return;
-
+    { 
         PhotonNetwork.OfflineMode = false; // 온라인 모드
         PhotonNetwork.GameVersion = gameVersion;
         PhotonNetwork.ConnectUsingSettings();
@@ -57,10 +56,6 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
     public void ConnectPhotonToSinglePlay()
     {
-        if (PhotonNetwork.IsConnected)
-            return;
-
-
         PhotonNetwork.OfflineMode = true;
         PhotonNetwork.GameVersion = gameVersion;
 
@@ -77,7 +72,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.OfflineMode)
         {
             Debug.Log("싱글 플레이 모드 - 씬 로드");
-            PhotonNetwork.LoadLevel("room");
+            //PhotonNetwork.LoadLevel("room");
+            PhotonNetwork.LoadLevel("Tutorial"); // 튜토리얼로
         }
         else
         {
