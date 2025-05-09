@@ -82,47 +82,47 @@ public class UISpaceInterationPanel : UIBase
             decayTimer = 1f;
         }
 
-        // 0.5초마다 아이콘 색 전환
-        //if (icon != null && blinkTimer <= 0f)
-        //{
-        //    icon.color = isBright ? Color.gray : Color.white;
-        //    isBright = !isBright;
-        //    blinkTimer = 0.5f;
-        //}
+        // ▶ 조기 성공 처리
+        if (fillImage.fillAmount >= 0.9f)
+        {
+            CompleteInteraction(true);
+            return;
+        }
 
         // 타이머 종료
         if (timeRemaining <= 0f)
         {
-            timerImage.fillAmount = 0;
-
-            isRunning = false;
-            InputManager.Instance.PlayerInput.actions["Space"].started -= SpaceInput;
-
-            bool success = fillImage.fillAmount >= 0.9f;
-
-            action?.Invoke(success);
-
-            UIManager.Instance.ClosePeekUI();
+            CompleteInteraction(fillImage.fillAmount >= 0.9f);
         }
+    }
+
+    private void CompleteInteraction(bool success)
+    {
+        if (!isRunning) return;
+
+        isRunning = false;
+        InputManager.Instance.PlayerInput.actions["Space"].started -= SpaceInput;
+
+        action?.Invoke(success);
+        UIManager.Instance.ClosePeekUI();
     }
 
     public void SetPanelPosition(Vector3 worldPos)
     {
         Canvas canvas = GetComponentInParent<Canvas>();
-        if (canvas == null || canvas.renderMode != RenderMode.ScreenSpaceCamera || canvas.worldCamera == null)
+        if (canvas == null || canvas.renderMode != RenderMode.ScreenSpaceOverlay)
         {
-            Debug.LogWarning("캔버스가 Screen Space - Camera 모드가 아니거나 연결된 카메라가 없습니다.");
+            Debug.LogWarning("캔버스가 Screen Space - Overlay 모드가 아닙니다.");
             return;
         }
 
-        Camera canvasCamera = canvas.worldCamera;
-        Vector2 screenPoint = canvasCamera.WorldToScreenPoint(worldPos);
+        Vector2 screenPoint = Camera.main.WorldToScreenPoint(worldPos);
 
         RectTransform panelRT = GetComponent<RectTransform>();
         RectTransform canvasRT = canvas.GetComponent<RectTransform>();
 
         Vector2 anchoredPos;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRT, screenPoint, canvasCamera, out anchoredPos);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRT, screenPoint, null, out anchoredPos);
 
         panelRT.anchoredPosition = anchoredPos;
     }
