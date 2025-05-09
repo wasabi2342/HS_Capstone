@@ -129,6 +129,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         UIStageReadyPanel panel = UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIStageReadyPanel>();
         panel.Init();
         OnUpdateReadyPlayer += panel.UpdateToggls;
+        OnUpdateReadyPlayer.Invoke(readyPlayers.Count);
     }
 
     private IEnumerator TimeCount()
@@ -560,6 +561,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
         UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("모든 플레이어가 사망해 잠시 뒤 마을로 복귀합니다......");
         RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().DeleteRuntimeData();
+        deadPlayers.Clear();
     }
 
     IEnumerator ResetGame()
