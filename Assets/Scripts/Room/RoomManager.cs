@@ -1,5 +1,6 @@
 using Photon.Pun;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Cinemachine;
@@ -38,6 +39,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public bool isEnteringStage;
 
     public Dictionary<int, GameObject> players = new Dictionary<int, GameObject>();
+
+    private HashSet<int> deadPlayers = new HashSet<int>();
 
     // 카메라 전환에서 사용
     private List<GameObject> sortedPlayers;
@@ -307,5 +310,58 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             other.transform.position = spawnPoint;
         }
+    }
+
+    /// <summary>
+    /// 플레이어 사망 시 호출
+    /// </summary>
+    public void ReportPlayerDeath(int actorNumber)
+    {
+        if (!deadPlayers.Contains(actorNumber))
+        {
+            deadPlayers.Add(actorNumber);
+            Debug.Log($"플레이어 {actorNumber} 사망. 현재 사망자 수: {deadPlayers.Count}");
+
+            CheckAllPlayersDead();
+        }
+    }
+
+    /// <summary>
+    /// 플레이어 부활 시 호출
+    /// </summary>
+    public void ReportPlayerRevive(int actorNumber)
+    {
+        if (deadPlayers.Contains(actorNumber))
+        {
+            deadPlayers.Remove(actorNumber);
+            Debug.Log($"플레이어 {actorNumber} 부활. 현재 사망자 수: {deadPlayers.Count}");
+        }
+    }
+
+    /// <summary>
+    /// 모든 플레이어가 사망했는지 확인
+    /// </summary>
+    private void CheckAllPlayersDead()
+    {
+        int totalPlayers = PhotonNetwork.OfflineMode ? 1 : PhotonNetwork.CurrentRoom.PlayerCount;
+
+        if (deadPlayers.Count >= totalPlayers)
+        {
+            Debug.Log("모든 플레이어가 사망했습니다. 마을 씬으로 전환합니다.");
+
+            if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
+            {
+                StartCoroutine(ResetGame());
+            }
+        }
+    }
+
+    IEnumerator ResetGame()
+    {
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("모든 플레이어가 사망해 잠시 뒤 마을로 복귀합니다......");
+        ReturnLocalPlayer().GetComponent<ParentPlayerController>().DeleteRuntimeData();
+
+        yield return new WaitForSeconds(3f);
+        PhotonNetwork.LoadLevel("room");
     }
 }

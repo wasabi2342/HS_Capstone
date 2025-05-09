@@ -466,4 +466,9 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     {
         shadow.enabled = true;
     }
+
+    public void DeleteRuntimeData()
+    {
+        runTimeData.DeleteRunTimeData();
+    }
 }
