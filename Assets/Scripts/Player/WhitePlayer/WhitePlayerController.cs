@@ -733,7 +733,7 @@ public class WhitePlayerController : ParentPlayerController
     }
 
     // 피격 및 사망 처리
-    public override void TakeDamage(float damage, AttackerType attackerType = AttackerType.Default)
+    public override void TakeDamage(float damage, Vector3 attackerPos,AttackerType attackerType = AttackerType.Default)
     {
         if (PhotonNetwork.IsConnected && !photonView.IsMine)
         {
@@ -762,7 +762,7 @@ public class WhitePlayerController : ParentPlayerController
             return;
         }
 
-        base.TakeDamage(damage);
+        base.TakeDamage(damage, attackerPos);
 
         Debug.Log("플레이어 체력: " + runTimeData.currentHealth);
 
@@ -795,9 +795,9 @@ public class WhitePlayerController : ParentPlayerController
     }
 
     [PunRPC]
-    public override void DamageToMaster(float damage)
+    public override void DamageToMaster(float damage, Vector3 attakerPos)
     {
-        base.DamageToMaster(damage);
+        base.DamageToMaster(damage, attakerPos);
     }
 
     [PunRPC]

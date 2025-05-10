@@ -32,6 +32,6 @@ public class ServantAttackCollider : MonoBehaviourPun
         // IDamageable 인터페이스로 데미지 전달
         var dmg = other.GetComponentInParent<IDamageable>();
         if (dmg != null)
-            dmg.TakeDamage(fsm.attackDamage, AttackerType.PinkPlayer);
+            dmg.TakeDamage(fsm.attackDamage, fsm.transform.position, AttackerType.PinkPlayer);
     }
 }
