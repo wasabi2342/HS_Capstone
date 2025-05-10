@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Photon.Pun;
 
-public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable
+public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITauntable
 {
     // ─── Components & References ─────────────────────────────
     public NavMeshAgent Agent { get; private set; }
@@ -32,6 +32,9 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable
 
     [Header("Detection")]
     public LayerMask enemyLayerMask;
+    [Header("Taunt")]
+    public bool tauntActive;
+    public float tauntEndTime;
 
     float currentHP;
 
@@ -46,6 +49,9 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable
     // ─── FSM States ───────────────────────────────────────────
     Dictionary<Type, ServantBaseState> states = new Dictionary<Type, ServantBaseState>();
     public ServantBaseState CurrentState { get; private set; }
+    // ── Taunt ─────────────────────────────────────────────────
+    public bool IsActive => tauntActive && Time.time < tauntEndTime;
+    public Transform TauntPoint => transform;
 
     void Awake()
     {
@@ -93,7 +99,13 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable
         CurrentState = states[next];
         CurrentState.Enter();
     }
-
+    /// <summary>상태 전환</summary>
+    [PunRPC]
+    public void RPC_EnableTaunt(float dur)
+    {
+        tauntActive = true;
+        tauntEndTime = Time.time + dur;
+    }
     /// <summary>가장 가까운 적 탐지</summary>
     public void DetectEnemy()
     {

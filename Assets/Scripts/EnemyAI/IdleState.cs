@@ -28,7 +28,7 @@ public class IdleState : BaseState
         detectT += Time.deltaTime;
         if (detectT >= 0.2f)
         {
-            fsm.DetectPlayer();
+            fsm.DetectTarget();
             detectT = 0f;
             if (fsm.Target) { fsm.TransitionToState(typeof(ChaseState)); return; }
         }

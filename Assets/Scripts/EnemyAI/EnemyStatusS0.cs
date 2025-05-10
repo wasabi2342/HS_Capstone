@@ -14,8 +14,9 @@ public class EnemyStatusSO : ScriptableObject
     public float navMeshSampleDistance = 3f; // NavMesh 샘플링 거리 (이동 시)
 
     [Header("추적 제한")]
-    public float maxChaseDistance = 15f;     // 스폰→타겟 최대 거리
-    public float loseSightDelay = 3f;
+    public float maxChaseDistance = 5f;     // 스폰→타겟 최대 거리
+    public float maxChaseTime = 5f;
+
 
     [Header("피격")]
     public float headOffset = 1.8f;

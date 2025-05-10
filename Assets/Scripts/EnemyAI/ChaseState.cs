@@ -5,6 +5,7 @@ using UnityEngine.AI;
 public class ChaseState : BaseState
 {
     float atkChkT, destT;
+    float chaseTimer = 0f;
     public ChaseState(EnemyFSM f) : base(f) { }
 
     public override void Enter()
@@ -16,6 +17,7 @@ public class ChaseState : BaseState
                           (status.chaseSpeedMultiplier > 0 ? status.chaseSpeedMultiplier : 1f);
         }
         fsm.PlayDirectionalAnim("Walk");
+        chaseTimer = 0f;
         atkChkT = destT = 0f;
     }
 
@@ -27,7 +29,20 @@ public class ChaseState : BaseState
             fsm.TransitionToState(typeof(WanderState));
             return;
         }
-
+        chaseTimer += Time.deltaTime;
+        if(chaseTimer > fsm.EnemyStatusRef.maxChaseTime)
+        {
+            fsm.Target = null;
+            fsm.TransitionToState(typeof(ReturnState));
+            return;
+        }
+        float distFromSpawn = (fsm.Target.position - fsm.spawnPosition).sqrMagnitude;
+        if (distFromSpawn > fsm.EnemyStatusRef.maxChaseDistance * fsm.EnemyStatusRef.maxChaseDistance)
+        {
+            fsm.Target = null;
+            fsm.TransitionToState(typeof(ReturnState));
+            return;
+        }
         // 1) 거리 계산
         float xDiff = fsm.Target.position.x - transform.position.x;
         float xAbs = Mathf.Abs(xDiff);
@@ -88,4 +103,5 @@ public class ChaseState : BaseState
     }
 
     public override void Exit() { }
+
 }

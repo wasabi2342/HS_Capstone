@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Photon.Pun;
 using Unity.AppUI.UI;
+using System.Linq;
 
 [RequireComponent(typeof(NavMeshAgent), typeof(PhotonView))]
 public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
@@ -15,15 +16,16 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     /* ───────── Data ───────── */
     [SerializeField] EnemyStatusSO enemyStatus;
     public EnemyStatusSO EnemyStatusRef => enemyStatus;
-    Vector3 spawnPosition;        // Start()에서 기록
-    float lastSeenTimer;        // 시야 잃은 후 경과시간
+    public Vector3 spawnPosition;        // Start()에서 기록
 
 
     /* ───────── Status ───────── */
     float maxHP, hp;    
     public float currentHP => hp;
     float maxShield, shield;
-
+    /* ────────── Detect ──────────── */
+    [SerializeField] LayerMask playerMask;      // Player 레이어만
+    [SerializeField] LayerMask servantMask;     // Servant 레이어만
 
     /* ───────── Facing ───────── */
     float lastMoveX = 1f;                       // +1 ⇒ Right , -1 ⇒ Left
@@ -96,6 +98,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         states[typeof(WanderState)] = new WanderState(this);
         states[typeof(IdleState)] = new IdleState(this);
         states[typeof(ChaseState)] = new ChaseState(this);
+        states[typeof(ReturnState)] = new ReturnState(this);
         states[typeof(WaitCoolState)] = new WaitCoolState(this);
         states[typeof(AttackState)] = new AttackState(this);
         states[typeof(AttackCoolState)] = new AttackCoolState(this);
@@ -123,7 +126,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
             uiHP.SetHP(1f);
             uiHP.SetShield(maxShield > 0 ? 1f : 0f);
         }
-
+         
         if (PhotonNetwork.IsMasterClient) ActiveMonsterCount++;
     }
 
@@ -132,6 +135,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         if (PhotonNetwork.IsMasterClient)
         {
             ApplyStatusToAgent();
+            spawnPosition = transform.position;
             TransitionToState(typeof(WanderState));
         }
     }
@@ -194,6 +198,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         _ when t == typeof(WanderState) => EnemyState.Wander,
         _ when t == typeof(IdleState) => EnemyState.Idle,
         _ when t == typeof(ChaseState) => EnemyState.Chase,
+        _ when t == typeof(ReturnState) => EnemyState.Return,
         _ when t == typeof(WaitCoolState) => EnemyState.WaitCool,
         _ when t == typeof(AttackState) => EnemyState.Attack,
         _ when t == typeof(AttackCoolState) => EnemyState.AttackCool,
@@ -206,6 +211,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         EnemyState.Wander => typeof(WanderState),
         EnemyState.Idle => typeof(IdleState),
         EnemyState.Chase => typeof(ChaseState),
+        EnemyState.Return => typeof(ReturnState),
         EnemyState.WaitCool => typeof(WaitCoolState),
         EnemyState.Attack => typeof(AttackState),
         EnemyState.AttackCool => typeof(AttackCoolState),
@@ -214,24 +220,51 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         _ => typeof(IdleState)
     };
 
-    /* ────────────────────────── Detect Player ──────────────────── */
+    /* ────────────────── Detect Target (Taunt > Player > Servant) ──────────────────── */
     float detT; const float DET_INT = .2f;
-    public void DetectPlayer()
+    public void DetectTarget()
     {
         detT += Time.deltaTime;
-        if (detT < DET_INT) return; detT = 0f;
+        if (detT < DET_INT) return;
+        detT = 0f;
+        /* 0) 활성 도발 확인 */
+        ITauntable[] taunts = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+                                    .OfType<ITauntable>()
+                                    .Where(t => t.IsActive)
+                                    .ToArray();
+        if (taunts.Length > 0)
+        {
+            Target = taunts[0].TauntPoint;          // 하나만 선택
+            return;
+        }
 
-        Collider[] cols = new Collider[8];
-        int n = Physics.OverlapSphereNonAlloc(transform.position, enemyStatus.detectRange,
-                                              cols, enemyStatus.playerLayerMask, QueryTriggerInteraction.Ignore);
-        Transform closest = null; float minSq = float.PositiveInfinity;
-        for (int i = 0; i < n; ++i)
-            if (cols[i].CompareTag("Player"))
-            {
-                float d = (cols[i].transform.position - transform.position).sqrMagnitude;
-                if (d < minSq) { minSq = d; closest = cols[i].transform; }
-            }
-        Target = closest;
+        /* 1) 플레이어 찾기 */
+        Collider[] cols = Physics.OverlapSphere(
+                transform.position, enemyStatus.detectRange,
+                playerMask, QueryTriggerInteraction.Ignore);
+
+        Transform nearest = FindNearest(cols);
+        if (nearest) { Target = nearest; return; }
+
+        /* 2) 소환수 찾기 */
+        cols = Physics.OverlapSphere(
+                transform.position, enemyStatus.detectRange,
+                servantMask, QueryTriggerInteraction.Ignore);
+
+        nearest = FindNearest(cols);
+        Target = nearest;          // 없으면 null
+    }
+
+    Transform FindNearest(Collider[] arr)
+    {
+        Transform best = null;
+        float minSq = float.PositiveInfinity;
+        foreach (var c in arr)
+        {
+            float d = (c.transform.position - transform.position).sqrMagnitude;
+            if (d < minSq) { minSq = d; best = c.transform; }
+        }
+        return best;
     }
 
     /* ────────────────────────── IDamageable ─────────────────────── */
