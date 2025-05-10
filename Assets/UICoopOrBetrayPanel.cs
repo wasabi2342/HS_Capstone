@@ -304,6 +304,7 @@ public class UICoopOrBetrayPanel : UIBase
                     break;
                 case CoopType.PVPType:
                     PhotonNetworkManager.Instance.GotoPVPArea();
+
                     break;
             }
         }
