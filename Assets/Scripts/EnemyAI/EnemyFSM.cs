@@ -15,6 +15,9 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     /* ───────── Data ───────── */
     [SerializeField] EnemyStatusSO enemyStatus;
     public EnemyStatusSO EnemyStatusRef => enemyStatus;
+    Vector3 spawnPosition;        // Start()에서 기록
+    float lastSeenTimer;        // 시야 잃은 후 경과시간
+
 
     /* ───────── Status ───────── */
     float maxHP, hp;    
