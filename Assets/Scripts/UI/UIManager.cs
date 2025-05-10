@@ -45,17 +45,6 @@ public class UIManager : MonoBehaviour
     {
         //OpenPanel<UiStartPanel>();
         OpenPanelInOverlayCanvas<UILogoPanel>();
-
-        string nickname = PlayerPrefs.GetString("Nickname");
-
-        if (nickname != "")
-        {
-            PhotonNetworkManager.Instance.SetNickname(nickname);
-        }
-        else
-        {
-            OpenPopupPanelInOverlayCanvas<UISetNicknamePanel>();
-        }
     }
 
     public T OpenPanelInOverlayCanvas<T>(bool additive = false) where T : UIBase

@@ -149,7 +149,10 @@ public class UILobbyPanel : UIBase
     public override void OnJoinedRoom()
     {
         UIManager.Instance.CloseAllUI();
-        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIRoomPanel>();
+        //캐릭터 선택창 제거를 위한
+        //UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIRoomPanel>();
+
+        PhotonNetwork.LoadLevel("Room"); // 나중에 삭제후 위 코드 부활 시켜야 함
     }
 
     private void OnClickedCreateRoomButton()
