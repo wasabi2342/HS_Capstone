@@ -18,12 +18,12 @@ public class InputManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(this);
         }
-        DontDestroyOnLoad(gameObject);
 
         PlayerInput = GetComponent<PlayerInput>();
     }
@@ -37,7 +37,7 @@ public class InputManager : MonoBehaviour
                 return true;
             case InputDefaultMap.UI:
                 PlayerInput.SwitchCurrentActionMap("UI");
-                return true;                
+                return true;
         }
 
         return false;

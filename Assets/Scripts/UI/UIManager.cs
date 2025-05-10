@@ -90,10 +90,14 @@ public class UIManager : MonoBehaviour
 
     public void CloseAllUI()
     {
-        if (uiStack.Count > 0)
+        while (uiStack.Count > 0)
         {
-            Destroy(uiStack.Pop().gameObject);
-            CloseAllUI();
+            UIBase ui = uiStack.Pop();
+
+            if (ui != null && ui.gameObject != null)
+            {
+                Destroy(ui.gameObject);
+            }
         }
     }
 
@@ -154,10 +158,15 @@ public class UIManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         CloseAllUI();
-        if (scene.name.StartsWith("Level")||scene.name=="StageTest1")
+        if (scene.name.StartsWith("Level")||scene.name=="StageTest1" || scene.name == "Tutorial")
         {
             OpenPanelInOverlayCanvas<UIIngameMainPanel>();
             OpenPanelInOverlayCanvas<UIMinimapPanel>(additive: true);
+        }
+        else if(scene.name == "Restart")
+        {
+            CloseAllUI();
+            OpenPanelInOverlayCanvas<UiStartPanel>();
         }
     }
 
