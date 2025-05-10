@@ -269,10 +269,16 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
 
     /* ────────────────────────── IDamageable ─────────────────────── */
     public void TakeDamage(float damage, Vector3 atkPos, AttackerType t = AttackerType.Default)
-        => pv.RPC(nameof(DamageToMaster), RpcTarget.MasterClient, damage, atkPos);
-    [PunRPC]
-    public void DamageToMaster(float damage, Vector3 atkPos)
+        => pv.RPC(nameof(DamageToMaster_RPC), RpcTarget.MasterClient, damage, atkPos, (int)t);
+    public void DamageToMaster(float damage, Vector3 attackerPos)
     {
+        // ‘Default’ 타입으로 실제 RPC 호출
+        DamageToMaster_RPC(damage, attackerPos, (int)AttackerType.Default);
+    }
+    [PunRPC]
+    public void DamageToMaster_RPC(float damage, Vector3 atkPos, int t = 0)
+    {
+        var atkType = (AttackerType)t;
         if (!PhotonNetwork.IsMasterClient) return;
         lastHitPos = atkPos;
         float rawDamage = damage;
@@ -292,11 +298,18 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         hp = Mathf.Max(0f, hp - damage);
         float deltaHP = prevHP - hp;
         pv.RPC(nameof(UpdateHP), RpcTarget.AllBuffered, hp / maxHP);
-        bool fromRight = atkPos.x < transform.position.x;
-        pv.RPC(nameof(RPC_ApplyKnockback), RpcTarget.All, atkPos);
-        pv.RPC(nameof(RPC_SpawnHitFx), RpcTarget.All, transform.position, fromRight);
         pv.RPC(nameof(RPC_ShowDamage), RpcTarget.All, rawDamage);
-        TransitionToState(hp <= 0f ? typeof(DeadState) : typeof(HitState));
+        if(atkType != AttackerType.Debuff)
+        {
+            bool fromRight = atkPos.x < transform.position.x;
+            pv.RPC(nameof(RPC_ApplyKnockback), RpcTarget.All, atkPos);
+            pv.RPC(nameof(RPC_SpawnHitFx), RpcTarget.All, transform.position, fromRight);
+            TransitionToState(hp <= 0f ? typeof(DeadState) : typeof(HitState));
+        }
+        else if (hp <= 0f)
+        {
+            TransitionToState(typeof(DeadState));
+        }
     }
 
     /* ─ HP / Shield UI 동기화 ─ */
