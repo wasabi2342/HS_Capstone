@@ -158,7 +158,7 @@ public class UIManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         CloseAllUI();
-        if (scene.name.StartsWith("Level")||scene.name=="StageTest1" || scene.name == "Tutorial")
+        if (scene.name.StartsWith("Level")||scene.name=="StageTest1" || scene.name == "Tutorial" || scene.name == "PvP")
         {
             OpenPanelInOverlayCanvas<UIIngameMainPanel>();
             OpenPanelInOverlayCanvas<UIMinimapPanel>(additive: true);
