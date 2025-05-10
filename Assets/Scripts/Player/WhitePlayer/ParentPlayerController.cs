@@ -310,7 +310,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     /// </summary>
     public virtual void ExitSuperArmorState()
     {
-        isSuperArmor = true;
+        isSuperArmor = false;
     }
 
     /// <summary>
