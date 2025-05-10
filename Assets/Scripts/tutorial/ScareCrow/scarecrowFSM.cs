@@ -14,7 +14,7 @@ public class ScarecrowFSM : MonoBehaviour, IDamageable
     [SerializeField] public float hitStunTime = 0.3f;
     [SerializeField] public float attackInterval = 2f;  // ← 새로 추가
     /* ───[Inspector] 디버그 토글─── */
-    [SerializeField] bool debugAttack;
+    public bool debugAttack;
     /* ─── 런타임 ─── */
     public Animator Anim { get; private set; }
     public float HP { get; private set; }

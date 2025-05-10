@@ -13,6 +13,7 @@ public class UISelectBlessingPanel : UIBase
 
     private bool[] isFlipped;
 
+    public bool isSelected = false;
 
     private List<SkillWithLevel> newBlessings = new List<SkillWithLevel>();
 
@@ -27,7 +28,7 @@ public class UISelectBlessingPanel : UIBase
     {
         var arr = RoomManager.Instance.ReturnLocalPlayer().GetComponent<PlayerBlessing>().ReturnSkillWithLevel();
         if (arr == null)
-            Debug.Log("arr ³Î");
+            Debug.Log("arr ï¿½ï¿½");
         for (int i = 0; i < arr.Length; i++)
         {
             Debug.Log(arr[i]);
@@ -147,6 +148,8 @@ public class UISelectBlessingPanel : UIBase
             RoomManager.Instance.ReturnLocalPlayer().GetComponent<PlayerBlessing>().UpdateBlessing(selectedBlessing);
             InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
             UIManager.Instance.ClosePeekUI();
+            isSelected = true;
         }
+        
     }
 }
