@@ -172,6 +172,12 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         return totalShield;
     }
 
+    [PunRPC]
+    public void TakeDamageRPC(float damage, int attackerTypeInt)
+    {
+        TakeDamage(damage, (AttackerType)attackerTypeInt);
+    }
+
     // 2) 추가 파라미터 useRPC를 사용한 데미지 처리
     public virtual void TakeDamage(float damage, AttackerType attackerType = AttackerType.Default)
     {

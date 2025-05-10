@@ -792,9 +792,8 @@ public class WhitePlayerController : ParentPlayerController
             }
             //StartCoroutine(CoHitReaction());
         }
-
-
     }
+
     [PunRPC]
     public override void DamageToMaster(float damage)
     {

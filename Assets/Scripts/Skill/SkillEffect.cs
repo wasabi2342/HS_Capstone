@@ -67,8 +67,8 @@ public class SkillEffect : MonoBehaviourPun
         if (!isMine)
             return;
 
-        IDamageable damageable = other.GetComponent<IDamageable>();
         PhotonView otherView = other.GetComponent<PhotonView>();
+        IDamageable damageable = other.GetComponent<IDamageable>();
 
         if (other.CompareTag("Player"))
         {
@@ -83,16 +83,19 @@ public class SkillEffect : MonoBehaviourPun
                 return;
             }
 
-            if (myTeamId != otherTeamId && damageable != null)
+            if (myTeamId != otherTeamId && otherView != null)
             {
-                ApplyAttack(other, damageable);
+                // 피해자에게 데미지를 적용하는 RPC 전송
+                otherView.RPC("TakeDamageRPC", otherView.Owner, damage, (int)attackerType);
+
+                ApplyAttackEffectOnly(other); // 이펙트 및 사운드
             }
         }
         else if (damageable != null)
         {
-            ApplyAttack(other, damageable);
+            ApplyAttackEffectOnly(other);
+            damageable.TakeDamage(damage, attackerType);
         }
-
     }
 
     private bool TryGetTeamId(PhotonView view, out int teamId)
@@ -106,7 +109,7 @@ public class SkillEffect : MonoBehaviourPun
         return false;
     }
 
-    private void ApplyAttack(Collider other, IDamageable damageable)
+    private void ApplyAttackEffectOnly(Collider other)
     {
         if (specialEffect != null)
         {
@@ -117,7 +120,6 @@ public class SkillEffect : MonoBehaviourPun
             }
         }
 
-        damageable.TakeDamage(damage, attackerType);
         triggerEvent?.Invoke();
 
         switch (attackerType)
