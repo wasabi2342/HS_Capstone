@@ -139,11 +139,11 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable
     [PunRPC]
     public void RPC_TakeDamage(float dmg, int attackerViewID)
     {
-        DamageToMaster(dmg, attackerViewID);
+        DamageToMaster(dmg);
     }
 
     [PunRPC]
-    public void DamageToMaster(float dmg, int attacker)
+    public void DamageToMaster(float dmg)
     {
         if (!PhotonNetwork.IsMasterClient) return;
         TakeDamage(dmg);
