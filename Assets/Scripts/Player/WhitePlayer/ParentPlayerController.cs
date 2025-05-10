@@ -100,6 +100,9 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
                 // UI 갱신용 invoke
                 OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
+
+                // pvp 테스트 임시 코드
+                SetTeamId(PhotonNetwork.LocalPlayer.ActorNumber);
             }
             else
             {
@@ -471,4 +474,16 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     {
         runTimeData.DeleteRunTimeData();
     }
+
+    public void SetTeamId(int teamId)
+    {
+        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+        {
+            { "TeamId", teamId }
+        };
+
+        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+        Debug.Log($"TeamId가 {teamId}로 설정되었습니다.");
+    }
+
 }

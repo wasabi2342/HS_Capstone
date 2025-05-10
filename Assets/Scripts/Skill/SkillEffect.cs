@@ -34,7 +34,7 @@ public class SkillEffect : MonoBehaviourPun
     /// </summary>
     /// <param name="damage"> 데미지 </param>
     /// <param name="triggerEvent"> 역경직 이벤트 </param>
-    public void Init(float damage, Action triggerEvent,bool isMine = false, BaseSpecialEffect specialEffect = null)
+    public void Init(float damage, Action triggerEvent, bool isMine = false, BaseSpecialEffect specialEffect = null)
     {
         this.damage = damage;
         this.triggerEvent += triggerEvent;
@@ -64,36 +64,73 @@ public class SkillEffect : MonoBehaviourPun
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!PhotonNetwork.IsConnected || isMine)
+        if (!isMine)
+            return;
+
+        IDamageable damageable = other.GetComponent<IDamageable>();
+        PhotonView otherView = other.GetComponent<PhotonView>();
+
+        if (other.CompareTag("Player"))
         {
-            IDamageable damageable = other.GetComponent<IDamageable>();
-            if (damageable != null && !other.CompareTag("Player"))
+            if (other.gameObject == RoomManager.Instance.ReturnLocalPlayer())
+                return;
+
+            PhotonView localView = RoomManager.Instance.ReturnLocalPlayer().GetPhotonView();
+
+            if (!TryGetTeamId(localView, out int myTeamId) || !TryGetTeamId(otherView, out int otherTeamId))
             {
-                if (specialEffect != null)
-                {
-                    specialEffect.InjectCollider(other);
-                }
+                Debug.Log("TeamId가 설정되지 않았습니다.");
+                return;
+            }
 
-                if (specialEffect != null && !specialEffect.IsInstant())
-                {
-                    specialEffect.ApplyEffect();
-                }
-
-                damageable.TakeDamage(damage, attackerType);
-                triggerEvent?.Invoke();
-                // 타격음
-                switch (attackerType)
-                {
-                    case AttackerType.WhitePlayer:
-                        AudioManager.Instance.PlayOneShot("event:/Character/Character-sword/katana_attack", transform.position);
-                        break;
-                    case AttackerType.PinkPlayer:
-                        AudioManager.Instance.PlayOneShot("event:/Character/Character-pink/mace_attack", transform.position);
-                        break;
-                }
-                StartCoroutine(PauseForSeconds());
+            if (myTeamId != otherTeamId && damageable != null)
+            {
+                ApplyAttack(other, damageable);
             }
         }
+        else if (damageable != null)
+        {
+            ApplyAttack(other, damageable);
+        }
+
+    }
+
+    private bool TryGetTeamId(PhotonView view, out int teamId)
+    {
+        if (view.Owner.CustomProperties.TryGetValue("TeamId", out object value))
+        {
+            teamId = (int)value;
+            return true;
+        }
+        teamId = -1;
+        return false;
+    }
+
+    private void ApplyAttack(Collider other, IDamageable damageable)
+    {
+        if (specialEffect != null)
+        {
+            specialEffect.InjectCollider(other);
+            if (!specialEffect.IsInstant())
+            {
+                specialEffect.ApplyEffect();
+            }
+        }
+
+        damageable.TakeDamage(damage, attackerType);
+        triggerEvent?.Invoke();
+
+        switch (attackerType)
+        {
+            case AttackerType.WhitePlayer:
+                AudioManager.Instance.PlayOneShot("event:/Character/Character-sword/katana_attack", transform.position);
+                break;
+            case AttackerType.PinkPlayer:
+                AudioManager.Instance.PlayOneShot("event:/Character/Character-pink/mace_attack", transform.position);
+                break;
+        }
+
+        StartCoroutine(PauseForSeconds());
     }
 
     private IEnumerator PauseForSeconds()
