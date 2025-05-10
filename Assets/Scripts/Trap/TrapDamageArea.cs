@@ -22,7 +22,7 @@ public class TrapDmageArea : MonoBehaviour
             if (damageable != null)
             {
                 
-                damageable.TakeDamage(damageAmount);
+                damageable.TakeDamage(damageAmount, transform.position);
             }
             else
             {

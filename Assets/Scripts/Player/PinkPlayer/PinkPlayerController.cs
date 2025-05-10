@@ -1211,7 +1211,7 @@ public class PinkPlayerController : ParentPlayerController
 
 
     // 피격 및 사망 처리
-    public override void TakeDamage(float damage, AttackerType attackerType = AttackerType.Default)
+    public override void TakeDamage(float damage, Vector3 attackerPos, AttackerType attackerType = AttackerType.Default)
     {
         if (currentState == PinkPlayerState.Death || currentState == PinkPlayerState.Stun)
         {
@@ -1236,7 +1236,7 @@ public class PinkPlayerController : ParentPlayerController
         //    return;
         //}
 
-        base.TakeDamage(damage);
+        base.TakeDamage(damage, attackerPos);
 
         Debug.Log("플레이어 체력: " + runTimeData.currentHealth);
 
@@ -1270,9 +1270,9 @@ public class PinkPlayerController : ParentPlayerController
 
     }
     [PunRPC]
-    public override void DamageToMaster(float damage)
+    public override void DamageToMaster(float damage, Vector3 attackerPos)
     {
-        base.DamageToMaster(damage);
+        base.DamageToMaster(damage, attackerPos);
     }
 
     [PunRPC]
