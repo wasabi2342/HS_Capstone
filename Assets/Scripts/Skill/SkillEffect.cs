@@ -86,7 +86,7 @@ public class SkillEffect : MonoBehaviourPun
             if (myTeamId != otherTeamId && otherView != null)
             {
                 // 피해자에게 데미지를 적용하는 RPC 전송
-                otherView.RPC("TakeDamageRPC", otherView.Owner, damage, (int)attackerType);
+                otherView.RPC("TakeDamageRPC", otherView.Owner, damage, transform.position, (int)attackerType);
 
                 ApplyAttackEffectOnly(other); // 이펙트 및 사운드
             }
@@ -94,7 +94,7 @@ public class SkillEffect : MonoBehaviourPun
         else if (damageable != null)
         {
             ApplyAttackEffectOnly(other);
-            damageable.TakeDamage(damage, attackerType);
+            damageable.TakeDamage(damage, transform.position ,attackerType);
         }
     }
 

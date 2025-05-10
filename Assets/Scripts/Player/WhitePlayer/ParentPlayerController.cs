@@ -108,7 +108,22 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
             {
                 RoomManager.Instance.AddPlayerDic(photonView.Owner.ActorNumber, gameObject);
                 nicknameText.text = PhotonNetwork.CurrentRoom.Players[photonView.Owner.ActorNumber].NickName;
-                nicknameText.color = new Color32(102, 255, 102, 255);
+
+                // 나와 팀 ID 비교
+                object myTeamIdObj, otherTeamIdObj;
+                PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("TeamId", out myTeamIdObj);
+                photonView.Owner.CustomProperties.TryGetValue("TeamId", out otherTeamIdObj);
+
+                if (myTeamIdObj != null && otherTeamIdObj != null && !myTeamIdObj.Equals(otherTeamIdObj))
+                {
+                    // 팀 ID 다르면 빨간색
+                    nicknameText.color = Color.red;
+                }
+                else
+                {
+                    // 같은 팀 또는 TeamId 없음
+                    nicknameText.color = new Color32(102, 255, 102, 255);
+                }
             }
         }
     }
@@ -173,9 +188,9 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     }
 
     [PunRPC]
-    public void TakeDamageRPC(float damage, int attackerTypeInt)
+    public void TakeDamageRPC(float damage, Vector3 pos, int attackerTypeInt)
     {
-        TakeDamage(damage, (AttackerType)attackerTypeInt);
+        TakeDamage(damage, pos, (AttackerType)attackerTypeInt);
     }
 
     // 2) 추가 파라미터 useRPC를 사용한 데미지 처리

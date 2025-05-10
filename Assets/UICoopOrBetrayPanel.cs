@@ -303,8 +303,25 @@ public class UICoopOrBetrayPanel : UIBase
                     PhotonNetworkManager.Instance.photonView.RPC("RPC_ApplyMonsterBuff", RpcTarget.All, 1.5f);
                     break;
                 case CoopType.PVPType:
-                    PhotonNetworkManager.Instance.GotoPVPArea();
+                    foreach (var pair in choices)
+                    {
+                        int teamId;
+                        if (!pair.Value)
+                        {
+                            teamId = pair.Key.ActorNumber;
+                        }
+                        else
+                        {
+                            teamId = -1;
+                        }
+                        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+                        {
+                            { "TeamId", teamId }
+                        };
 
+                        pair.Key.SetCustomProperties(props);
+                    }
+                    PhotonNetworkManager.Instance.GotoPVPArea();
                     break;
             }
         }
@@ -330,14 +347,20 @@ public class UICoopOrBetrayPanel : UIBase
                 case CoopType.PVPType:
                     foreach (var pair in choices)
                     {
+                        int teamId;
                         if (!pair.Value)
                         {
-                            PhotonNetworkManager.Instance.photonView.RPC("PopupBlessingPanel", pair.Key);
+                            teamId = pair.Key.ActorNumber;
                         }
                         else
                         {
-                            PhotonNetworkManager.Instance.photonView.RPC("PopupDialogPanel", pair.Key, "누군가 배신했습니다.");
+                            teamId = -1;
                         }
+                        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+                        {
+                            { "TeamId", teamId }
+                        };
+                        pair.Key.SetCustomProperties(props);
                     }
                     PhotonNetworkManager.Instance.GotoPVPArea();
                     break;

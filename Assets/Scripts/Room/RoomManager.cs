@@ -1,4 +1,5 @@
 using Photon.Pun;
+using Photon.Realtime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,7 +28,9 @@ public class RoomManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private Vector3 playerScale = new Vector3(0.375f, 0.525f, 0.375f);
     [SerializeField]
-    private Vector3 spawnPoint = Vector3.zero;
+    private List<Vector3> spawnPointList = new List<Vector3>();
+
+    private Vector3 spawnPos;
 
     // ────────────────────────────────
     // 런타임 변수
@@ -86,6 +89,19 @@ public class RoomManager : MonoBehaviourPunCallbacks
         // 키 정의
         string key = "SelectCharacter";
 
+        // 순서 기반 인덱스 구하기
+        List<Player> playerList = PhotonNetwork.PlayerList.ToList(); // ActorNumber 순
+        int myIndex = playerList.IndexOf(PhotonNetwork.LocalPlayer);
+
+        // 인덱스 범위 확인
+        if (myIndex < 0 || myIndex >= spawnPointList.Count)
+        {
+            Debug.LogWarning("스폰 포인트를 찾을 수 없습니다.");
+            return;
+        }
+
+        spawnPos = spawnPointList[myIndex] + new Vector3(0, 1.5f, 0);
+
         // 룸에 연결되어 있고 커스텀 프로퍼티에 해당 키가 있으면 안전하게 꺼내기
         if (PhotonNetwork.IsConnected
             && PhotonNetwork.CurrentRoom != null
@@ -93,12 +109,12 @@ public class RoomManager : MonoBehaviourPunCallbacks
             && val is string charName)
         {
             Debug.Log($"Loaded character name: {charName}");
-            CreateCharacter(charName, spawnPoint + new Vector3(0, 1.5f, 0), Quaternion.identity, isInVillage);
+            CreateCharacter(charName, spawnPos, Quaternion.identity, isInVillage);
         }
         else
         {
             // 키가 없거나 오프라인 모드일 때 기본 플레이어로 생성
-            CreateCharacter(defaultPlayer.name, spawnPoint + new Vector3(0, 1.5f, 0), Quaternion.identity, isInVillage);
+            CreateCharacter(defaultPlayer.name, spawnPos, Quaternion.identity, isInVillage);
         }
 
         if (UICamera != null)
@@ -306,7 +322,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         if (other.CompareTag("Player") && (!PhotonNetwork.InRoom ||
             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
-            other.transform.position = spawnPoint;
+            other.transform.position = spawnPos;
         }
     }
 }
