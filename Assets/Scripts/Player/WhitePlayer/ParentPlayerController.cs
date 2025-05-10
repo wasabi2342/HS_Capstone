@@ -102,7 +102,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
                 OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
 
                 // pvp 테스트 임시 코드
-                SetTeamId(PhotonNetwork.LocalPlayer.ActorNumber);
+                //SetTeamId(PhotonNetwork.LocalPlayer.ActorNumber);
             }
             else
             {

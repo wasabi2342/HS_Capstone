@@ -559,16 +559,40 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    private void RPC_ResetGame()
+    private void RPC_ResetGame(string message)
     {
-        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("모든 플레이어가 사망해 잠시 뒤 마을로 복귀합니다......");
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText(message);
         RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().DeleteRuntimeData();
         deadPlayers.Clear();
     }
 
+    [PunRPC]
+    private void RPC_GotoPVPArea(string message)
+    {
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText(message);
+    }
+
+    public void GotoPVPArea()
+    {
+        if (PhotonNetwork.IsMasterClient)
+            StartCoroutine(LoadPVPScene());
+    }
+
+    IEnumerator LoadPVPScene()
+    {
+        photonView.RPC("RPC_GotoPVPArea", RpcTarget.All, "배신자가 있어 잠시 뒤 PVP지역으로 이동합니다.");
+
+        yield return new WaitForSeconds(3f);
+
+        UIManager.Instance.CloseAllUI();
+
+        if (PhotonNetwork.IsMasterClient)
+            PhotonNetwork.LoadLevel("PvP");
+    }
+
     IEnumerator ResetGame()
     {
-        photonView.RPC("RPC_ResetGame", RpcTarget.All);
+        photonView.RPC("RPC_ResetGame", RpcTarget.All, "모든 플레이어가 사망해 잠시 뒤 마을로 복귀합니다......");
 
         yield return new WaitForSeconds(3f);
 

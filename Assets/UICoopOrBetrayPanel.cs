@@ -7,6 +7,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum CoopType
+{
+    defaultType,
+    PVPType
+}
+
 public class UICoopOrBetrayPanel : UIBase
 {
     [SerializeField]
@@ -49,9 +55,11 @@ public class UICoopOrBetrayPanel : UIBase
     [SerializeField]
     private UICoopOrBetrayInfoPanel betrayInfoPanel;
 
+    private CoopType coopType;
+
     private void Start()
     {
-        Init();
+        Init(CoopType.PVPType);
     }
 
     private void OnDisable()
@@ -59,17 +67,19 @@ public class UICoopOrBetrayPanel : UIBase
         InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
     }
 
-    public override void Init()
+    public void Init(CoopType coopType)
     {
-         InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
-        
-         // ���� ���� �ʱ�ȭ
-         ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable
+        InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
+
+        this.coopType = coopType;
+
+        // ���� ���� �ʱ�ȭ
+        ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable
          {
              { "coopChoice", null } // null�� �����ϸ� ��ǻ� �ʱ�ȭó�� ����
          };
-        
-         PhotonNetwork.LocalPlayer.SetCustomProperties(resetProps);
+
+        PhotonNetwork.LocalPlayer.SetCustomProperties(resetProps);
 
         StartCoroutine(StartAnimation());
 
@@ -88,10 +98,10 @@ public class UICoopOrBetrayPanel : UIBase
                 betrayInfoPanel.gameObject.SetActive(true);
         });
 
-        resetInfoPanelButton.onClick.AddListener(() => 
-        { 
-            coopInfoPanel.gameObject.SetActive(false); 
-            betrayInfoPanel.gameObject.SetActive(false); 
+        resetInfoPanelButton.onClick.AddListener(() =>
+        {
+            coopInfoPanel.gameObject.SetActive(false);
+            betrayInfoPanel.gameObject.SetActive(false);
         });
     }
 
@@ -273,28 +283,63 @@ public class UICoopOrBetrayPanel : UIBase
         {
             Debug.Log("���� ����!");
             // �������� ���� �ο�
-            PhotonNetworkManager.Instance.photonView.RPC("RPC_ApplyPlayerBuff", RpcTarget.All, 1.5f);
+            switch (coopType)
+            {
+                case CoopType.defaultType:
+                    PhotonNetworkManager.Instance.photonView.RPC("RPC_ApplyPlayerBuff", RpcTarget.All, 1.5f);
+                    break;
+                case CoopType.PVPType:
+                    PhotonNetworkManager.Instance.photonView.RPC("RPC_ResetGame", RpcTarget.All, "모든 플레이어가 협력해 유물을 성공적으로 전달했습니다.\n 잠시 뒤 마을로 복귀합니다......");
+                    break;
+            }
         }
         else if (betrayCount == choices.Count)
         {
             Debug.Log("���� ���!");
             // �������� ����� �ο�
-            PhotonNetworkManager.Instance.photonView.RPC("RPC_ApplyMonsterBuff", RpcTarget.All, 1.5f);
+            switch (coopType)
+            {
+                case CoopType.defaultType:
+                    PhotonNetworkManager.Instance.photonView.RPC("RPC_ApplyMonsterBuff", RpcTarget.All, 1.5f);
+                    break;
+                case CoopType.PVPType:
+                    PhotonNetworkManager.Instance.GotoPVPArea();
+                    break;
+            }
         }
         else
         {
             Debug.Log("�Ϻ� ���");
             // ����� ����� ����
-            foreach (var pair in choices)
+            switch (coopType)
             {
-                if (!pair.Value)
-                {
-                    PhotonNetworkManager.Instance.photonView.RPC("PopupBlessingPanel", pair.Key);
-                }
-                else
-                {
-                    PhotonNetworkManager.Instance.photonView.RPC("PopupDialogPanel", pair.Key, "누군가 배신했습니다.");
-                }
+                case CoopType.defaultType:
+                    foreach (var pair in choices)
+                    {
+                        if (!pair.Value)
+                        {
+                            PhotonNetworkManager.Instance.photonView.RPC("PopupBlessingPanel", pair.Key);
+                        }
+                        else
+                        {
+                            PhotonNetworkManager.Instance.photonView.RPC("PopupDialogPanel", pair.Key, "누군가 배신했습니다.");
+                        }
+                    }
+                    break;
+                case CoopType.PVPType:
+                    foreach (var pair in choices)
+                    {
+                        if (!pair.Value)
+                        {
+                            PhotonNetworkManager.Instance.photonView.RPC("PopupBlessingPanel", pair.Key);
+                        }
+                        else
+                        {
+                            PhotonNetworkManager.Instance.photonView.RPC("PopupDialogPanel", pair.Key, "누군가 배신했습니다.");
+                        }
+                    }
+                    PhotonNetworkManager.Instance.GotoPVPArea();
+                    break;
             }
         }
     }
