@@ -87,7 +87,7 @@ public class WhitePlayerController : ParentPlayerController
     public void SetMoveInput(Vector2 input)
     {
         moveInput = input;
-      
+
     }
 
     // 이동 처리
@@ -480,7 +480,7 @@ public class WhitePlayerController : ParentPlayerController
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, false);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.R].skillData.ID, this) : null);
     }
@@ -515,7 +515,7 @@ public class WhitePlayerController : ParentPlayerController
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this) : null);
         skillEffect.transform.parent = transform;
@@ -550,7 +550,7 @@ public class WhitePlayerController : ParentPlayerController
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this) : null);
         skillEffect.transform.parent = transform;
@@ -584,8 +584,8 @@ public class WhitePlayerController : ParentPlayerController
             skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
         }
 
-        if (PhotonNetwork.IsConnected && photonView.IsMine)
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
+        //if (PhotonNetwork.IsConnected && photonView.IsMine)
+        //    photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, null);
         skillEffect.transform.parent = transform;
@@ -620,7 +620,7 @@ public class WhitePlayerController : ParentPlayerController
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, null);
         skillEffect.transform.parent = transform;
@@ -645,9 +645,9 @@ public class WhitePlayerController : ParentPlayerController
     #endregion
 
     [PunRPC]
-    public override void CreateAnimation(string name, Vector3 pos)
+    public override void CreateAnimation(string name, Vector3 pos, bool isChild)
     {
-        base.CreateAnimation(name, pos);
+        base.CreateAnimation(name, pos, isChild);
     }
 
     public void GetUltimateBonus()
