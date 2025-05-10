@@ -38,7 +38,7 @@ public class FlameArea : MonoBehaviourPun
             IDamageable damageable = other.GetComponent<IDamageable>();
             if (damageable != null)
             {
-                damageable.TakeDamage(damage);
+                damageable.TakeDamage(damage, transform.position);
             }
         }
     }

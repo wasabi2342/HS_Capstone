@@ -31,7 +31,7 @@ public class ArrowProjectile : MonoBehaviourPun
 
         IDamageable dmg = other.GetComponentInParent<IDamageable>();
         if (dmg != null)
-            dmg.TakeDamage(overrideDamage > 0 ? overrideDamage : 0f);
+            //dmg.TakeDamage(overrideDamage > 0 ? overrideDamage : 0f);
 
         if (photonView.IsMine)
             PhotonNetwork.Destroy(gameObject);

@@ -79,7 +79,7 @@ public class SkillEffect : MonoBehaviourPun
                     specialEffect.ApplyEffect();
                 }
 
-                damageable.TakeDamage(damage, attackerType);
+                damageable.TakeDamage(damage, transform.position ,attackerType);
                 triggerEvent?.Invoke();
                 // Å¸°ÝÀ½
                 switch (attackerType)

@@ -28,7 +28,7 @@ public class ServantSpawnState : ServantBaseState
         var hits = Physics.OverlapSphere(transform.position, damageRadius, enemyLayerMask);
         foreach (var c in hits)
             if (c.GetComponentInParent<IDamageable>() is IDamageable d)
-                d.TakeDamage(damageAmount, AttackerType.PinkPlayer);
+                d.TakeDamage(damageAmount,transform.position, AttackerType.PinkPlayer);
 
         // 4) 기다림 후 분기
         if (PhotonNetwork.IsMasterClient)
