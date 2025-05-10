@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: HASAGI_Animtion
+  m_Name: HASAGI_Animtion_crocell
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -21,19 +21,19 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 8491302131849754124, guid: 6e782190d2499e54bb216da5dad8aab4, type: 3}
+      value: {fileID: 3624783599884122740, guid: 85b2abe0147ae4f4f8fa4697d244fdee, type: 3}
     - time: 0.05
-      value: {fileID: -915464185152366829, guid: 6e782190d2499e54bb216da5dad8aab4, type: 3}
+      value: {fileID: -3254509167518903402, guid: 85b2abe0147ae4f4f8fa4697d244fdee, type: 3}
     - time: 0.1
-      value: {fileID: 7618758918906297529, guid: 6e782190d2499e54bb216da5dad8aab4, type: 3}
+      value: {fileID: 1528797822358150823, guid: 85b2abe0147ae4f4f8fa4697d244fdee, type: 3}
     - time: 0.2
-      value: {fileID: -1502712726753043665, guid: 6e782190d2499e54bb216da5dad8aab4, type: 3}
+      value: {fileID: -6631927535946285918, guid: 85b2abe0147ae4f4f8fa4697d244fdee, type: 3}
     - time: 0.3
-      value: {fileID: -5292934103561203510, guid: 6e782190d2499e54bb216da5dad8aab4, type: 3}
+      value: {fileID: -4382432404190564080, guid: 85b2abe0147ae4f4f8fa4697d244fdee, type: 3}
     - time: 0.4
-      value: {fileID: 7845876348451989494, guid: 6e782190d2499e54bb216da5dad8aab4, type: 3}
+      value: {fileID: -5339668790310312691, guid: 85b2abe0147ae4f4f8fa4697d244fdee, type: 3}
     - time: 0.49
-      value: {fileID: 7845876348451989494, guid: 6e782190d2499e54bb216da5dad8aab4, type: 3}
+      value: {fileID: -5339668790310312691, guid: 85b2abe0147ae4f4f8fa4697d244fdee, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -56,13 +56,13 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 8491302131849754124, guid: 6e782190d2499e54bb216da5dad8aab4, type: 3}
-    - {fileID: -915464185152366829, guid: 6e782190d2499e54bb216da5dad8aab4, type: 3}
-    - {fileID: 7618758918906297529, guid: 6e782190d2499e54bb216da5dad8aab4, type: 3}
-    - {fileID: -1502712726753043665, guid: 6e782190d2499e54bb216da5dad8aab4, type: 3}
-    - {fileID: -5292934103561203510, guid: 6e782190d2499e54bb216da5dad8aab4, type: 3}
-    - {fileID: 7845876348451989494, guid: 6e782190d2499e54bb216da5dad8aab4, type: 3}
-    - {fileID: 7845876348451989494, guid: 6e782190d2499e54bb216da5dad8aab4, type: 3}
+    - {fileID: 3624783599884122740, guid: 85b2abe0147ae4f4f8fa4697d244fdee, type: 3}
+    - {fileID: -3254509167518903402, guid: 85b2abe0147ae4f4f8fa4697d244fdee, type: 3}
+    - {fileID: 1528797822358150823, guid: 85b2abe0147ae4f4f8fa4697d244fdee, type: 3}
+    - {fileID: -6631927535946285918, guid: 85b2abe0147ae4f4f8fa4697d244fdee, type: 3}
+    - {fileID: -4382432404190564080, guid: 85b2abe0147ae4f4f8fa4697d244fdee, type: 3}
+    - {fileID: -5339668790310312691, guid: 85b2abe0147ae4f4f8fa4697d244fdee, type: 3}
+    - {fileID: -5339668790310312691, guid: 85b2abe0147ae4f4f8fa4697d244fdee, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
@@ -116,42 +116,49 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.05
-    functionName: WhitePlayerSoundEffect
-    data: katana_stab
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 0.05
-    functionName: CreateShiftSkillEffect
+  - time: 0
+    functionName: ShiftSkill_01_Crocell_AddShield
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.1
+  - time: 0.05
     functionName: OnMoveFront
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0.3
     intParameter: 0
     messageOptions: 0
-  - time: 0.1
+  - time: 0.05
+    functionName: OnSkillCollider
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.05
     functionName: OnAttackPreAttckEnd
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.4
+  - time: 0.2
+    functionName: OffSkillCollider
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.3
     functionName: OnAttackAllowNextInput
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.4
+  - time: 0.3
     functionName: ExitSuperArmorState
     data: 
     objectReferenceParameter: {fileID: 0}

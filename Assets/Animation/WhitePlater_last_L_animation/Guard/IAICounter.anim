@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Dodge_Left
+  m_Name: IAICounter
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -21,13 +21,21 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: -6201740536283730955, guid: a1c90f83db3ac78418cf60316f3ff326, type: 3}
-    - time: 0.1
-      value: {fileID: 7549598733312918622, guid: a1c90f83db3ac78418cf60316f3ff326, type: 3}
-    - time: 0.2
-      value: {fileID: -5670777402062328868, guid: a1c90f83db3ac78418cf60316f3ff326, type: 3}
-    - time: 0.29000002
-      value: {fileID: -5670777402062328868, guid: a1c90f83db3ac78418cf60316f3ff326, type: 3}
+      value: {fileID: 7994693542407540310, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.049999952
+      value: {fileID: 5350191874317856694, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.100000024
+      value: {fileID: 1319527386705619115, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.14999998
+      value: {fileID: -667448636462227399, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.25
+      value: {fileID: 4040684227084368486, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.35000002
+      value: {fileID: -429954514137593556, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.44999993
+      value: {fileID: 5147003868122391066, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.53999996
+      value: {fileID: 5147003868122391066, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -50,16 +58,20 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: -6201740536283730955, guid: a1c90f83db3ac78418cf60316f3ff326, type: 3}
-    - {fileID: 7549598733312918622, guid: a1c90f83db3ac78418cf60316f3ff326, type: 3}
-    - {fileID: -5670777402062328868, guid: a1c90f83db3ac78418cf60316f3ff326, type: 3}
-    - {fileID: -5670777402062328868, guid: a1c90f83db3ac78418cf60316f3ff326, type: 3}
+    - {fileID: 7994693542407540310, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - {fileID: 5350191874317856694, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - {fileID: 1319527386705619115, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - {fileID: -667448636462227399, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - {fileID: 4040684227084368486, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - {fileID: -429954514137593556, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - {fileID: 5147003868122391066, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - {fileID: 5147003868122391066, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.3
+    m_StopTime: 0.54999995
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -80,37 +92,37 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0
+    functionName: EnterSuperArmorState
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.15
+    functionName: CreateCounterSkillEffect
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.15
     functionName: WhitePlayerSoundEffect
-    data: dash
+    data: IAICounter
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0
-    functionName: OnMoveFront2
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0.7
-    intParameter: 0
-    messageOptions: 0
-  - time: 0
-    functionName: StartSpaceCooldown
+  - time: 0.35
+    functionName: ExitSuperArmorState
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.1
-    functionName: OnMoveFront2
+  - time: 0.35
+    functionName: OnAttackAllowNextInput
     data: 
     objectReferenceParameter: {fileID: 0}
-    floatParameter: 0.5
-    intParameter: 0
-    messageOptions: 0
-  - time: 0.2
-    functionName: OnMoveFront2
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0.2
+    floatParameter: 0
     intParameter: 0
     messageOptions: 0

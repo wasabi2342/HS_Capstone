@@ -77,14 +77,46 @@ AnimationClip:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
   m_ClipBindingConstant:
-    genericBindings: []
-    pptrCurveMapping: []
+    genericBindings:
+    - serializedVersion: 2
+      path: 0
+      attribute: 0
+      script: {fileID: 0}
+      typeID: 212
+      customType: 23
+      isPPtrCurve: 1
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+    pptrCurveMapping:
+    - {fileID: 1219265100591526808, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: -5413667481670827489, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: -7746220637371332690, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: -4609316660986079099, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: -3563841313093667494, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: 5286147431685188619, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: -5070339455918053544, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: -7012124524212657367, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: 1493637898016637172, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: -7549659422001493020, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: -8602303123572324802, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: -3270429985489155711, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: 5013508770552064077, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: 5616546853389977262, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: -2259890699204398228, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: -8301514108802429106, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: 3430861599354416423, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: 5098177063400327602, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: 410366500065589706, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: 8340539286903594560, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: -2888771784106708741, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: -4178739981017227471, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
+    - {fileID: -4178739981017227471, guid: d37f1087d3e49c04a8fef3d27317ad6f, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 2.1
+    m_StopTime: 2.2
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -103,4 +135,74 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 0
+    functionName: OnAttackPreAttckStart
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0
+    functionName: OnMoveFront
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0.7
+    intParameter: 0
+    messageOptions: 0
+  - time: 0
+    functionName: StartAttackCooldown
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.1
+    functionName: OnAttackPreAttckEnd
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.1
+    functionName: OnMoveFront
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0.7
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.2
+    functionName: WhitePlayerSoundEffect
+    data: katana_slash
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.2
+    functionName: CreateBasicAttackEffect
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.5
+    functionName: WhitePlayerSoundEffect
+    data: katana_slash
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.8
+    functionName: OnAttackAllowNextInput
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 2.2
+    functionName: OnAttackAnimationEnd
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

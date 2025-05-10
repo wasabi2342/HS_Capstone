@@ -116,8 +116,49 @@ AnimationClip:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
   m_ClipBindingConstant:
-    genericBindings: []
-    pptrCurveMapping: []
+    genericBindings:
+    - serializedVersion: 2
+      path: 0
+      attribute: 3305885265
+      script: {fileID: 0}
+      typeID: 212
+      customType: 0
+      isPPtrCurve: 0
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+    - serializedVersion: 2
+      path: 0
+      attribute: 0
+      script: {fileID: 0}
+      typeID: 212
+      customType: 23
+      isPPtrCurve: 1
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+    pptrCurveMapping:
+    - {fileID: 138495642183928733, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: 6458470599879325350, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: 1422405177105620355, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: -1198204478044054393, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: 463331431818848870, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: -3926510456020348230, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: 2180370952417525876, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: -6512191780594226645, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: 8417077085692155852, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: -7638727203594972614, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: -7705815074918415308, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: 3178439201910767543, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: 621507931478278513, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: 6767838147339870945, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: 2203903183466809074, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: 9085212150256746355, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: 2526341801376625274, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: -1460662855830161649, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: 3640241316436154224, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: -1995817095928372565, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: -9139632698733227938, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: 6989049914448893453, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
+    - {fileID: 6989049914448893453, guid: 36a251fd1b9602d46b78bfbab681ecac, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
@@ -181,4 +222,95 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 0
+    functionName: InitAttackStak
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0
+    functionName: EnterInvincibleState
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0
+    functionName: StartUltimateCoolDown
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0
+    functionName: WhitePlayerSoundEffect
+    data: katana_DashAttack
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.6
+    functionName: OnMoveFront
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: -0.7
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.8
+    functionName: ShadowOff
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.8
+    functionName: CreateUltimateEffect
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.8
+    functionName: UltimateMove
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: -12
+    intParameter: 0
+    messageOptions: 0
+  - time: 1.3
+    functionName: ShadowOn
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 1.8
+    functionName: OnAttackAllowNextInput
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 1.9
+    functionName: WhitePlayerSoundEffect
+    data: IAI_Sheathing
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 2.4
+    functionName: ExitInvincibleState
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 2.5
+    functionName: GetUltimateBonus
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

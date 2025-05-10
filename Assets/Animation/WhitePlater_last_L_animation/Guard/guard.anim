@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Dodge_Left
+  m_Name: guard
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -21,13 +21,17 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: -6201740536283730955, guid: a1c90f83db3ac78418cf60316f3ff326, type: 3}
-    - time: 0.1
-      value: {fileID: 7549598733312918622, guid: a1c90f83db3ac78418cf60316f3ff326, type: 3}
-    - time: 0.2
-      value: {fileID: -5670777402062328868, guid: a1c90f83db3ac78418cf60316f3ff326, type: 3}
-    - time: 0.29000002
-      value: {fileID: -5670777402062328868, guid: a1c90f83db3ac78418cf60316f3ff326, type: 3}
+      value: {fileID: 918880986046527662, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.05
+      value: {fileID: 6722791234428771935, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.15
+      value: {fileID: -5796667154969236802, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.25
+      value: {fileID: 6836268887281362943, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.35
+      value: {fileID: -7564038737710076458, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.44
+      value: {fileID: -7564038737710076458, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -50,16 +54,18 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: -6201740536283730955, guid: a1c90f83db3ac78418cf60316f3ff326, type: 3}
-    - {fileID: 7549598733312918622, guid: a1c90f83db3ac78418cf60316f3ff326, type: 3}
-    - {fileID: -5670777402062328868, guid: a1c90f83db3ac78418cf60316f3ff326, type: 3}
-    - {fileID: -5670777402062328868, guid: a1c90f83db3ac78418cf60316f3ff326, type: 3}
+    - {fileID: 918880986046527662, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - {fileID: 6722791234428771935, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - {fileID: -5796667154969236802, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - {fileID: 6836268887281362943, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - {fileID: -7564038737710076458, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - {fileID: -7564038737710076458, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.3
+    m_StopTime: 0.45
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -80,37 +86,37 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0
+    functionName: StartMouseRCoolDown
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0
     functionName: WhitePlayerSoundEffect
-    data: dash
+    data: parrying motion
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0
-    functionName: OnMoveFront2
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0.7
-    intParameter: 0
-    messageOptions: 0
-  - time: 0
-    functionName: StartSpaceCooldown
+  - time: 0.05
+    functionName: EnterInvincibleState
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.1
-    functionName: OnMoveFront2
+  - time: 0.35
+    functionName: ExitInvincibleState
     data: 
     objectReferenceParameter: {fileID: 0}
-    floatParameter: 0.5
+    floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.2
-    functionName: OnMoveFront2
+  - time: 0.35
+    functionName: OnAttackAllowNextInput
     data: 
     objectReferenceParameter: {fileID: 0}
-    floatParameter: 0.2
+    floatParameter: 0
     intParameter: 0
     messageOptions: 0

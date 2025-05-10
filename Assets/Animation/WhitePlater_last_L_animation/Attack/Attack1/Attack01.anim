@@ -73,8 +73,38 @@ AnimationClip:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
   m_ClipBindingConstant:
-    genericBindings: []
-    pptrCurveMapping: []
+    genericBindings:
+    - serializedVersion: 2
+      path: 0
+      attribute: 0
+      script: {fileID: 0}
+      typeID: 212
+      customType: 23
+      isPPtrCurve: 1
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+    pptrCurveMapping:
+    - {fileID: 439044775971063969, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: -6063074084489079060, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: 748064254260003066, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: 5484822424276523103, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: 7317430173414779758, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: -5218469101145699467, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: 2111938457623173050, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: -2481496553717459688, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: -4642756081576335276, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: 8103763353493580639, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: 2577306252287680977, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: -7084305935768552766, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: 4626221756977710256, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: 7665599144358076222, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: -288528556098999685, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: -3561468822130678886, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: 3667111251277278436, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: 8770487099584430288, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: -582675093422401288, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: -8149862587309994524, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
+    - {fileID: -8149862587309994524, guid: d428dfaaf38e7d94c84fd0cecf623c46, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
@@ -99,4 +129,60 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 0
+    functionName: StartAttackCooldown
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0
+    functionName: OnAttackPreAttckStart
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.1
+    functionName: OnMoveFront
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.1
+    functionName: OnAttackPreAttckEnd
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.2
+    functionName: CreateBasicAttackEffect
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.2
+    functionName: WhitePlayerSoundEffect
+    data: katana_slash
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.6
+    functionName: OnAttackAllowNextInput
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 1.9
+    functionName: OnAttackAnimationEnd
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

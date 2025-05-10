@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: HASAGI_Animtion
+  m_Name: HASAGI_Animtion_crocell
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -116,42 +116,49 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.05
-    functionName: WhitePlayerSoundEffect
-    data: katana_stab
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 0.05
-    functionName: CreateShiftSkillEffect
+  - time: 0
+    functionName: ShiftSkill_01_Crocell_AddShield
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.1
+  - time: 0.05
     functionName: OnMoveFront
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0.3
     intParameter: 0
     messageOptions: 0
-  - time: 0.1
+  - time: 0.05
     functionName: OnAttackPreAttckEnd
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.4
+  - time: 0.05
+    functionName: OnSkillCollider
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.2
+    functionName: OffSkillCollider
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.3
     functionName: OnAttackAllowNextInput
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.4
+  - time: 0.3
     functionName: ExitSuperArmorState
     data: 
     objectReferenceParameter: {fileID: 0}
