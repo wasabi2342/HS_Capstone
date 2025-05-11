@@ -529,6 +529,12 @@ public class WhitePlayerController : ParentPlayerController
             photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this) : null);
+
+        //// 4) 넉백 배수 설정 (추가된 코드)
+        ////    attackStack이 1일 땐 1.0, 2일 땐 1.2, 3일 땐 1.4 식으로
+        //float knockbackMultiplier = 1f + 0.2f * (attackStack - 1);
+        //skillEffect.SetKnockbackMultiplier(knockbackMultiplier);
+
         skillEffect.transform.parent = transform;
     }
 

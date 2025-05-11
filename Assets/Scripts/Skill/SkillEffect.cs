@@ -30,6 +30,20 @@ public class SkillEffect : MonoBehaviourPun
         animator.speed = animationSpeed;
     }
 
+    private Vector3 pushDirection = Vector3.zero;
+
+    public void OnSetPushDirection()
+    {
+        // 이펙트 스프라이트/모델이 바라보는 앞쪽을 기준으로
+        pushDirection = transform.forward;
+    }
+
+    /// (기존) 넉백 세기 설정
+    public void SetKnockbackMultiplier(float multiplier)
+    {
+        this.knockbackMultiplier = multiplier;
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -156,34 +170,44 @@ public class SkillEffect : MonoBehaviourPun
         Rigidbody rb = other.attachedRigidbody ?? other.GetComponent<Rigidbody>();
         if (rb == null) return;
 
-        // 2) 수평 벡터만 사용 (Y축 차이는 무시)
-        Vector3 delta3D = other.transform.position - transform.position;
-        Vector3 delta = new Vector3(delta3D.x, 0f, delta3D.z);
-        float dist = delta.magnitude;
-
-        // 3) 방향 계산 (거리가 0에 매우 가깝지 않을 때만 실제 벡터 사용)
+        // 넉백 방향 계산
         Vector3 dir;
-        if (delta.sqrMagnitude > Mathf.Epsilon)  // 거의 “0,0,0”이 아닐 때
+        // 애니메이션 이벤트로 설정된 전진 방향이 있으면 우선 사용
+        if (pushDirection.sqrMagnitude > Mathf.Epsilon)
         {
-            dir = delta / dist;
+            dir = pushDirection.normalized;
         }
         else
         {
-            // 완전히 겹친 상태일 땐 오른쪽으로 밀어냄(필요시 -transform.right 으로 바꾸세요)
-            dir = transform.right;
+            //  충돌 시점의 플레이어와 몬스터 위치 차이
+            Vector3 delta = other.transform.position - transform.position;
+            delta.y = 0f;                    // 수직 성분 제거
+            if (delta.sqrMagnitude > Mathf.Epsilon)
+            {
+                dir = delta.normalized;      // 거리가 0이 아니면 그 방향
+            }
+            else
+            {
+                // 완전히 겹친 상태면, 이펙트 앞쪽(또는 공격 방향)으로
+                dir = transform.forward;
+            }
         }
 
-        // 4) 최소 분리 거리 확보 (MovePosition 사용)
+        //최소 분리 거리 확보 (밀어내기)
         const float minDistance = 1f;
-        if (dist < minDistance)
+        float currentDist = Vector3.Distance(other.transform.position, transform.position);
+        if (currentDist < minDistance)
         {
-            Vector3 pushOut = dir * (minDistance - dist);
+            Vector3 pushOut = dir * (minDistance - currentDist);
             rb.MovePosition(rb.position + pushOut);
         }
 
-        // 5) 넉백 힘 적용
+        //반드시 넉백 힘 적용 (거리 0이어도 여기까지 옴)
         float force = damage * knockbackMultiplier;
         rb.AddForce(dir * force, ForceMode.VelocityChange);
+
+        //다음 충돌을 위해 전진 방향 초기화
+        pushDirection = Vector3.zero;
     }
 
 
@@ -200,6 +224,7 @@ public class SkillEffect : MonoBehaviourPun
     {
         gameObject.SetActive(false);
     }
+
 
 
 }
