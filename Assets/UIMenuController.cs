@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MenuUIController : UIBase
+public class UIMenuPanel : UIBase
 {
     [Header("¿ÞÂÊ ½ºÅ©·Ñ ºä ±×·ì")]
     public GameObject optionList;
@@ -40,7 +40,7 @@ public class MenuUIController : UIBase
     {
         preButton.onClick.AddListener(() =>
         {
-            if (UIManager.Instance.ReturnPeekUI() as MenuUIController)
+            if (UIManager.Instance.ReturnPeekUI() as UIMenuPanel)
                 UIManager.Instance.ClosePeekUI();
         });
 
@@ -153,5 +153,10 @@ public class MenuUIController : UIBase
     private void OnMasterVolumeSliderValueChanged(float value)
     {
         AudioManager.Instance.SetMasterVolume(value);
+    }
+
+    private void OnDisable()
+    {
+        InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
     }
 }

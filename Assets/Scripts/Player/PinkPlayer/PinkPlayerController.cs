@@ -57,6 +57,13 @@ public class PinkPlayerController : ParentPlayerController
     {
         base.Start();
 
+        StartCoroutine(Co_Start());
+    }
+
+    IEnumerator Co_Start()
+    {
+        yield return null;
+
         currentState = PinkPlayerState.Idle;
 
         if (photonView.IsMine)
@@ -78,7 +85,6 @@ public class PinkPlayerController : ParentPlayerController
             }
         }
     }
-
     private void Update()
     {
     }

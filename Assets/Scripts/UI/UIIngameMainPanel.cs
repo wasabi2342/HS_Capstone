@@ -54,13 +54,19 @@ public class UIIngameMainPanel : UIBase
 
     private void Start()
     {
+        StartCoroutine(Co_Start());
+    }
+
+    IEnumerator Co_Start()
+    {
+        yield return null;
+
         openBlessingInfoAction = OpenBlessingInfoPanel;
         InputManager.Instance.PlayerInput.actions["OpenBlessingInfo"].performed += openBlessingInfoAction;
 
         RoomManager.Instance.UIUpdate += AddPartyPlayerHPbar;
         Init();
     }
-
 
     [SerializeField] private Image stunOverlay;
     [SerializeField] private Image stunSlider;
@@ -188,6 +194,8 @@ public class UIIngameMainPanel : UIBase
 
     public void OpenBlessingInfoPanel(InputAction.CallbackContext ctx)
     {
+        if (UIManager.Instance.ReturnPeekUI() as UIMenuPanel)
+            return;
         UIManager.Instance.OpenPopupPanelInOverlayCanvas<UISkillInfoPanel>();
         InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
     }

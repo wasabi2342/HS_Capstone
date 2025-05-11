@@ -45,6 +45,13 @@ public class WhitePlayerController : ParentPlayerController
     {
         base.Start();
 
+        StartCoroutine(Co_Start());
+    }
+
+    IEnumerator Co_Start()
+    {
+        yield return null;
+
         currentState = WhitePlayerState.Idle;
 
         if (photonView.IsMine || !PhotonNetwork.IsConnected)
