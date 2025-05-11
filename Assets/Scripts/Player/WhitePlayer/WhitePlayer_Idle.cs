@@ -16,7 +16,7 @@ public class WhitePlayer_Idle : StateMachineBehaviour
         if (whitePlayerController == null)
             whitePlayerController = animator.GetComponent<WhitePlayerController>();
         whitePlayerController.currentState = WhitePlayerState.Idle;
-        animator.SetBool("basicattackk", false);
+        animator.SetBool("basicattack", false);
         animator.SetBool("guard", false);
         animator.SetBool("skill", false);
         animator.SetBool("ultimate", false);
