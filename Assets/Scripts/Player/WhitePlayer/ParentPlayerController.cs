@@ -89,6 +89,13 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     protected virtual void Start()
     {
+        StartCoroutine(Co_Start());
+    }
+
+    IEnumerator Co_Start()
+    {
+        yield return new WaitForFixedUpdate();
+
         if (PhotonNetwork.IsConnected)
         {
             if (photonView.IsMine)
