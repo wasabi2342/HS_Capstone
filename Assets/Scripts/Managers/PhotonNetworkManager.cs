@@ -82,6 +82,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         }
         else
         {
+            if (PhotonNetwork.IsMasterClient)
+                PhotonNetwork.LoadLevel("room");
             Debug.Log("멀티플레이 모드 - 씬 로드는 마스터 클라이언트에서 수행해야 함");
             // 예: if (PhotonNetwork.IsMasterClient) PhotonNetwork.LoadLevel(sceneToLoad);
         }
