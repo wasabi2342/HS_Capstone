@@ -78,7 +78,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     IEnumerator Co_Start()
     {
-        yield return null;
+        yield return new WaitForFixedUpdate();
 
         PhotonNetworkManager.Instance.SetIsInPvPArea(isInPvPArea);
 
@@ -93,7 +93,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
         if (myIndex < 0 || myIndex >= spawnPointList.Count)
         {
             Debug.LogWarning("스폰 포인트를 찾을 수 없습니다.");
-            return;
+            //return;
+            yield break; // 코루틴 종료
         }
 
         spawnPos = spawnPointList[myIndex] + new Vector3(0, 1.5f, 0);
