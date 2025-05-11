@@ -1,6 +1,8 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class MenuUIController : MonoBehaviour
+public class MenuUIController : UIBase
 {
     [Header("왼쪽 스크롤 뷰 그룹")]
     public GameObject optionList;
@@ -9,6 +11,20 @@ public class MenuUIController : MonoBehaviour
     [Header("우측 설명 패널들")]
     public GameObject[] rightPanels; // Credit, GraphicOption, Character 등
 
+    [SerializeField]
+    private Button preButton;
+    [SerializeField]
+    private TMP_Dropdown resolutionDropdown;
+    [SerializeField]
+    private TMP_Dropdown windowDropdown;
+
+    [SerializeField]
+    private Slider masterVolumeSlider;
+    [SerializeField]
+    private Slider bgmVolumeSlider;
+    [SerializeField]
+    private Slider sfxVolumeSlider;
+
     private void Start()
     {
         // 시작할 때 모든 RightPanel 내용 끄기
@@ -16,8 +32,27 @@ public class MenuUIController : MonoBehaviour
         {
             panel.SetActive(false);
         }
+
+        Init();
     }
 
+    public override void Init()
+    {
+        preButton.onClick.AddListener(() =>
+        {
+            if (UIManager.Instance.ReturnPeekUI() as MenuUIController)
+                UIManager.Instance.ClosePeekUI();
+        });
+
+        resolutionDropdown.onValueChanged.AddListener(OnResolutionDropdownValueChanged);
+        windowDropdown.onValueChanged.AddListener(OnWindowDropdownValueChanged);
+        masterVolumeSlider.onValueChanged.AddListener(OnMasterVolumeSliderValueChanged);
+
+        masterVolumeSlider.value = AudioManager.Instance.masterVolume;
+
+        InitializeResolutionDropdown();
+        InitializeWindowModeDropdown();
+    }
 
     /// 상단 Guide / Option 버튼 클릭 시 호출
     public void ShowLeftList(string listName)
@@ -39,5 +74,84 @@ public class MenuUIController : MonoBehaviour
         {
             panel.SetActive(panel.name == panelName);
         }
+    }
+
+    private void OnResolutionDropdownValueChanged(int index)
+    {
+        bool isFullScreen = Screen.fullScreen;
+        switch (index)
+        {
+            case 0:
+                Screen.SetResolution(1920, 1080, isFullScreen);
+                Debug.Log("1920, 1080");
+                break;
+            case 1:
+                Screen.SetResolution(2560, 1440, isFullScreen);
+                Debug.Log("2560, 1440");
+                break;
+            case 2:
+                Screen.SetResolution(3840, 2160, isFullScreen);
+                Debug.Log("3840, 2160");
+                break;
+        }
+    }
+
+    private void OnWindowDropdownValueChanged(int index)
+    {
+        switch (index)
+        {
+            case 0:
+                Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+                Debug.Log("ExclusiveFullScreen");
+                break;
+            case 1:
+                Screen.fullScreenMode = FullScreenMode.Windowed;
+                Debug.Log("Windowed");
+                break;
+            case 2:
+                Screen.fullScreenMode = FullScreenMode.FullScreenWindow; 
+                Debug.Log("FullScreenWindow");
+                break;
+        }
+    }
+
+    private void InitializeWindowModeDropdown()
+    {
+        switch (Screen.fullScreenMode)
+        {
+            case FullScreenMode.ExclusiveFullScreen:
+                windowDropdown.value = 0;
+                break;
+            case FullScreenMode.Windowed:
+                windowDropdown.value = 1;
+                break;
+            case FullScreenMode.FullScreenWindow:
+                windowDropdown.value = 2;
+                break;
+        }
+
+        windowDropdown.RefreshShownValue();
+    }
+
+    private void InitializeResolutionDropdown()
+    {
+        var currentWidth = Screen.width;
+        var currentHeight = Screen.height;
+
+        for (int i = 0; i < resolutionDropdown.options.Count; i++)
+        {
+            var option = resolutionDropdown.options[i].text;
+            if (option.Contains(currentWidth.ToString()) && option.Contains(currentHeight.ToString()))
+            {
+                resolutionDropdown.value = i;
+                resolutionDropdown.RefreshShownValue(); // 표시 즉시 갱신
+                break;
+            }
+        }
+    }
+
+    private void OnMasterVolumeSliderValueChanged(float value)
+    {
+        AudioManager.Instance.SetMasterVolume(value);
     }
 }

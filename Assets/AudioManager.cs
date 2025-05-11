@@ -4,6 +4,13 @@ using FMOD.Studio;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
+public enum SoundType
+{
+    defaultType,
+    bgmType,
+    SFXType
+}
+
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
