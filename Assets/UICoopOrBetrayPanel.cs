@@ -66,6 +66,11 @@ public class UICoopOrBetrayPanel : UIBase
 
     private CoopType coopType;
 
+    // 선택 완료 이벤트 추가
+    public event System.Action OnChoiceCompleted;
+
+    private bool isChoice = false;
+    
     private void OnDisable()
     {
         InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
@@ -80,7 +85,7 @@ public class UICoopOrBetrayPanel : UIBase
         // ���� ���� �ʱ�ȭ
         ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable
          {
-             { "coopChoice", null } // null�� �����ϸ� ��ǻ� �ʱ�ȭó�� ����
+             { "coopChoice", null } // null�� �����ϸ� ��ǻ�? �ʱ�ȭó�� ����
          };
 
         PhotonNetwork.LocalPlayer.SetCustomProperties(resetProps);
@@ -111,16 +116,16 @@ public class UICoopOrBetrayPanel : UIBase
         switch (coopType)
         {
             case CoopType.defaultType:
-                coopHeaderText.text = "협력 시 얻는 효과";
-                coopBodyText.text = "협력 성공\r\n: 공격력 1.5배 증가\r\n\r\n협력 실패\r\n: 보상 없음";
-                betaryHeaderText.text = "배신 시 얻는 효과";
-                betrayBodyText.text = "배신 성공\r\n: 무작위 가호를 획득 \r\n\r\n배신 실패\r\n: 몬스터의 공격력 1.5배 증가";
+                coopHeaderText.text = "?��?�� ?�� ?��?�� ?���?";
+                coopBodyText.text = "?��?�� ?���?\r\n: 공격?�� 1.5�? 증�??\r\n\r\n?��?�� ?��?��\r\n: 보상 ?��?��";
+                betaryHeaderText.text = "배신 ?�� ?��?�� ?���?";
+                betrayBodyText.text = "배신 ?���?\r\n: 무작?�� �??���? ?��?�� \r\n\r\n배신 ?��?��\r\n: 몬스?��?�� 공격?�� 1.5�? 증�??";
                 break;
             case CoopType.PVPType:
-                coopHeaderText.text = "협력 시 얻는 효과";
-                coopBodyText.text = "협력 성공\r\n: 공격력 1.5배 증가\r\n\r\n협력 실패\r\n: 보상 없음";
-                betaryHeaderText.text = "배신 시 얻는 효과";
-                betrayBodyText.text = "배신 성공\r\n: 무작위 가호를 획득 \r\n\r\n배신 실패\r\n: 몬스터의 공격력 1.5배 증가";
+                coopHeaderText.text = "?��?�� ?�� ?��?�� ?���?";
+                coopBodyText.text = "?��?�� ?���?\r\n: 공격?�� 1.5�? 증�??\r\n\r\n?��?�� ?��?��\r\n: 보상 ?��?��";
+                betaryHeaderText.text = "배신 ?�� ?��?�� ?���?";
+                betrayBodyText.text = "배신 ?���?\r\n: 무작?�� �??���? ?��?�� \r\n\r\n배신 ?��?��\r\n: 몬스?��?�� 공격?�� 1.5�? 증�??";
                 break;
         }
     }
@@ -218,15 +223,15 @@ public class UICoopOrBetrayPanel : UIBase
         }
 
         // �۸�ġ ȿ�� ��, ��������Ʈ ����
-        // ���Ͻô� ��������Ʈ�� ���ܳ��ų� ���������� ������ ��������Ʈ�� ��� �����Ϸ��� �߰��� �� �ֽ��ϴ�.
-        // ���� ���, ������ ��������Ʈ�� ������ �� �ֽ��ϴ�.
+        // ���Ͻô� ��������Ʈ�� ���ܳ��ų� ���������� ������ ��������Ʈ�� ���? �����Ϸ��� �߰��� �� �ֽ��ϴ�.
+        // ���� ���?, ������ ��������Ʈ�� ������ �� �ֽ��ϴ�.
         target.sprite = sprites[sprites.Length - 1];
         target.SetNativeSize();
     }
 
     private void OnChoiceMade(bool choice)
     {
-        Debug.Log("��ư ����: " + (choice ? "����" : "���"));
+        Debug.Log("��ư ����: " + (choice ? "����" : "���?"));
 
         // CustomProperties�� ���� ����
         ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
@@ -246,14 +251,17 @@ public class UICoopOrBetrayPanel : UIBase
         {
             coopButton.transform.DOScaleX(0f, 0.1f).SetEase(Ease.Linear).OnComplete(EndSelect);
         }
-
+        
         // ��ư ��Ȱ��ȭ
         coopButton.interactable = false;
         betrayButton.interactable = false;
         coopConfirmButton.interactable = false;
         betrayConfirmButton.interactable = false;
         resetInfoPanelButton.interactable = false;
-
+        isChoice = true;
+        
+        // 선택 완료 이벤트 발생
+        OnChoiceCompleted?.Invoke();
     }
 
     private void EndSelect()
@@ -274,7 +282,7 @@ public class UICoopOrBetrayPanel : UIBase
         if (!PhotonNetwork.IsMasterClient) return;
         if (!changedProps.ContainsKey("coopChoice")) return;
 
-        // ��� ���� �÷��̾ ���� Ȯ��
+        // ���? ���� �÷��̾ ���� Ȯ��
         var currentPlayers = PhotonNetwork.CurrentRoom.Players.Values;
         var choices = new Dictionary<Player, bool>();
 
@@ -286,10 +294,10 @@ public class UICoopOrBetrayPanel : UIBase
             }
         }
 
-        // ���� ���� ���� ��� ������ ���
+        // ���� ���� ���� ���? ������ ���?
         if (choices.Count < currentPlayers.Count) return;
 
-        // ��� ���
+        // ���? ���?
         int coopCount = 0;
         int betrayCount = 0;
 
@@ -309,14 +317,14 @@ public class UICoopOrBetrayPanel : UIBase
                     PhotonNetworkManager.Instance.photonView.RPC("RPC_ApplyPlayerBuff", RpcTarget.All, 1.5f);
                     break;
                 case CoopType.PVPType:
-                    PhotonNetworkManager.Instance.photonView.RPC("RPC_ResetGame", RpcTarget.All, "모든 플레이어가 협력해 유물을 성공적으로 전달했습니다.\n 잠시 뒤 마을로 복귀합니다......");
+                    PhotonNetworkManager.Instance.photonView.RPC("RPC_ResetGame", RpcTarget.All, "모든 ?��?��?��?���? ?��?��?�� ?��물을 ?��공적?���? ?��?��?��?��?��?��.\n ?��?�� ?�� 마을�? 복�???��?��?��......");
                     break;
             }
         }
         else if (betrayCount == choices.Count)
         {
-            Debug.Log("���� ���!");
-            // �������� ����� �ο�
+            Debug.Log("���� ���?!");
+            // �������� �����? �ο�
             switch (coopType)
             {
                 case CoopType.defaultType:
@@ -347,8 +355,8 @@ public class UICoopOrBetrayPanel : UIBase
         }
         else
         {
-            Debug.Log("�Ϻ� ���");
-            // ����� ����� ����
+            Debug.Log("�Ϻ� ���?");
+            // �����? �����? ����
             switch (coopType)
             {
                 case CoopType.defaultType:
@@ -360,7 +368,7 @@ public class UICoopOrBetrayPanel : UIBase
                         }
                         else
                         {
-                            PhotonNetworkManager.Instance.photonView.RPC("PopupDialogPanel", pair.Key, "누군가 배신했습니다.");
+                            PhotonNetworkManager.Instance.photonView.RPC("PopupDialogPanel", pair.Key, "?��군�?? 배신?��?��?��?��.");
                         }
                     }
                     break;

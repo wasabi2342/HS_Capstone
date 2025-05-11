@@ -10,6 +10,9 @@ public class TutorialCrossCheck : TutorialBase
 	private bool isInitialized = false;
 	private GameObject targetObject = null;
 	private SelectBlessingNPC blessingNPC = null;
+	
+	// CoopOrBetray 패널 참조 추가
+	private UICoopOrBetrayPanel coopOrBetrayPanel = null;
 
 	public override void Enter()
 	{
@@ -54,6 +57,9 @@ public class TutorialCrossCheck : TutorialBase
                 {
                     Debug.LogWarning("SelectBlessingNPC 컴포넌트를 찾을 수 없습니다.");
                 }
+                
+                // 초기화가 완료되면 UICoopOrBetrayPanel 참조 찾기 시작
+                StartCoroutine(FindCoopOrBetrayPanel());
                 isInitialized = true;
             }	
 			else
@@ -64,11 +70,35 @@ public class TutorialCrossCheck : TutorialBase
 		}
 	}
 	
+	// UICoopOrBetrayPanel 찾기
+	private IEnumerator FindCoopOrBetrayPanel()
+	{
+		// 패널이 활성화될 때까지 대기 (상호작용 후 패널이 열릴 것이므로)
+		while (coopOrBetrayPanel == null)
+		{
+			// UI 매니저에서 현재 열린 패널 확인
+			UIBase currentPanel = UIManager.Instance.ReturnPeekUI();
+			if (currentPanel is UICoopOrBetrayPanel)
+			{
+				coopOrBetrayPanel = (UICoopOrBetrayPanel)currentPanel;
+				// 원본 OnChoiceMade 메서드가 호출된 후 실행될 콜백 등록
+				coopOrBetrayPanel.OnChoiceCompleted += OnChoiceCompletedHandler;
+				Debug.Log("UICoopOrBetrayPanel을 찾았습니다.");
+			}
+			
+			yield return new WaitForSeconds(0.5f);
+		}
+	}
+	
+	// 선택 완료 이벤트 핸들러
+	private void OnChoiceCompletedHandler()
+	{
+		isCompleted = true;
+		Debug.Log("선택이 완료되었습니다. isCompleted = true");
+	}
+	
 	public override void Execute(TutorialController controller)
 	{
-		
-	
-
 		if (isCompleted)
 		{
 			controller.SetNextTutorial();
@@ -77,5 +107,10 @@ public class TutorialCrossCheck : TutorialBase
 
 	public override void Exit()
 	{
+		// 패널 참조가 있으면 이벤트 핸들러 제거
+		if (coopOrBetrayPanel != null)
+		{
+			coopOrBetrayPanel.OnChoiceCompleted -= OnChoiceCompletedHandler;
+		}
 	}
 }
