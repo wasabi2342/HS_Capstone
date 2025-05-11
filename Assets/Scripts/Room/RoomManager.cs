@@ -79,6 +79,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
         StartCoroutine(Co_Start());
     }
 
+    private void OnDisable()
+    {
+        InputManager.Instance.PlayerInput.actions["OpenMenu"].performed -= openMenuAction;
+    }
+
     IEnumerator Co_Start()
     {
         yield return new WaitForFixedUpdate();
