@@ -162,6 +162,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 1620
+--- !u!114 &-6188617244730496483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-pink/ult_hit
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-pink/ult_hit
+  Guid:
+    Data1: 1313105367
+    Data2: 1121738080
+    Data3: 1119974806
+    Data4: -346619168
+  Banks:
+  - {fileID: -5749200132036131284}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 991
 --- !u!114 &-5932170203070475626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -204,10 +231,10 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/SFX.bank
   Name: SFX
   StudioPath: bank:/SFX
-  lastModified: 638816472784798974
+  lastModified: 638825828573061809
   FileSizes:
   - Name: Desktop
-    Value: 2716288
+    Value: 2867936
   Exists: 1
 --- !u!114 &-5712910688963151768
 MonoBehaviour:
@@ -472,13 +499,13 @@ MonoBehaviour:
     Data4: 1047362417
   Banks:
   - {fileID: -5749200132036131284}
-  IsStream: 1
+  IsStream: 0
   Is3D: 1
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 5300
+  Length: 3200
 --- !u!114 &-3304474167308404038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -694,7 +721,7 @@ MonoBehaviour:
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 620
+  Length: 360
 --- !u!114 &-1181900802947430958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -903,12 +930,14 @@ MonoBehaviour:
   - {fileID: -6285344057164941153}
   - {fileID: 7597543541683717130}
   - {fileID: -5712910688963151768}
+  - {fileID: 8913885456062505645}
+  - {fileID: -6188617244730496483}
   EditorParameters: []
   MasterBanks:
   - {fileID: 7615206358843715136}
   StringsBanks:
   - {fileID: 937915744167907725}
-  cacheTime: 638816472784798974
+  cacheTime: 638825828573061809
   cacheVersion: 131846
 --- !u!114 &241547184550738655
 MonoBehaviour:
@@ -1006,10 +1035,10 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638816472784673987
+  lastModified: 638825806290366189
   FileSizes:
   - Name: Desktop
-    Value: 3414
+    Value: 3502
   Exists: 1
 --- !u!114 &1284256337427851988
 MonoBehaviour:
@@ -1064,7 +1093,7 @@ MonoBehaviour:
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 500
+  Length: 665
 --- !u!114 &2107491773004500857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1539,7 +1568,7 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638814083478198792
+  lastModified: 638825806290356193
   FileSizes:
   - Name: Desktop
     Value: 3470432
@@ -1625,6 +1654,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 2500
+--- !u!114 &8913885456062505645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-pink/ult_finish
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-pink/ult_finish
+  Guid:
+    Data1: -1814081435
+    Data2: 1310737706
+    Data3: 2146725021
+    Data4: -775957780
+  Banks:
+  - {fileID: -5749200132036131284}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1650
 --- !u!114 &9058541493331265512
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -113,6 +113,13 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0
+    functionName: PinkPlayerSoundEffect
+    data: ult_hit
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.3
     functionName: CreateUltimateEffectHit
     data: 
     objectReferenceParameter: {fileID: 0}
@@ -134,14 +141,14 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 0.6
-    functionName: OnAttackLastAttckEnd
+    functionName: OnAttackAllowNextInput
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 0.6
-    functionName: OnAttackAllowNextInput
+    functionName: OnAttackLastAttckEnd
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
