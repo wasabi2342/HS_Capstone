@@ -3,7 +3,7 @@
 public class TutorialTrigger : TutorialBase
 {
 	[SerializeField]
-	private	PlayerController	playerController;
+	private	WhitePlayerController	playerController;
 	[SerializeField]
 	private	Transform			triggerObject;
 	
