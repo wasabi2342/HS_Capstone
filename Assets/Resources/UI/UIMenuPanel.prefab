@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 5b8175368be1ff24b9e1a43960148627, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -140,7 +140,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: ec838b968ba15804b801fe3ac82f9d7f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -273,6 +273,7 @@ GameObject:
   - component: {fileID: 1495051554513779188}
   - component: {fileID: 5743805607922311324}
   - component: {fileID: 6386288772147251956}
+  - component: {fileID: 6840405292791068011}
   m_Layer: 5
   m_Name: StunButton
   m_TagString: Untagged
@@ -321,7 +322,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -394,6 +395,37 @@ MonoBehaviour:
           m_StringArgument: StunInfo
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &6840405292791068011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 80648074192828082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &119259226539053543
 GameObject:
   m_ObjectHideFlags: 0
@@ -481,6 +513,7 @@ GameObject:
   - component: {fileID: 4419572535033055577}
   - component: {fileID: 7602338222245999014}
   - component: {fileID: 1861519958666092008}
+  - component: {fileID: 1819123756553727010}
   m_Layer: 5
   m_Name: ShieldButton
   m_TagString: Untagged
@@ -529,7 +562,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -602,6 +635,37 @@ MonoBehaviour:
           m_StringArgument: ShieldInfo
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1819123756553727010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 186457343189375428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &295040769499400284
 GameObject:
   m_ObjectHideFlags: 0
@@ -651,6 +715,7 @@ GameObject:
   - component: {fileID: 8244547507158595796}
   - component: {fileID: 2493494166643577337}
   - component: {fileID: 7071343568034607754}
+  - component: {fileID: 5456119333750720289}
   m_Layer: 5
   m_Name: StatInfoButton
   m_TagString: Untagged
@@ -699,7 +764,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -772,6 +837,37 @@ MonoBehaviour:
           m_StringArgument: StatInfo
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &5456119333750720289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 307062255156544970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &312447778362183785
 GameObject:
   m_ObjectHideFlags: 0
@@ -989,7 +1085,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC2A4\uD0EF \uC815\uBCF4"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -997,7 +1093,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1055,7 +1151,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &472757266265792959
@@ -1125,7 +1221,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC870\uC791 \uBC29\uBC95\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1133,7 +1229,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1191,7 +1287,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &473891731401606208
@@ -1246,6 +1342,7 @@ GameObject:
   - component: {fileID: 7327880193127423001}
   - component: {fileID: 2973242350432462000}
   - component: {fileID: 6599892094770168411}
+  - component: {fileID: 6354396515570937829}
   m_Layer: 5
   m_Name: HudButton
   m_TagString: Untagged
@@ -1294,7 +1391,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1367,6 +1464,37 @@ MonoBehaviour:
           m_StringArgument: HudInfo
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &6354396515570937829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 474715823526909970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &504847809669355549
 GameObject:
   m_ObjectHideFlags: 0
@@ -1546,7 +1674,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uBA54\uB274\uB85C \uB3CC\uC544\uAC00\uAE30\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1554,7 +1682,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1571,8 +1699,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1612,7 +1740,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &741095110290686732
@@ -1806,7 +1934,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC774\uC740\uC11D\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1872,7 +2000,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &827681488918298621
@@ -1962,6 +2090,7 @@ GameObject:
   - component: {fileID: 2526226036070839525}
   - component: {fileID: 5071589614267332642}
   - component: {fileID: 7531467668147641177}
+  - component: {fileID: 5839701502647521888}
   m_Layer: 5
   m_Name: BackToGame
   m_TagString: Untagged
@@ -2010,7 +2139,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2071,6 +2200,37 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5839701502647521888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861346369174685227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &915264039481131329
 GameObject:
   m_ObjectHideFlags: 0
@@ -2139,15 +2299,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uB9C8\uC2A4\uD130 \uBCFC\uB968\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281874488
-  m_fontColor: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2330,7 +2490,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 76, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1079412381344227064
@@ -2400,15 +2560,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC124\uC815\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2425,8 +2585,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2536,15 +2696,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC0AC\uC6B4\uB4DC \uC124\uC815\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2653,6 +2813,7 @@ GameObject:
   - component: {fileID: 5290895354046975653}
   - component: {fileID: 6074610042370352190}
   - component: {fileID: 4397511863188316574}
+  - component: {fileID: 4620043435025925159}
   m_Layer: 5
   m_Name: PinkPlayerButton
   m_TagString: Untagged
@@ -2701,7 +2862,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2774,6 +2935,37 @@ MonoBehaviour:
           m_StringArgument: PinkPlayerInfo
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &4620043435025925159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1391588547880396557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &1418629779330617213
 GameObject:
   m_ObjectHideFlags: 0
@@ -3027,7 +3219,7 @@ MonoBehaviour:
   m_text: "\uD55C\uC131\uB300\uD559\uAD50 2025 \uC0B0\uD559\uACF5\uB3D9\uC5F0\uAD6C
     \uD504\uB85C\uC81D\uD2B8 \uC9C0\uC6D0\uACFC\uC81C"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -3093,7 +3285,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &1711081981823990449
@@ -3163,7 +3355,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uAE40\uC724\uD638, \uC7A5\uC5D0\uC2A4\uB354"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -3229,7 +3421,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &1729059823841851436
@@ -3514,7 +3706,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Option A
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -3580,7 +3772,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &1924102988632080538
@@ -3917,15 +4109,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uB3CC\uC544\uAC00\uAE30\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3942,8 +4134,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3998,6 +4190,7 @@ GameObject:
   - component: {fileID: 5733561280351940139}
   - component: {fileID: 8004460587103693775}
   - component: {fileID: 6494575639683112379}
+  - component: {fileID: 8402579760083326175}
   m_Layer: 5
   m_Name: RewardButton
   m_TagString: Untagged
@@ -4046,7 +4239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4119,6 +4312,37 @@ MonoBehaviour:
           m_StringArgument: RewardInfo
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &8402579760083326175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2152624625484316818}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &2160264092343410698
 GameObject:
   m_ObjectHideFlags: 0
@@ -4204,6 +4428,7 @@ GameObject:
   - component: {fileID: 1405091877715065157}
   - component: {fileID: 8149561441512137644}
   - component: {fileID: 36678265699597300}
+  - component: {fileID: 2429269947942801749}
   m_Layer: 5
   m_Name: SoundButton
   m_TagString: Untagged
@@ -4252,7 +4477,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4325,6 +4550,37 @@ MonoBehaviour:
           m_StringArgument: SoundOption
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &2429269947942801749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2254517755744933161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &2263144664604967589
 GameObject:
   m_ObjectHideFlags: 0
@@ -4392,7 +4648,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uAE30\uC808 \uBC0F \uC0AC\uB9DD"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -4400,7 +4656,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -4458,7 +4714,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &2289117789543699936
@@ -4528,7 +4784,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC2DC\uC2A4\uD15C \uAE30\uD68D\uC790\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -4594,7 +4850,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &2352711948996976232
@@ -5034,7 +5290,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC544\uD2B8\uB514\uB809\uD130\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -5100,7 +5356,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &2748894666488491017
@@ -5115,6 +5371,7 @@ GameObject:
   - component: {fileID: 5165528643339594614}
   - component: {fileID: 9178891002299537055}
   - component: {fileID: 2496552919077261726}
+  - component: {fileID: 8782680273439445898}
   m_Layer: 5
   m_Name: BlessButton
   m_TagString: Untagged
@@ -5163,7 +5420,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5236,6 +5493,37 @@ MonoBehaviour:
           m_StringArgument: BlessInfo
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &8782680273439445898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2748894666488491017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &2777436857001642735
 GameObject:
   m_ObjectHideFlags: 0
@@ -5429,6 +5717,7 @@ GameObject:
   - component: {fileID: 655849464075730647}
   - component: {fileID: 5520294627473296231}
   - component: {fileID: 2239607128095096930}
+  - component: {fileID: 6330656500098324726}
   m_Layer: 5
   m_Name: ControllButton
   m_TagString: Untagged
@@ -5477,7 +5766,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5550,6 +5839,37 @@ MonoBehaviour:
           m_StringArgument: ControllInfo
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &6330656500098324726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3086761094012782174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &3087528488340433724
 GameObject:
   m_ObjectHideFlags: 0
@@ -5619,7 +5939,7 @@ MonoBehaviour:
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -5627,7 +5947,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -5685,7 +6005,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &3172056604531593599
@@ -5901,6 +6221,7 @@ GameObject:
   - component: {fileID: 350071577425215687}
   - component: {fileID: 7035455699139206198}
   - component: {fileID: 942299925308502935}
+  - component: {fileID: 6956320219821662464}
   m_Layer: 5
   m_Name: BetrayButton
   m_TagString: Untagged
@@ -5949,7 +6270,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6022,6 +6343,37 @@ MonoBehaviour:
           m_StringArgument: BetrayInfo
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &6956320219821662464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3261647493022307663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &3315875158528840249
 GameObject:
   m_ObjectHideFlags: 0
@@ -6126,15 +6478,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC804\uCCB4\uD654\uBA74\uBAA8\uB4DC\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281874488
-  m_fontColor: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -6367,7 +6719,6 @@ GameObject:
   m_Component:
   - component: {fileID: 39756444926186794}
   - component: {fileID: 7890692152890616359}
-  - component: {fileID: 4330072296179933602}
   - component: {fileID: 3351578461524829695}
   m_Layer: 5
   m_Name: Scroll View
@@ -6405,36 +6756,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3412998944684609954}
   m_CullTransparentMesh: 1
---- !u!114 &4330072296179933602
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3412998944684609954}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!114 &3351578461524829695
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6532,8 +6853,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC804\uCCB4\uD654\uBA74"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -6557,8 +6878,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -6668,7 +6989,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uBCF4\uC0C1"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -6676,7 +6997,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -6734,7 +7055,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &3585779193476535952
@@ -6802,7 +7123,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: d710c500b5cfb6d468f82fafda6b337e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6846,7 +7167,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -23.5}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5918975711501014219
@@ -6877,17 +7198,17 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uAC00\uC774\uB4DC\n"
+  m_text: "\uAC00\uC774\uB4DC\n\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -6904,8 +7225,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -7451,6 +7772,7 @@ GameObject:
   - component: {fileID: 6763299420946865322}
   - component: {fileID: 7682557342485833254}
   - component: {fileID: 5190780713305853929}
+  - component: {fileID: 2191166628179486249}
   m_Layer: 5
   m_Name: OptionButton
   m_TagString: Untagged
@@ -7499,7 +7821,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7572,6 +7894,37 @@ MonoBehaviour:
           m_StringArgument: Option
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &2191166628179486249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4250023804239813945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &4257498256225778865
 GameObject:
   m_ObjectHideFlags: 0
@@ -8390,7 +8743,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uBAAC\uC2A4\uD130 \uC274\uB4DC"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -8398,7 +8751,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -8456,7 +8809,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &5229005223786499044
@@ -8471,6 +8824,7 @@ GameObject:
   - component: {fileID: 3291213821255710770}
   - component: {fileID: 7464669869140404993}
   - component: {fileID: 262439136456391599}
+  - component: {fileID: 287676516204992393}
   m_Layer: 5
   m_Name: PlayGuideButton
   m_TagString: Untagged
@@ -8519,7 +8873,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -8592,6 +8946,37 @@ MonoBehaviour:
           m_StringArgument: PlayGuideInfo
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &287676516204992393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5229005223786499044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &5290393251907541579
 GameObject:
   m_ObjectHideFlags: 0
@@ -8659,7 +9044,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC9C0\uB3C4\uAD50\uC218 : \uD558\uC2B9\uC644"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -8725,7 +9110,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &5295365785032609691
@@ -8795,7 +9180,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC0AC\uC6A9\uC790 \uC778\uD130\uD398\uC774\uC2A4"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -8803,7 +9188,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -8861,7 +9246,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &5388749093283156688
@@ -9006,15 +9391,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uD06C\uB808\uB527"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -9253,15 +9638,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uADF8\uB798\uD53D \uC124\uC815\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -9426,7 +9811,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC544\uD2B8\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -9492,7 +9877,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &6114368825290425025
@@ -9745,7 +10130,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uD50C\uB808\uC774 \uAC00\uC774\uB4DC\n\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -9753,7 +10138,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -9811,7 +10196,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &6266766956543257559
@@ -10120,6 +10505,7 @@ GameObject:
   - component: {fileID: 4733727259522517961}
   - component: {fileID: 1688046102250855801}
   - component: {fileID: 5532480769640917408}
+  - component: {fileID: 823427192763920664}
   m_Layer: 5
   m_Name: InteractionButton
   m_TagString: Untagged
@@ -10168,7 +10554,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -10241,6 +10627,37 @@ MonoBehaviour:
           m_StringArgument: InteractionInfo
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &823427192763920664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6337292936269872088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &6346737171390151034
 GameObject:
   m_ObjectHideFlags: 0
@@ -10648,6 +11065,7 @@ GameObject:
   - component: {fileID: 7871465043241422842}
   - component: {fileID: 7280861253380798637}
   - component: {fileID: 9217930790051126191}
+  - component: {fileID: 5129116984480540573}
   m_Layer: 5
   m_Name: GuideButton
   m_TagString: Untagged
@@ -10696,7 +11114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -10769,6 +11187,37 @@ MonoBehaviour:
           m_StringArgument: Guide
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &5129116984480540573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6748506787444268763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &6855775366061213736
 GameObject:
   m_ObjectHideFlags: 0
@@ -10911,7 +11360,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uD504\uB85C\uC81D\uD2B8 \uB514\uB809\uD130"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -10977,7 +11426,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &6903729184697802644
@@ -11047,7 +11496,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uBC30\uC11C\uD604\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -11113,7 +11562,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &6936721178228797073
@@ -11183,7 +11632,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uAC00\uD638"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -11191,7 +11640,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -11249,7 +11698,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &6952890035676595867
@@ -11319,7 +11768,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uAE40\uD61C\uC131\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -11385,7 +11834,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &6960363379702615129
@@ -11456,15 +11905,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uD574\uC0C1\uB3C4 "
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281874488
-  m_fontColor: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -11537,6 +11986,7 @@ GameObject:
   - component: {fileID: 6482250298561128695}
   - component: {fileID: 9165399151216773149}
   - component: {fileID: 5608095009100930479}
+  - component: {fileID: 3018261309936839582}
   m_Layer: 5
   m_Name: CreditButton
   m_TagString: Untagged
@@ -11585,7 +12035,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -11658,6 +12108,37 @@ MonoBehaviour:
           m_StringArgument: Credit
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &3018261309936839582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7005796721604037246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &7012440669016474172
 GameObject:
   m_ObjectHideFlags: 0
@@ -12003,15 +12484,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: "BGM \uBCFC\uB968"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281874488
-  m_fontColor: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -12656,7 +13137,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uCD5C\uC885\uBBFC\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -12722,7 +13203,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &7427830775048041458
@@ -12792,7 +13273,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC0C1\uD638\uC791\uC6A9"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -12800,7 +13281,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -12858,7 +13339,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &7443024252575903593
@@ -13206,7 +13687,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uBC15\uAE30\uBC94"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -13272,7 +13753,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &7541531777042371334
@@ -13347,9 +13828,9 @@ RectTransform:
   m_Father: {fileID: 471904392211802333}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -18, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &8366215403726885104
 MonoBehaviour:
@@ -13475,10 +13956,10 @@ MonoBehaviour:
     \uC788\uB294 \uAE30\uC220 \uC544\uC774\uCF58 \uC785\uB2C8\uB2E4. \uCFE8\uD0C0\uC784\uACFC
     \uC7A5\uCC29\uD55C \uAC00\uD638\uAC00 \uD45C\uC2DC\uB429\uB2C8\uB2E4.\n\n\uCCB4\uB825
     (HP) : \uCE90\uB9AD\uD130\uC758 \uCCB4\uB825\uC785\uB2C8\uB2E4. 0\uC5D0 \uB3C4\uB2EC\uD558\uBA74
-    \uB9DD\uD569\uB2C8\uB2E4.\n\n\uC7AC\uD654 : \uD50C\uB808\uC774\uC5B4\uAC00 \uC9C0\uB2CC
-    \uC7AC\uD654\uC785\uB2C8\uB2E4. \uC7AC\uD654\uB97C \uD1B5\uD574 \uC0C1\uC810\uC744
-    \uC774\uC6A9\uD558\uAC70\uB098, \uCE90\uB9AD\uD130\uB97C \uAC15\uD654\uD560 \uC218
-    \uC788\uC2B5\uB2C8\uB2E4.\n\n\uBBF8\uB2C8\uB9F5 : \uBBF8\uB2C8\uB9F5\uC785\uB2C8\uB2E4.
+    \uC0AC\uB9DD\uD569\uB2C8\uB2E4.\n\n\uC7AC\uD654 : \uD50C\uB808\uC774\uC5B4\uAC00
+    \uC9C0\uB2CC \uC7AC\uD654\uC785\uB2C8\uB2E4. \uC7AC\uD654\uB97C \uD1B5\uD574
+    \uC0C1\uC810\uC744 \uC774\uC6A9\uD558\uAC70\uB098, \uCE90\uB9AD\uD130\uB97C \uAC15\uD654\uD560
+    \uC218 \uC788\uC2B5\uB2C8\uB2E4.\n\n\uBBF8\uB2C8\uB9F5 : \uBBF8\uB2C8\uB9F5\uC785\uB2C8\uB2E4.
     \uC720\uC800\uC640 \uD30C\uD2F0\uC6D0, \uBAAC\uC2A4\uD130\uC758 \uC704\uCE58\uAC00
     \uD45C\uC2DC\uB429\uB2C8\uB2E4."
   m_isRightToLeft: 0
@@ -13618,7 +14099,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uD611\uB825\uACFC \uBC30\uC2E0"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -13626,7 +14107,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -13684,7 +14165,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &7685112278497578562
@@ -13830,7 +14311,7 @@ MonoBehaviour:
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -13838,7 +14319,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -13896,7 +14377,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &8014939792454687089
@@ -13986,6 +14467,7 @@ GameObject:
   - component: {fileID: 3826947165951932560}
   - component: {fileID: 7520479559749945160}
   - component: {fileID: 3338118782814148666}
+  - component: {fileID: 155297603850114428}
   m_Layer: 5
   m_Name: GraphicButton
   m_TagString: Untagged
@@ -14034,7 +14516,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -14107,6 +14589,37 @@ MonoBehaviour:
           m_StringArgument: GraphicOption
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &155297603850114428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8150121101042692915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &8159294469240412087
 GameObject:
   m_ObjectHideFlags: 0
@@ -14284,6 +14797,7 @@ GameObject:
   - component: {fileID: 352530662428944206}
   - component: {fileID: 8484821051747157744}
   - component: {fileID: 7160834363650152220}
+  - component: {fileID: 4692483033473687313}
   m_Layer: 5
   m_Name: BackToMenu
   m_TagString: Untagged
@@ -14332,7 +14846,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -14393,6 +14907,37 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4692483033473687313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8279083944366178216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &8311848421608033695
 GameObject:
   m_ObjectHideFlags: 0
@@ -14460,8 +15005,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Option A
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -14777,15 +15322,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: "SFX \uBCFC\uB968\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281874488
-  m_fontColor: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -15083,6 +15628,7 @@ GameObject:
   - component: {fileID: 6360705780333561019}
   - component: {fileID: 7368698591558497607}
   - component: {fileID: 23058750078573794}
+  - component: {fileID: 5752612018190263362}
   m_Layer: 5
   m_Name: WhitePlayerButton
   m_TagString: Untagged
@@ -15131,7 +15677,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -15204,6 +15750,37 @@ MonoBehaviour:
           m_StringArgument: WhitePlayerInfo
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &5752612018190263362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8687917316204230114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &8708006217999105596
 GameObject:
   m_ObjectHideFlags: 0
@@ -15214,7 +15791,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8022338356631713374}
   - component: {fileID: 2270846754137095557}
-  - component: {fileID: 2356437598300920076}
   - component: {fileID: 4377506308337621059}
   m_Layer: 5
   m_Name: Scroll View
@@ -15252,36 +15828,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8708006217999105596}
   m_CullTransparentMesh: 1
---- !u!114 &2356437598300920076
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8708006217999105596}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!114 &4377506308337621059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15490,7 +16036,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uB9AC\uB4DC \uD504\uB85C\uADF8\uB798\uBA38\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -15556,7 +16102,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &9002410625089006000
@@ -15592,7 +16138,7 @@ RectTransform:
   m_Father: {fileID: 2538158093551237765}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0.2}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -15701,8 +16247,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 1920*1080
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -15726,8 +16272,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -15837,7 +16383,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uD074\uB77C\uC774\uC5B8\uD2B8 \uD504\uB85C\uADF8\uB798\uBA38\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -15903,6 +16449,6 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
