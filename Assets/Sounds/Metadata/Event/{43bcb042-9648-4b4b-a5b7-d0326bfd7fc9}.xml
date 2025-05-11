@@ -5,7 +5,7 @@
 			<value>low hum charge</value>
 		</property>
 		<property name="outputFormat">
-			<value>2</value>
+			<value>1</value>
 		</property>
 		<relationship name="folder">
 			<destination>{346fbd80-205e-4a70-bbd1-25aa2bbfc3ba}</destination>
@@ -95,6 +95,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{06949eaf-dd28-4172-b67a-6c59d5893c31}">
+		<property name="volume">
+			<value>-0.5</value>
+		</property>
 		<relationship name="effectChain">
 			<destination>{e1ab805f-ed71-4ce0-9941-9de8949f1dc9}</destination>
 		</relationship>
@@ -227,7 +230,6 @@
 	<object class="MixerBusEffectChain" id="{e1ab805f-ed71-4ce0-9941-9de8949f1dc9}">
 		<relationship name="effects">
 			<destination>{56c6c56d-dc4f-416b-a810-99eed8694bfa}</destination>
-			<destination>{14d9d450-b568-46bf-8648-6f44351d9255}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{c3bd2df1-1d7e-458c-9eb5-282dac0f5e91}" />
@@ -299,7 +301,6 @@
 	</object>
 	<object class="MixerBusPanner" id="{8b6d9189-3225-4738-b6af-5be8fcf0e359}" />
 	<object class="MixerBusFader" id="{56c6c56d-dc4f-416b-a810-99eed8694bfa}" />
-	<object class="SpatialiserEffect" id="{14d9d450-b568-46bf-8648-6f44351d9255}" />
 	<object class="AutomationPoint" id="{cc7e832b-bd2e-48f1-beeb-cd320de8ee9e}">
 		<property name="position">
 			<value>0.25000000000000006</value>

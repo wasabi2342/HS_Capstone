@@ -5,7 +5,7 @@
 			<value>heavy mace</value>
 		</property>
 		<property name="outputFormat">
-			<value>2</value>
+			<value>1</value>
 		</property>
 		<relationship name="folder">
 			<destination>{346fbd80-205e-4a70-bbd1-25aa2bbfc3ba}</destination>
@@ -82,6 +82,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{33f0acbd-34af-4184-a93b-29b07e270b82}">
+		<property name="volume">
+			<value>-8</value>
+		</property>
 		<relationship name="effectChain">
 			<destination>{1124e12e-2c4c-44a4-a2dc-0687fa80709b}</destination>
 		</relationship>
@@ -163,7 +166,6 @@
 	<object class="MixerBusEffectChain" id="{1124e12e-2c4c-44a4-a2dc-0687fa80709b}">
 		<relationship name="effects">
 			<destination>{541f41a6-8c99-4ffe-83aa-dd2e93d5a6fc}</destination>
-			<destination>{c1d90d89-028a-4c8d-8ad9-b64958a2730e}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{5c870d7a-3bb4-4419-92a0-62f7c6eb4bd7}" />
@@ -198,7 +200,6 @@
 	</object>
 	<object class="MixerBusPanner" id="{7d7e0b56-e388-4796-a23a-ecce472c2f30}" />
 	<object class="MixerBusFader" id="{541f41a6-8c99-4ffe-83aa-dd2e93d5a6fc}" />
-	<object class="SpatialiserEffect" id="{c1d90d89-028a-4c8d-8ad9-b64958a2730e}" />
 	<object class="MixerBusFader" id="{3ba4f39f-f6d0-4979-aa6e-42dac92f84ad}" />
 	<object class="SFXReverbEffect" id="{4f94c74f-55bd-4cae-8f98-09fcb76bc897}" />
 	<object class="AutomationPoint" id="{8a75d1d0-4956-4c26-b4d5-d25f97ae405d}">

@@ -83,15 +83,22 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0
-    functionName: OnAttackCollider
+    functionName: CreateChildEffect
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 0
-    functionName: CreateChildEffect
+    functionName: OnAttackCollider
     data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.01
+    functionName: WhitePlayerSoundEffect
+    data: time
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
