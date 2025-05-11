@@ -4,8 +4,15 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
+public enum CoopType
+{
+    defaultType,
+    PVPType
+}
 
 public class UICoopOrBetrayPanel : UIBase
 {
@@ -48,28 +55,35 @@ public class UICoopOrBetrayPanel : UIBase
     private UICoopOrBetrayInfoPanel coopInfoPanel;
     [SerializeField]
     private UICoopOrBetrayInfoPanel betrayInfoPanel;
+    [SerializeField]
+    private TextMeshProUGUI coopHeaderText;
+    [SerializeField]
+    private TextMeshProUGUI coopBodyText;
+    [SerializeField]
+    private TextMeshProUGUI betaryHeaderText;
+    [SerializeField]
+    private TextMeshProUGUI betrayBodyText;
 
-    private void Start()
-    {
-        Init();
-    }
+    private CoopType coopType;
 
     private void OnDisable()
     {
         InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
     }
 
-    public override void Init()
+    public void Init(CoopType coopType)
     {
-         InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
-        
-         // ���� ���� �ʱ�ȭ
-         ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable
+        InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
+
+        this.coopType = coopType;
+
+        // ���� ���� �ʱ�ȭ
+        ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable
          {
              { "coopChoice", null } // null�� �����ϸ� ��ǻ� �ʱ�ȭó�� ����
          };
-        
-         PhotonNetwork.LocalPlayer.SetCustomProperties(resetProps);
+
+        PhotonNetwork.LocalPlayer.SetCustomProperties(resetProps);
 
         StartCoroutine(StartAnimation());
 
@@ -88,11 +102,27 @@ public class UICoopOrBetrayPanel : UIBase
                 betrayInfoPanel.gameObject.SetActive(true);
         });
 
-        resetInfoPanelButton.onClick.AddListener(() => 
-        { 
-            coopInfoPanel.gameObject.SetActive(false); 
-            betrayInfoPanel.gameObject.SetActive(false); 
+        resetInfoPanelButton.onClick.AddListener(() =>
+        {
+            coopInfoPanel.gameObject.SetActive(false);
+            betrayInfoPanel.gameObject.SetActive(false);
         });
+
+        switch (coopType)
+        {
+            case CoopType.defaultType:
+                coopHeaderText.text = "협력 시 얻는 효과";
+                coopBodyText.text = "협력 성공\r\n: 공격력 1.5배 증가\r\n\r\n협력 실패\r\n: 보상 없음";
+                betaryHeaderText.text = "배신 시 얻는 효과";
+                betrayBodyText.text = "배신 성공\r\n: 무작위 가호를 획득 \r\n\r\n배신 실패\r\n: 몬스터의 공격력 1.5배 증가";
+                break;
+            case CoopType.PVPType:
+                coopHeaderText.text = "협력 시 얻는 효과";
+                coopBodyText.text = "협력 성공\r\n: 공격력 1.5배 증가\r\n\r\n협력 실패\r\n: 보상 없음";
+                betaryHeaderText.text = "배신 시 얻는 효과";
+                betrayBodyText.text = "배신 성공\r\n: 무작위 가호를 획득 \r\n\r\n배신 실패\r\n: 몬스터의 공격력 1.5배 증가";
+                break;
+        }
     }
 
     private IEnumerator StartAnimation()
@@ -273,28 +303,87 @@ public class UICoopOrBetrayPanel : UIBase
         {
             Debug.Log("���� ����!");
             // �������� ���� �ο�
-            PhotonNetworkManager.Instance.photonView.RPC("RPC_ApplyPlayerBuff", RpcTarget.All, 1.5f);
+            switch (coopType)
+            {
+                case CoopType.defaultType:
+                    PhotonNetworkManager.Instance.photonView.RPC("RPC_ApplyPlayerBuff", RpcTarget.All, 1.5f);
+                    break;
+                case CoopType.PVPType:
+                    PhotonNetworkManager.Instance.photonView.RPC("RPC_ResetGame", RpcTarget.All, "모든 플레이어가 협력해 유물을 성공적으로 전달했습니다.\n 잠시 뒤 마을로 복귀합니다......");
+                    break;
+            }
         }
         else if (betrayCount == choices.Count)
         {
             Debug.Log("���� ���!");
             // �������� ����� �ο�
-            PhotonNetworkManager.Instance.photonView.RPC("RPC_ApplyMonsterBuff", RpcTarget.All, 1.5f);
+            switch (coopType)
+            {
+                case CoopType.defaultType:
+                    PhotonNetworkManager.Instance.photonView.RPC("RPC_ApplyMonsterBuff", RpcTarget.All, 1.5f);
+                    break;
+                case CoopType.PVPType:
+                    foreach (var pair in choices)
+                    {
+                        int teamId;
+                        if (!pair.Value)
+                        {
+                            teamId = pair.Key.ActorNumber;
+                        }
+                        else
+                        {
+                            teamId = -1;
+                        }
+                        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+                        {
+                            { "TeamId", teamId }
+                        };
+
+                        pair.Key.SetCustomProperties(props);
+                    }
+                    PhotonNetworkManager.Instance.GotoPVPArea();
+                    break;
+            }
         }
         else
         {
             Debug.Log("�Ϻ� ���");
             // ����� ����� ����
-            foreach (var pair in choices)
+            switch (coopType)
             {
-                if (!pair.Value)
-                {
-                    PhotonNetworkManager.Instance.photonView.RPC("PopupBlessingPanel", pair.Key);
-                }
-                else
-                {
-                    PhotonNetworkManager.Instance.photonView.RPC("PopupDialogPanel", pair.Key, "누군가 배신했습니다.");
-                }
+                case CoopType.defaultType:
+                    foreach (var pair in choices)
+                    {
+                        if (!pair.Value)
+                        {
+                            PhotonNetworkManager.Instance.photonView.RPC("PopupBlessingPanel", pair.Key);
+                        }
+                        else
+                        {
+                            PhotonNetworkManager.Instance.photonView.RPC("PopupDialogPanel", pair.Key, "누군가 배신했습니다.");
+                        }
+                    }
+                    break;
+                case CoopType.PVPType:
+                    foreach (var pair in choices)
+                    {
+                        int teamId;
+                        if (!pair.Value)
+                        {
+                            teamId = pair.Key.ActorNumber;
+                        }
+                        else
+                        {
+                            teamId = -1;
+                        }
+                        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+                        {
+                            { "TeamId", teamId }
+                        };
+                        pair.Key.SetCustomProperties(props);
+                    }
+                    PhotonNetworkManager.Instance.GotoPVPArea();
+                    break;
             }
         }
     }
