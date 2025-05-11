@@ -1,4 +1,4 @@
-using Photon.Pun;
+ï»¿using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections;
@@ -41,22 +41,22 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("Æ÷Åæ ¸¶½ºÅÍ ¼­¹ö¿¡ ¿¬°áµÊ");
+        Debug.Log("í¬í†¤ ë§ˆìŠ¤í„° ì„œë²„ì— ì—°ê²°ë¨");
 
-        if (!PhotonNetwork.OfflineMode)  // ¿Â¶óÀÎÀÏ °æ¿ì¿¡¸¸ ·Îºñ Á¢¼Ó
+        if (!PhotonNetwork.OfflineMode)  // ì˜¨ë¼ì¸ì¼ ê²½ìš°ì—ë§Œ ë¡œë¹„ ì ‘ì†
         {
             PhotonNetwork.JoinLobby();
-            Debug.Log("Æ÷Åæ ·Îºñ Á¢¼Ó ½Ãµµ");
+            Debug.Log("í¬í†¤ ë¡œë¹„ ì ‘ì† ì‹œë„");
         }
     }
 
     public void ConnectPhoton()
     {
-        PhotonNetwork.OfflineMode = false; // ¿Â¶óÀÎ ¸ğµå
+        PhotonNetwork.OfflineMode = false; // ì˜¨ë¼ì¸ ëª¨ë“œ
         PhotonNetwork.GameVersion = gameVersion;
         PhotonNetwork.ConnectUsingSettings();
 
-        Debug.Log("Æ÷Åæ¼­¹ö Á¢¼Ó ½Ãµµ (¿Â¶óÀÎ)");
+        Debug.Log("í¬í†¤ì„œë²„ ì ‘ì† ì‹œë„ (ì˜¨ë¼ì¸)");
     }
 
     public void ConnectPhotonToSinglePlay()
@@ -67,25 +67,25 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 1;
 
-        PhotonNetwork.CreateRoom("½Ì±ÛÇÃ·¹ÀÌ", roomOptions);
+        PhotonNetwork.CreateRoom("ì‹±ê¸€í”Œë ˆì´", roomOptions);
 
-        Debug.Log("½Ì±Û ÇÃ·¹ÀÌ (¿ÀÇÁ¶óÀÎ ¸ğµå)·Î Æ÷Åæ Á¢¼Ó ¹× ¹æ »ı¼º");
+        Debug.Log("ì‹±ê¸€ í”Œë ˆì´ (ì˜¤í”„ë¼ì¸ ëª¨ë“œ)ë¡œ í¬í†¤ ì ‘ì† ë° ë°© ìƒì„±");
     }
 
     public override void OnJoinedRoom()
     {
         if (PhotonNetwork.OfflineMode)
         {
-            Debug.Log("½Ì±Û ÇÃ·¹ÀÌ ¸ğµå - ¾À ·Îµå");
+            Debug.Log("ì‹±ê¸€ í”Œë ˆì´ ëª¨ë“œ - ì”¬ ë¡œë“œ");
             //PhotonNetwork.LoadLevel("room");
-            PhotonNetwork.LoadLevel("Tutorial"); // Æ©Åä¸®¾ó·Î
+            PhotonNetwork.LoadLevel("Tutorial"); // íŠœí† ë¦¬ì–¼ë¡œ
         }
         else
         {
             if (PhotonNetwork.IsMasterClient)
                 PhotonNetwork.LoadLevel("room");
-            Debug.Log("¸ÖÆ¼ÇÃ·¹ÀÌ ¸ğµå - ¾À ·Îµå´Â ¸¶½ºÅÍ Å¬¶óÀÌ¾ğÆ®¿¡¼­ ¼öÇàÇØ¾ß ÇÔ");
-            // ¿¹: if (PhotonNetwork.IsMasterClient) PhotonNetwork.LoadLevel(sceneToLoad);
+            Debug.Log("ë©€í‹°í”Œë ˆì´ ëª¨ë“œ - ì”¬ ë¡œë“œëŠ” ë§ˆìŠ¤í„° í´ë¼ì´ì–¸íŠ¸ì—ì„œ ìˆ˜í–‰í•´ì•¼ í•¨");
+            // ì˜ˆ: if (PhotonNetwork.IsMasterClient) PhotonNetwork.LoadLevel(sceneToLoad);
         }
     }
 
@@ -139,7 +139,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     private IEnumerator TimeCount()
     {
         yield return new WaitForSeconds(60);
-        Debug.Log("60ÃÊ °æ°ú ½ºÅ×ÀÌÁö ÁøÀÔ");
+        Debug.Log("60ì´ˆ ê²½ê³¼ ìŠ¤í…Œì´ì§€ ì§„ì…");
         if (PhotonNetwork.IsMasterClient)
         {
 
@@ -161,7 +161,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.CurrentRoom.PlayerCount == readyPlayers.Count && PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("¸ğµÎ ÁØºñ ¿Ï·á");
+            Debug.Log("ëª¨ë‘ ì¤€ë¹„ ì™„ë£Œ");
             StopCoroutine(stageEnterCoroutine);
             UIManager.Instance.ClosePeekUI();
             RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
@@ -222,7 +222,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void RPC_OpenRewardUIForAll()
     {
-        // Áß¾Ó UIManager¸¦ ÅëÇØ UIRewardPanel ÇÁ¸®ÆÕÀ» Instantiate
+        // ì¤‘ì•™ UIManagerë¥¼ í†µí•´ UIRewardPanel í”„ë¦¬íŒ¹ì„ Instantiate
         UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIRewardPanel>();
     }
     [PunRPC]
@@ -233,7 +233,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             UIRewardPanel.Instance.rewardUI.SetActive(true);
         }
     }
-    /// ÅõÇ¥ È®Á¤ RPC: ÀÌ¹Ì ÅõÇ¥ÇÑ ÇÃ·¹ÀÌ¾î¸é ¹«½Ã, ¾Æ´Ï¶ó¸é ±â·Ï ÈÄ Ã¼Å© ¾ÆÀÌÄÜ Ãß°¡
+    /// íˆ¬í‘œ í™•ì • RPC: ì´ë¯¸ íˆ¬í‘œí•œ í”Œë ˆì´ì–´ë©´ ë¬´ì‹œ, ì•„ë‹ˆë¼ë©´ ê¸°ë¡ í›„ ì²´í¬ ì•„ì´ì½˜ ì¶”ê°€
     [PunRPC]
     public void RPC_ConfirmVote(int actorNum, int rewardIndex)
     {
@@ -243,14 +243,14 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         rewardVotes[actorNum] = rewardIndex;
         photonView.RPC("RPC_AddCheckMark", RpcTarget.All, actorNum, rewardIndex);
 
-        // ¸ğµç ÀÎ¿øÀÌ ÅõÇ¥ ¿Ï·áÇÏ¸é Ä«¿îÆ®´Ù¿î ½ÃÀÛ (¸¶½ºÅÍ Å¬¶óÀÌ¾ğÆ®)
+        // ëª¨ë“  ì¸ì›ì´ íˆ¬í‘œ ì™„ë£Œí•˜ë©´ ì¹´ìš´íŠ¸ë‹¤ìš´ ì‹œì‘ (ë§ˆìŠ¤í„° í´ë¼ì´ì–¸íŠ¸)
         if (rewardVotes.Count == PhotonNetwork.CurrentRoom.PlayerCount && PhotonNetwork.IsMasterClient)
         {
             finalRewardCountdownCoroutine = StartCoroutine(StartFinalRewardCountdown());
         }
     }
 
-    /// Æ¯Á¤ ÇÃ·¹ÀÌ¾î(actorNum)°¡ ÅõÇ¥ÇÑ º¸»ó(rewardIndex)¿¡ ´ëÇØ Ã¼Å© ¾ÆÀÌÄÜ Ãß°¡
+    /// íŠ¹ì • í”Œë ˆì´ì–´(actorNum)ê°€ íˆ¬í‘œí•œ ë³´ìƒ(rewardIndex)ì— ëŒ€í•´ ì²´í¬ ì•„ì´ì½˜ ì¶”ê°€
     [PunRPC]
     public void RPC_AddCheckMark(int actorNum, int rewardIndex)
     {
@@ -260,7 +260,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
-    /// ·ÎÄÃ ÇÃ·¹ÀÌ¾î°¡ Ãë¼Ò ¿äÃ» ½Ã ÇØ´ç ÇÃ·¹ÀÌ¾îÀÇ ÅõÇ¥¸¸ Á¦°Å
+    /// ë¡œì»¬ í”Œë ˆì´ì–´ê°€ ì·¨ì†Œ ìš”ì²­ ì‹œ í•´ë‹¹ í”Œë ˆì´ì–´ì˜ íˆ¬í‘œë§Œ ì œê±°
     [PunRPC]
     public void RPC_RemoveMyVote(int actorNum)
     {
@@ -272,7 +272,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
         photonView.RPC("RPC_RemoveMyCheckIcon", RpcTarget.All, actorNum, rewardIndex);
 
-        // ÀÌ¹Ì Ä«¿îÆ®´Ù¿îÀÌ ÁøÇà ÁßÀÌ¶ó¸é Áï½Ã Áß´Ü
+        // ì´ë¯¸ ì¹´ìš´íŠ¸ë‹¤ìš´ì´ ì§„í–‰ ì¤‘ì´ë¼ë©´ ì¦‰ì‹œ ì¤‘ë‹¨
         if (PhotonNetwork.IsMasterClient && finalRewardCountdownCoroutine != null)
         {
             StopCoroutine(finalRewardCountdownCoroutine);
@@ -280,7 +280,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
-    /// Æ¯Á¤ º¸»ó¿¡¼­ ÇØ´ç ÇÃ·¹ÀÌ¾î(actorNum)°¡ Ãß°¡ÇÑ Ã¼Å© ¾ÆÀÌÄÜ Á¦°Å
+    /// íŠ¹ì • ë³´ìƒì—ì„œ í•´ë‹¹ í”Œë ˆì´ì–´(actorNum)ê°€ ì¶”ê°€í•œ ì²´í¬ ì•„ì´ì½˜ ì œê±°
     [PunRPC]
     public void RPC_RemoveMyCheckIcon(int actorNum, int rewardIndex)
     {
@@ -290,28 +290,28 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
-    /// Ä«¿îÆ®´Ù¿î ¾÷µ¥ÀÌÆ® RPC: RewardName ÅØ½ºÆ®¿¡ ³²Àº ÃÊ Ç¥½Ã
+    /// ì¹´ìš´íŠ¸ë‹¤ìš´ ì—…ë°ì´íŠ¸ RPC: RewardName í…ìŠ¤íŠ¸ì— ë‚¨ì€ ì´ˆ í‘œì‹œ
     [PunRPC]
     public void RPC_UpdateCountdown(int seconds, string unused)
     {
         if (UIRewardPanel.Instance != null && UIRewardPanel.Instance.rewardNameText != null)
         {
-            // ³²Àº ½Ã°£ÀÌ ÀÖÀ¸¸é Ç¥½Ã, ¾øÀ¸¸é ÅØ½ºÆ®¸¦ Áö¿ò
+            // ë‚¨ì€ ì‹œê°„ì´ ìˆìœ¼ë©´ í‘œì‹œ, ì—†ìœ¼ë©´ í…ìŠ¤íŠ¸ë¥¼ ì§€ì›€
             UIRewardPanel.Instance.rewardNameText.text = seconds > 0 ? seconds.ToString() : "";
         }
     }
 
-    /// ÃÖÁ¾ º¸»ó È®Á¤ Ä«¿îÆ®´Ù¿î ÄÚ·çÆ¾: 10ÃÊºÎÅÍ 0±îÁö Ä«¿îÆ® ÈÄ ÃÖÁ¾ È®Á¤ RPC ½ÇÇà
+    /// ìµœì¢… ë³´ìƒ í™•ì • ì¹´ìš´íŠ¸ë‹¤ìš´ ì½”ë£¨í‹´: 5ì´ˆë¶€í„° 0ê¹Œì§€ ì¹´ìš´íŠ¸ í›„ ìµœì¢… í™•ì • RPC ì‹¤í–‰
     private IEnumerator StartFinalRewardCountdown()
     {
-        int countdown = 10;
+        int countdown = 5;
         while (countdown > 0)
         {
             photonView.RPC("RPC_UpdateCountdown", RpcTarget.All, countdown, "");
             yield return new WaitForSeconds(1f);
             countdown--;
 
-            // (¼±ÅÃ) Áß°£¿¡ ´©±º°¡ ÅõÇ¥ Ãë¼ÒÇßÀ¸¸é ¿©±â¼­µµ break
+            // (ì„ íƒ) ì¤‘ê°„ì— ëˆ„êµ°ê°€ íˆ¬í‘œ ì·¨ì†Œí–ˆìœ¼ë©´ ì—¬ê¸°ì„œë„ break
             if (rewardVotes.Count < PhotonNetwork.CurrentRoom.PlayerCount)
                 break;
         }
@@ -324,7 +324,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
         finalRewardCountdownCoroutine = null;
     }
-    ///ÃÖÁ¾ º¸»ó È®Á¤ RPC: weighted random selection ÈÄ °á°ú Àü´Ş
+    ///ìµœì¢… ë³´ìƒ í™•ì • RPC: weighted random selection í›„ ê²°ê³¼ ì „ë‹¬
     [PunRPC]
     public void RPC_FinalizeRewardSelection()
     {
@@ -360,24 +360,24 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             }
         }
 
-        Debug.Log($"ÃÖÁ¾ ¼±ÅÃµÈ º¸»ó ÀÎµ¦½º: {winningIndex} (È®·ü: {probabilities[winningIndex]:0.00}), ·£´ı°ª: {r}");
-        // ÃÖÁ¾ °á°ú´Â winningIndex ÇÏ³ª¸¸ Àü´ŞÇÕ´Ï´Ù.
+        Debug.Log($"ìµœì¢… ì„ íƒëœ ë³´ìƒ ì¸ë±ìŠ¤: {winningIndex} (í™•ë¥ : {probabilities[winningIndex]:0.00}), ëœë¤ê°’: {r}");
+        // ìµœì¢… ê²°ê³¼ëŠ” winningIndex í•˜ë‚˜ë§Œ ì „ë‹¬í•©ë‹ˆë‹¤.
         photonView.RPC("RPC_UpdateFinalReward", RpcTarget.All, winningIndex);
 
-        //photonView.RPC("RPC_SaveRunTimeData", RpcTarget.All); // °ÔÀÓ µ¥ÀÌÅÍ ÀúÀå
+        //photonView.RPC("RPC_SaveRunTimeData", RpcTarget.All); // ê²Œì„ ë°ì´í„° ì €ì¥
 
         if (PhotonNetwork.IsMasterClient)
         {
-            // º¸°üÇÒ °ªÀ» ´ãÀ» ÇØ½ÃÅ×ÀÌºí »ı¼º
+            // ë³´ê´€í•  ê°’ì„ ë‹´ì„ í•´ì‹œí…Œì´ë¸” ìƒì„±
             var props = new ExitGames.Client.Photon.Hashtable();
             props["FinalRewardIndex"] = winningIndex;
 
-            // ÇöÀç ¹æÀÇ CustomProperties¿¡ ¼¼ÆÃ
+            // í˜„ì¬ ë°©ì˜ CustomPropertiesì— ì„¸íŒ…
             PhotonNetwork.CurrentRoom.SetCustomProperties(props);
         }
     }
 
-    /// ÃÖÁ¾ ´çÃ· °á°ú ¾÷µ¥ÀÌÆ®: RewardName ÅØ½ºÆ®´Â Áö¿ì°í Detail ÅØ½ºÆ®¿¡ ´çÃ· °á°ú¸¦ Ç¥½Ã
+    /// ìµœì¢… ë‹¹ì²¨ ê²°ê³¼ ì—…ë°ì´íŠ¸: RewardName í…ìŠ¤íŠ¸ëŠ” ì§€ìš°ê³  Detail í…ìŠ¤íŠ¸ì— ë‹¹ì²¨ ê²°ê³¼ë¥¼ í‘œì‹œ
     [PunRPC]
     public void RPC_UpdateFinalReward(int winningIndex)
     {
@@ -399,20 +399,43 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
     private IEnumerator StartNextStageCountdown()
     {
-        int countdown = 5; // ¿¹) 5ÃÊ ÈÄ ´ÙÀ½ ¾À ÀÌµ¿
+        int countdown = 5;
         while (countdown > 0)
         {
-            // ¸ğµç Å¬¶óÀÌ¾ğÆ®°¡ 5,4,3,... ¸Ş½ÃÁö¸¦ º¼ ¼ö ÀÖµµ·Ï RPC
-            photonView.RPC("RPC_ShowNextStageCountdown", RpcTarget.All, countdown);
+            photonView.RPC(nameof(RPC_ShowNextStageCountdown), RpcTarget.All, countdown);
             yield return new WaitForSeconds(1f);
             countdown--;
         }
 
-        // Ä«¿îÆ®´Ù¿îÀÌ ³¡³ª¸é ¸¶Áö¸·À¸·Î 0ÃÊ Ç¥±â
-        photonView.RPC("RPC_ShowNextStageCountdown", RpcTarget.All, 0);
+        photonView.RPC(nameof(RPC_ShowNextStageCountdown), RpcTarget.All, 0);
+
+        // í”Œë ˆì´ì–´ ì˜¤ë¸Œì íŠ¸ ì •ë¦¬
         PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
-        // ÀÌÈÄ ¿øÇÏ´Â ¾ÀÀ¸·Î ÀÌµ¿
-        PhotonNetwork.LoadLevel("Level1");
+
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€ ë‹¤ìŒ ì”¬ ì´ë¦„ ê³„ì‚° â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        string cur = SceneManager.GetActiveScene().name;      // ex) "Level0"
+        string prefix = new string(cur.TakeWhile(char.IsLetter).ToArray()); // "Level"
+        string numberTxt = new string(cur.SkipWhile(char.IsLetter).ToArray()); // "0"
+
+        int curIdx;
+        if (int.TryParse(numberTxt, out curIdx))
+        {
+            string nextScene = $"{prefix}{curIdx + 1}";
+
+            // ë¹Œë“œ ì„¸íŒ…ì— ìˆëŠ”ì§€ í™•ì¸í•˜ê³  ì´ë™
+            if (Application.CanStreamedLevelBeLoaded(nextScene))
+            {
+                PhotonNetwork.LoadLevel(nextScene);
+            }
+            else
+            {
+                Debug.LogError($"{nextScene}â€¯ì´(ê°€) Build Settingsì— ì—†ìŠµë‹ˆë‹¤!");
+            }
+        }
+        else
+        {
+            Debug.LogError($"í˜„ì¬ ì”¬ ì´ë¦„ {cur} ì—ì„œ ìˆ«ìë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+        }
 
         finalRewardNextStageCoroutine = null;
     }
@@ -421,7 +444,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
         if (UIRewardPanel.Instance != null)
         {
-            // detailText ¾Æ·¡¿¡ Ãß°¡·Î Àû°Å³ª, º°µµÀÇ Text ÇÊµå¸¦ ¸¸µé¾î¼­ »ç¿ë
+            // detailText ì•„ë˜ì— ì¶”ê°€ë¡œ ì ê±°ë‚˜, ë³„ë„ì˜ Text í•„ë“œë¥¼ ë§Œë“¤ì–´ì„œ ì‚¬ìš©
             if (seconds > 0)
             {
                 UIRewardPanel.Instance.detailText.text = $"Going Next Stage... {seconds}s";
@@ -446,7 +469,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             UIManager.Instance.ClosePeekUI();
         }
 
-        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText($"¸ğµÎ°¡ Çù·ÂÇØ ÇÇÇØ·®ÀÌ{damageBuff}¹è Áõ°¡ÇÕ´Ï´Ù.");
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText($"ëª¨ë‘ê°€ í˜‘ë ¥í•´ í”¼í•´ëŸ‰ì´{damageBuff}ë°° ì¦ê°€í•©ë‹ˆë‹¤.");
     }
 
     [PunRPC]
@@ -462,7 +485,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             UIManager.Instance.ClosePeekUI();
         }
 
-        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText($"¸ğµÎ°¡ ¹è½ÅÇØ ¸ó½ºÅÍÀÇ ÇÇÇØ·®ÀÌ{damageBuff}¹è Áõ°¡ÇÕ´Ï´Ù.");
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText($"ëª¨ë‘ê°€ ë°°ì‹ í•´ ëª¬ìŠ¤í„°ì˜ í”¼í•´ëŸ‰ì´{damageBuff}ë°° ì¦ê°€í•©ë‹ˆë‹¤.");
     }
 
     [PunRPC]
@@ -475,7 +498,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
         UIManager.Instance.OpenPopupPanelInCameraCanvas<UISelectBlessingPanel>();
 
-        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText($"¹è½Å¿¡ ¼º°øÇØ °¡È£¸¦ È¹µæÇÕ´Ï´Ù.");
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText($"ë°°ì‹ ì— ì„±ê³µí•´ ê°€í˜¸ë¥¼ íšë“í•©ë‹ˆë‹¤.");
     }
 
     [PunRPC]
@@ -490,7 +513,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     }
 
     /// <summary>
-    /// ÇÃ·¹ÀÌ¾î »ç¸Á ½Ã È£Ãâ
+    /// í”Œë ˆì´ì–´ ì‚¬ë§ ì‹œ í˜¸ì¶œ
     /// </summary>
     public void ReportPlayerDeath(int actorNumber)
     {
@@ -499,7 +522,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             if (!deadPlayers.Contains(actorNumber))
             {
                 deadPlayers.Add(actorNumber);
-                Debug.Log($"ÇÃ·¹ÀÌ¾î {actorNumber} »ç¸Á. ÇöÀç »ç¸ÁÀÚ ¼ö: {deadPlayers.Count}");
+                Debug.Log($"í”Œë ˆì´ì–´ {actorNumber} ì‚¬ë§. í˜„ì¬ ì‚¬ë§ì ìˆ˜: {deadPlayers.Count}");
 
                 if (isInPvPArea)
                 {
@@ -518,7 +541,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     }
 
     /// <summary>
-    /// ÇÃ·¹ÀÌ¾î ºÎÈ° ½Ã È£Ãâ
+    /// í”Œë ˆì´ì–´ ë¶€í™œ ì‹œ í˜¸ì¶œ
     /// </summary>
     public void ReportPlayerRevive(int actorNumber)
     {
@@ -527,7 +550,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             if (deadPlayers.Contains(actorNumber))
             {
                 deadPlayers.Remove(actorNumber);
-                Debug.Log($"ÇÃ·¹ÀÌ¾î {actorNumber} ºÎÈ°. ÇöÀç »ç¸ÁÀÚ ¼ö: {deadPlayers.Count}");
+                Debug.Log($"í”Œë ˆì´ì–´ {actorNumber} ë¶€í™œ. í˜„ì¬ ì‚¬ë§ì ìˆ˜: {deadPlayers.Count}");
             }
         }
         else
@@ -555,7 +578,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
         if (aliveTeamIds.Count == 1)
         {
-            // ´Ü ÇÏ³ªÀÇ ÆÀ¸¸ »ıÁ¸ ¡æ ÇØ´ç ÆÀ ½Â¸®
+            // ë‹¨ í•˜ë‚˜ì˜ íŒ€ë§Œ ìƒì¡´ â†’ í•´ë‹¹ íŒ€ ìŠ¹ë¦¬
             int winningTeamId = aliveTeamIds.First();
             var winningPlayers = alivePlayers
                 .Where(p => (int)p.CustomProperties["TeamId"] == winningTeamId)
@@ -564,8 +587,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             string winnerNames = string.Join("\n", winningPlayers.Select(p => $"Player : {p.NickName}"));
 
             string resultMessage = winningTeamId == -1
-                ? $"Çù·ÂÀÚÆÀ ½Â¸®! \n{winnerNames}"
-                : $"¹è½Å ¼º°ø: {winnerNames}";
+                ? $"í˜‘ë ¥ìíŒ€ ìŠ¹ë¦¬! \n{winnerNames}"
+                : $"ë°°ì‹  ì„±ê³µ: {winnerNames}";
 
             StartCoroutine(ResetGame(resultMessage));
         }
@@ -584,7 +607,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     }
 
     /// <summary>
-    /// ¸ğµç ÇÃ·¹ÀÌ¾î°¡ »ç¸ÁÇß´ÂÁö È®ÀÎ
+    /// ëª¨ë“  í”Œë ˆì´ì–´ê°€ ì‚¬ë§í–ˆëŠ”ì§€ í™•ì¸
     /// </summary>
     private void CheckAllPlayersDead()
     {
@@ -592,11 +615,11 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
         if (deadPlayers.Count >= totalPlayers)
         {
-            Debug.Log("¸ğµç ÇÃ·¹ÀÌ¾î°¡ »ç¸ÁÇß½À´Ï´Ù. ¸¶À» ¾ÀÀ¸·Î ÀüÈ¯ÇÕ´Ï´Ù.");
+            Debug.Log("ëª¨ë“  í”Œë ˆì´ì–´ê°€ ì‚¬ë§í–ˆìŠµë‹ˆë‹¤. ë§ˆì„ ì”¬ìœ¼ë¡œ ì „í™˜í•©ë‹ˆë‹¤.");
 
             if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
             {
-                StartCoroutine(ResetGame("¸ğµç ÇÃ·¹ÀÌ¾î°¡ »ç¸ÁÇØ Àá½Ã µÚ ¸¶À»·Î º¹±ÍÇÕ´Ï´Ù......"));
+                StartCoroutine(ResetGame("ëª¨ë“  í”Œë ˆì´ì–´ê°€ ì‚¬ë§í•´ ì ì‹œ ë’¤ ë§ˆì„ë¡œ ë³µê·€í•©ë‹ˆë‹¤......"));
             }
         }
     }
@@ -624,7 +647,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
     IEnumerator LoadPVPScene()
     {
-        photonView.RPC("RPC_GotoPVPArea", RpcTarget.All, "¹è½ÅÀÚ°¡ ÀÖ¾î Àá½Ã µÚ PVPÁö¿ªÀ¸·Î ÀÌµ¿ÇÕ´Ï´Ù.");
+        photonView.RPC("RPC_GotoPVPArea", RpcTarget.All, "ë°°ì‹ ìê°€ ìˆì–´ ì ì‹œ ë’¤ PVPì§€ì—­ìœ¼ë¡œ ì´ë™í•©ë‹ˆë‹¤.");
 
         yield return new WaitForSeconds(3f);
 
@@ -638,14 +661,14 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
         photonView.RPC("RPC_ResetGame", RpcTarget.All, message);
 
-        // Ä¿½ºÅÒ ÇÁ·ÎÆÛÆ¼ ÃÊ±âÈ­ (TeamId Á¦°Å)
+        // ì»¤ìŠ¤í…€ í”„ë¡œí¼í‹° ì´ˆê¸°í™” (TeamId ì œê±°)
         foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
             if (player.CustomProperties.ContainsKey("TeamId"))
             {
                 ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable
             {
-                { "TeamId", null } // Å° Á¦°Å´Â null ÇÒ´ç ¶Ç´Â Remove
+                { "TeamId", null } // í‚¤ ì œê±°ëŠ” null í• ë‹¹ ë˜ëŠ” Remove
             };
                 player.SetCustomProperties(resetProps);
             }

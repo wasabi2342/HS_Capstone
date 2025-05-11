@@ -106,8 +106,8 @@ public class StageManager : MonoBehaviour
 
     public bool AreAllMonstersCleared()
     {
-        Debug.Log("ActiveMonsterCount: " + EnemyAI.ActiveMonsterCount);
-        bool cleared = EnemyAI.ActiveMonsterCount == 0;
+        Debug.Log("ActiveMonsterCount: " + EnemyFSM.ActiveMonsterCount);
+        bool cleared = EnemyFSM.ActiveMonsterCount == 0;
         if (cleared)
         {
             Debug.Log("모든 몬스터가 제거되었습니다.");
