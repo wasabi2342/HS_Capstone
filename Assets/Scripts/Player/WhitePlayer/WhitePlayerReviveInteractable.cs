@@ -81,12 +81,18 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
     }
     private bool IsSameTeam(PhotonView localView, PhotonView otherView)
     {
-        if (!TryGetTeamId(localView, out int myTeamId) || !TryGetTeamId(otherView, out int otherTeamId))
+        // TeamId를 가져오는데 실패하면 기본값으로 -1을 사용하고, 기본적으로 같은 팀으로 처리
+        if (!TryGetTeamId(localView, out int myTeamId))
         {
-            Debug.Log("TeamId가 설정되지 않았습니다.");
-            return false;
+            myTeamId = -1; // TeamId가 없으면 기본값 -1
         }
 
+        if (!TryGetTeamId(otherView, out int otherTeamId))
+        {
+            otherTeamId = -1; // TeamId가 없으면 기본값 -1
+        }
+
+        // TeamId가 설정되지 않았거나 같은 팀일 때 true 반환
         return myTeamId == otherTeamId;
     }
 
