@@ -4,6 +4,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -54,13 +55,16 @@ public class UICoopOrBetrayPanel : UIBase
     private UICoopOrBetrayInfoPanel coopInfoPanel;
     [SerializeField]
     private UICoopOrBetrayInfoPanel betrayInfoPanel;
+    [SerializeField]
+    private TextMeshProUGUI coopHeaderText;
+    [SerializeField]
+    private TextMeshProUGUI coopBodyText;
+    [SerializeField]
+    private TextMeshProUGUI betaryHeaderText;
+    [SerializeField]
+    private TextMeshProUGUI betrayBodyText;
 
     private CoopType coopType;
-
-    private void Start()
-    {
-        Init(CoopType.PVPType);
-    }
 
     private void OnDisable()
     {
@@ -103,6 +107,22 @@ public class UICoopOrBetrayPanel : UIBase
             coopInfoPanel.gameObject.SetActive(false);
             betrayInfoPanel.gameObject.SetActive(false);
         });
+
+        switch (coopType)
+        {
+            case CoopType.defaultType:
+                coopHeaderText.text = "협력 시 얻는 효과";
+                coopBodyText.text = "협력 성공\r\n: 공격력 1.5배 증가\r\n\r\n협력 실패\r\n: 보상 없음";
+                betaryHeaderText.text = "배신 시 얻는 효과";
+                betrayBodyText.text = "배신 성공\r\n: 무작위 가호를 획득 \r\n\r\n배신 실패\r\n: 몬스터의 공격력 1.5배 증가";
+                break;
+            case CoopType.PVPType:
+                coopHeaderText.text = "협력 시 얻는 효과";
+                coopBodyText.text = "협력 성공\r\n: 공격력 1.5배 증가\r\n\r\n협력 실패\r\n: 보상 없음";
+                betaryHeaderText.text = "배신 시 얻는 효과";
+                betrayBodyText.text = "배신 성공\r\n: 무작위 가호를 획득 \r\n\r\n배신 실패\r\n: 몬스터의 공격력 1.5배 증가";
+                break;
+        }
     }
 
     private IEnumerator StartAnimation()

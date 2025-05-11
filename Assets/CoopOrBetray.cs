@@ -11,6 +11,9 @@ public class CoopOrBetray : MonoBehaviourPun, IInteractable
 
     private bool canInteract = true;
 
+    [SerializeField]
+    private CoopType coopType = CoopType.defaultType;
+
     private void Start()
     {
         canvas.gameObject.SetActive(false);
@@ -41,7 +44,7 @@ public class CoopOrBetray : MonoBehaviourPun, IInteractable
     public void Interact()
     {
         canInteract = false;
-        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UICoopOrBetrayPanel>();
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UICoopOrBetrayPanel>().Init(coopType);
     }
 
     private void OnTriggerEnter(Collider other)
