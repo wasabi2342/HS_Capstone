@@ -26,6 +26,8 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     float lastMoveX = 1f;                       // +1 ⇒ Right , -1 ⇒ Left
     public float CurrentFacing => lastMoveX;
     public void ForceFacing(float s) => lastMoveX = s >= 0 ? 1f : -1f;
+    private Vector3 lastHitPos;
+    public Vector3 LastHitPos => lastHitPos; // 공격자 위치
 
     /* ───────── UI ───────── */
     UIEnemyHealthBar uiHP;                      // ★ EnemyAI 식 Resources 스폰
@@ -230,14 +232,13 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     }
 
     /* ────────────────────────── IDamageable ─────────────────────── */
-    public void TakeDamage(float damage, AttackerType t = AttackerType.Default)
-        => pv.RPC(nameof(DamageToMaster), RpcTarget.MasterClient, damage);
-
+    public void TakeDamage(float damage, Vector3 atkPos, AttackerType t = AttackerType.Default)
+        => pv.RPC(nameof(DamageToMaster), RpcTarget.MasterClient, damage, atkPos);
     [PunRPC]
-    public void DamageToMaster(float damage)
+    public void DamageToMaster(float damage, Vector3 atkPos)
     {
         if (!PhotonNetwork.IsMasterClient) return;
-
+        lastHitPos = atkPos;
         float rawDamage = damage;
         /* 실드 → HP 차감 */
         if (shield > 0f)
@@ -255,9 +256,6 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         hp = Mathf.Max(0f, hp - damage);
         float deltaHP = prevHP - hp;
         pv.RPC(nameof(UpdateHP), RpcTarget.AllBuffered, hp / maxHP);
-
-        /* 넉백 & FX */
-        Vector3 atkPos = Target ? Target.position : transform.position;
         bool fromRight = atkPos.x < transform.position.x;
         pv.RPC(nameof(RPC_ApplyKnockback), RpcTarget.All, atkPos);
         pv.RPC(nameof(RPC_SpawnHitFx), RpcTarget.All, transform.position, fromRight);

@@ -137,19 +137,19 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable
 
     // 式式式 IDamageable 掘⑷ 式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式
     [PunRPC]
-    public void RPC_TakeDamage(float dmg, int attackerViewID)
+    public void RPC_TakeDamage(float dmg, int attackerViewID, Vector3 attackerPos)
     {
-        DamageToMaster(dmg);
+        DamageToMaster(dmg, attackerPos);
     }
 
     [PunRPC]
-    public void DamageToMaster(float dmg)
+    public void DamageToMaster(float dmg, Vector3 attackerPos)
     {
         if (!PhotonNetwork.IsMasterClient) return;
-        TakeDamage(dmg);
+        TakeDamage(dmg, attackerPos);
     }
 
-    public void TakeDamage(float damage, AttackerType at = AttackerType.Default)
+    public void TakeDamage(float damage, Vector3 attackerPos, AttackerType at = AttackerType.Default)
     {
         if (IsInvincible || !PhotonNetwork.IsMasterClient) return;
 

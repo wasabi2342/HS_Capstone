@@ -25,12 +25,12 @@ public class DataManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(this);
         }
-        DontDestroyOnLoad(gameObject);
 
         skillList = LoadSkillCsv("CSV/Blessing_Table");
         effectList = LoadSpecialEffectCsv("CSV/Special_Table");

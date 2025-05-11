@@ -13,10 +13,10 @@ public class HitState : BaseState
 
     public override void Enter()
     {
-        RefreshFacingToTarget();
+        FaceLastAttacker();
         SetAgentStopped(true);
         FlashSprite();
-        ApplyKnockback();
+        ApplyKnockbackFromLastAttacker();
         fsm.PlayDirectionalAnim("Hit");
 
         /* 체력 0 -> 즉시 DeadState */
@@ -30,7 +30,12 @@ public class HitState : BaseState
         if (PhotonNetwork.IsMasterClient)
             stunCo = fsm.StartCoroutine(Stun());
 
-
+    }
+    void FaceLastAttacker()
+    {
+        float dx = fsm.LastHitPos.x - transform.position.x;
+        if (Mathf.Abs(dx) > 0.01f)
+            fsm.ForceFacing(dx);   // + → 오른쪽, – → 왼쪽
     }
 
     public override void Execute()
@@ -83,10 +88,10 @@ public class HitState : BaseState
         }
     }
 
-    void ApplyKnockback()                                      
+    void ApplyKnockbackFromLastAttacker()                                      
     {
         if (fsm.Target == null) return;
-        Vector3 dir = (fsm.transform.position - fsm.Target.position).normalized;
+        Vector3 dir = (fsm.transform.position - fsm.LastHitPos).normalized;
         dir.y = 0f;
         dir.z = 0f;
         knockbackVelocity = dir * status.hitKnockbackStrength;

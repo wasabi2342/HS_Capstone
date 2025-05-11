@@ -170,7 +170,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     }
 
     // 2) 추가 파라미터 useRPC를 사용한 데미지 처리
-    public virtual void TakeDamage(float damage, AttackerType attackerType = AttackerType.Default)
+    public virtual void TakeDamage(float damage, Vector3 attackerPos, AttackerType attackerType = AttackerType.Default)
     {
 
         if (PhotonNetwork.InRoom)
@@ -217,7 +217,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
             else
             {
                 // Master Client가 아니라면, 피해량을 Master에 전송
-                photonView.RPC("DamageToMaster", RpcTarget.MasterClient, damage);
+                photonView.RPC("DamageToMaster", RpcTarget.MasterClient, damage, attackerPos);
             }
         }
 
@@ -257,7 +257,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
 
     [PunRPC]
-    public virtual void DamageToMaster(float damage)
+    public virtual void DamageToMaster(float damage, Vector3 attackerPos)
     {
         if (!PhotonNetwork.IsMasterClient)
             return;
@@ -310,7 +310,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     /// </summary>
     public virtual void ExitSuperArmorState()
     {
-        isSuperArmor = true;
+        isSuperArmor = false;
     }
 
     /// <summary>
@@ -451,10 +451,11 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     }
 
     [PunRPC]
-    public virtual void CreateAnimation(string name, Vector3 pos)
+    public virtual void CreateAnimation(string name, Vector3 pos, bool isChild)
     {
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(name), pos, Quaternion.identity);
-        skillEffect.transform.parent = transform;
+        if(isChild)
+            skillEffect.transform.parent = transform;
     }
 
     public virtual void ShadowOff()

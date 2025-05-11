@@ -25,7 +25,7 @@ public class MonsterAttackCollider : MonoBehaviourPun
         IDamageable damageable = other.GetComponentInParent<IDamageable>();
         if (damageable != null && fsm != null)
         {
-            damageable.TakeDamage(fsm.EnemyStatusRef.attackDamage);
+            damageable.TakeDamage(fsm.EnemyStatusRef.attackDamage, fsm.transform.position);
         }
     }
 }
