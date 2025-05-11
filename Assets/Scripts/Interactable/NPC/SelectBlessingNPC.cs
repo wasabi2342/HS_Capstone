@@ -8,6 +8,12 @@ public class SelectBlessingNPC : MonoBehaviour, IInteractable
     private bool canIneract = true;
     [SerializeField]
     private Canvas canvas;
+    
+    // 현재 상호작용 가능 상태를 확인하는 메서드
+    public bool CanInteract()
+    {
+        return canIneract;
+    }
 
     public void OnInteract(InputAction.CallbackContext ctx)
     {

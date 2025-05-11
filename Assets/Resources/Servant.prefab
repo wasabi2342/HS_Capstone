@@ -108,7 +108,7 @@ GameObject:
   - component: {fileID: 7471104878824668836}
   m_Layer: 13
   m_Name: Servant
-  m_TagString: Servant
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -339,15 +339,17 @@ MonoBehaviour:
   maxHealth: 100
   moveSpeed: 3
   chaseMultiplier: 1.2
-  attackDamage: 20
+  attackDamage: 5
   detectRange: 3
   attackRange: 3
   attackDuration: 1
-  waitCoolTime: 2
+  waitCoolTime: 3
   attackCoolTime: 2
   enemyLayerMask:
     serializedVersion: 2
     m_Bits: 128
+  tauntActive: 0
+  tauntEndTime: 0
 --- !u!114 &7471104878824668836
 MonoBehaviour:
   m_ObjectHideFlags: 0

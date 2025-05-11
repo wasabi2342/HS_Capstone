@@ -5,7 +5,7 @@
 			<value>katana_stab</value>
 		</property>
 		<property name="outputFormat">
-			<value>2</value>
+			<value>1</value>
 		</property>
 		<relationship name="folder">
 			<destination>{9378d00e-121b-4d39-8e2e-81414e9b901f}</destination>
@@ -277,7 +277,7 @@
 	<object class="MixerBusEffectChain" id="{ef08d79b-5996-4f67-adc1-73867ccff83b}">
 		<relationship name="effects">
 			<destination>{6e97dc94-a76c-4b0a-8e05-6ea800de86bf}</destination>
-			<destination>{b77d6d5e-e29b-413e-bba0-541330e43932}</destination>
+			<destination>{d590fb07-aa34-43c2-885a-d36d23432bc1}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{f0332b16-c7a4-43eb-a34a-770712ad8fcb}" />
@@ -326,7 +326,14 @@
 	</object>
 	<object class="MixerBusPanner" id="{62cfcf17-6f52-4f50-ad54-a81a2b0a73b2}" />
 	<object class="MixerBusFader" id="{6e97dc94-a76c-4b0a-8e05-6ea800de86bf}" />
-	<object class="SpatialiserEffect" id="{b77d6d5e-e29b-413e-bba0-541330e43932}" />
+	<object class="LimiterEffect" id="{d590fb07-aa34-43c2-885a-d36d23432bc1}">
+		<property name="ceiling">
+			<value>-6.80000019</value>
+		</property>
+		<property name="release">
+			<value>1</value>
+		</property>
+	</object>
 	<object class="MixerBusFader" id="{9555cb71-24b5-4721-b637-b4a99dd639e6}" />
 	<object class="MixerBusFader" id="{c1d035c4-86dc-4ec6-b505-0a38269a3f9b}" />
 	<object class="MixerBusFader" id="{ec3d960c-b3d8-4642-b447-5426c673a974}" />

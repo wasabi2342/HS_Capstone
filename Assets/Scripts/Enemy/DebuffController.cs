@@ -4,14 +4,12 @@ using UnityEngine.AI;
 
 public class DebuffController : MonoBehaviour
 {
-    private EnemyAI enemyAI;
-    private Coroutine dotCoroutine;
-    private Coroutine slowCoroutine;
-    private Coroutine bindCoroutine;
+    private EnemyFSM fsm;
+    private Coroutine dotCo, slowCo, bindCo;
 
     private void Awake()
     {
-        enemyAI = GetComponent<EnemyAI>();
+        fsm = GetComponent<EnemyFSM>();
     }
 
     public void ApplyDebuff(SpecialEffectType type, float duration, float value)
@@ -19,18 +17,18 @@ public class DebuffController : MonoBehaviour
         switch (type)
         {
             case SpecialEffectType.Dot:
-                if (dotCoroutine != null) StopCoroutine(dotCoroutine);
-                dotCoroutine = StartCoroutine(DamageOverTime(duration, value));
+                if (dotCo != null) StopCoroutine(dotCo);
+                dotCo = StartCoroutine(DamageOverTime(duration, value));
                 break;
 
             case SpecialEffectType.Slow:
-                if (slowCoroutine != null) StopCoroutine(slowCoroutine);
-                slowCoroutine = StartCoroutine(ApplySlow(duration, value));
+                if (slowCo != null) StopCoroutine(slowCo);
+                slowCo = StartCoroutine(ApplySlow(duration, value));
                 break;
 
             case SpecialEffectType.Bind:
-                if (bindCoroutine != null) StopCoroutine(bindCoroutine);
-                bindCoroutine = StartCoroutine(ApplyBind(duration));
+                if (bindCo != null) StopCoroutine(bindCo);
+                bindCo = StartCoroutine(ApplyBind(duration));
                 break;
         }
     }
@@ -40,7 +38,7 @@ public class DebuffController : MonoBehaviour
         float timer = 0f;
         while (timer < duration)
         {
-            enemyAI.TakeDamage(dps);
+            fsm.TakeDamage(dps, transform.position, AttackerType.Debuff);
             yield return new WaitForSeconds(1f);
             timer += 1f;
         }

@@ -6,7 +6,8 @@ public enum AttackerType
     Default,
     WhitePlayer,
     PinkPlayer,
-    Enemy
+    Enemy,
+    Debuff  
 }
 
 public interface IDamageable

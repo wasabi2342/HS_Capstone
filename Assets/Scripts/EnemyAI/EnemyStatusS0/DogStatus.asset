@@ -13,10 +13,15 @@ MonoBehaviour:
   m_Name: DogStatus
   m_EditorClassIdentifier: 
   enemyName: Default Enemy
+  spawnAreaBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 5, y: 5, z: 5}
   maxHealth: 50
   moveSpeed: 2
   chaseSpeedMultiplier: 1.2
   navMeshSampleDistance: 7
+  maxChaseDistance: 5
+  maxChaseTime: 5
   headOffset: 2
   hitStunTime: 0.3
   hitKnockbackStrength: 3
@@ -25,10 +30,7 @@ MonoBehaviour:
   attackRange: 3.5
   playerLayerMask:
     serializedVersion: 2
-    m_Bits: 64
-  spawnAreaBounds:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 5, y: 5, z: 5}
+    m_Bits: 73792
   waitCoolTime: 0.5
   attackDuration: 0.7
   attackCoolTime: 2

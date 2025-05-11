@@ -45,6 +45,13 @@ public class WhitePlayerController : ParentPlayerController
     {
         base.Start();
 
+        StartCoroutine(Co_Start());
+    }
+
+    IEnumerator Co_Start()
+    {
+        yield return new WaitForFixedUpdate();
+
         currentState = WhitePlayerState.Idle;
 
         if (photonView.IsMine || !PhotonNetwork.IsConnected)
@@ -792,9 +799,8 @@ public class WhitePlayerController : ParentPlayerController
             }
             //StartCoroutine(CoHitReaction());
         }
-
-
     }
+
     [PunRPC]
     public override void DamageToMaster(float damage, Vector3 attakerPos)
     {
