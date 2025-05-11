@@ -3,6 +3,7 @@ using Photon.Realtime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -20,6 +21,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     private Coroutine finalRewardNextStageCoroutine;
 
     private HashSet<int> deadPlayers = new HashSet<int>();
+
+    private bool isInPvPArea = false;
 
     private void Awake()
     {
@@ -48,7 +51,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     }
 
     public void ConnectPhoton()
-    { 
+    {
         PhotonNetwork.OfflineMode = false; // 온라인 모드
         PhotonNetwork.GameVersion = gameVersion;
         PhotonNetwork.ConnectUsingSettings();
@@ -496,7 +499,14 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
                 deadPlayers.Add(actorNumber);
                 Debug.Log($"플레이어 {actorNumber} 사망. 현재 사망자 수: {deadPlayers.Count}");
 
-                CheckAllPlayersDead();
+                if (isInPvPArea)
+                {
+                    CheckRemainingTeamsAndEndGame();
+                }
+                else
+                {
+                    CheckAllPlayersDead();
+                }
             }
         }
         else
@@ -521,6 +531,41 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         else
         {
             photonView.RPC(nameof(RPC_ReportPlayerRevive), RpcTarget.MasterClient, actorNumber);
+        }
+    }
+
+    private void CheckRemainingTeamsAndEndGame()
+    {
+        var alivePlayers = PhotonNetwork.CurrentRoom.Players
+            .Where(p => !deadPlayers.Contains(p.Key))
+            .Select(p => p.Value)
+            .ToList();
+
+        HashSet<int> aliveTeamIds = new HashSet<int>();
+
+        foreach (var player in alivePlayers)
+        {
+            if (player.CustomProperties.TryGetValue("TeamId", out object teamIdObj) && teamIdObj is int teamId)
+            {
+                aliveTeamIds.Add(teamId);
+            }
+        }
+
+        if (aliveTeamIds.Count == 1)
+        {
+            // 단 하나의 팀만 생존 → 해당 팀 승리
+            int winningTeamId = aliveTeamIds.First();
+            var winningPlayers = alivePlayers
+                .Where(p => (int)p.CustomProperties["TeamId"] == winningTeamId)
+                .ToList();
+
+            string winnerNames = string.Join("\n", winningPlayers.Select(p => $"Player : {p.NickName}"));
+
+            string resultMessage = winningTeamId == -1
+                ? $"협력자팀 승리! \n{winnerNames}"
+                : $"배신 성공: {winnerNames}";
+
+            StartCoroutine(ResetGame(resultMessage));
         }
     }
 
@@ -549,7 +594,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
             if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
             {
-                StartCoroutine(ResetGame());
+                StartCoroutine(ResetGame("모든 플레이어가 사망해 잠시 뒤 마을로 복귀합니다......"));
             }
         }
     }
@@ -586,15 +631,32 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             PhotonNetwork.LoadLevel("PvP");
     }
 
-    IEnumerator ResetGame()
+    IEnumerator ResetGame(string message)
     {
-        photonView.RPC("RPC_ResetGame", RpcTarget.All, "모든 플레이어가 사망해 잠시 뒤 마을로 복귀합니다......");
+        photonView.RPC("RPC_ResetGame", RpcTarget.All, message);
 
+        // 커스텀 프로퍼티 초기화 (TeamId 제거)
+        foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
+        {
+            if (player.CustomProperties.ContainsKey("TeamId"))
+            {
+                ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable
+            {
+                { "TeamId", null } // 키 제거는 null 할당 또는 Remove
+            };
+                player.SetCustomProperties(resetProps);
+            }
+        }
         yield return new WaitForSeconds(3f);
 
         UIManager.Instance.CloseAllUI();
 
         if (PhotonNetwork.IsMasterClient)
             PhotonNetwork.LoadLevel("room");
+    }
+
+    public void SetIsInPvPArea(bool value)
+    {
+        isInPvPArea = value;
     }
 }

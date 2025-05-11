@@ -26,6 +26,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private bool isInVillage;
     [SerializeField]
+    private bool isInPvPArea = false;
+    [SerializeField]
     private Vector3 playerScale = new Vector3(0.375f, 0.525f, 0.375f);
     [SerializeField]
     private List<Vector3> spawnPointList = new List<Vector3>();
@@ -86,6 +88,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
+        PhotonNetworkManager.Instance.SetIsInPvPArea(isInPvPArea);
+
         // Å° Á¤ÀÇ
         string key = "SelectCharacter";
 
