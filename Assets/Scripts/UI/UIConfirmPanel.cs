@@ -20,13 +20,14 @@ public class UIConfirmPanel : UIBase
         }
         confirmButton.onClick.RemoveAllListeners();
         cancelButton.onClick.RemoveAllListeners();
-        confirmButton.onClick.AddListener(() => confirmEvent.Invoke());
+
+        confirmButton.onClick.AddListener(() =>
+        {
+            confirmEvent.Invoke();
+        });
+
         cancelButton.onClick.AddListener(() => cancelEvent.Invoke());
         this.message.text = message;
-        if (PhotonNetwork.IsConnected)
-        {
-            PhotonNetwork.CurrentRoom.IsOpen = false;
-        }
     }
 
     public override void OnDisable()

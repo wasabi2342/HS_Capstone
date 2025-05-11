@@ -217,7 +217,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public GameObject ReturnLocalPlayer() =>
     PhotonNetwork.InRoom ? players[PhotonNetwork.LocalPlayer.ActorNumber] : players[0];
 
-    public UIConfirmPanel InteractWithDungeonNPC()
+    public void InteractWithDungeonNPC()
     {
         var panel = UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIConfirmPanel>();
         panel.Init(
@@ -225,7 +225,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
             () => UIManager.Instance.ClosePeekUI(),
             "게임 스테이지에 진입하시겠습니까?"
             );
-        return panel;
+        //return panel;
     }
 
     public void WaitForEnterStage()

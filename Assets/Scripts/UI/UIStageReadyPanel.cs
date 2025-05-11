@@ -55,6 +55,12 @@ public class UIStageReadyPanel : UIBase
         { 
             toggles.Add(Instantiate(toggle, toggleParent));
         }
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+            PhotonNetwork.CurrentRoom.IsVisible = false;
+        }
     }
 
     public override void OnDisable()
