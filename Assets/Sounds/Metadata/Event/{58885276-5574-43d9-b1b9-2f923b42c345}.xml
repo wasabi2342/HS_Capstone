@@ -5,7 +5,7 @@
 			<value>tackle</value>
 		</property>
 		<property name="outputFormat">
-			<value>2</value>
+			<value>1</value>
 		</property>
 		<relationship name="folder">
 			<destination>{346fbd80-205e-4a70-bbd1-25aa2bbfc3ba}</destination>
@@ -102,6 +102,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{84927058-e432-4b53-aaf7-572284812852}">
+		<property name="volume">
+			<value>-3.5</value>
+		</property>
 		<relationship name="effectChain">
 			<destination>{e81cb0d7-b524-483c-8249-ce871e503a79}</destination>
 		</relationship>
@@ -248,7 +251,6 @@
 	<object class="MixerBusEffectChain" id="{e81cb0d7-b524-483c-8249-ce871e503a79}">
 		<relationship name="effects">
 			<destination>{f458c826-c156-4644-86ba-3707e71f0c2f}</destination>
-			<destination>{7a8b84e9-9793-4a5f-b54e-a478674e56b0}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{4cf29f12-5a28-4d77-94c1-5b9673e78d67}" />
@@ -294,7 +296,6 @@
 	</object>
 	<object class="MixerBusPanner" id="{bfa500ed-3471-48b8-b41a-f37aedf4a3da}" />
 	<object class="MixerBusFader" id="{f458c826-c156-4644-86ba-3707e71f0c2f}" />
-	<object class="SpatialiserEffect" id="{7a8b84e9-9793-4a5f-b54e-a478674e56b0}" />
 	<object class="MixerBusFader" id="{5d745d22-ed96-47ca-bed6-255e9a4d41c0}" />
 	<object class="AutomationPoint" id="{ccd7cded-1fe7-4504-8586-76bf4279b148}">
 		<property name="position">

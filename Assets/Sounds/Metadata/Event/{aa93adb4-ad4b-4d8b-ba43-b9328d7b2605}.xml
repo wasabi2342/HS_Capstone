@@ -5,7 +5,7 @@
 			<value>dash</value>
 		</property>
 		<property name="outputFormat">
-			<value>2</value>
+			<value>1</value>
 		</property>
 		<relationship name="folder">
 			<destination>{9378d00e-121b-4d39-8e2e-81414e9b901f}</destination>
@@ -72,6 +72,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{aa231faa-c905-410e-9762-c4c6b00281f1}">
+		<property name="volume">
+			<value>-6.5</value>
+		</property>
 		<relationship name="effectChain">
 			<destination>{395d3bbe-4998-4668-ab5d-45bb0f33e755}</destination>
 		</relationship>
@@ -119,7 +122,6 @@
 	<object class="MixerBusEffectChain" id="{395d3bbe-4998-4668-ab5d-45bb0f33e755}">
 		<relationship name="effects">
 			<destination>{11739d85-0030-4741-9222-be7045a340ce}</destination>
-			<destination>{ce037578-430b-483b-95af-d78355b38219}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{c7300779-0d5e-448c-8ff3-8a575dc6b7b8}" />
@@ -139,7 +141,6 @@
 	</object>
 	<object class="MixerBusPanner" id="{12e1d5c6-3f7e-42d2-9955-455f997730d2}" />
 	<object class="MixerBusFader" id="{11739d85-0030-4741-9222-be7045a340ce}" />
-	<object class="SpatialiserEffect" id="{ce037578-430b-483b-95af-d78355b38219}" />
 	<object class="AutomationPoint" id="{6ffc6691-fe80-47e7-98e3-501b10e432ff}">
 		<property name="position">
 			<value>0</value>
