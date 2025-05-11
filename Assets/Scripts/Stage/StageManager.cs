@@ -48,7 +48,7 @@ public class StageManager : MonoBehaviour
                     if (coopOrBetrayNPC != null)
                     {
                         PhotonNetwork.Instantiate(
-                        blessingNPCPrefabName,
+                        CoopOrBetrayNPCPrefabNameList[i],
                         coopOrBetrayNPCPosList[i].position,
                         coopOrBetrayNPCPosList[i].rotation);
                     }
@@ -161,7 +161,7 @@ public class StageManager : MonoBehaviour
                         if (coopOrBetrayNPC != null)
                         {
                             PhotonNetwork.Instantiate(
-                            blessingNPCPrefabName,
+                            CoopOrBetrayNPCPrefabNameList[i],
                             coopOrBetrayNPCPosList[i].position,
                             coopOrBetrayNPCPosList[i].rotation);
                         }
