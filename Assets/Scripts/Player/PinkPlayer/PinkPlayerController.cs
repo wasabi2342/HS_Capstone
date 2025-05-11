@@ -62,7 +62,7 @@ public class PinkPlayerController : ParentPlayerController
 
     IEnumerator Co_Start()
     {
-        yield return null;
+        yield return new WaitForFixedUpdate();
 
         currentState = PinkPlayerState.Idle;
 

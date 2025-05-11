@@ -50,7 +50,7 @@ public class WhitePlayerController : ParentPlayerController
 
     IEnumerator Co_Start()
     {
-        yield return null;
+        yield return new WaitForFixedUpdate();
 
         currentState = WhitePlayerState.Idle;
 

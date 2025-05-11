@@ -59,7 +59,7 @@ public class UIIngameMainPanel : UIBase
 
     IEnumerator Co_Start()
     {
-        yield return null;
+        yield return new WaitForFixedUpdate();
 
         openBlessingInfoAction = OpenBlessingInfoPanel;
         InputManager.Instance.PlayerInput.actions["OpenBlessingInfo"].performed += openBlessingInfoAction;
