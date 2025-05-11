@@ -43,7 +43,7 @@ public class UiStartPanel : UIBase
     {
         multiPlayButton.onClick.AddListener(OnClikedMultiPlayButton);
         quitButton.onClick.AddListener(QuitGame);
-        settingButton.onClick.AddListener(() => UIManager.Instance.OpenPopupPanelInOverlayCanvas<UISettingPanel>());
+        settingButton.onClick.AddListener(() => UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIMenuPanel>());
 
         singlePlayButton.onClick.AddListener(OnClikedSinglePlayButton);
 

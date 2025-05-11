@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class RoomManager : MonoBehaviourPunCallbacks
@@ -55,6 +56,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
     private const string PLAYER_TAG = "Player";
     private int PLAYER_LAYER = 0;
 
+    private System.Action<InputAction.CallbackContext> openMenuAction;
+
     private void Awake()
     {
         if (Instance == null)
@@ -79,6 +82,9 @@ public class RoomManager : MonoBehaviourPunCallbacks
     IEnumerator Co_Start()
     {
         yield return new WaitForFixedUpdate();
+
+        openMenuAction = OpenMenuPanel;
+        InputManager.Instance.PlayerInput.actions["OpenMenu"].performed += openMenuAction;
 
         PhotonNetworkManager.Instance.SetIsInPvPArea(isInPvPArea);
 
@@ -118,6 +124,14 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             UIManager.Instance.SetRenderCamera(UICamera);
         }
+    }
+
+    public void OpenMenuPanel(InputAction.CallbackContext ctx)
+    {
+        if (UIManager.Instance.ReturnPeekUI() as UISkillInfoPanel)
+            return;
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIMenuPanel>();
+        InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
     }
 
     public void CreateCharacter(string playerPrefabName, Vector3 pos, Quaternion quaternion, bool isInVillage)
