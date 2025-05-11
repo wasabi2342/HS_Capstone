@@ -31,7 +31,7 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
 
     protected override void OnTriggerEnter(Collider other)
     {
-        if(whitePlayer.currentState != WhitePlayerState.Stun)
+        if (whitePlayer.currentState != WhitePlayerState.Stun)
         {
             return;
         }
@@ -41,8 +41,10 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
             otherPhotonView = otherView;
 
         Debug.Log("부활 상호작용 enter");
-
-        base.OnTriggerEnter(other);
+        if (IsSameTeam(localPhotonView, otherPhotonView))
+        {
+            base.OnTriggerEnter(other);
+        }
     }
 
     protected override void OnTriggerExit(Collider other)
@@ -51,8 +53,8 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
         {
             return;
         }
-
-        base.OnTriggerExit(other);
+        if (IsSameTeam(localPhotonView, otherPhotonView))
+            base.OnTriggerExit(other);
 
         Debug.Log("부활 상호작용 exit");
     }
@@ -60,7 +62,7 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
     protected override void OnPerformedEvent()
     {
         base.OnPerformedEvent();
-        
+
         Debug.Log("부활 상호작용 ");
 
         whitePlayer.Revive();
@@ -69,7 +71,7 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
     protected override void OnCanceledEvent()
     {
         base.OnCanceledEvent();
-        
+
         Debug.Log("부활 상호작용 cancel");
     }
 
