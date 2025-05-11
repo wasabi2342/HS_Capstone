@@ -9,9 +9,11 @@ public class TutorialReSpawn : TutorialBase
 	private	Vector3	endPosition;
 	private	bool isCompleted = false;
 	private bool isInitialized = false;
+	private GameObject targetObject = null;
 
 	public override void Enter()
 	{
+		// 타겟 오브젝트 찾기
 		StartCoroutine(FindTargetObject());
 	}
 	
@@ -20,7 +22,7 @@ public class TutorialReSpawn : TutorialBase
 		// 타겟 오브젝트를 찾을 때까지 반복
 		while (!isInitialized)
 		{
-			GameObject targetObject = null;
+			targetObject = null;
 			
 			// 1. 태그로 찾기
 			GameObject[] objectsWithTag = GameObject.FindGameObjectsWithTag(targetObjectName);
@@ -32,7 +34,8 @@ public class TutorialReSpawn : TutorialBase
 			
 			// 2. 이름으로 찾기
 			if (targetObject == null)
-			{				// 씬의 모든 GameObjects 중에서 이름에 targetObjectName이 포함된 것 찾기
+			{				
+				// 씬의 모든 GameObjects 중에서 이름에 targetObjectName이 포함된 것 찾기
 				foreach (GameObject obj in GameObject.FindObjectsByType<GameObject>(FindObjectsSortMode.None))
 				{
 					if (obj.name.Contains(targetObjectName))
@@ -88,7 +91,7 @@ public class TutorialReSpawn : TutorialBase
 			isCompleted = true; // 에러가 발생해도 진행되도록 함
 		}
 	}
-
+	
 	public override void Execute(TutorialController controller)
 	{
 		if (isCompleted == true)
@@ -99,5 +102,23 @@ public class TutorialReSpawn : TutorialBase
 
 	public override void Exit()
 	{
+		if (targetObject != null)
+		{
+			CoopOrBetray coopOrBetray = targetObject.GetComponent<CoopOrBetray>();
+			if (coopOrBetray != null)
+			{
+				coopOrBetray.isInTutorial = true;
+				coopOrBetray.ActivateCanvas(true);
+				Debug.Log("CoopOrBetray 캔버스가 활성화되었습니다.");
+			}
+			else
+			{
+				Debug.LogWarning("타겟 오브젝트에 CoopOrBetray 컴포넌트가 없습니다.");
+			}
+		}
+		else
+		{
+			Debug.LogWarning("타겟 오브젝트가 null입니다.");
+		}
 	}
 }

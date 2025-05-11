@@ -3,13 +3,21 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class CoopOrBetray : MonoBehaviourPun, IInteractable
-{
-    [SerializeField]
+{    [SerializeField]
     private Canvas canvas;
 
     public bool isInTutorial = false;
 
     private bool canInteract = true;
+    
+    // 캔버스 활성화를 위한 public 메서드 추가
+    public void ActivateCanvas(bool activate)
+    {
+        if (canvas != null)
+        {
+            canvas.gameObject.SetActive(activate);
+        }
+    }
 
     [SerializeField]
     private CoopType coopType = CoopType.defaultType;
