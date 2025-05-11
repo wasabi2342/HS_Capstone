@@ -32,7 +32,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
     private Vector3 playerScale = new Vector3(0.375f, 0.525f, 0.375f);
     [SerializeField]
     private List<Vector3> spawnPointList = new List<Vector3>();
-
+    [SerializeField]
+    private GameObject rpchandler;
     private Vector3 spawnPos;
 
     // 式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式
@@ -82,6 +83,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
     IEnumerator Co_Start()
     {
         yield return new WaitForFixedUpdate();
+
+        PhotonNetwork.Instantiate("RPCHandler", Vector3.zero, Quaternion.identity);
 
         openMenuAction = OpenMenuPanel;
         InputManager.Instance.PlayerInput.actions["OpenMenu"].performed += openMenuAction;
@@ -231,7 +234,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public void WaitForEnterStage()
     {
         UIManager.Instance.ClosePeekUI();
-        PhotonNetworkManager.Instance.ReadyToEnterStage();
+        RPCHandler.Instance.ReadyToEnterStage();
     }
 
     public void EnterRestrictedArea(int viewID)

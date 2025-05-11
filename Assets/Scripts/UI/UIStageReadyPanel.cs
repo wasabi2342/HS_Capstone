@@ -32,7 +32,7 @@ public class UIStageReadyPanel : UIBase
     {
         if (RoomManager.Instance.isEnteringStage)
         {
-            PhotonNetworkManager.Instance.ReadyToEnterStage();
+            RPCHandler.Instance.ReadyToEnterStage();
         }
     }
 
