@@ -19,6 +19,7 @@ public class SkillEffect : MonoBehaviourPun
     private BaseSpecialEffect specialEffect;
 
     private float damage;
+    private float knockbackMultiplier = 1f;  // 데미지 대비 넉백 세기 비율
     private Action triggerEvent;
     private BoxCollider boxCollider;
     private bool isMine = false;
@@ -89,12 +90,17 @@ public class SkillEffect : MonoBehaviourPun
                 otherView.RPC("TakeDamageRPC", otherView.Owner, damage, transform.position, (int)attackerType);
 
                 ApplyAttackEffectOnly(other); // 이펙트 및 사운드
+
+                // 넉백 적용
+                ApplyKnockback(other);
             }
         }
         else if (damageable != null)
         {
             ApplyAttackEffectOnly(other);
-            damageable.TakeDamage(damage, transform.position ,attackerType);
+            damageable.TakeDamage(damage, transform.position, attackerType);
+            // 넉백 적용
+            ApplyKnockback(other);
         }
     }
 
@@ -142,6 +148,47 @@ public class SkillEffect : MonoBehaviourPun
         animator.speed = 1;
     }
 
+    // 넉백
+
+    private void ApplyKnockback(Collider other)
+    {
+        // 1) Rigidbody 가져오기
+        Rigidbody rb = other.attachedRigidbody ?? other.GetComponent<Rigidbody>();
+        if (rb == null) return;
+
+        // 2) 수평 벡터만 사용 (Y축 차이는 무시)
+        Vector3 delta3D = other.transform.position - transform.position;
+        Vector3 delta = new Vector3(delta3D.x, 0f, delta3D.z);
+        float dist = delta.magnitude;
+
+        // 3) 방향 계산 (거리가 0에 매우 가깝지 않을 때만 실제 벡터 사용)
+        Vector3 dir;
+        if (delta.sqrMagnitude > Mathf.Epsilon)  // 거의 “0,0,0”이 아닐 때
+        {
+            dir = delta / dist;
+        }
+        else
+        {
+            // 완전히 겹친 상태일 땐 오른쪽으로 밀어냄(필요시 -transform.right 으로 바꾸세요)
+            dir = transform.right;
+        }
+
+        // 4) 최소 분리 거리 확보 (MovePosition 사용)
+        const float minDistance = 1f;
+        if (dist < minDistance)
+        {
+            Vector3 pushOut = dir * (minDistance - dist);
+            rb.MovePosition(rb.position + pushOut);
+        }
+
+        // 5) 넉백 힘 적용
+        float force = damage * knockbackMultiplier;
+        rb.AddForce(dir * force, ForceMode.VelocityChange);
+    }
+
+
+
+
     private void OnDisable()
     {
         triggerEvent = null;
@@ -153,4 +200,6 @@ public class SkillEffect : MonoBehaviourPun
     {
         gameObject.SetActive(false);
     }
+
+
 }

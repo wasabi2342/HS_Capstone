@@ -11,6 +11,8 @@ public enum WhitePlayerState { Idle, Run, BasicAttack, Hit, Dash, Skill, Ultimat
 
 public class WhitePlayerController : ParentPlayerController
 {
+
+
     [Header("대쉬 설정")]
     public float dashDistance = 2f;
     public float dashDoubleClickThreshold = 0.3f;
@@ -36,10 +38,12 @@ public class WhitePlayerController : ParentPlayerController
 
     {
         //AttackCollider = GetComponentInChildren<WhitePlayerAttackZone>();
+ 
 
         base.Awake();
         facingDirection = Vector3.right;
     }
+
 
     protected override void Start()
     {

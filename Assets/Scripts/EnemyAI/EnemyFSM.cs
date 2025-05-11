@@ -302,7 +302,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         if(atkType != AttackerType.Debuff)
         {
             bool fromRight = atkPos.x < transform.position.x;
-            pv.RPC(nameof(RPC_ApplyKnockback), RpcTarget.All, atkPos);
+            //pv.RPC(nameof(RPC_ApplyKnockback), RpcTarget.All, atkPos);
             pv.RPC(nameof(RPC_SpawnHitFx), RpcTarget.All, transform.position, fromRight);
             TransitionToState(hp <= 0f ? typeof(DeadState) : typeof(HitState));
         }
@@ -329,14 +329,14 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     { if (uiHP) { uiHP.SetShield(r); uiHP.CheckThreshold(r, true); } }
 
     /* ─ 넉백 / FX ─ */
-    [PunRPC]
-    void RPC_ApplyKnockback(Vector3 atkPos)
-    {
-        Vector3 dir = (transform.position - atkPos).normalized;
-        dir.y = dir.z = 0f;
-        knockVel = dir * enemyStatus.hitKnockbackStrength;
-        knockTime = KNOCK_DUR;
-    }
+    //[PunRPC]
+    //void RPC_ApplyKnockback(Vector3 atkPos)
+    //{
+    //    Vector3 dir = (transform.position - atkPos).normalized;
+    //    dir.y = dir.z = 0f;
+    //    knockVel = dir * enemyStatus.hitKnockbackStrength;
+    //    knockTime = KNOCK_DUR;
+    //}
     [PunRPC]
     void RPC_SpawnHitFx(Vector3 pos, bool spawnRight)
     {
