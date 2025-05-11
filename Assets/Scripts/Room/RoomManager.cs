@@ -71,23 +71,15 @@ public class RoomManager : MonoBehaviourPunCallbacks
         PLAYER_LAYER = layerIdx != -1 ? layerIdx : 0;
     }
 
-    /*
     private void Start()
     {
-        if (PhotonNetwork.IsConnected && PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName"] != null)
-        {
-            Debug.Log(PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName"].ToString());
-            CreateCharacter(PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName"].ToString(), new Vector3(0, 1, 0), Quaternion.identity, isInVillage);
-        }
-        else
-        {
-            CreateCharacter(defaultPlayer.name, new Vector3(0, 0, 0), Quaternion.identity, isInVillage);
-        }
+        StartCoroutine(Co_Start());
     }
-    */
 
-    private void Start()
+    IEnumerator Co_Start()
     {
+        yield return null;
+
         PhotonNetworkManager.Instance.SetIsInPvPArea(isInPvPArea);
 
         // Å° Á¤ÀÇ
@@ -125,9 +117,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             UIManager.Instance.SetRenderCamera(UICamera);
         }
-
     }
-
 
     public void CreateCharacter(string playerPrefabName, Vector3 pos, Quaternion quaternion, bool isInVillage)
     {
