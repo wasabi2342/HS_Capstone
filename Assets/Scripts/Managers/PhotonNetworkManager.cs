@@ -142,11 +142,10 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("60초 경과 스테이지 진입");
         if (PhotonNetwork.IsMasterClient)
         {
-
             PhotonNetwork.CurrentRoom.IsOpen = false;
+            PhotonNetwork.CurrentRoom.IsVisible = false;
             RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
             PhotonNetwork.LoadLevel("Level0");
-
         }
     }
 
