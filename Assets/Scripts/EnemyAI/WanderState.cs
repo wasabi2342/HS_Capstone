@@ -36,7 +36,7 @@ public class WanderState : BaseState
         detectT += Time.deltaTime;
         if (detectT >= DETECT_INTERVAL)
         {
-            fsm.DetectPlayer();
+            fsm.DetectTarget();
             detectT = 0f;
             if (fsm.Target)
             {
