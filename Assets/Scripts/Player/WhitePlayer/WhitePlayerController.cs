@@ -436,7 +436,7 @@ public class WhitePlayerController : ParentPlayerController
         Vector3 movement = dashDirection * value;
         rb.MovePosition(rb.position + movement);
     }
-    private Vector3 GetMouseWorldPosition()
+    public Vector3 GetMouseWorldPosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Plane groundPlane = new Plane(Vector3.up, new Vector3(0, transform.position.y, 0));

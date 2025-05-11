@@ -21,20 +21,32 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 7528742017947109798, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
-    - time: 0.05
-      value: {fileID: -4584257825186446714, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
-    - time: 0.1
-      value: {fileID: 4722944713117868759, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
-    - time: 0.15
-      value: {fileID: 5414311983463988273, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+      value: {fileID: 4296778077115119899, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.049999952
+      value: {fileID: 4587938012662362372, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.099999905
+      value: {fileID: 8231608623556240525, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.1500001
+      value: {fileID: 3574190607555767094, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.20000005
+      value: {fileID: 6945624571051585204, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
     - time: 0.25
+      value: {fileID: -7293851611377820039, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.29999995
+      value: {fileID: 7528742017947109798, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.3499999
+      value: {fileID: -4584257825186446714, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.4000001
+      value: {fileID: 4722944713117868759, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.45000005
+      value: {fileID: 5414311983463988273, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - time: 0.54999995
       value: {fileID: -1267496883996170964, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
-    - time: 0.35
+    - time: 0.6500001
       value: {fileID: 2753071872411340815, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
-    - time: 0.45
+    - time: 0.75
       value: {fileID: 9010887404056007512, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
-    - time: 0.54
+    - time: 0.84000003
       value: {fileID: 9010887404056007512, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
     attribute: m_Sprite
     path: 
@@ -58,6 +70,12 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
+    - {fileID: 4296778077115119899, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - {fileID: 4587938012662362372, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - {fileID: 8231608623556240525, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - {fileID: 3574190607555767094, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - {fileID: 6945624571051585204, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
+    - {fileID: -7293851611377820039, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
     - {fileID: 7528742017947109798, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
     - {fileID: -4584257825186446714, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
     - {fileID: 4722944713117868759, guid: c364150dab519c446bcd56e93fc455cd, type: 3}
@@ -71,7 +89,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.55
+    m_StopTime: 0.85
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -112,15 +130,29 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.25
-    functionName: ExitSuperArmorState
+  - time: 0.2
+    functionName: WhitePlayerSoundEffect
+    data: IAICounter
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.3
+    functionName: WhitePlayerSoundEffect
+    data: IAICounter
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.35
+    functionName: OnAttackAllowNextInput
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.25
-    functionName: OnAttackAllowNextInput
+  - time: 0.35
+    functionName: ExitSuperArmorState
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

@@ -54,13 +54,17 @@ public class WhitePlayer_Idle : StateMachineBehaviour
                 Debug.Log(whitePlayerController.attackStack);
                 animator.SetInteger("AttackStack", whitePlayerController.attackStack);
                 whitePlayerController.AttackStackUpdate?.Invoke(whitePlayerController.attackStack);
-                animator.SetBool("basicattack", true);
                 whitePlayerController.currentState = WhitePlayerState.BasicAttack;
 
+                Vector3 mousePos = whitePlayerController.GetMouseWorldPosition();
+                animator.SetBool("Right", mousePos.x > whitePlayerController.transform.position.x);
+                
+                animator.SetBool("basicattack", true);
                 if (PhotonNetwork.IsConnected)
                 {
                     whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
                     whitePlayerController.SetBoolParameter("basicattack", true);
+                    whitePlayerController.SetBoolParameter("Right", mousePos.x > whitePlayerController.transform.position.x);
                 }
                 break;
             case WhitePlayerState.Guard:
