@@ -23,7 +23,7 @@ public class TutorialReSpawn : TutorialBase
 			GameObject targetObject = null;
 			
 			// 1. 태그로 찾기
-			GameObject[] objectsWithTag = GameObject.FindGameObjectsWithTag("BlessingNPC");
+			GameObject[] objectsWithTag = GameObject.FindGameObjectsWithTag(targetObjectName);
 			if (objectsWithTag.Length > 0)
 			{
 				targetObject = objectsWithTag[0];

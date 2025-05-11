@@ -5,7 +5,7 @@ public class ReviveTutorial : GaugeInteraction
 {
     [SerializeField]
     private Animator animator;
-
+    public bool revive = false;
     public override void OnInteract(InputAction.CallbackContext ctx)
     {
         base.OnInteract(ctx);
@@ -21,6 +21,7 @@ public class ReviveTutorial : GaugeInteraction
         base.OnPerformedEvent();
         animator.SetTrigger("Revive");
         canvas.gameObject.SetActive(false);
+        revive = true;
     }
 
     protected override void OnStartedEvent()
