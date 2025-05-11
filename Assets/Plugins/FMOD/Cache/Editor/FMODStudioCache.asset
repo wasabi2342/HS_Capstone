@@ -231,10 +231,10 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/SFX.bank
   Name: SFX
   StudioPath: bank:/SFX
-  lastModified: 638825828573061809
+  lastModified: 638825926776958211
   FileSizes:
   - Name: Desktop
-    Value: 2867936
+    Value: 3068672
   Exists: 1
 --- !u!114 &-5712910688963151768
 MonoBehaviour:
@@ -246,9 +246,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Character/Character-sword/IAI_Sheathing
+  m_Name: event:/Character/Character-sword/iAI_Sheathing
   m_EditorClassIdentifier: 
-  Path: event:/Character/Character-sword/IAI_Sheathing
+  Path: event:/Character/Character-sword/iAI_Sheathing
   Guid:
     Data1: -485859129
     Data2: 1322901374
@@ -932,12 +932,15 @@ MonoBehaviour:
   - {fileID: -5712910688963151768}
   - {fileID: 8913885456062505645}
   - {fileID: -6188617244730496483}
+  - {fileID: 3904678262385365224}
+  - {fileID: 4151679015071637659}
+  - {fileID: 2815744165791865577}
   EditorParameters: []
   MasterBanks:
   - {fileID: 7615206358843715136}
   StringsBanks:
   - {fileID: 937915744167907725}
-  cacheTime: 638825828573061809
+  cacheTime: 638825926776958211
   cacheVersion: 131846
 --- !u!114 &241547184550738655
 MonoBehaviour:
@@ -1035,10 +1038,10 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638825806290366189
+  lastModified: 638825860355391505
   FileSizes:
   - Name: Desktop
-    Value: 3502
+    Value: 3616
   Exists: 1
 --- !u!114 &1284256337427851988
 MonoBehaviour:
@@ -1175,6 +1178,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 1110
+--- !u!114 &2815744165791865577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-sword/time
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-sword/time
+  Guid:
+    Data1: -1617979960
+    Data2: 1167720624
+    Data3: 1498572941
+    Data4: 665720335
+  Banks:
+  - {fileID: -5749200132036131284}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 860
 --- !u!114 &3243081455721358825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1202,6 +1232,60 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 200
+--- !u!114 &3904678262385365224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-sword/fire
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-sword/fire
+  Guid:
+    Data1: -522307068
+    Data2: 1226299854
+    Data3: 1723724427
+    Data4: 1160230975
+  Banks:
+  - {fileID: -5749200132036131284}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 831
+--- !u!114 &4151679015071637659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-sword/ice
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-sword/ice
+  Guid:
+    Data1: -820479392
+    Data2: 1131998709
+    Data3: -211194716
+    Data4: -1654608377
+  Banks:
+  - {fileID: -5749200132036131284}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2000
 --- !u!114 &4430142303167214453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1428,9 +1512,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Character/Character-sword/IAICounter
+  m_Name: event:/Character/Character-sword/iAICounter
   m_EditorClassIdentifier: 
-  Path: event:/Character/Character-sword/IAICounter
+  Path: event:/Character/Character-sword/iAICounter
   Guid:
     Data1: -1336597565
     Data2: 1298637764
@@ -1568,7 +1652,7 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638825806290356193
+  lastModified: 638825860355381514
   FileSizes:
   - Name: Desktop
     Value: 3470432
