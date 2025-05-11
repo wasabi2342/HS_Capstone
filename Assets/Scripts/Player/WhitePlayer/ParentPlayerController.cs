@@ -64,6 +64,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     public float damageBuff = 1;
 
+    private bool isInPVPArea;
+
     #region Unity Lifecycle
 
     protected virtual void Awake()
@@ -92,6 +94,9 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
             if (photonView.IsMine)
             {
                 runTimeData.LoadFromJsonFile();
+
+                if (isInPVPArea)
+                    runTimeData.currentHealth = characterBaseStats.maxHP;
 
                 // 내 체력으로 동기화
                 photonView.RPC("UpdateHP", RpcTarget.OthersBuffered, runTimeData.currentHealth);
@@ -129,6 +134,11 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     }
 
     #endregion
+
+    public void SetIsInPVPArea(bool value)
+    {
+        isInPVPArea = value;
+    }
 
     public void UpdateHP()
     {

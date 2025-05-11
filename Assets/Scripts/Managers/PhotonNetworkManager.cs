@@ -610,6 +610,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void RPC_GotoPVPArea(string message)
     {
+        RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
         UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText(message);
     }
 
