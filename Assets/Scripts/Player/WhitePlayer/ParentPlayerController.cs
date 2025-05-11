@@ -64,6 +64,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     public float damageBuff = 1;
 
+    private bool isInPVPArea;
+
     #region Unity Lifecycle
 
     protected virtual void Awake()
@@ -93,6 +95,9 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
             {
                 runTimeData.LoadFromJsonFile();
 
+                if (isInPVPArea)
+                    runTimeData.currentHealth = characterBaseStats.maxHP;
+
                 // 내 체력으로 동기화
                 photonView.RPC("UpdateHP", RpcTarget.OthersBuffered, runTimeData.currentHealth);
                 nicknameText.text = PhotonNetwork.CurrentRoom.Players[photonView.Owner.ActorNumber].NickName;
@@ -100,17 +105,40 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
                 // UI 갱신용 invoke
                 OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
+
+                // pvp 테스트 임시 코드
+                //SetTeamId(PhotonNetwork.LocalPlayer.ActorNumber);
             }
             else
             {
                 RoomManager.Instance.AddPlayerDic(photonView.Owner.ActorNumber, gameObject);
                 nicknameText.text = PhotonNetwork.CurrentRoom.Players[photonView.Owner.ActorNumber].NickName;
-                nicknameText.color = new Color32(102, 255, 102, 255);
+
+                // 나와 팀 ID 비교
+                object myTeamIdObj, otherTeamIdObj;
+                PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("TeamId", out myTeamIdObj);
+                photonView.Owner.CustomProperties.TryGetValue("TeamId", out otherTeamIdObj);
+
+                if (myTeamIdObj != null && otherTeamIdObj != null && !myTeamIdObj.Equals(otherTeamIdObj))
+                {
+                    // 팀 ID 다르면 빨간색
+                    nicknameText.color = Color.red;
+                }
+                else
+                {
+                    // 같은 팀 또는 TeamId 없음
+                    nicknameText.color = new Color32(102, 255, 102, 255);
+                }
             }
         }
     }
 
     #endregion
+
+    public void SetIsInPVPArea(bool value)
+    {
+        isInPVPArea = value;
+    }
 
     public void UpdateHP()
     {
@@ -167,6 +195,12 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
             totalShield += shield.amount;
         }
         return totalShield;
+    }
+
+    [PunRPC]
+    public void TakeDamageRPC(float damage, Vector3 pos, int attackerTypeInt)
+    {
+        TakeDamage(damage, pos, (AttackerType)attackerTypeInt);
     }
 
     // 2) 추가 파라미터 useRPC를 사용한 데미지 처리
@@ -310,7 +344,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     /// </summary>
     public virtual void ExitSuperArmorState()
     {
-        isSuperArmor = true;
+        isSuperArmor = false;
     }
 
     /// <summary>
@@ -451,10 +485,11 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     }
 
     [PunRPC]
-    public virtual void CreateAnimation(string name, Vector3 pos)
+    public virtual void CreateAnimation(string name, Vector3 pos, bool isChild)
     {
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(name), pos, Quaternion.identity);
-        skillEffect.transform.parent = transform;
+        if(isChild)
+            skillEffect.transform.parent = transform;
     }
 
     public virtual void ShadowOff()
@@ -471,4 +506,16 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     {
         runTimeData.DeleteRunTimeData();
     }
+
+    public void SetTeamId(int teamId)
+    {
+        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+        {
+            { "TeamId", teamId }
+        };
+
+        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+        Debug.Log($"TeamId가 {teamId}로 설정되었습니다.");
+    }
+
 }

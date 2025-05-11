@@ -34,7 +34,7 @@ public class SkillEffect : MonoBehaviourPun
     /// </summary>
     /// <param name="damage"> 데미지 </param>
     /// <param name="triggerEvent"> 역경직 이벤트 </param>
-    public void Init(float damage, Action triggerEvent,bool isMine = false, BaseSpecialEffect specialEffect = null)
+    public void Init(float damage, Action triggerEvent, bool isMine = false, BaseSpecialEffect specialEffect = null)
     {
         this.damage = damage;
         this.triggerEvent += triggerEvent;
@@ -64,36 +64,75 @@ public class SkillEffect : MonoBehaviourPun
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!PhotonNetwork.IsConnected || isMine)
+        if (!isMine)
+            return;
+
+        PhotonView otherView = other.GetComponent<PhotonView>();
+        IDamageable damageable = other.GetComponent<IDamageable>();
+
+        if (other.CompareTag("Player"))
         {
-            IDamageable damageable = other.GetComponent<IDamageable>();
-            if (damageable != null && !other.CompareTag("Player"))
+            if (other.gameObject == RoomManager.Instance.ReturnLocalPlayer())
+                return;
+
+            PhotonView localView = RoomManager.Instance.ReturnLocalPlayer().GetPhotonView();
+
+            if (!TryGetTeamId(localView, out int myTeamId) || !TryGetTeamId(otherView, out int otherTeamId))
             {
-                if (specialEffect != null)
-                {
-                    specialEffect.InjectCollider(other);
-                }
+                Debug.Log("TeamId가 설정되지 않았습니다.");
+                return;
+            }
 
-                if (specialEffect != null && !specialEffect.IsInstant())
-                {
-                    specialEffect.ApplyEffect();
-                }
+            if (myTeamId != otherTeamId && otherView != null)
+            {
+                // 피해자에게 데미지를 적용하는 RPC 전송
+                otherView.RPC("TakeDamageRPC", otherView.Owner, damage, transform.position, (int)attackerType);
 
-                damageable.TakeDamage(damage, transform.position ,attackerType);
-                triggerEvent?.Invoke();
-                // 타격음
-                switch (attackerType)
-                {
-                    case AttackerType.WhitePlayer:
-                        AudioManager.Instance.PlayOneShot("event:/Character/Character-sword/katana_attack", transform.position);
-                        break;
-                    case AttackerType.PinkPlayer:
-                        AudioManager.Instance.PlayOneShot("event:/Character/Character-pink/mace_attack", transform.position);
-                        break;
-                }
-                StartCoroutine(PauseForSeconds());
+                ApplyAttackEffectOnly(other); // 이펙트 및 사운드
             }
         }
+        else if (damageable != null)
+        {
+            ApplyAttackEffectOnly(other);
+            damageable.TakeDamage(damage, transform.position ,attackerType);
+        }
+    }
+
+    private bool TryGetTeamId(PhotonView view, out int teamId)
+    {
+        if (view.Owner.CustomProperties.TryGetValue("TeamId", out object value))
+        {
+            teamId = (int)value;
+            return true;
+        }
+        teamId = -1;
+        return false;
+    }
+
+    private void ApplyAttackEffectOnly(Collider other)
+    {
+        if (specialEffect != null)
+        {
+            specialEffect.InjectCollider(other);
+            if (!specialEffect.IsInstant())
+            {
+                specialEffect.ApplyEffect();
+            }
+        }
+
+        triggerEvent?.Invoke();
+
+        switch (attackerType)
+        {
+            case AttackerType.WhitePlayer:
+                AudioManager.Instance.PlayOneShot("event:/Character/Character-sword/katana_attack", transform.position);
+                break;
+            case AttackerType.PinkPlayer:
+                AudioManager.Instance.PlayOneShot("event:/Character/Character-pink/mace_attack", transform.position);
+                break;
+        }
+
+        StartCoroutine(PauseForSeconds());
     }
 
     private IEnumerator PauseForSeconds()
