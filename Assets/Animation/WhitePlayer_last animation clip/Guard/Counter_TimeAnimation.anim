@@ -21,32 +21,20 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: -7465252651008898619, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - time: 0.049999952
-      value: {fileID: 1526166930043304763, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - time: 0.099999905
-      value: {fileID: -8089559535700686229, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - time: 0.1500001
-      value: {fileID: -8131888894206086459, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - time: 0.20000005
-      value: {fileID: 6836354611485843053, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - time: 0.25
-      value: {fileID: 5292991566455942711, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - time: 0.29999995
       value: {fileID: 3342414088429930119, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - time: 0.3499999
+    - time: 0.05
       value: {fileID: -2209291938614625177, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - time: 0.4000001
+    - time: 0.1
       value: {fileID: 459740179464873297, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - time: 0.45000005
+    - time: 0.15
       value: {fileID: 4186658082592504708, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - time: 0.54999995
+    - time: 0.25
       value: {fileID: 8298906576955511932, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - time: 0.6500001
+    - time: 0.35
       value: {fileID: 1249300261444509666, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - time: 0.75
+    - time: 0.45
       value: {fileID: 2804088769366337485, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - time: 0.84000003
+    - time: 0.54
       value: {fileID: 2804088769366337485, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
     attribute: m_Sprite
     path: 
@@ -70,12 +58,6 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: -7465252651008898619, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - {fileID: 1526166930043304763, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - {fileID: -8089559535700686229, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - {fileID: -8131888894206086459, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - {fileID: 6836354611485843053, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
-    - {fileID: 5292991566455942711, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
     - {fileID: 3342414088429930119, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
     - {fileID: -2209291938614625177, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
     - {fileID: 459740179464873297, guid: 1bca489c66bc9884b88b186fdbd67385, type: 3}
@@ -89,7 +71,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.85
+    m_StopTime: 0.55
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -108,4 +90,39 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 0
+    functionName: EnterSuperArmorState
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.05
+    functionName: WhitePlayerSoundEffect
+    data: IAICounter
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.05
+    functionName: CreateCounterSkillEffect
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.25
+    functionName: ExitSuperArmorState
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.25
+    functionName: OnAttackAllowNextInput
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

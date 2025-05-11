@@ -16,6 +16,10 @@ public class WhitePlayer_Idle : StateMachineBehaviour
         if (whitePlayerController == null)
             whitePlayerController = animator.GetComponent<WhitePlayerController>();
         whitePlayerController.currentState = WhitePlayerState.Idle;
+
+        whitePlayerController.ExitInvincibleState();
+        whitePlayerController.ExitSuperArmorState();
+
         animator.SetBool("Pre-Attack", false);
         animator.SetBool("Pre-Input", false);
         animator.SetBool("CancleState", false);
