@@ -143,8 +143,18 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             PhotonNetwork.CurrentRoom.IsOpen = false;
-            PhotonNetwork.CurrentRoom.IsVisible = false;
-            RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
+            PhotonNetwork.CurrentRoom.IsVisible = false; 
+            
+            // 플레이어 데이터 저장
+            if (RoomManager.Instance != null && RoomManager.Instance.ReturnLocalPlayer() != null)
+            {
+                RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>()?.SaveRunTimeData();
+            }
+            else
+            {
+                Debug.LogWarning("TimeCount: RoomManager 또는 로컬 플레이어를 찾을 수 없어 데이터를 저장할 수 없습니다.");
+            }
+            
             PhotonNetwork.LoadLevel("Level0");
         }
     }
@@ -155,17 +165,42 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         if (!readyPlayers.ContainsKey(playerNum))
         {
             readyPlayers.Add(playerNum, true);
-            OnUpdateReadyPlayer.Invoke(readyPlayers.Count);
+            if (OnUpdateReadyPlayer != null) // Null 체크 추가
+            {
+                OnUpdateReadyPlayer.Invoke(readyPlayers.Count);
+            }
+            else
+            {
+                Debug.LogWarning("UpdateReadyPlayer: OnUpdateReadyPlayer is null.");
+            }
         }
 
         if (PhotonNetwork.CurrentRoom.PlayerCount == readyPlayers.Count && PhotonNetwork.IsMasterClient)
         {
             Debug.Log("모두 준비 완료");
-            StopCoroutine(stageEnterCoroutine);
-            UIManager.Instance.ClosePeekUI();
-            RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
+            if (stageEnterCoroutine != null) // Null 체크 추가
+            {
+                StopCoroutine(stageEnterCoroutine);
+                stageEnterCoroutine = null; // 코루틴 참조 초기화
+            }
+
+            if (UIManager.Instance.ReturnPeekUI() as UIStageReadyPanel) // UI가 있다면 닫기
+            {
+                UIManager.Instance.ClosePeekUI();
+            }
+            
+            // 플레이어 데이터 저장
+            if (RoomManager.Instance != null && RoomManager.Instance.ReturnLocalPlayer() != null)
+            {
+                RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>()?.SaveRunTimeData();
+            }
+            else
+            {
+                Debug.LogWarning("UpdateReadyPlayer: RoomManager 또는 로컬 플레이어를 찾을 수 없어 데이터를 저장할 수 없습니다.");
+            }
 
             PhotonNetwork.CurrentRoom.IsOpen = false;
+            PhotonNetwork.CurrentRoom.IsVisible = false; // IsVisible도 함께 설정
             PhotonNetwork.LoadLevel("Level0");
         }
     }
@@ -408,36 +443,37 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
         photonView.RPC(nameof(RPC_ShowNextStageCountdown), RpcTarget.All, 0);
 
-        // 플레이어 오브젝트 정리
-        PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
-
-        // ───────── 다음 씬 이름 계산 ─────────
-        string cur = SceneManager.GetActiveScene().name;      // ex) "Level0"
-        string prefix = new string(cur.TakeWhile(char.IsLetter).ToArray()); // "Level"
-        string numberTxt = new string(cur.SkipWhile(char.IsLetter).ToArray()); // "0"
-
-        int curIdx;
-        if (int.TryParse(numberTxt, out curIdx))
+        if (PhotonNetwork.IsMasterClient) // 마스터 클라이언트만 다음 씬 로드 및 객체 정리 수행
         {
-            string nextScene = $"{prefix}{curIdx + 1}";
+            // ───────── 다음 씬 이름 계산 ─────────
+            string cur = SceneManager.GetActiveScene().name;      // ex) "Level0"
+            string prefix = new string(cur.TakeWhile(char.IsLetter).ToArray()); // "Level"
+            string numberTxt = new string(cur.SkipWhile(char.IsLetter).ToArray()); // "0"
 
-            // 빌드 세팅에 있는지 확인하고 이동
-            if (Application.CanStreamedLevelBeLoaded(nextScene))
+            int curIdx;
+            if (int.TryParse(numberTxt, out curIdx))
             {
-                PhotonNetwork.LoadLevel(nextScene);
+                string nextScene = $"{prefix}{curIdx + 1}";
+
+                // 빌드 세팅에 있는지 확인하고 이동
+                if (Application.CanStreamedLevelBeLoaded(nextScene))
+                {
+                    PhotonNetwork.LoadLevel(nextScene);
+                }
+                else
+                {
+                    Debug.LogError($"{nextScene} 이(가) Build Settings에 없습니다!");
+                }
             }
             else
             {
-                Debug.LogError($"{nextScene} 이(가) Build Settings에 없습니다!");
+                Debug.LogError($"현재 씬 이름 {cur} 에서 숫자를 찾을 수 없습니다.");
             }
         }
-        else
-        {
-            Debug.LogError($"현재 씬 이름 {cur} 에서 숫자를 찾을 수 없습니다.");
-        }
 
-        finalRewardNextStageCoroutine = null;
+        finalRewardNextStageCoroutine = null; // 코루틴 참조 초기화
     }
+
     [PunRPC]
     public void RPC_ShowNextStageCountdown(int seconds)
     {
