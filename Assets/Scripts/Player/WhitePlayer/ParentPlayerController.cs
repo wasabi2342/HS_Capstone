@@ -82,9 +82,6 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         {
             Debug.LogError("Animator 컴포넌트를 찾을 수 없습니다! (WhitePlayerController)");
         }
-
-        // 애니메이터 속도는 미리 설정
-        animator.speed = runTimeData.attackSpeed;
     }
 
     protected virtual void Start()
@@ -101,7 +98,9 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
             if (photonView.IsMine)
             {
                 runTimeData.LoadFromJsonFile();
-
+                
+                animator.speed = runTimeData.attackSpeed;
+                
                 if (isInPVPArea)
                     runTimeData.currentHealth = characterBaseStats.maxHP;
 

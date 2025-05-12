@@ -14,6 +14,8 @@ public class UIMenuPanel : UIBase
     [SerializeField]
     private Button preButton;
     [SerializeField]
+    private Button quitButton;
+    [SerializeField]
     private TMP_Dropdown resolutionDropdown;
     [SerializeField]
     private TMP_Dropdown windowDropdown;
@@ -43,6 +45,7 @@ public class UIMenuPanel : UIBase
             if (UIManager.Instance.ReturnPeekUI() as UIMenuPanel)
                 UIManager.Instance.ClosePeekUI();
         });
+        quitButton.onClick.AddListener(QuitGame);
 
         resolutionDropdown.onValueChanged.AddListener(OnResolutionDropdownValueChanged);
         windowDropdown.onValueChanged.AddListener(OnWindowDropdownValueChanged);
@@ -52,6 +55,14 @@ public class UIMenuPanel : UIBase
 
         InitializeResolutionDropdown();
         InitializeWindowModeDropdown();
+    }
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;  // 에디터 실행 중지
+#else
+        Application.Quit();  // 빌드된 게임 종료
+#endif
     }
 
     /// 상단 Guide / Option 버튼 클릭 시 호출

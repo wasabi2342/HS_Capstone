@@ -55,24 +55,41 @@ public class DataManager : MonoBehaviour
 
         for (int i = 1; i < lines.Length; i++)
         {
-            var values = lines[i].Trim().Split(',');
-            Debug.Log(values);
-            if (values.Length < 10) continue;
+            var line = lines[i].Trim();
+            if (string.IsNullOrWhiteSpace(line)) continue;
 
-            var data = ScriptableObject.CreateInstance<SkillData>();
-            data.ID = int.Parse(values[0]);
-            data.Devil = int.Parse(values[1]);
-            data.Bind_Key = int.Parse(values[2]);
-            data.Character = int.Parse(values[3]);
-            data.Blessing_name = values[4];
-            data.Bless_Discript = values[5];
-            data.AttackDamageCoefficient = float.Parse(values[6]);
-            data.AbilityPowerCoefficient = float.Parse(values[7]);
-            data.Cooldown = float.Parse(values[8]);
-            data.Stack = int.Parse(values[9]);
+            var values = line.Split(',');
+            if (values.Length < 10)
+            {
+                Debug.LogWarning($"줄 {i} 건너뜀 - 값 부족: {line}");
+                continue;
+            }
 
-            list.Add(data);
+            try
+            {
+                Debug.Log($"줄 {i} 파싱 시도: {line}");
+
+                var data = ScriptableObject.CreateInstance<SkillData>();
+                data.ID = int.Parse(values[0]);
+                data.Devil = int.Parse(values[1]);
+                data.Bind_Key = int.Parse(values[2]);
+                data.Character = int.Parse(values[3]);
+                data.Blessing_name = values[4];
+                data.Bless_Discript = values[5];
+
+                data.AttackDamageCoefficient = float.Parse(values[6].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                data.AbilityPowerCoefficient = float.Parse(values[7].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                data.Cooldown = float.Parse(values[8].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                data.Stack = int.Parse(values[9]);
+
+                list.Add(data);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"줄 {i} 파싱 중 오류 발생: {line}\n에러: {e.Message}");
+            }
         }
+
         return list;
     }
 
