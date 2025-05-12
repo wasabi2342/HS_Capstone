@@ -58,6 +58,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     private System.Action<InputAction.CallbackContext> openMenuAction;
 
+    private bool isInitialized = false;
+
     private void Awake()
     {
         if (Instance == null)
@@ -101,6 +103,36 @@ public class RoomManager : MonoBehaviourPunCallbacks
         
         players.Clear();
         isEnteringStage = false;
+        isInitialized = false;  // 초기화 상태 리셋
+
+        // 씬의 카메라 참조 찾기
+        FindCameraReferences();
+        
+        // 씬 전환 후 즉시 플레이어 생성 시작
+        StartCoroutine(Co_Start());
+    }
+
+    private void FindCameraReferences()
+    {
+        // 씬에서 카메라 찾기
+        var cinemachineCameras = FindObjectsOfType<CinemachineCamera>();
+        foreach (var cam in cinemachineCameras)
+        {
+            if (cam.name.Contains("Player"))
+                playerCinemachineCamera = cam;
+            else if (cam.name.Contains("Background"))
+                backgroundCinemachineCamera = cam;
+            else if (cam.name.Contains("Minimap"))
+                minimapCinemachineCamera = cam;
+        }
+
+        // UI 카메라 찾기
+        UICamera = FindObjectOfType<Camera>();
+        
+        Debug.Log($"카메라 참조 업데이트: Player={playerCinemachineCamera != null}, " +
+                  $"Background={backgroundCinemachineCamera != null}, " +
+                  $"Minimap={minimapCinemachineCamera != null}, " +
+                  $"UI={UICamera != null}");
     }
 
     private void Start()
@@ -117,8 +149,26 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         yield return new WaitForFixedUpdate();
 
-        openMenuAction = OpenMenuPanel;
-        InputManager.Instance.PlayerInput.actions["OpenMenu"].performed += openMenuAction;
+        // 이미 초기화되었다면 중복 실행 방지
+        if (isInitialized)
+        {
+            Debug.Log("이미 초기화되어 있습니다.");
+            yield break;
+        }
+
+        Debug.Log("플레이어 초기화 시작");
+
+        // 입력 시스템 초기화
+        if (InputManager.Instance != null)
+        {
+            openMenuAction = OpenMenuPanel;
+            InputManager.Instance.PlayerInput.actions["OpenMenu"].performed += openMenuAction;
+            Debug.Log("입력 시스템 초기화 완료");
+        }
+        else
+        {
+            Debug.LogError("InputManager를 찾을 수 없습니다!");
+        }
 
         PhotonNetworkManager.Instance.SetIsInPvPArea(isInPvPArea);
 
@@ -133,8 +183,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         if (myIndex < 0 || myIndex >= spawnPointList.Count)
         {
             Debug.LogWarning("스폰 포인트를 찾을 수 없습니다.");
-            //return;
-            yield break; // 코루틴 종료
+            yield break;
         }
 
         spawnPos = spawnPointList[myIndex] + new Vector3(0, 1.5f, 0);
@@ -150,14 +199,22 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
         else
         {
-            // 키가 없거나 오프라인 모드일 때 기본 플레이어로 생성
             CreateCharacter(defaultPlayer.name, spawnPos, Quaternion.identity, isInVillage);
         }
 
-        if (UICamera != null)
+        // UI 카메라 설정
+        if (UICamera != null && UIManager.Instance != null)
         {
             UIManager.Instance.SetRenderCamera(UICamera);
+            Debug.Log("UI 카메라 설정 완료");
         }
+        else
+        {
+            Debug.LogWarning("UI 카메라 또는 UIManager를 찾을 수 없습니다!");
+        }
+
+        isInitialized = true;
+        Debug.Log("플레이어 초기화 완료");
     }
 
     public void OpenMenuPanel(InputAction.CallbackContext ctx)
@@ -170,6 +227,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     public void CreateCharacter(string playerPrefabName, Vector3 pos, Quaternion quaternion, bool isInVillage)
     {
+        Debug.Log($"플레이어 생성 시작: {playerPrefabName}");
+
         // 이미 존재하는 플레이어 객체가 있다면 제거
         int localActorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
         if (players.ContainsKey(localActorNumber) && players[localActorNumber] != null)
@@ -185,6 +244,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
             // 마스터 클라이언트가 아닌 경우에만 새 플레이어 생성
             if (!PhotonNetwork.IsMasterClient || localActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
             {
+                Debug.Log($"플레이어 인스턴스 생성: {playerPrefabName}");
                 playerInstance = PhotonNetwork.Instantiate("Prefab/" + playerPrefabName, pos, quaternion);
                 players[localActorNumber] = playerInstance;
                 PhotonNetwork.CurrentRoom.CustomProperties[localActorNumber + "CharacterName"] = playerPrefabName;
@@ -204,32 +264,60 @@ public class RoomManager : MonoBehaviourPunCallbacks
         // 플레이어 설정
         if (playerInstance != null)
         {
+            Debug.Log($"플레이어 설정 시작: {playerInstance.name}");
             playerInstance.tag = PLAYER_TAG;
             SetLayerRecursively(playerInstance, PLAYER_LAYER);
             playerInstance.transform.localScale = playerScale;
-            playerInstance.GetComponent<Playercontroller_event>().isInVillage = isInVillage;
-            playerInstance.GetComponent<ParentPlayerController>().SetIsInPVPArea(isInPvPArea);
+            
+            // 컴포넌트 설정
+            var playerEvent = playerInstance.GetComponent<Playercontroller_event>();
+            if (playerEvent != null)
+            {
+                playerEvent.isInVillage = isInVillage;
+            }
+            else
+            {
+                Debug.LogError($"Playercontroller_event 컴포넌트를 찾을 수 없습니다: {playerInstance.name}");
+            }
+
+            var playerController = playerInstance.GetComponent<ParentPlayerController>();
+            if (playerController != null)
+            {
+                playerController.SetIsInPVPArea(isInPvPArea);
+            }
+            else
+            {
+                Debug.LogError($"ParentPlayerController 컴포넌트를 찾을 수 없습니다: {playerInstance.name}");
+            }
 
             // 카메라 설정
             if (playerCinemachineCamera != null)
             {
                 playerCinemachineCamera.Follow = playerInstance.transform;
                 playerCinemachineCamera.LookAt = playerInstance.transform;
+                Debug.Log("플레이어 카메라 설정 완료");
             }
 
             if (backgroundCinemachineCamera != null)
             {
                 backgroundCinemachineCamera.Follow = playerInstance.transform;
                 backgroundCinemachineCamera.LookAt = playerInstance.transform;
+                Debug.Log("배경 카메라 설정 완료");
             }
 
             if (minimapCinemachineCamera != null)
             {
                 minimapCinemachineCamera.Follow = playerInstance.transform;
                 minimapCinemachineCamera.LookAt = playerInstance.transform;
+                Debug.Log("미니맵 카메라 설정 완료");
             }
 
             UpdateSortedPlayers();
+            Debug.Log($"플레이어 설정 완료: {playerInstance.name}");
+        }
+        else
+        {
+            Debug.LogError($"플레이어 인스턴스 생성 실패: {playerPrefabName}");
         }
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
@@ -270,8 +358,28 @@ public class RoomManager : MonoBehaviourPunCallbacks
     }
     */
 
-    public GameObject ReturnLocalPlayer() =>
-    PhotonNetwork.InRoom ? players[PhotonNetwork.LocalPlayer.ActorNumber] : players[0];
+    public GameObject ReturnLocalPlayer()
+    {
+        if (!PhotonNetwork.InRoom)
+        {
+            if (players.TryGetValue(0, out GameObject offlinePlayer))
+            {
+                return offlinePlayer;
+            }
+            Debug.LogWarning("오프라인 모드에서 플레이어를 찾을 수 없습니다.");
+            return null;
+        }
+        else
+        {
+            int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+            if (players.TryGetValue(actorNumber, out GameObject onlinePlayer))
+            {
+                return onlinePlayer;
+            }
+            Debug.LogWarning($"온라인 모드에서 플레이어를 찾을 수 없습니다. ActorNumber: {actorNumber}");
+            return null;
+        }
+    }
 
     public UIConfirmPanel InteractWithDungeonNPC()
     {
