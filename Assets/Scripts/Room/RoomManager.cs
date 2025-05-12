@@ -63,15 +63,44 @@ public class RoomManager : MonoBehaviourPunCallbacks
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject); // 씬 전환시 유지
         }
         else
         {
             Destroy(gameObject);
+            return;
         }
 
         players = new Dictionary<int, GameObject>();
         int layerIdx = LayerMask.NameToLayer("Player");
         PLAYER_LAYER = layerIdx != -1 ? layerIdx : 0;
+
+        // 씬 로드 이벤트 구독
+        SceneManager.sceneLoaded += OnSceneLoadedClearPlayers;
+    }
+
+    private void OnDestroy()
+    {
+        // 이벤트 구독 해제
+        SceneManager.sceneLoaded -= OnSceneLoadedClearPlayers;
+    }
+
+    private void OnSceneLoadedClearPlayers(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log($"씬 {scene.name} 로드됨. 플레이어 정리 시작");
+        
+        // 기존 플레이어 객체 정리
+        foreach (var player in players.Values.ToList())
+        {
+            if (player != null)
+            {
+                Debug.Log($"기존 플레이어 제거: {player.name}");
+                PhotonNetwork.Destroy(player);
+            }
+        }
+        
+        players.Clear();
+        isEnteringStage = false;
     }
 
     private void Start()
@@ -141,45 +170,67 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     public void CreateCharacter(string playerPrefabName, Vector3 pos, Quaternion quaternion, bool isInVillage)
     {
-        GameObject playerInstance;
+        // 이미 존재하는 플레이어 객체가 있다면 제거
+        int localActorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+        if (players.ContainsKey(localActorNumber) && players[localActorNumber] != null)
+        {
+            Debug.Log($"기존 플레이어 객체 제거: ActorNumber {localActorNumber}");
+            PhotonNetwork.Destroy(players[localActorNumber]);
+            players.Remove(localActorNumber);
+        }
 
+        GameObject playerInstance;
         if (PhotonNetwork.IsConnected)
         {
-            playerInstance = PhotonNetwork.Instantiate("Prefab/" + playerPrefabName, pos, quaternion);
-            players[PhotonNetwork.LocalPlayer.ActorNumber] = playerInstance;
-            //PhotonNetworkManager.Instance.AddPlayer(PhotonNetwork.LocalPlayer.ActorNumber, playerInstance.GetComponent<PhotonView>().ViewID);
-            PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName"] = playerPrefabName;
+            // 마스터 클라이언트가 아닌 경우에만 새 플레이어 생성
+            if (!PhotonNetwork.IsMasterClient || localActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
+            {
+                playerInstance = PhotonNetwork.Instantiate("Prefab/" + playerPrefabName, pos, quaternion);
+                players[localActorNumber] = playerInstance;
+                PhotonNetwork.CurrentRoom.CustomProperties[localActorNumber + "CharacterName"] = playerPrefabName;
+            }
+            else
+            {
+                Debug.Log($"마스터 클라이언트: 다른 플레이어 {localActorNumber}의 생성은 건너뜁니다");
+                return;
+            }
         }
         else
         {
             playerInstance = Instantiate(Resources.Load<ParentPlayerController>(playerPrefabName), pos, quaternion).gameObject;
             players[0] = playerInstance;
         }
-        playerInstance.tag = PLAYER_TAG;
-        SetLayerRecursively(playerInstance, PLAYER_LAYER);
-        playerInstance.transform.localScale = playerScale;
-        playerInstance.GetComponent<Playercontroller_event>().isInVillage = isInVillage; // 플레이어의 공통 스크립트로 변경 해야함
-        playerInstance.GetComponent<ParentPlayerController>().SetIsInPVPArea(isInPvPArea);
-        if (playerCinemachineCamera != null)
+
+        // 플레이어 설정
+        if (playerInstance != null)
         {
-            playerCinemachineCamera.Follow = playerInstance.transform;
-            playerCinemachineCamera.LookAt = playerInstance.transform;
+            playerInstance.tag = PLAYER_TAG;
+            SetLayerRecursively(playerInstance, PLAYER_LAYER);
+            playerInstance.transform.localScale = playerScale;
+            playerInstance.GetComponent<Playercontroller_event>().isInVillage = isInVillage;
+            playerInstance.GetComponent<ParentPlayerController>().SetIsInPVPArea(isInPvPArea);
+
+            // 카메라 설정
+            if (playerCinemachineCamera != null)
+            {
+                playerCinemachineCamera.Follow = playerInstance.transform;
+                playerCinemachineCamera.LookAt = playerInstance.transform;
+            }
+
+            if (backgroundCinemachineCamera != null)
+            {
+                backgroundCinemachineCamera.Follow = playerInstance.transform;
+                backgroundCinemachineCamera.LookAt = playerInstance.transform;
+            }
+
+            if (minimapCinemachineCamera != null)
+            {
+                minimapCinemachineCamera.Follow = playerInstance.transform;
+                minimapCinemachineCamera.LookAt = playerInstance.transform;
+            }
+
+            UpdateSortedPlayers();
         }
-
-        if (backgroundCinemachineCamera != null)
-        {
-            backgroundCinemachineCamera.Follow = playerInstance.transform;
-            backgroundCinemachineCamera.LookAt = playerInstance.transform;
-        }
-
-        if (minimapCinemachineCamera != null)
-        {
-            minimapCinemachineCamera.Follow = playerInstance.transform;
-            minimapCinemachineCamera.LookAt = playerInstance.transform;
-        }
-
-        UpdateSortedPlayers();
-
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
