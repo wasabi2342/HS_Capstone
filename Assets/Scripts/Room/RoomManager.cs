@@ -67,32 +67,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
         else
         {
             Destroy(gameObject);
-            return; // 이미 인스턴스가 있으면 중복 실행 방지
         }
 
         players = new Dictionary<int, GameObject>();
         int layerIdx = LayerMask.NameToLayer("Player");
         PLAYER_LAYER = layerIdx != -1 ? layerIdx : 0;
-
-        // 씬 로드 시 플레이어 목록 초기화 및 재검증 로직 추가
-        SceneManager.sceneLoaded += OnSceneLoadedClearPlayers;
-    }
-
-    private void OnDestroy() // Awake에서 추가한 이벤트 핸들러 제거
-    {
-        SceneManager.sceneLoaded -= OnSceneLoadedClearPlayers;
-        if (InputManager.Instance != null && InputManager.Instance.PlayerInput != null && openMenuAction != null) // Null 체크 추가
-        {
-            InputManager.Instance.PlayerInput.actions["OpenMenu"].performed -= openMenuAction;
-        }
-    }
-
-    private void OnSceneLoadedClearPlayers(Scene scene, LoadSceneMode mode)
-    {
-        // 새 씬이 로드될 때마다 players 딕셔너리를 초기화합니다.
-        Debug.Log($"Scene {scene.name} loaded. Clearing players dictionary.");
-        players.Clear();
-        isEnteringStage = false; // 씬 전환 후 스테이지 진입 플래그 초기화
     }
 
     private void Start()
@@ -100,67 +79,38 @@ public class RoomManager : MonoBehaviourPunCallbacks
         StartCoroutine(Co_Start());
     }
 
+    private void OnDisable()
+    {
+        InputManager.Instance.PlayerInput.actions["OpenMenu"].performed -= openMenuAction;
+    }
+
     IEnumerator Co_Start()
     {
         yield return new WaitForFixedUpdate();
 
-        if (InputManager.Instance == null || InputManager.Instance.PlayerInput == null)
-        {
-            Debug.LogError("RoomManager.Co_Start: InputManager or PlayerInput not initialized!");
-            yield break;
-        }
         openMenuAction = OpenMenuPanel;
         InputManager.Instance.PlayerInput.actions["OpenMenu"].performed += openMenuAction;
 
-        if (PhotonNetworkManager.Instance == null)
-        {
-            Debug.LogError("RoomManager.Co_Start: PhotonNetworkManager not initialized!");
-            yield break;
-        }
         PhotonNetworkManager.Instance.SetIsInPvPArea(isInPvPArea);
 
-        // 로컬 플레이어의 이전 캐릭터 객체가 있다면 파괴 (씬 전환 시 중복 방지)
-        if (PhotonNetwork.IsConnected && PhotonNetwork.LocalPlayer != null)
-        {
-            GameObject[] existingPlayers = GameObject.FindGameObjectsWithTag(PLAYER_TAG);
-            Debug.Log($"RoomManager.Co_Start: Found {existingPlayers.Length} existing objects with tag '{PLAYER_TAG}'.");
-            foreach (GameObject oldPlayer in existingPlayers)
-            {
-                PhotonView pv = oldPlayer.GetComponent<PhotonView>();
-                if (pv != null && pv.IsMine && oldPlayer != null)
-                {
-                    bool isCurrentCharacter = false;
-                    if (players.TryGetValue(PhotonNetwork.LocalPlayer.ActorNumber, out GameObject currentPlayerObject))
-                    {
-                        if (currentPlayerObject == oldPlayer)
-                        {
-                            isCurrentCharacter = true;
-                        }
-                    }
-
-                    if (!isCurrentCharacter)
-                    {
-                        Debug.LogWarning($"RoomManager.Co_Start: Destroying potentially old player object for local player: {oldPlayer.name} (ViewID: {pv.ViewID})");
-                        PhotonNetwork.Destroy(oldPlayer);
-                    }
-                }
-            }
-        }
-        yield return null;
-
+        // 키 정의
         string key = "SelectCharacter";
 
-        List<Player> playerList = PhotonNetwork.PlayerList.ToList();
+        // 순서 기반 인덱스 구하기
+        List<Player> playerList = PhotonNetwork.PlayerList.ToList(); // ActorNumber 순
         int myIndex = playerList.IndexOf(PhotonNetwork.LocalPlayer);
 
+        // 인덱스 범위 확인
         if (myIndex < 0 || myIndex >= spawnPointList.Count)
         {
             Debug.LogWarning("스폰 포인트를 찾을 수 없습니다.");
-            yield break;
+            //return;
+            yield break; // 코루틴 종료
         }
 
         spawnPos = spawnPointList[myIndex] + new Vector3(0, 1.5f, 0);
 
+        // 룸에 연결되어 있고 커스텀 프로퍼티에 해당 키가 있으면 안전하게 꺼내기
         if (PhotonNetwork.IsConnected
             && PhotonNetwork.CurrentRoom != null
             && PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(key, out var val)
@@ -171,6 +121,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
         else
         {
+            // 키가 없거나 오프라인 모드일 때 기본 플레이어로 생성
             CreateCharacter(defaultPlayer.name, spawnPos, Quaternion.identity, isInVillage);
         }
 
@@ -191,36 +142,24 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public void CreateCharacter(string playerPrefabName, Vector3 pos, Quaternion quaternion, bool isInVillage)
     {
         GameObject playerInstance;
-        int localActorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
 
-        if (players.ContainsKey(localActorNumber) && players[localActorNumber] != null)
+        if (PhotonNetwork.IsConnected)
         {
-            Debug.LogWarning($"RoomManager.CreateCharacter: Player for ActorNumber {localActorNumber} already exists. Skipping creation. Existing: {players[localActorNumber].name}");
-            playerInstance = players[localActorNumber];
+            playerInstance = PhotonNetwork.Instantiate("Prefab/" + playerPrefabName, pos, quaternion);
+            players[PhotonNetwork.LocalPlayer.ActorNumber] = playerInstance;
+            //PhotonNetworkManager.Instance.AddPlayer(PhotonNetwork.LocalPlayer.ActorNumber, playerInstance.GetComponent<PhotonView>().ViewID);
+            PhotonNetwork.CurrentRoom.CustomProperties[PhotonNetwork.LocalPlayer.ActorNumber + "CharacterName"] = playerPrefabName;
         }
         else
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                Debug.Log($"RoomManager.CreateCharacter: Instantiating new character '{playerPrefabName}' for local player (ActorNumber: {localActorNumber}).");
-                playerInstance = PhotonNetwork.Instantiate("Prefab/" + playerPrefabName, pos, quaternion);
-            }
-            else
-            {
-                Debug.Log($"RoomManager.CreateCharacter: Instantiating new character '{playerPrefabName}' for offline mode.");
-                playerInstance = Instantiate(Resources.Load<ParentPlayerController>(playerPrefabName), pos, quaternion).gameObject;
-            }
-
-            AddPlayerDic(PhotonNetwork.IsConnected ? localActorNumber : 0, playerInstance);
-
-            if (PhotonNetwork.IsConnected)
-                PhotonNetwork.CurrentRoom.CustomProperties[localActorNumber + "CharacterName"] = playerPrefabName;
+            playerInstance = Instantiate(Resources.Load<ParentPlayerController>(playerPrefabName), pos, quaternion).gameObject;
+            players[0] = playerInstance;
         }
-
+        playerInstance.tag = PLAYER_TAG;
+        SetLayerRecursively(playerInstance, PLAYER_LAYER);
         playerInstance.transform.localScale = playerScale;
-        playerInstance.GetComponent<Playercontroller_event>().isInVillage = isInVillage;
+        playerInstance.GetComponent<Playercontroller_event>().isInVillage = isInVillage; // 플레이어의 공통 스크립트로 변경 해야함
         playerInstance.GetComponent<ParentPlayerController>().SetIsInPVPArea(isInPvPArea);
-
         if (playerCinemachineCamera != null)
         {
             playerCinemachineCamera.Follow = playerInstance.transform;
@@ -240,31 +179,22 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
 
         UpdateSortedPlayers();
-    }
 
+    }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
-        Debug.Log($"RoomManager.OnPlayerEnteredRoom: Player {newPlayer.NickName} (ActorNumber: {newPlayer.ActorNumber}) entered. Current player count in dictionary: {players.Count}");
-
-        if (players.ContainsKey(newPlayer.ActorNumber) && players[newPlayer.ActorNumber] != null)
-        {
-            Debug.LogWarning($"RoomManager.OnPlayerEnteredRoom: Player {newPlayer.NickName} (ActorNumber: {newPlayer.ActorNumber}) is already in the players dictionary. Current object: {players[newPlayer.ActorNumber].name}. Skipping LateCheckRemotePlayer.");
-            return;
-        }
-
-        if (newPlayer.ActorNumber != PhotonNetwork.LocalPlayer.ActorNumber)
-        {
-            StartCoroutine(LateCheckRemotePlayer(newPlayer.ActorNumber));
-        }
+        // 네트워크로 전송되는 Instantiate 시점에 AddPlayerDic() 을 RPC 로 호출해두면 됨
+        // 단, 여기에서도 혹시 누락된 원격 플레이어가 있으면 찾아서 사후 처리
+        StartCoroutine(LateCheckRemotePlayer(newPlayer.ActorNumber));
     }
 
     System.Collections.IEnumerator LateCheckRemotePlayer(int actorNum)
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1f);   // 네트워크 Instantiate 완료 대기
 
-        if (!players.ContainsKey(actorNum) || players[actorNum] == null)
+        if (!players.ContainsKey(actorNum))
         {
-            Debug.Log($"RoomManager.LateCheckRemotePlayer: Player with ActorNumber {actorNum} not found or null in dictionary. Searching in scene...");
+            // 씬 내 모든 Player 태그 검색 후 PhotonView 체크
             foreach (var p in GameObject.FindGameObjectsWithTag(PLAYER_TAG))
             {
                 if (p.TryGetComponent(out PhotonView pv) && pv.OwnerActorNr == actorNum)
@@ -275,9 +205,22 @@ public class RoomManager : MonoBehaviourPunCallbacks
             }
         }
     }
+    /*
+    public GameObject ReturnLocalPlayer()
+    {
+        if (!PhotonNetwork.InRoom)
+        {
+            return players[0];
+        }
+        else
+        {
+            return players[PhotonNetwork.LocalPlayer.ActorNumber];
+        }
+    }
+    */
 
     public GameObject ReturnLocalPlayer() =>
-        PhotonNetwork.InRoom ? players[PhotonNetwork.LocalPlayer.ActorNumber] : players[0];
+    PhotonNetwork.InRoom ? players[PhotonNetwork.LocalPlayer.ActorNumber] : players[0];
 
     public UIConfirmPanel InteractWithDungeonNPC()
     {
@@ -286,7 +229,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
             () => WaitForEnterStage(),
             () => UIManager.Instance.ClosePeekUI(),
             "게임 스테이지에 진입하시겠습니까?"
-        );
+            );
         return panel;
     }
 
@@ -329,8 +272,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         if (sortedPlayers.Count == 0) return;
 
+        // 다음 플레이어로 이동 (마지막이면 0번으로 돌아감)
         currentIndex = (currentIndex + 1) % sortedPlayers.Count;
 
+        // 카메라 변경
         playerCinemachineCamera.Follow = sortedPlayers[currentIndex].transform;
         playerCinemachineCamera.LookAt = sortedPlayers[currentIndex].transform;
 
@@ -351,24 +296,20 @@ public class RoomManager : MonoBehaviourPunCallbacks
                            .Select(p => p.Value)
                            .ToList();
 
+        // 현재 따라가고 있는 플레이어가 리스트에서 몇 번째인지 찾기
         GameObject currentTarget = playerCinemachineCamera.Follow?.gameObject;
         int newIndex = sortedPlayers.FindIndex(p => p == currentTarget);
 
+        // 유효한 값이면 currentIndex 갱신
         if (newIndex != -1)
             currentIndex = newIndex;
         else
-            currentIndex = 0;
+            currentIndex = 0; // 기본적으로 첫 번째 플레이어를 바라보도록
     }
 
     public void AddPlayerDic(int actNum, GameObject player)
     {
-        if (player == null)
-        {
-            Debug.LogError($"RoomManager.AddPlayerDic: Attempted to add a null player object for ActorNumber {actNum}.");
-            return;
-        }
-
-        if (!players.ContainsKey(actNum) || players[actNum] == null)
+        if (!players.ContainsKey(actNum))
         {
             players[actNum] = player;
             player.tag = PLAYER_TAG;
@@ -376,24 +317,12 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
             UpdateSortedPlayers();
             UIUpdate?.Invoke(actNum, player);
-            Debug.Log($"RoomManager.AddPlayerDic: Player {actNum} (Object: {player.name}, ViewID: {player.GetComponent<PhotonView>()?.ViewID}) added to dictionary.");
-        }
-        else
-        {
-            if (players[actNum] != player)
-            {
-                Debug.LogWarning($"RoomManager.AddPlayerDic: ActorNumber {actNum} already exists in dictionary with a DIFFERENT object. Existing: {players[actNum].name} (ViewID: {players[actNum].GetComponent<PhotonView>()?.ViewID}), New: {player.name} (ViewID: {player.GetComponent<PhotonView>()?.ViewID}). This might indicate a duplicate.");
-            }
-            else
-            {
-                Debug.Log($"RoomManager.AddPlayerDic: Player {actNum} (Object: {player.name}) is already the same instance in dictionary. No action taken.");
-            }
         }
     }
-
     // ────────────────────────────────
     // 유틸
     // ────────────────────────────────
+
 
     private void SetLayerRecursively(GameObject obj, int layer)
     {
