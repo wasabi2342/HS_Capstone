@@ -150,15 +150,26 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
             transform.position += knockVel * t;
         }
 
-        /* FSM 실행 / 네트워크 보간 */
-        if (PhotonNetwork.IsMasterClient) CurrentState?.Execute();
+        /* FSM 실행 / 네트워크 보간 */
+        if (PhotonNetwork.IsMasterClient) 
+        {
+            CurrentState?.Execute();
+            
+            // 체력이 0 이하이고 아직 DeadState가 아니면 죽음 처리
+            if (hp <= 0f && !(CurrentState is DeadState))
+            {
+                TransitionToState(typeof(DeadState));
+            }
+            // DeadState.cs에는 이미 DestroyLater 코루틴이 구현되어 있으므로 
+            // 여기서 추가 파괴 로직이 필요하지 않음
+        }
         else
         {
             transform.position = Vector3.Lerp(transform.position, netPos, Time.deltaTime * NET_SMOOTH);
             transform.rotation = Quaternion.Slerp(transform.rotation, netRot, Time.deltaTime * NET_SMOOTH);
             lastMoveX = netFacing;
         }
-
+        
         UpdateFacingFromVelocity();
     }
 
@@ -221,7 +232,8 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     };
 
     /* ────────────────── Detect Target (Taunt > Player > Servant) ──────────────────── */
-    float detT; const float DET_INT = .2f;
+    float detT; 
+    const float DET_INT = .2f;
     public void DetectTarget()
     {
         detT += Time.deltaTime;
