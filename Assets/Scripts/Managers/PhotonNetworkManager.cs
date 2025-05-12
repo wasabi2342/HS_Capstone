@@ -77,8 +77,11 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.OfflineMode)
         {
             Debug.Log("싱글 플레이 모드 - 씬 로드");
-            //PhotonNetwork.LoadLevel("room");
-            PhotonNetwork.LoadLevel("Tutorial"); // 튜토리얼로
+            int tutorial = PlayerPrefs.GetInt("Tutorial", 0);
+            if (tutorial == 0)
+                PhotonNetwork.LoadLevel("Tutorial"); // 튜토리얼로
+            else
+                PhotonNetwork.LoadLevel("room");
         }
         else
         {

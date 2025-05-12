@@ -74,7 +74,9 @@ public class TutorialController : MonoBehaviour
 
 		if ( !nextSceneName.Equals("") )
 		{
-			PhotonNetwork.LeaveRoom();
+            PlayerPrefs.SetInt("Tutorial", 1);
+            PlayerPrefs.Save();
+            PhotonNetwork.LeaveRoom();
 			SceneManager.LoadScene(nextSceneName);
 		}
 	}
