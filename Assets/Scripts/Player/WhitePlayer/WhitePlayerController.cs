@@ -38,7 +38,7 @@ public class WhitePlayerController : ParentPlayerController
 
     {
         //AttackCollider = GetComponentInChildren<WhitePlayerAttackZone>();
- 
+
 
         base.Awake();
         facingDirection = Vector3.right;
@@ -70,6 +70,11 @@ public class WhitePlayerController : ParentPlayerController
             if (eventController != null)
             {
                 //eventController.OnInteractionEvent += HandleReviveInteraction;
+            }
+
+            if (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil != 0)
+            {
+                animator.SetInteger("mouseRightBlessing", runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil);
             }
         }
     }
@@ -750,7 +755,7 @@ public class WhitePlayerController : ParentPlayerController
     }
 
     // 피격 및 사망 처리
-    public override void TakeDamage(float damage, Vector3 attackerPos,AttackerType attackerType = AttackerType.Default)
+    public override void TakeDamage(float damage, Vector3 attackerPos, AttackerType attackerType = AttackerType.Default)
     {
         if (PhotonNetwork.IsConnected && !photonView.IsMine)
         {
@@ -947,7 +952,7 @@ public class WhitePlayerController : ParentPlayerController
         currentState = WhitePlayerState.Death;
         Debug.Log("플레이어 사망");
 
-        if(PhotonNetworkManager.Instance != null)
+        if (PhotonNetworkManager.Instance != null)
         {
             PhotonNetworkManager.Instance.ReportPlayerDeath(photonView.Owner.ActorNumber);
         }
