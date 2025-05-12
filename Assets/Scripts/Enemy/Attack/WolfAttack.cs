@@ -13,12 +13,17 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
     [Header("공격 콜라이더")]
     public GameObject weaponColliderObject;
 
+    [Tooltip("공격 콜라이더 최대 유지 시간 (초)")]
+    public float maxColliderActiveTime = 0.5f; // 콜라이더 활성화 최대 시간
+
     // ───────── 내부 캐시 ─────────
     private Collider weaponCollider;
     private Vector3 defaultCenter;
     private bool isCharging;
     private Transform chargeTarget;
     private Animator animator;
+    private float colliderActiveTimer = 0f; // 콜라이더 활성화 타이머
+    private bool isColliderActive = false;  // 콜라이더 활성화 상태 추적
 
     void Awake()
     {
@@ -45,6 +50,22 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
 
         // 기본 비활성화
         weaponColliderObject.SetActive(false);
+    }
+
+    void Update()
+    {
+        // 콜라이더 활성화 상태 확인 및 타이머 관리
+        if (isColliderActive)
+        {
+            colliderActiveTimer += Time.deltaTime;
+            
+            // 최대 활성화 시간 초과 시 강제로 비활성화
+            if (colliderActiveTimer >= maxColliderActiveTime)
+            {
+                Debug.LogWarning("[WolfAttack] Attack collider was active too long. Forcing disable.");
+                DisableAttack();
+            }
+        }
     }
 
     /// <summary>
@@ -83,13 +104,24 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
     /// <summary>애니메이션 이벤트: 콜라이더 켜기</summary>
     public void EnableAttack()
     {
-        if (weaponColliderObject) weaponColliderObject.SetActive(true);
+        if (weaponColliderObject)
+        {
+            weaponColliderObject.SetActive(true);
+            isColliderActive = true;
+            colliderActiveTimer = 0f; // 타이머 리셋
+            Debug.Log("[WolfAttack] Attack collider enabled");
+        }
     }
 
     /// <summary>애니메이션 이벤트: 콜라이더 끄기</summary>
     public void DisableAttack()
     {
-        if (weaponColliderObject) weaponColliderObject.SetActive(false);
+        if (weaponColliderObject)
+        {
+            weaponColliderObject.SetActive(false);
+            isColliderActive = false;
+            Debug.Log("[WolfAttack] Attack collider disabled");
+        }
     }
 
     /// <summary>애니메이션 이벤트: 오른쪽 공격 시 호출</summary>
@@ -129,5 +161,6 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
     public void OnAttackAnimationEndEvent()
     {
         DisableAttack();
+        Debug.Log("[WolfAttack] Attack animation ended");
     }
 }
