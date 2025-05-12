@@ -241,7 +241,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             return;
 
         rewardVotes[actorNum] = rewardIndex;
-        photonView.RPC("RPC_AddCheckMark", RpcTarget.All, actorNum, rewardIndex);
+        photonView.RPC("RPC_AddCheckMark", RpcTarget.AllBuffered, actorNum, rewardIndex);
 
         // 모든 인원이 투표 완료하면 카운트다운 시작 (마스터 클라이언트)
         if (rewardVotes.Count == PhotonNetwork.CurrentRoom.PlayerCount && PhotonNetwork.IsMasterClient)
