@@ -22,6 +22,14 @@ public class StageManager : MonoBehaviour
     private Transform coopOrBetrayNPCPos;
     public Transform rewardSpawn;
     public Transform blessingSpawn;
+
+    [SerializeField]
+    private List<string> CoopOrBetrayNPCPrefabNameList = new List<string>();
+    [SerializeField]
+    private List<Transform> coopOrBetrayNPCPosList = new List<Transform>();
+    [SerializeField]
+    private List<bool> isImmediateSpawnList = new List<bool>();
+
     private void Awake()
     {
         Instance = this;
@@ -32,12 +40,26 @@ public class StageManager : MonoBehaviour
         if (PhotonNetwork.IsMasterClient)
         {
             SpawnWave(0);
+            for(int i = 0; i < isImmediateSpawnList.Count; i++)
+            {
+                if (isImmediateSpawnList[i])
+                {
+                    GameObject coopOrBetrayNPC = Resources.Load<GameObject>(CoopOrBetrayNPCPrefabNameList[i]);
+                    if (coopOrBetrayNPC != null)
+                    {
+                        PhotonNetwork.Instantiate(
+                        CoopOrBetrayNPCPrefabNameList[i],
+                        coopOrBetrayNPCPosList[i].position,
+                        coopOrBetrayNPCPosList[i].rotation);
+                    }
+                }
+            }
             //PhotonNetwork.Instantiate(blessingNPCPrefabName, Vector3.zero, Quaternion.identity);
             //PhotonNetwork.Instantiate(doorPrefabName, new Vector3(10,0,0), Quaternion.identity);
-            if (coopOrBetrayNPCPos != null)
-            {
-                PhotonNetwork.Instantiate(CoopOrBetrayNPCPrefabName, coopOrBetrayNPCPos.position, Quaternion.identity);
-            }
+            //if (coopOrBetrayNPCPos != null)
+            //{
+            //    PhotonNetwork.Instantiate(CoopOrBetrayNPCPrefabName, coopOrBetrayNPCPos.position, Quaternion.identity);
+            //}
 
         }
         // RoomProperties에서 인덱스 읽기
@@ -106,8 +128,8 @@ public class StageManager : MonoBehaviour
 
     public bool AreAllMonstersCleared()
     {
-        Debug.Log("ActiveMonsterCount: " + EnemyAI.ActiveMonsterCount);
-        bool cleared = EnemyAI.ActiveMonsterCount == 0;
+        Debug.Log("ActiveMonsterCount: " + EnemyFSM.ActiveMonsterCount);
+        bool cleared = EnemyFSM.ActiveMonsterCount == 0;
         if (cleared)
         {
             Debug.Log("모든 몬스터가 제거되었습니다.");
@@ -130,6 +152,20 @@ public class StageManager : MonoBehaviour
                     blessingNPCPrefabName,
                     blessingSpawn.position,
                     blessingSpawn.rotation);
+                }
+                for (int i = 0; i < isImmediateSpawnList.Count; i++)
+                {
+                    if (isImmediateSpawnList[i])
+                    {
+                        GameObject coopOrBetrayNPC = Resources.Load<GameObject>(CoopOrBetrayNPCPrefabNameList[i]);
+                        if (coopOrBetrayNPC != null)
+                        {
+                            PhotonNetwork.Instantiate(
+                            CoopOrBetrayNPCPrefabNameList[i],
+                            coopOrBetrayNPCPosList[i].position,
+                            coopOrBetrayNPCPosList[i].rotation);
+                        }
+                    }
                 }
                 if (MonsterStatusManager.instance != null)
                 {

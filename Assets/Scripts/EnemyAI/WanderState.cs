@@ -21,6 +21,8 @@ public class WanderState : BaseState
         {
             SetAgentStopped(false);
             agent.speed = status.moveSpeed;
+            if (agent.stoppingDistance != 0f)      
+                agent.stoppingDistance = 0f;
         }
         fsm.PlayDirectionalAnim("Walk");
 

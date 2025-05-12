@@ -7,8 +7,9 @@ public class ReturnState : BaseState
 
     public override void Enter()
     {
-        fsm.Agent.isStopped = false;
-        fsm.Agent.SetDestination(fsm.spawnPosition);
+        agent.isStopped = false;
+        agent.stoppingDistance = 0f;
+        agent.SetDestination(fsm.spawnPosition);
         fsm.PlayDirectionalAnim("Walk");
     }
 

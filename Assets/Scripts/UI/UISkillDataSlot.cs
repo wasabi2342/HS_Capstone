@@ -12,11 +12,11 @@ public class UISkillDataSlot : MonoBehaviour
     [SerializeField]
     private Image bgImage;
 
-    public void Init(string skillInfo, string key, string skillImagePath = "images", string bgImagePath = "images")
+    public void Init(SkillWithLevel blessingData)
     {
-        skillInfoText.text = skillInfo;
-        skillKeyText.text = key;
-        skillImage.sprite = Resources.Load<Sprite>(skillImagePath);
-        bgImage.sprite = Resources.Load<Sprite>(bgImagePath);
+        skillInfoText.text = blessingData.skillData.Bless_Discript;
+        skillKeyText.text = blessingData.skillData.Blessing_name + blessingData.level.ToString();
+        //skillImage.sprite = Resources.Load<Sprite>($"Blessing/Front/{(Blessings)blessingData.skillData.ID}");
+        //bgImage.sprite = Resources.Load<Sprite>(bgImagePath);
     }
 }

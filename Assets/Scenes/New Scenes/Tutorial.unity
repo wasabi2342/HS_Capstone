@@ -628,8 +628,44 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1146320485}
     - target: {fileID: 3254718173748875429, guid: 547691f37b3593f4081ebea699d6fd24, type: 3}
+      propertyPath: spawnPointList.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3254718173748875429, guid: 547691f37b3593f4081ebea699d6fd24, type: 3}
       propertyPath: backgroundCinemachineCamera
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3254718173748875429, guid: 547691f37b3593f4081ebea699d6fd24, type: 3}
+      propertyPath: spawnPointList.Array.data[0].x
+      value: 9.236
+      objectReference: {fileID: 0}
+    - target: {fileID: 3254718173748875429, guid: 547691f37b3593f4081ebea699d6fd24, type: 3}
+      propertyPath: spawnPointList.Array.data[0].y
+      value: 1.37
+      objectReference: {fileID: 0}
+    - target: {fileID: 3254718173748875429, guid: 547691f37b3593f4081ebea699d6fd24, type: 3}
+      propertyPath: spawnPointList.Array.data[1].x
+      value: 9.236
+      objectReference: {fileID: 0}
+    - target: {fileID: 3254718173748875429, guid: 547691f37b3593f4081ebea699d6fd24, type: 3}
+      propertyPath: spawnPointList.Array.data[1].y
+      value: 1.37
+      objectReference: {fileID: 0}
+    - target: {fileID: 3254718173748875429, guid: 547691f37b3593f4081ebea699d6fd24, type: 3}
+      propertyPath: spawnPointList.Array.data[2].x
+      value: 9.236
+      objectReference: {fileID: 0}
+    - target: {fileID: 3254718173748875429, guid: 547691f37b3593f4081ebea699d6fd24, type: 3}
+      propertyPath: spawnPointList.Array.data[2].y
+      value: 1.37
+      objectReference: {fileID: 0}
+    - target: {fileID: 3254718173748875429, guid: 547691f37b3593f4081ebea699d6fd24, type: 3}
+      propertyPath: spawnPointList.Array.data[3].x
+      value: 9.236
+      objectReference: {fileID: 0}
+    - target: {fileID: 3254718173748875429, guid: 547691f37b3593f4081ebea699d6fd24, type: 3}
+      propertyPath: spawnPointList.Array.data[3].y
+      value: 1.37
       objectReference: {fileID: 0}
     - target: {fileID: 5047502544695598649, guid: 547691f37b3593f4081ebea699d6fd24, type: 3}
       propertyPath: m_Name
@@ -769,7 +805,7 @@ Transform:
   m_GameObject: {fileID: 39358629}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 64.42, y: 0, z: 4.83}
+  m_LocalPosition: {x: 76.1, y: 0, z: 4.83}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -794,7 +830,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 12, y: 25, z: 40}
+  m_Size: {x: 35, y: 25, z: 40}
   m_Center: {x: 0, y: 0, z: -5.2241707}
 --- !u!4 &48917456 stripped
 Transform:
@@ -1641,7 +1677,7 @@ Transform:
   m_GameObject: {fileID: 180137971}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9.99, y: 0, z: -19.09}
+  m_LocalPosition: {x: -0.4, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6022,9 +6058,9 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 126
   m_CollisionDetection: 0
 --- !u!65 &688914924
 BoxCollider:
@@ -7982,6 +8018,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 7d6493cd-778c-404a-936d-305f4cbeb690
     m_ActionName: UI/AnyKey
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c296509f-cd40-4cec-b46b-350de47b4e62
+    m_ActionName: 'Player/OpenMenu[/Keyboard/escape]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -12869,7 +12909,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4131734313779836671, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7687062139411390392, guid: 759a3f3ea02be0e49b12c79618187392, type: 3}
       propertyPath: sceneViewId

@@ -61,7 +61,7 @@ public class UISelectBlessingButton : UIBase
         cardBG.sprite = Resources.Load<Sprite>("Blessing/Front/Front");  // 임시 카드
         cardBG.SetNativeSize();
         icon.sprite = Resources.Load<Sprite>("Blessing/Front/card_image");  // 이미지 이름 나중에 맞는 가호로 바꾸기
-        //icon.sprite = Resources.Load<Sprite>($"Blessing/Front/{(Blessings)newBlessing.skillData.Devil}"); 나중에 바꾸기 인덱스로 바뀔 수도
+        //icon.sprite = Resources.Load<Sprite>($"Blessing/Front/{(Blessings)thisBlessing.skillData.ID}"); //나중에 바꾸기 인덱스로 바뀔 수도
 
     }
 
