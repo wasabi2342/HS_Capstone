@@ -25,7 +25,7 @@ public class CoopOrBetray : MonoBehaviourPun, IInteractable
             canInteract = false;
         }
 
-        if(isInTutorial || isEndStage)
+        if (isInTutorial || isEndStage)
         {
             canInteract = true;
         }
@@ -39,16 +39,16 @@ public class CoopOrBetray : MonoBehaviourPun, IInteractable
             {
                 canInteract = false;
 
-                if(PhotonNetwork.CurrentRoom.PlayerCount < 2 || isInTutorial)
-                    photonView.RPC("Interact", RpcTarget.All);
-                else if (PhotonNetwork.OfflineMode)
-                {
-                     UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("알파버전 클리어하셨습니다");
-                }
-                else if (!PhotonNetwork.OfflineMode)
-                {
-
-                }
+                //if(PhotonNetwork.CurrentRoom.PlayerCount < 2 || isInTutorial)
+                photonView.RPC("Interact", RpcTarget.All);
+                //else if (PhotonNetwork.OfflineMode)
+                //{
+                //     UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("알파버전 클리어하셨습니다");
+                //}
+                //else if (!PhotonNetwork.OfflineMode)
+                //{
+                //
+                //}
             }
             else
             {

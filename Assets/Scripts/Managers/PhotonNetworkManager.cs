@@ -687,4 +687,9 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
         isInPvPArea = value;
     }
+
+    public void EndGameInSoloPlay()
+    {
+        StartCoroutine(ResetGame("알파버전 클리어하셨습니다."));
+    }
 }
