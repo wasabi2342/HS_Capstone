@@ -23,6 +23,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     float maxHP, hp;    
     public float currentHP => hp;
     float maxShield, shield;
+    private bool isDead;
     /* ────────── Detect ──────────── */
     [SerializeField] LayerMask playerMask;      // Player 레이어만
     [SerializeField] LayerMask servantMask;     // Servant 레이어만
@@ -150,15 +151,26 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
             transform.position += knockVel * t;
         }
 
-        /* FSM 실행 / 네트워크 보간 */
-        if (PhotonNetwork.IsMasterClient) CurrentState?.Execute();
+        /* FSM 실행 / 네트워크 보간 */
+        if (PhotonNetwork.IsMasterClient) 
+        {
+            CurrentState?.Execute();
+            
+            // 체력이 0 이하이고 아직 DeadState가 아니면 죽음 처리
+            if (hp <= 0f && !(CurrentState is DeadState))
+            {
+                TransitionToState(typeof(DeadState));
+            }
+            // DeadState.cs에는 이미 DestroyLater 코루틴이 구현되어 있으므로 
+            // 여기서 추가 파괴 로직이 필요하지 않음
+        }
         else
         {
             transform.position = Vector3.Lerp(transform.position, netPos, Time.deltaTime * NET_SMOOTH);
             transform.rotation = Quaternion.Slerp(transform.rotation, netRot, Time.deltaTime * NET_SMOOTH);
             lastMoveX = netFacing;
         }
-
+        
         UpdateFacingFromVelocity();
     }
 
@@ -221,7 +233,8 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     };
 
     /* ────────────────── Detect Target (Taunt > Player > Servant) ──────────────────── */
-    float detT; const float DET_INT = .2f;
+    float detT; 
+    const float DET_INT = .2f;
     public void DetectTarget()
     {
         detT += Time.deltaTime;
@@ -269,7 +282,11 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
 
     /* ────────────────────────── IDamageable ─────────────────────── */
     public void TakeDamage(float damage, Vector3 atkPos, AttackerType t = AttackerType.Default)
-        => pv.RPC(nameof(DamageToMaster_RPC), RpcTarget.MasterClient, damage, atkPos, (int)t);
+    {
+        if (isDead) return;
+        pv.RPC(nameof(DamageToMaster_RPC), RpcTarget.MasterClient, damage, atkPos, (int)t);
+    }
+      
     public void DamageToMaster(float damage, Vector3 attackerPos)
     {
         // ‘Default’ 타입으로 실제 RPC 호출
@@ -278,6 +295,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     [PunRPC]
     public void DamageToMaster_RPC(float damage, Vector3 atkPos, int t = 0)
     {
+        if (isDead) return;
         var atkType = (AttackerType)t;
         if (!PhotonNetwork.IsMasterClient) return;
         lastHitPos = atkPos;
@@ -308,6 +326,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         }
         else if (hp <= 0f)
         {
+            isDead = true;
             TransitionToState(typeof(DeadState));
         }
     }

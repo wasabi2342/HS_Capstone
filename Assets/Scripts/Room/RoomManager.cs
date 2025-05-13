@@ -81,7 +81,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     private void OnDisable()
     {
-        InputManager.Instance.PlayerInput.actions["OpenMenu"].performed -= openMenuAction;
+        if (InputManager.Instance != null)
+            InputManager.Instance.PlayerInput.actions["OpenMenu"].performed -= openMenuAction;
     }
 
     IEnumerator Co_Start()

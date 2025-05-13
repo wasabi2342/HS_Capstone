@@ -30,17 +30,23 @@ public class StageManager : MonoBehaviour
     [SerializeField]
     private List<bool> isImmediateSpawnList = new List<bool>();
 
+    [SerializeField]
+    private bool isEndStage = false;
+
     private void Awake()
     {
         Instance = this;
     }
+
     private void Start()
     {
 
         if (PhotonNetwork.IsMasterClient)
         {
+            EnemyFSM.ActiveMonsterCount = 0;
+
             SpawnWave(0);
-            for(int i = 0; i < isImmediateSpawnList.Count; i++)
+            for (int i = 0; i < isImmediateSpawnList.Count; i++)
             {
                 if (isImmediateSpawnList[i])
                 {
@@ -135,6 +141,10 @@ public class StageManager : MonoBehaviour
             Debug.Log("모든 몬스터가 제거되었습니다.");
             if (PhotonNetwork.IsMasterClient)
             {
+                if (isEndStage && PhotonNetwork.CurrentRoom.PlayerCount == 1)
+                {
+                    PhotonNetworkManager.Instance.EndGameInSoloPlay();
+                }
                 // Resources 폴더에서 doorPrefab을 로드
                 GameObject doorPrefab = Resources.Load<GameObject>(doorPrefabName);
                 GameObject blessingNPC = Resources.Load<GameObject>(blessingNPCPrefabName);

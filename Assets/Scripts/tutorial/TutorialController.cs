@@ -42,24 +42,24 @@ public class TutorialController : MonoBehaviour
 
 	public void SetNextTutorial()
 	{
-		// í˜„ì¬ íŠœí† ë¦¬ì–¼ì˜ Exit() ë©”ì†Œë“œ í˜¸ì¶œ
+		// ?˜„?¬ ?Šœ?† ë¦¬ì–¼?˜ Exit() ë©”ì†Œ?“œ ?˜¸ì¶?
 		if ( currentTutorial != null )
 		{
 			currentTutorial.Exit();
 		}
 
-		// ë§ˆì§€ë§‰ íŠœí† ë¦¬ì–¼ì„ ì§„í–‰í–ˆë‹¤ë©´ CompletedAllTutorials() ë©”ì†Œë“œ í˜¸ì¶œ
+		// ë§ˆì??ë§? ?Šœ?† ë¦¬ì–¼?„ ì§„í–‰?–ˆ?‹¤ë©? CompletedAllTutorials() ë©”ì†Œ?“œ ?˜¸ì¶?
 		if ( currentIndex >= tutorials.Count-1 )
 		{
 			CompletedAllTutorials();
 			return;
 		}
 
-		// ë‹¤ìŒ íŠœí† ë¦¬ì–¼ ê³¼ì •ì„ currentTutorialë¡œ ë“±ë¡
+		// ?‹¤?Œ ?Šœ?† ë¦¬ì–¼ ê³¼ì •?„ currentTutorialë¡? ?“±ë¡?
 		currentIndex ++;
 		currentTutorial = tutorials[currentIndex];
 
-		// ìƒˆë¡œ ë°”ë€ íŠœí† ë¦¬ì–¼ì˜ Enter() ë©”ì†Œë“œ í˜¸ì¶œ
+		// ?ƒˆë¡? ë°”ë?? ?Šœ?† ë¦¬ì–¼?˜ Enter() ë©”ì†Œ?“œ ?˜¸ì¶?
 		currentTutorial.Enter();
 	}
 
@@ -67,13 +67,16 @@ public class TutorialController : MonoBehaviour
 	{
 		currentTutorial = null;
 
-		// í–‰ë™ ì–‘ì‹ì´ ì—¬ëŸ¬ ì¢…ë¥˜ê°€ ë˜ì—ˆì„ ë•Œ ì½”ë“œ ì¶”ê°€ ì‘ì„±
-		// í˜„ì¬ëŠ” ì”¬ ì „í™˜
+		// ?–‰?™ ?–‘?‹?´ ?—¬?Ÿ¬ ì¢…ë¥˜ê°? ?˜?—ˆ?„ ?•Œ ì½”ë“œ ì¶”ê?? ?‘?„±
+		// ?˜„?¬?Š” ?”¬ ? „?™˜
 
 		Debug.Log("Complete All");
 
 		if ( !nextSceneName.Equals("") )
 		{
+            PlayerPrefs.SetInt("Tutorial", 1);
+            PlayerPrefs.Save();
+            PhotonNetwork.LeaveRoom();
 			SceneManager.LoadScene(nextSceneName);
 		}
 	}

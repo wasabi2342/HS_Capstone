@@ -28,8 +28,16 @@ public class UiStartPanel : UIBase
 
     private void OnClikedMultiPlayButton()
     {
-        PhotonNetworkManager.Instance.ConnectPhoton();
-        UIManager.Instance.OpenPanelInOverlayCanvas<UILobbyPanel>();
+        int tutorial = PlayerPrefs.GetInt("Tutorial", 0);
+        if (tutorial == 0)
+        {
+            OnClikedSinglePlayButton();
+        }
+        else
+        {
+            PhotonNetworkManager.Instance.ConnectPhoton();
+            UIManager.Instance.OpenPanelInOverlayCanvas<UILobbyPanel>();
+        }
     }
 
     private void OnClikedSinglePlayButton()

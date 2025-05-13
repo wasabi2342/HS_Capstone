@@ -1,5 +1,7 @@
+using Photon.Pun;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIMenuPanel : UIBase
@@ -15,6 +17,8 @@ public class UIMenuPanel : UIBase
     private Button preButton;
     [SerializeField]
     private Button quitButton;
+    [SerializeField]
+    private Button gotoStartUIButton;
     [SerializeField]
     private TMP_Dropdown resolutionDropdown;
     [SerializeField]
@@ -46,6 +50,10 @@ public class UIMenuPanel : UIBase
                 UIManager.Instance.ClosePeekUI();
         });
         quitButton.onClick.AddListener(QuitGame);
+        gotoStartUIButton.onClick.AddListener(() => 
+        {
+            PhotonNetwork.LeaveRoom();
+        });
 
         resolutionDropdown.onValueChanged.AddListener(OnResolutionDropdownValueChanged);
         windowDropdown.onValueChanged.AddListener(OnWindowDropdownValueChanged);
@@ -56,6 +64,24 @@ public class UIMenuPanel : UIBase
         InitializeResolutionDropdown();
         InitializeWindowModeDropdown();
     }
+
+    public override void OnLeftRoom()
+    {
+        if (PhotonNetwork.InLobby)
+        {
+            PhotonNetwork.LeaveLobby(); // 다음으로 로비 나가기
+        }
+        else
+        {
+            SceneManager.LoadScene("Restart");
+        }
+    }
+
+    public override void OnLeftLobby()
+    {
+        SceneManager.LoadScene("Restart");
+    }
+
     public void QuitGame()
     {
 #if UNITY_EDITOR
