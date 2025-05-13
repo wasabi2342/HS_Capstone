@@ -9,6 +9,8 @@ public class CoopOrBetray : MonoBehaviourPun, IInteractable
 
     public bool isInTutorial = false;
 
+    public bool isEndStage = false;
+
     private bool canInteract = true;
 
     [SerializeField]
@@ -22,16 +24,31 @@ public class CoopOrBetray : MonoBehaviourPun, IInteractable
         {
             canInteract = false;
         }
+
+        if(isInTutorial || isEndStage)
+        {
+            canInteract = true;
+        }
     }
 
     public void OnInteract(InputAction.CallbackContext ctx)
     {
         if (ctx.started)
         {
-            if (canInteract || isInTutorial)
+            if (canInteract)
             {
                 canInteract = false;
-                photonView.RPC("Interact", RpcTarget.All);
+
+                if(PhotonNetwork.CurrentRoom.PlayerCount < 2 || isInTutorial)
+                    photonView.RPC("Interact", RpcTarget.All);
+                else if (PhotonNetwork.OfflineMode)
+                {
+                     UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("알파버전 클리어하셨습니다");
+                }
+                else if (!PhotonNetwork.OfflineMode)
+                {
+
+                }
             }
             else
             {
