@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4378223950097629850}
   - component: {fileID: 7844911853591879032}
   - component: {fileID: 8064116814195874161}
-  - component: {fileID: 4679199332066995704}
+  - component: {fileID: -5061736729488504416}
   m_Layer: 0
   m_Name: doorPrefab
   m_TagString: Untagged
@@ -157,7 +157,7 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &4679199332066995704
+--- !u!114 &-5061736729488504416
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -166,7 +166,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5551015284415976861}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 941674fe1056b9748af3822f2b76aaa8, type: 3}
+  m_Script: {fileID: 11500000, guid: 381e515812cb32d499924e80e8b61b8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   canInteract: 1
@@ -186,6 +186,10 @@ PrefabInstance:
     - target: {fileID: 2847464693790831718, guid: c07aab95fb28e0347a76d76952c0433b, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5783220874177045045, guid: c07aab95fb28e0347a76d76952c0433b, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7123743667366610605, guid: c07aab95fb28e0347a76d76952c0433b, type: 3}
       propertyPath: m_Pivot.x
