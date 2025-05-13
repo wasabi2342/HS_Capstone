@@ -31,40 +31,50 @@ public class Pink_R_Idle : StateMachineBehaviour
         bool runParam = animator.GetBool("run");
         var pc = animator.GetComponent<PinkPlayerController>();
 
+        switch (pc.nextState)
+        {
+            case PinkPlayerState.Run:
+                animator.SetBool("run", true);
+                pc.currentState = PinkPlayerState.Run;
+                break;
+        }
+
         // 1) move 입력이 와서 아직 전이 안 된 경우 → Run
-        if (!hasTransitioned && runParam)
-        {
-            animator.CrossFade("Run", transitionDuration, 0);      // base layer(0) Run으로
-            pc.currentState = PinkPlayerState.Run;
-            hasTransitioned = true;
-        }
-        // 2) 이미 Run으로 전이된 상태였다가 run 파라미터가 꺼지면 → 다시 R_Idle
-        else if (hasTransitioned && !runParam)
-        {
-            // stateInfo.shortNameHash는 이 Behaviour가 붙은 "R_Idle" state의 해시값
-            animator.CrossFade(stateInfo.shortNameHash, transitionDuration, layerIndex);
-            pc.currentState = PinkPlayerState.R_Idle;
-            hasTransitioned = false;
-        }
+        //if (!hasTransitioned && runParam)
+        //{
+        //    animator.CrossFade("Run", transitionDuration, 0);      // base layer(0) Run으로
+        //    pc.currentState = PinkPlayerState.Run;
+        //    hasTransitioned = true;
+        //}
+        //// 2) 이미 Run으로 전이된 상태였다가 run 파라미터가 꺼지면 → 다시 R_Idle
+        //else if (hasTransitioned && !runParam)
+        //{
+        //    // stateInfo.shortNameHash는 이 Behaviour가 붙은 "R_Idle" state의 해시값
+        //    animator.CrossFade(stateInfo.shortNameHash, transitionDuration, layerIndex);
+        //    pc.currentState = PinkPlayerState.R_Idle;
+        //    hasTransitioned = false;
+        //}
     }
+
+
+
+    // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
+    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        var pc = animator.GetComponent<PinkPlayerController>();
+        pc.nextState = PinkPlayerState.R_Idle;
+    }
+
+    // OnStateMove is called right after Animator.OnAnimatorMove()
+    //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    //{
+    //    // Implement code that processes and affects root motion
+    //}
+
+    // OnStateIK is called right after Animator.OnAnimatorIK()
+    //override public void OnStateIK(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    //{
+    //    // Implement code that sets up animation IK (inverse kinematics)
+    //}
 }
-
-
-// OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-//override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-//{
-//    
-//}
-
-// OnStateMove is called right after Animator.OnAnimatorMove()
-//override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-//{
-//    // Implement code that processes and affects root motion
-//}
-
-// OnStateIK is called right after Animator.OnAnimatorIK()
-//override public void OnStateIK(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-//{
-//    // Implement code that sets up animation IK (inverse kinematics)
-//}
 
