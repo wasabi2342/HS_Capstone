@@ -161,18 +161,20 @@ public class WhitePlayercontroller_event : Playercontroller_event
     {
         if (!photonView.IsMine)
             return;
-
-        InputManager.Instance.PlayerInput.actions["Move"].performed -= movePerformedCallback;
-        InputManager.Instance.PlayerInput.actions["Move"].canceled -= moveCanceledCallback;
-        //InputManager.Instance.PlayerInput.actions["Dash"].performed -= dashPerformedCallback;
-        //InputManager.Instance.PlayerInput.actions["Dash"].canceled -= dashCanceledCallback;
-        InputManager.Instance.PlayerInput.actions["Dash"].started -= dashPerformedCallback;
-        InputManager.Instance.PlayerInput.actions["Interaction"].performed -= interactionPerformedCallback;
-        InputManager.Instance.PlayerInput.actions["Interaction"].canceled -= interactionCanceledCallback;
-        InputManager.Instance.PlayerInput.actions["Interaction"].started -= interactionStartedCallback;
-        InputManager.Instance.PlayerInput.actions["BasicAttack"].performed -= basicAttackPerformedCallback;
-        InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed -= specialAttackPerformedCallback;
-        InputManager.Instance.PlayerInput.actions["SkillAttack"].performed -= skillAttackPerformedCallback;
-        InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed -= ultimateAttackPerformedCallback;
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.PlayerInput.actions["Move"].performed -= movePerformedCallback;
+            InputManager.Instance.PlayerInput.actions["Move"].canceled -= moveCanceledCallback;
+            //InputManager.Instance.PlayerInput.actions["Dash"].performed -= dashPerformedCallback;
+            //InputManager.Instance.PlayerInput.actions["Dash"].canceled -= dashCanceledCallback;
+            InputManager.Instance.PlayerInput.actions["Dash"].started -= dashPerformedCallback;
+            InputManager.Instance.PlayerInput.actions["Interaction"].performed -= interactionPerformedCallback;
+            InputManager.Instance.PlayerInput.actions["Interaction"].canceled -= interactionCanceledCallback;
+            InputManager.Instance.PlayerInput.actions["Interaction"].started -= interactionStartedCallback;
+            InputManager.Instance.PlayerInput.actions["BasicAttack"].performed -= basicAttackPerformedCallback;
+            InputManager.Instance.PlayerInput.actions["SpecialAttack"].performed -= specialAttackPerformedCallback;
+            InputManager.Instance.PlayerInput.actions["SkillAttack"].performed -= skillAttackPerformedCallback;
+            InputManager.Instance.PlayerInput.actions["UltimateAttack"].performed -= ultimateAttackPerformedCallback;
+        }
     }
 }

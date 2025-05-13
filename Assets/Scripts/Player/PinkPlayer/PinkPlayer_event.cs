@@ -168,7 +168,7 @@ public class PinkPlayercontroller_event : Playercontroller_event
     {
         pinkPlayerController.OnUltimateInput(context);
         OnKeyboardREvent?.Invoke();
-        
+
     }
 
     // Space¹Ù (È¸ÇÇ)
@@ -186,19 +186,22 @@ public class PinkPlayercontroller_event : Playercontroller_event
         if (!photonView.IsMine)
             return;
 
-        var actions = InputManager.Instance.PlayerInput.actions;
-        actions["Move"].performed -= movePerformed;
-        actions["Move"].canceled -= moveCanceled;
-        actions["Dash"].performed -= dashPerformed;
-        actions["Dash"].canceled -= dashCanceled;
-        actions["Interaction"].performed -= interactionPerformed;
-        actions["Interaction"].canceled -= interactionCanceled;
-        actions["Interaction"].started -= interactionStarted;
-        actions["BasicAttack"].performed -= basicAttackPerformed;
-        actions["SpecialAttack"].started -= specialAttackStarted;
-        actions["SpecialAttack"].canceled -= specialAttackCanceled;
-        actions["SpecialAttack"].performed -= specialAttackPerformed;
-        actions["SkillAttack"].performed -= skillAttackPerformed;
-        actions["UltimateAttack"].started -= ultimateAttackStarted;
+        if (InputManager.Instance != null)
+        {
+            var actions = InputManager.Instance.PlayerInput.actions;
+            actions["Move"].performed -= movePerformed;
+            actions["Move"].canceled -= moveCanceled;
+            actions["Dash"].performed -= dashPerformed;
+            actions["Dash"].canceled -= dashCanceled;
+            actions["Interaction"].performed -= interactionPerformed;
+            actions["Interaction"].canceled -= interactionCanceled;
+            actions["Interaction"].started -= interactionStarted;
+            actions["BasicAttack"].performed -= basicAttackPerformed;
+            actions["SpecialAttack"].started -= specialAttackStarted;
+            actions["SpecialAttack"].canceled -= specialAttackCanceled;
+            actions["SpecialAttack"].performed -= specialAttackPerformed;
+            actions["SkillAttack"].performed -= skillAttackPerformed;
+            actions["UltimateAttack"].started -= ultimateAttackStarted;
+        }
     }
 }
