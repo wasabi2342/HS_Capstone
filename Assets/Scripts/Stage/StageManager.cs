@@ -37,13 +37,16 @@ public class StageManager : MonoBehaviour
     {
         Instance = this;
     }
+
     private void Start()
     {
 
         if (PhotonNetwork.IsMasterClient)
         {
+            EnemyFSM.ActiveMonsterCount = 0;
+
             SpawnWave(0);
-            for(int i = 0; i < isImmediateSpawnList.Count; i++)
+            for (int i = 0; i < isImmediateSpawnList.Count; i++)
             {
                 if (isImmediateSpawnList[i])
                 {
