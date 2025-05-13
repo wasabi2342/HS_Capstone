@@ -159,8 +159,17 @@ public class SkillEffect : MonoBehaviourPun
     {
         animator.speed = 0;
         yield return new WaitForSeconds(hitlagTime);
-        animator.speed = 1;
+        animator.speed = animationSpeed;
     }
+
+    // 공격속도 조절
+
+    public void SetAttackSpeed(float value)
+    {
+        animationSpeed = value;
+        animator.speed = animationSpeed;
+    }
+
 
     // 넉백
 

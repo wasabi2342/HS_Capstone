@@ -268,39 +268,38 @@ public class PinkPlayerController : ParentPlayerController
                 }
                 //photonView.RPC("PlayAnimation", RpcTarget.All, "basicattack");
                 currentState = PinkPlayerState.R_hit1;
-                return;
+                
             }
+
+
 
             if (currentState == PinkPlayerState.R_hit1 || currentState == PinkPlayerState.R_hit2 || currentState == PinkPlayerState.R_hit3)
             {
-                //animator.SetBool("basicattack", true);
+                
                 animator.SetBool("Pre-Input", true);
-                //Vector3 mousePos = GetMouseWorldPosition();
-                //animator.SetBool("Right", mousePos.x > transform.position.x);
-                //if (PhotonNetwork.IsConnected)
-                //{
-                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
-                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                //}
-                //currentState = PinkPlayerState.R_hit2;
-                //return;
+               
             }
 
-            //else if (currentState == PinkPlayerState.R_hit1 && animator.GetInteger("attackStack") > 2)
-            //{
-            //    animator.SetBool("basicattack", true);
-            //    Vector3 mousePos = GetMouseWorldPosition();
-            //    animator.SetBool("Right", mousePos.x > transform.position.x);
-            //    if (PhotonNetwork.IsConnected)
-            //    {
-            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
-            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-            //    }
-            //    currentState = PinkPlayerState.R_hit3;
-            //    return;
-            //}
 
-            if (nextState <= PinkPlayerState.BasicAttack)
+
+          
+
+
+                //else if (currentState == PinkPlayerState.R_hit1 && animator.GetInteger("attackStack") > 2)
+                //{
+                //    animator.SetBool("basicattack", true);
+                //    Vector3 mousePos = GetMouseWorldPosition();
+                //    animator.SetBool("Right", mousePos.x > transform.position.x);
+                //    if (PhotonNetwork.IsConnected)
+                //    {
+                //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
+                //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                //    }
+                //    currentState = PinkPlayerState.R_hit3;
+                //    return;
+                //}
+
+                if (nextState <= PinkPlayerState.BasicAttack && nextState != PinkPlayerState.R_Idle)
             {
 
                 Vector3 mousePos = GetMouseWorldPosition();
@@ -814,6 +813,8 @@ public class PinkPlayerController : ParentPlayerController
         float damage = (runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                         runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
 
+       
+
         // Photon에 접속 중인지 확인하여 isMine 설정
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
         Vector3 targetPos = transform.position;
@@ -838,6 +839,8 @@ public class PinkPlayerController : ParentPlayerController
         // init 메서드 호출
         //skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine);
         skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.R].skillData.ID, this));
+        // 궁극기 속도
+        skillEffect.SetAttackSpeed(animator.speed);
 
         // 생성된 이펙트의 부모를 설정
         skillEffect.transform.parent = transform;
