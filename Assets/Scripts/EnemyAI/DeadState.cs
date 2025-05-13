@@ -4,7 +4,7 @@ using Photon.Pun;
 
 public class DeadState : BaseState
 {
-    const float DESTROY_DELAY = 1.5f;               // 원 EnemyAI DIE_DUR ≒ 1.5f
+    const float DESTROY_DELAY = 1.5f;               
     private float destroyTimer = 0f;
     
     public DeadState(EnemyFSM f) : base(f) { }
