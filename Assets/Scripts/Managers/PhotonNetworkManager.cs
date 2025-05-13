@@ -398,7 +398,53 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
         RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
     }
+    [PunRPC]
+    public void RPC_NextStage()
+    {
+        StartCoroutine(StartNextStage());
+    }
+    private IEnumerator StartNextStage()
+    {
+        float countdown = .1f;
+        while (countdown > 0)
+        {
+            photonView.RPC(nameof(RPC_ShowNextStageCountdown), RpcTarget.All, countdown);
+            yield return new WaitForSeconds(1f);
+            countdown--;
+        }
 
+        photonView.RPC(nameof(RPC_ShowNextStageCountdown), RpcTarget.All, 0);
+
+        // 플레이어 오브젝트 정리
+        PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
+
+        // ───────── 다음 씬 이름 계산 ─────────
+        string cur = SceneManager.GetActiveScene().name;      // ex) "Level0"
+        string prefix = new string(cur.TakeWhile(char.IsLetter).ToArray()); // "Level"
+        string numberTxt = new string(cur.SkipWhile(char.IsLetter).ToArray()); // "0"
+
+        int curIdx;
+        if (int.TryParse(numberTxt, out curIdx))
+        {
+            string nextScene = $"{prefix}{curIdx + 1}";
+
+            // 빌드 세팅에 있는지 확인하고 이동
+            if (Application.CanStreamedLevelBeLoaded(nextScene))
+            {
+                PhotonNetwork.LoadLevel(nextScene);
+            }
+            else
+            {
+                Debug.LogError($"{nextScene} 이(가) Build Settings에 없습니다!");
+            }
+        }
+        else
+        {
+            Debug.LogError($"현재 씬 이름 {cur} 에서 숫자를 찾을 수 없습니다.");
+        }
+
+        finalRewardNextStageCoroutine = null;
+    }
     private IEnumerator StartNextStageCountdown()
     {
         int countdown = 5;
