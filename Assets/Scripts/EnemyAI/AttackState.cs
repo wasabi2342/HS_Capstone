@@ -27,7 +27,6 @@ public class AttackState : BaseState
     public override void Execute()
     {
         if (!PhotonNetwork.IsMasterClient) return;
-        RefreshFacingToTarget();
         fsm.PlayDirectionalAnim("Attack");
     }
 
