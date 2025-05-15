@@ -43,11 +43,11 @@ public class UIIngameMainPanel : UIBase
     private List<Image> playerIconList = new List<Image>();
     [SerializeField]
     private Image hitOverlay;
-    [SerializeField] 
+    [SerializeField]
     private float hitOverlayDuration = 0.5f;
-    
+
     private Coroutine hitOverlayCoroutine;
-    
+
     private Dictionary<int, UIPartyHPContent> contentPairs = new Dictionary<int, UIPartyHPContent>();
 
     private System.Action<InputAction.CallbackContext> openBlessingInfoAction;
@@ -146,10 +146,14 @@ public class UIIngameMainPanel : UIBase
         {
             if (RoomManager.Instance.players.ContainsKey(keyValuePair.Key))
             {
-                playerController = RoomManager.Instance.players[keyValuePair.Key].GetComponent<ParentPlayerController>();
-                if (playerController != null)
+                if (RoomManager.Instance.players[keyValuePair.Key] != null)
                 {
-                    playerController.OnHealthChanged.RemoveListener(keyValuePair.Value.UpdateHPImage);
+                    playerController = RoomManager.Instance.players[keyValuePair.Key].GetComponent<ParentPlayerController>();
+
+                    if (playerController != null)
+                    {
+                        playerController.OnHealthChanged.RemoveListener(keyValuePair.Value.UpdateHPImage);
+                    }
                 }
             }
             else
