@@ -15,6 +15,8 @@ public class DoorInteractionManager : MonoBehaviour
     private GameObject doorLeft;
     [SerializeField]
     private GameObject doorRight;
+    [SerializeField]
+    private Collider collider;
 
     private int leverCount = 0;
     private int successLeverCount = 0;
@@ -71,7 +73,7 @@ public class DoorInteractionManager : MonoBehaviour
     public void OpenDoor()
     {
         AudioManager.Instance.PlayUISFX("wood door open", (doorLeft.transform.position + doorRight.transform.position) / 2);
-
+        collider.enabled = false;
         doorLeft.transform.DORotate(new Vector3(0f, -90f, 0f), 1f, RotateMode.LocalAxisAdd);
         doorRight.transform.DORotate(new Vector3(0f, 90f, 0f), 1f, RotateMode.LocalAxisAdd);
     }
