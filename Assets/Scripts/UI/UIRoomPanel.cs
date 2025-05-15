@@ -57,7 +57,7 @@ public class UIRoomPanel : UIBase
             isReady = false;
         }
 
-        if(PhotonNetwork.InRoom)
+        if (PhotonNetwork.InRoom)
         {
             roomName.text = PhotonNetwork.CurrentRoom.Name;
         }
@@ -204,8 +204,15 @@ public class UIRoomPanel : UIBase
 
     public override void OnLeftRoom()
     {
-        PhotonNetwork.JoinLobby();
-        UIManager.Instance.OpenPanelInOverlayCanvas<UILobbyPanel>();
+        if (!PhotonNetwork.OfflineMode)
+        {
+            PhotonNetwork.JoinLobby();
+            UIManager.Instance.OpenPanelInOverlayCanvas<UILobbyPanel>();
+        }
+        else
+        {
+            UIManager.Instance.OpenPanelInOverlayCanvas<UiStartPanel>();
+        }
     }
 
     private void CheckCanStart()
