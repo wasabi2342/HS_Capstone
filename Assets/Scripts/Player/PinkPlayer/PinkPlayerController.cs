@@ -798,6 +798,23 @@ public class PinkPlayerController : ParentPlayerController
         rb.MovePosition(rb.position + movement);
     }
 
+    // 핑뚝이 궁극기 초기화 이벤트 함수 -> run일 때 쓸라고 만듦
+
+    public void ResetRAttackStack()
+    {
+        // 스택 리셋
+        R_attackStack = 0;
+
+        
+        animator.SetInteger("R_attackStack", R_attackStack);
+
+       
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+        {
+            photonView.RPC("SyncIntegerParameter", RpcTarget.Others, "R_attackStack", R_attackStack);
+        }
+    }
+
 
     #region 스킬 이펙트 생성
 
