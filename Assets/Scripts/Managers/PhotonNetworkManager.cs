@@ -72,25 +72,25 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("싱글 플레이 (오프라인 모드)로 포톤 접속 및 방 생성");
     }
 
-    public override void OnJoinedRoom()
-    {
-        if (PhotonNetwork.OfflineMode)
-        {
-            Debug.Log("싱글 플레이 모드 - 씬 로드");
-            int tutorial = PlayerPrefs.GetInt("Tutorial", 0);
-            if (tutorial == 0)
-                PhotonNetwork.LoadLevel("Tutorial"); // 튜토리얼로
-            else
-                PhotonNetwork.LoadLevel("room");
-        }
-        else
-        {
-            if (PhotonNetwork.IsMasterClient)
-                PhotonNetwork.LoadLevel("room");
-            Debug.Log("멀티플레이 모드 - 씬 로드는 마스터 클라이언트에서 수행해야 함");
-            // 예: if (PhotonNetwork.IsMasterClient) PhotonNetwork.LoadLevel(sceneToLoad);
-        }
-    }
+    //public override void OnJoinedRoom()
+    //{
+    //    if (PhotonNetwork.OfflineMode)
+    //    {
+    //        Debug.Log("싱글 플레이 모드 - 씬 로드");
+    //        int tutorial = PlayerPrefs.GetInt("Tutorial", 0);
+    //        if (tutorial == 0)
+    //            PhotonNetwork.LoadLevel("Tutorial"); // 튜토리얼로
+    //        else
+    //            PhotonNetwork.LoadLevel("room");
+    //    }
+    //    //else
+    //    //{
+    //    //    if (PhotonNetwork.IsMasterClient)
+    //    //        PhotonNetwork.LoadLevel("room");
+    //    //    Debug.Log("멀티플레이 모드 - 씬 로드는 마스터 클라이언트에서 수행해야 함");
+    //    //    // 예: if (PhotonNetwork.IsMasterClient) PhotonNetwork.LoadLevel(sceneToLoad);
+    //    //}
+    //}
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
