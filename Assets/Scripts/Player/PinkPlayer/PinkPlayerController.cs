@@ -7,7 +7,7 @@ using Unity.VisualScripting;
 using System;
 using System.Collections.Generic;
 
-public enum PinkPlayerState { Idle, Run, tackle, BasicAttack, Hit, Dash, Skill, Ultimate, R_Idle, R_hit1, R_hit2, R_hit3, R_finish, Charge1, Charge2, Charge3, Stun, Revive, Death }
+public enum PinkPlayerState { Idle, R_Idle, Run, tackle, BasicAttack, Hit, Dash, Skill, Ultimate, R_hit1, R_hit2, R_hit3, R_finish, Charge1, Charge2, Charge3, Stun, Revive, Death }
 
 public class PinkPlayerController : ParentPlayerController
 {
@@ -268,39 +268,38 @@ public class PinkPlayerController : ParentPlayerController
                 }
                 //photonView.RPC("PlayAnimation", RpcTarget.All, "basicattack");
                 currentState = PinkPlayerState.R_hit1;
-                return;
+                
             }
+
+
 
             if (currentState == PinkPlayerState.R_hit1 || currentState == PinkPlayerState.R_hit2 || currentState == PinkPlayerState.R_hit3)
             {
-                //animator.SetBool("basicattack", true);
+                
                 animator.SetBool("Pre-Input", true);
-                //Vector3 mousePos = GetMouseWorldPosition();
-                //animator.SetBool("Right", mousePos.x > transform.position.x);
-                //if (PhotonNetwork.IsConnected)
-                //{
-                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
-                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                //}
-                //currentState = PinkPlayerState.R_hit2;
-                //return;
+               
             }
 
-            //else if (currentState == PinkPlayerState.R_hit1 && animator.GetInteger("attackStack") > 2)
-            //{
-            //    animator.SetBool("basicattack", true);
-            //    Vector3 mousePos = GetMouseWorldPosition();
-            //    animator.SetBool("Right", mousePos.x > transform.position.x);
-            //    if (PhotonNetwork.IsConnected)
-            //    {
-            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
-            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-            //    }
-            //    currentState = PinkPlayerState.R_hit3;
-            //    return;
-            //}
 
-            if (nextState <= PinkPlayerState.BasicAttack)
+
+          
+
+
+                //else if (currentState == PinkPlayerState.R_hit1 && animator.GetInteger("attackStack") > 2)
+                //{
+                //    animator.SetBool("basicattack", true);
+                //    Vector3 mousePos = GetMouseWorldPosition();
+                //    animator.SetBool("Right", mousePos.x > transform.position.x);
+                //    if (PhotonNetwork.IsConnected)
+                //    {
+                //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
+                //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                //    }
+                //    currentState = PinkPlayerState.R_hit3;
+                //    return;
+                //}
+
+                if (nextState <= PinkPlayerState.BasicAttack && nextState != PinkPlayerState.R_Idle)
             {
 
                 Vector3 mousePos = GetMouseWorldPosition();
@@ -799,6 +798,23 @@ public class PinkPlayerController : ParentPlayerController
         rb.MovePosition(rb.position + movement);
     }
 
+    // 핑뚝이 궁극기 초기화 이벤트 함수 -> run일 때 쓸라고 만듦
+
+    public void ResetRAttackStack()
+    {
+        // 스택 리셋
+        R_attackStack = 0;
+
+        
+        animator.SetInteger("R_attackStack", R_attackStack);
+
+       
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+        {
+            photonView.RPC("SyncIntegerParameter", RpcTarget.Others, "R_attackStack", R_attackStack);
+        }
+    }
+
 
     #region 스킬 이펙트 생성
 
@@ -813,6 +829,8 @@ public class PinkPlayerController : ParentPlayerController
         // 궁극기 데미지 계산
         float damage = (runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                         runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
+
+       
 
         // Photon에 접속 중인지 확인하여 isMine 설정
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
@@ -838,6 +856,8 @@ public class PinkPlayerController : ParentPlayerController
         // init 메서드 호출
         //skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine);
         skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.R].skillData.ID, this));
+        // 궁극기 속도
+        skillEffect.SetAttackSpeed(animator.speed);
 
         // 생성된 이펙트의 부모를 설정
         skillEffect.transform.parent = transform;
