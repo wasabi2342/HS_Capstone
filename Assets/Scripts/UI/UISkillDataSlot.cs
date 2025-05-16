@@ -16,7 +16,7 @@ public class UISkillDataSlot : MonoBehaviour
     {
         skillInfoText.text = blessingData.skillData.Bless_Discript;
         skillKeyText.text = blessingData.skillData.Blessing_name + blessingData.level.ToString();
-        Sprite sprite = Resources.Load<Sprite>($"Blessing/Front/{(Blessings)blessingData.skillData.ID}"); //나중에 바꾸기 인덱스로 바뀔 수도
+        Sprite sprite = Resources.Load<Sprite>($"Blessing/Front/{blessingData.skillData.ID}"); //나중에 바꾸기 인덱스로 바뀔 수도
         if (sprite != null)
             skillImage.sprite = sprite;
         else

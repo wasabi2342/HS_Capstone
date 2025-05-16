@@ -1,6 +1,8 @@
 using Photon.Pun;
+using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -31,6 +33,8 @@ public class UIMenuPanel : UIBase
     [SerializeField]
     private Slider sfxVolumeSlider;
 
+    private Action<InputAction.CallbackContext> closeUIAction;
+
     private void Start()
     {
         // 시작할 때 모든 RightPanel 내용 끄기
@@ -44,14 +48,28 @@ public class UIMenuPanel : UIBase
 
     public override void Init()
     {
+        closeUIAction = CloseUI;
+        InputManager.Instance.PlayerInput.actions["ESC"].performed += closeUIAction;
+
         preButton.onClick.AddListener(() =>
         {
             if (UIManager.Instance.ReturnPeekUI() as UIMenuPanel)
                 UIManager.Instance.ClosePeekUI();
         });
+
         quitButton.onClick.AddListener(QuitGame);
-        gotoStartUIButton.onClick.AddListener(() => 
+
+        gotoStartUIButton.onClick.AddListener(() =>
         {
+            if (RoomManager.Instance != null)
+            {
+                GameObject localPlayer = RoomManager.Instance.ReturnLocalPlayer();
+                if(localPlayer != null)
+                {
+                    localPlayer.GetComponent<ParentPlayerController>().DeleteRuntimeData();
+                }
+            }
+
             PhotonNetwork.LeaveRoom();
         });
 
@@ -63,6 +81,14 @@ public class UIMenuPanel : UIBase
 
         InitializeResolutionDropdown();
         InitializeWindowModeDropdown();
+    }
+
+    public void CloseUI(InputAction.CallbackContext ctx)
+    {
+        if (UIManager.Instance.ReturnPeekUI() as UIMenuPanel)
+        {
+            UIManager.Instance.ClosePeekUI();
+        }
     }
 
     public override void OnLeftRoom()
@@ -146,7 +172,7 @@ public class UIMenuPanel : UIBase
                 Debug.Log("Windowed");
                 break;
             case 2:
-                Screen.fullScreenMode = FullScreenMode.FullScreenWindow; 
+                Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
                 Debug.Log("FullScreenWindow");
                 break;
         }
@@ -195,5 +221,10 @@ public class UIMenuPanel : UIBase
     private void OnDisable()
     {
         InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
+
+        if (InputManager.Instance != null && InputManager.Instance.PlayerInput != null && closeUIAction != null)
+        {
+            InputManager.Instance.PlayerInput.actions["ESC"].performed -= closeUIAction;
+        }
     }
 }
