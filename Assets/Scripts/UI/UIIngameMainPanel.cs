@@ -164,7 +164,7 @@ public class UIIngameMainPanel : UIBase
 
         int localActorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
 
-        if (RoomManager.Instance.players.ContainsKey(localActorNumber))
+        if (RoomManager.Instance.players.ContainsKey(localActorNumber) && RoomManager.Instance.players[localActorNumber] != null)
         {
             playerController = RoomManager.Instance.players[localActorNumber].GetComponent<ParentPlayerController>();
             if (playerController != null)
