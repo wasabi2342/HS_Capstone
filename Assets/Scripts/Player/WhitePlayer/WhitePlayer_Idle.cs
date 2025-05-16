@@ -10,8 +10,8 @@ public class WhitePlayer_Idle : StateMachineBehaviour
     {
         if (photonView == null)
             photonView = animator.GetComponent<PhotonView>();
-        if (PhotonNetwork.IsConnected && !photonView.IsMine)
-            return;
+        //if (PhotonNetwork.IsConnected && !photonView.IsMine)
+        //    return;
 
         if (whitePlayerController == null)
             whitePlayerController = animator.GetComponent<WhitePlayerController>();
@@ -32,6 +32,7 @@ public class WhitePlayer_Idle : StateMachineBehaviour
         animator.SetBool("run", false);
         animator.SetBool("revive", false);
         animator.SetInteger("CounterStack", 0);
+        animator.SetBool("AttackContinue", false);
     }
 
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
