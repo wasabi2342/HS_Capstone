@@ -64,7 +64,7 @@ public class UIMenuPanel : UIBase
             if (RoomManager.Instance != null)
             {
                 GameObject localPlayer = RoomManager.Instance.ReturnLocalPlayer();
-                if(localPlayer != null)
+                if (localPlayer != null)
                 {
                     localPlayer.GetComponent<ParentPlayerController>().DeleteRuntimeData();
                 }
@@ -146,14 +146,20 @@ public class UIMenuPanel : UIBase
         {
             case 0:
                 Screen.SetResolution(1920, 1080, isFullScreen);
+                DataManager.Instance.settingData.resolution = new Vector2Int(1920, 1080);
+                DataManager.Instance.SaveSettingData();
                 Debug.Log("1920, 1080");
                 break;
             case 1:
                 Screen.SetResolution(2560, 1440, isFullScreen);
+                DataManager.Instance.settingData.resolution = new Vector2Int(2560, 1440);
+                DataManager.Instance.SaveSettingData();
                 Debug.Log("2560, 1440");
                 break;
             case 2:
                 Screen.SetResolution(3840, 2160, isFullScreen);
+                DataManager.Instance.settingData.resolution = new Vector2Int(3840, 2160);
+                DataManager.Instance.SaveSettingData();
                 Debug.Log("3840, 2160");
                 break;
         }
@@ -176,6 +182,9 @@ public class UIMenuPanel : UIBase
                 Debug.Log("FullScreenWindow");
                 break;
         }
+
+        DataManager.Instance.settingData.screenMode = Screen.fullScreenMode;
+        DataManager.Instance.SaveSettingData();
     }
 
     private void InitializeWindowModeDropdown()
@@ -216,6 +225,8 @@ public class UIMenuPanel : UIBase
     private void OnMasterVolumeSliderValueChanged(float value)
     {
         AudioManager.Instance.SetMasterVolume(value);
+        DataManager.Instance.settingData.masterVolume = value;
+        DataManager.Instance.SaveSettingData();
     }
 
     private void OnDisable()

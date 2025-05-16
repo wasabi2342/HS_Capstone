@@ -74,8 +74,8 @@ public class TutorialController : MonoBehaviour
 
 		if ( !nextSceneName.Equals("") )
 		{
-            PlayerPrefs.SetInt("Tutorial", 1);
-            PlayerPrefs.Save();
+            DataManager.Instance.settingData.tutorialCompleted = true;
+            DataManager.Instance.SaveSettingData();
             PhotonNetwork.LeaveRoom();
 			SceneManager.LoadScene(nextSceneName);
 		}

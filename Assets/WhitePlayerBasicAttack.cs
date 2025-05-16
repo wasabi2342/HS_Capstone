@@ -21,8 +21,12 @@ public class WhitePlayerBasicAttack : StateMachineBehaviour
         animator.SetBool("FreeState", false);
         animator.SetBool("AttackContinue", false);
         animator.SetBool("basicattack", false);
+
         whitePlayerController.attackStack = attackStack;
+        whitePlayerController.AttackStackUpdate?.Invoke(whitePlayerController.attackStack);
+        
         animator.SetInteger("AttackStack", attackStack);
+        
         whitePlayerController.currentState = WhitePlayerState.BasicAttack;
         whitePlayerController.nextState = WhitePlayerState.Idle;
     }
