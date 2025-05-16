@@ -40,10 +40,20 @@ public class WhitePlayerBasicAttack : StateMachineBehaviour
         if(whitePlayerController.nextState == WhitePlayerState.BasicAttack)
         {
             animator.SetBool("AttackContinue", true);
+            if (PhotonNetwork.IsConnected)
+            {
+                whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
+                whitePlayerController.SetBoolParameter("AttackContinue", true);
+            }
         }
         else
         {
             animator.SetBool("AttackContinue", false);
+            if (PhotonNetwork.IsConnected)
+            {
+                whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
+                whitePlayerController.SetBoolParameter("AttackContinue", false);
+            }
         }
     }
 

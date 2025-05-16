@@ -60,6 +60,8 @@ public class UiStartPanel : UIBase
 
     public override void Init()
     {
+        PhotonNetwork.Disconnect();
+
         multiPlayButton.onClick.AddListener(OnClikedMultiPlayButton);
         quitButton.onClick.AddListener(QuitGame);
         settingButton.onClick.AddListener(() => UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIMenuPanel>());
