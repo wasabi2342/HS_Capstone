@@ -129,6 +129,13 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         }
          
         if (PhotonNetwork.IsMasterClient) ActiveMonsterCount++;
+
+
+        enemyStatus = Instantiate(enemyStatus);
+        int pc = PhotonNetwork.CurrentRoom.PlayerCount;
+        float statScale = 1f + (pc - 1) * 0.15f;   // 1명→1.0, 2명→1.15, …
+        enemyStatus.maxHealth *= statScale;
+        enemyStatus.attackDamage *= statScale;
     }
 
     void Start()

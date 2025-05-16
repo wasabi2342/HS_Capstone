@@ -1,6 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
 using System.Collections.Generic;
+using System.Linq;
 
 public class StageManager : MonoBehaviour
 {
@@ -88,37 +89,28 @@ public class StageManager : MonoBehaviour
     }
     void SpawnWave(int waveIdx)
     {
-        currentWave = waveIdx;
+        int playerCount = PhotonNetwork.CurrentRoom.PlayerCount;            // 현재 참가자 수
+        float diffScale = 1f + (playerCount - 1) * 0.2f;                    // 예: 1명→1.0, 2명→1.2, …, 4명→1.6
 
-        // --- 첫 웨이브(0)일 땐 SpawnArea 프리팹 생성 ---
-        if (waveIdx == 0)
-        {
-            foreach (var setting in currentStageSettings.waves[0].spawnAreaSettings)
-            {
-                var areaGO = PhotonNetwork.Instantiate(
-                    spawnAreaPrefabName, setting.position, spawnAreaRotation);
-                spawnAreaInstances.Add(areaGO);
-
-                // 반경 설정
-                var area = areaGO.GetComponent<SpawnArea>();
-                area.SetRadius(setting.radius);
-            }
-        }
-
-        // --- 해당 웨이브 몬스터만 스폰 ---
+        
+        var wave = currentStageSettings.waves[waveIdx];
         for (int i = 0; i < spawnAreaInstances.Count; i++)
         {
-            var spawner = spawnAreaInstances[i]
-                .GetComponentInChildren<MonsterSpawner>();
-            if (spawner != null)
-            {
-                var infos = currentStageSettings
-                    .waves[waveIdx].spawnAreaSettings[i]
-                    .monsterSpawnInfos;
-                spawner.SpawnMonsters(infos);
-            }
+            var spawner = spawnAreaInstances[i].GetComponentInChildren<MonsterSpawner>();
+            // 원본 infos
+            var baseInfos = wave.spawnAreaSettings[i].monsterSpawnInfos;
+            // 스케일링된 infos 생성
+            var scaledInfos = baseInfos
+                .Select(info => new MonsterSpawnInfo
+                {
+                    monsterPrefabName = info.monsterPrefabName,
+                    count = Mathf.CeilToInt(info.count * diffScale)
+                })
+                .ToArray();
+            spawner.SpawnMonsters(scaledInfos);
         }
     }
+
     public void OnAllMonsterCleared()
     {
         if (!PhotonNetwork.IsMasterClient) return; // 마스터 클라이언트만 실행
