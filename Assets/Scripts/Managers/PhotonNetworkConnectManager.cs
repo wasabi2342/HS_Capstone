@@ -62,13 +62,19 @@ public class PhotonNetworkConnectManager : MonoBehaviourPunCallbacks
         if (!PhotonNetwork.OfflineMode)
             UIManager.Instance.OpenPanelInOverlayCanvas<UIRoomPanel>();
         if (PhotonNetwork.IsMasterClient)
-            photonNetworkManager = PhotonNetwork.Instantiate("PhotonNetworkManager", Vector3.zero, Quaternion.identity);
+        {
+            photonNetworkManager = PhotonNetwork.InstantiateRoomObject("PhotonNetworkManager", Vector3.zero, Quaternion.identity);
+            DontDestroyOnLoad(photonNetworkManager);
+        }
     }
 
     public override void OnLeftRoom()
     {
         if (photonNetworkManager != null)
+        {
+            Debug.Log("photonNetworkManager Á¦°Å");
             Destroy(photonNetworkManager);
+        }
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
