@@ -13,6 +13,7 @@ public class MonsterSpawner : MonoBehaviourPun
 {
     [SerializeField] private SpawnArea spawnArea;   // 없어도 부모에서 자동 탐색
 
+
     void Awake()
     {
         if (!spawnArea)
@@ -25,10 +26,13 @@ public class MonsterSpawner : MonoBehaviourPun
     public void SpawnMonsters(MonsterSpawnInfo[] infos)
     {
         if (!PhotonNetwork.IsMasterClient || spawnArea == null) return;
+        int pCnt = Mathf.Clamp(PhotonNetwork.CurrentRoom.PlayerCount, 1, 4);
+        float countMul = 1f + 0.15f * (pCnt - 1);
 
         foreach (var info in infos)
         {
-            for (int i = 0; i < Mathf.Max(1, info.count); i++)
+            int spawnCount = Mathf.CeilToInt(info.count * countMul);
+            for (int i = 0; i < spawnCount; i++)
             {
                 /* 1️⃣ 위치 선정 */
                 Vector3 pos = spawnArea.GetRandomPointInsideArea();
