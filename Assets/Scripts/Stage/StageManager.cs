@@ -134,8 +134,8 @@ public class StageManager : MonoBehaviour
         }
 
         /* ───────── 2) 난이도 스케일링 값 계산 ───────── */
-        int pCnt = PhotonNetwork.CurrentRoom?.PlayerCount ?? 1;
-        float diffMul = 1f + 2f * (pCnt - 1);          // 1P=1.0, 4P=1.6
+        int pCnt = PhotonNetwork.CurrentRoom.PlayerCount;
+        float diffMul = DifficultyManager.Instance.GetCountMultiplier(pCnt);
         Debug.Log($"[Stage] playerCount={pCnt}, diffMul={diffMul:0.00}");
 
         /* ───────── 3) 몬스터 스폰 ───────── */

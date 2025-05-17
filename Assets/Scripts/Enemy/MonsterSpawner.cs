@@ -26,9 +26,8 @@ public class MonsterSpawner : MonoBehaviourPun
     public void SpawnMonsters(MonsterSpawnInfo[] infos)
     {
         if (!PhotonNetwork.IsMasterClient || spawnArea == null) return;
-        int pCnt = Mathf.Clamp(PhotonNetwork.CurrentRoom.PlayerCount, 1, 4);
-        float countMul = 1f + 0.15f * (pCnt - 1);
-
+        int pCnt = PhotonNetwork.CurrentRoom.PlayerCount;
+        float countMul = DifficultyManager.Instance.GetCountMultiplier(pCnt);
         foreach (var info in infos)
         {
             int spawnCount = Mathf.CeilToInt(info.count * countMul);
