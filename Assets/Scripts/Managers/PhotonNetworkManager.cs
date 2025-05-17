@@ -405,15 +405,15 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     }
     private IEnumerator StartNextStage()
     {
-        float countdown = .1f;
-        while (countdown > 0)
-        {
-            photonView.RPC(nameof(RPC_ShowNextStageCountdown), RpcTarget.All, countdown);
-            yield return new WaitForSeconds(1f);
-            countdown--;
-        }
-
-        photonView.RPC(nameof(RPC_ShowNextStageCountdown), RpcTarget.All, 0);
+        //float countdown = .1f;
+        //while (countdown > 0)
+        //{
+        //    photonView.RPC(nameof(RPC_ShowNextStageCountdown), RpcTarget.All, countdown);
+        //    yield return new WaitForSeconds(1f);
+        //    countdown--;
+        //}
+        //
+        //photonView.RPC(nameof(RPC_ShowNextStageCountdown), RpcTarget.All, 0);
 
         // 플레이어 오브젝트 정리
         PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
@@ -444,6 +444,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         }
 
         finalRewardNextStageCoroutine = null;
+
+        yield return null;
     }
     private IEnumerator StartNextStageCountdown()
     {
