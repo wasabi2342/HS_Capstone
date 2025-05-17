@@ -30,7 +30,7 @@ public class MonsterSpawner : MonoBehaviourPun
         float countMul = DifficultyManager.Instance.GetCountMultiplier(pCnt);
         foreach (var info in infos)
         {
-            int spawnCount = Mathf.CeilToInt(info.count * countMul);
+            int spawnCount = info.count;
             for (int i = 0; i < spawnCount; i++)
             {
                 /* 1️⃣ 위치 선정 */
