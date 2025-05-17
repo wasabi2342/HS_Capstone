@@ -11,7 +11,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 {
     public static PhotonNetworkManager Instance { get; private set; }
 
-    private string gameVersion = "1";
+    //private string gameVersion = "1";
 
     public event Action<int> OnUpdateReadyPlayer;
 
@@ -29,77 +29,14 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(this);
             DontDestroyOnLoad(gameObject);
         }
         else
-            Destroy(this);
-
-        PhotonNetwork.AutomaticallySyncScene = true;
-        PhotonNetwork.SendRate = 60;
-        PhotonNetwork.SerializationRate = 60;
-    }
-
-    public override void OnConnectedToMaster()
-    {
-        Debug.Log("포톤 마스터 서버에 연결됨");
-
-        if (!PhotonNetwork.OfflineMode)  // 온라인일 경우에만 로비 접속
         {
-            PhotonNetwork.JoinLobby();
-            Debug.Log("포톤 로비 접속 시도");
+            Debug.Log("photonNetworkManager 제거");
+            Destroy(this);
         }
-    }
-
-    public void ConnectPhoton()
-    {
-        PhotonNetwork.OfflineMode = false; // 온라인 모드
-        PhotonNetwork.GameVersion = gameVersion;
-        PhotonNetwork.ConnectUsingSettings();
-
-        Debug.Log("포톤서버 접속 시도 (온라인)");
-    }
-
-    public void ConnectPhotonToSinglePlay()
-    {
-        PhotonNetwork.OfflineMode = true;
-        PhotonNetwork.GameVersion = gameVersion;
-
-        RoomOptions roomOptions = new RoomOptions();
-        roomOptions.MaxPlayers = 1;
-
-        PhotonNetwork.CreateRoom("싱글플레이", roomOptions);
-
-        Debug.Log("싱글 플레이 (오프라인 모드)로 포톤 접속 및 방 생성");
-    }
-
-    //public override void OnJoinedRoom()
-    //{
-    //    if (PhotonNetwork.OfflineMode)
-    //    {
-    //        Debug.Log("싱글 플레이 모드 - 씬 로드");
-    //        int tutorial = PlayerPrefs.GetInt("Tutorial", 0);
-    //        if (tutorial == 0)
-    //            PhotonNetwork.LoadLevel("Tutorial"); // 튜토리얼로
-    //        else
-    //            PhotonNetwork.LoadLevel("room");
-    //    }
-    //    //else
-    //    //{
-    //    //    if (PhotonNetwork.IsMasterClient)
-    //    //        PhotonNetwork.LoadLevel("room");
-    //    //    Debug.Log("멀티플레이 모드 - 씬 로드는 마스터 클라이언트에서 수행해야 함");
-    //    //    // 예: if (PhotonNetwork.IsMasterClient) PhotonNetwork.LoadLevel(sceneToLoad);
-    //    //}
-    //}
-
-    public override void OnCreateRoomFailed(short returnCode, string message)
-    {
-        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText(message);
-    }
-
-    public void CreateRoom(string roomName, RoomOptions roomOptions)
-    {
-        PhotonNetwork.CreateRoom(roomName, roomOptions);
     }
 
     public void ReadyToEnterStage()
@@ -169,6 +106,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
 
             PhotonNetwork.CurrentRoom.IsOpen = false;
+
             PhotonNetwork.LoadLevel("Level0");
         }
     }
@@ -196,31 +134,6 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
-    public void SetNickname(string nickname)
-    {
-        PhotonNetwork.NickName = nickname;
-    }
-
-    //[PunRPC]
-    //public void UpdatePlayerDic(int actNum, int viewID)
-    //{
-    //    PhotonView targetView = PhotonView.Find(viewID);
-    //    if (targetView != null)
-    //    {
-    //        //RoomManager.Instance.AddPlayerDic(actNum, targetView.gameObject);
-    //        //RoomManager.Instance.UpdateSortedPlayers();
-    //    }
-    //}
-
-    //public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
-    //{
-    //    foreach (var player in RoomManager.Instance.players)
-    //    {
-    //        int actNum = player.Key;
-    //        int viewID = player.Value.GetComponent<PhotonView>().ViewID;
-    //        photonView.RPC("UpdatePlayerDic", newPlayer, actNum, viewID);
-    //    }
-    //}
     [PunRPC]
     public void RPC_OpenRewardUIForAll()
     {
@@ -405,15 +318,15 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     }
     private IEnumerator StartNextStage()
     {
-        float countdown = .1f;
-        while (countdown > 0)
-        {
-            photonView.RPC(nameof(RPC_ShowNextStageCountdown), RpcTarget.All, countdown);
-            yield return new WaitForSeconds(1f);
-            countdown--;
-        }
-
-        photonView.RPC(nameof(RPC_ShowNextStageCountdown), RpcTarget.All, 0);
+        //float countdown = .1f;
+        //while (countdown > 0)
+        //{
+        //    photonView.RPC(nameof(RPC_ShowNextStageCountdown), RpcTarget.All, countdown);
+        //    yield return new WaitForSeconds(1f);
+        //    countdown--;
+        //}
+        //
+        //photonView.RPC(nameof(RPC_ShowNextStageCountdown), RpcTarget.All, 0);
 
         // 플레이어 오브젝트 정리
         PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
@@ -428,14 +341,17 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         {
             string nextScene = $"{prefix}{curIdx + 1}";
 
-            // 빌드 세팅에 있는지 확인하고 이동
-            if (Application.CanStreamedLevelBeLoaded(nextScene))
+            if (PhotonNetwork.IsMasterClient)
             {
-                PhotonNetwork.LoadLevel(nextScene);
-            }
-            else
-            {
-                Debug.LogError($"{nextScene} 이(가) Build Settings에 없습니다!");
+                // 빌드 세팅에 있는지 확인하고 이동
+                if (Application.CanStreamedLevelBeLoaded(nextScene))
+                {
+                    PhotonNetwork.LoadLevel(nextScene);
+                }
+                else
+                {
+                    Debug.LogError($"{nextScene} 이(가) Build Settings에 없습니다!");
+                }
             }
         }
         else
@@ -444,6 +360,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         }
 
         finalRewardNextStageCoroutine = null;
+
+        yield return null;
     }
     private IEnumerator StartNextStageCountdown()
     {

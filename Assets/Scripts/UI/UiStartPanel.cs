@@ -29,27 +29,25 @@ public class UiStartPanel : UIBase
 
     private void OnClikedMultiPlayButton()
     {
-        int tutorial = PlayerPrefs.GetInt("Tutorial", 0);
-        if (tutorial == 0)
+        if (DataManager.Instance.settingData.tutorialCompleted == false)
         {
             OnClikedSinglePlayButton();
         }
         else
         {
-            PhotonNetworkManager.Instance.ConnectPhoton();
+            PhotonNetworkConnectManager.Instance.ConnectPhoton();
             UIManager.Instance.OpenPanelInOverlayCanvas<UILobbyPanel>();
         }
     }
 
     private void OnClikedSinglePlayButton()
     {
-        PhotonNetworkManager.Instance.ConnectPhotonToSinglePlay();
+        PhotonNetworkConnectManager.Instance.ConnectPhotonToSinglePlay();
 
         if (PhotonNetwork.OfflineMode)
         {
             Debug.Log("싱글 플레이 모드 - 씬 로드");
-            int tutorial = PlayerPrefs.GetInt("Tutorial", 0);
-            if (tutorial == 0)
+            if (DataManager.Instance.settingData.tutorialCompleted == false)
                 PhotonNetwork.LoadLevel("Tutorial"); // 튜토리얼로
             else
                 UIManager.Instance.OpenPanelInOverlayCanvas<UIRoomPanel>(); //나중에 넣기
@@ -60,6 +58,8 @@ public class UiStartPanel : UIBase
 
     public override void Init()
     {
+        PhotonNetwork.Disconnect();
+
         multiPlayButton.onClick.AddListener(OnClikedMultiPlayButton);
         quitButton.onClick.AddListener(QuitGame);
         settingButton.onClick.AddListener(() => UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIMenuPanel>());
@@ -70,7 +70,7 @@ public class UiStartPanel : UIBase
 
         if (nickname != "")
         {
-            PhotonNetworkManager.Instance.SetNickname(nickname);
+            PhotonNetworkConnectManager.Instance.SetNickname(nickname);
         }
         else
         {

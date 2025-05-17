@@ -72,7 +72,7 @@ public class WhitePlayerController : ParentPlayerController
                 //eventController.OnInteractionEvent += HandleReviveInteraction;
             }
 
-            if (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil != 0)
+            if (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil != null && runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil != 0)
             {
                 animator.SetInteger("mouseRightBlessing", runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil);
             }

@@ -18,6 +18,9 @@ public class DataManager : MonoBehaviour
     public List<BlessingEffectLinkData> linkList;
     public List<BasicAttackComboData> basicAttackComboDatas;
 
+    public SettingData settingData;
+    private string settingDataPath;
+
     public static DataManager Instance { get; private set; }
 
     private void Awake()
@@ -36,6 +39,12 @@ public class DataManager : MonoBehaviour
         effectList = LoadSpecialEffectCsv("CSV/Special_Table");
         linkList = LoadBlessingEffectLinkCsv("CSV/Bless_Special_Table");
         basicAttackComboDatas = LoadComboCsv("CSV/Norm_Attack_Table");
+    }
+
+    private void Start()
+    {
+        settingDataPath = Path.Combine(Application.persistentDataPath, "setting.json");
+        LoadSettingData();
     }
 
     private List<SkillData> LoadSkillCsv(string resourcePath)
@@ -221,6 +230,43 @@ public class DataManager : MonoBehaviour
 
         Debug.LogWarning($"Combo not found for Character: {character}, ComboIndex: {comboIndex}");
         return -1f;
+    }
+
+    public void SaveSettingData()
+    {
+        string json = JsonUtility.ToJson(settingData, true);
+        File.WriteAllText(settingDataPath, json);
+        Debug.Log($"[DataManager] Setting saved to {settingDataPath}");
+    }
+
+    public void LoadSettingData()
+    {
+        if (File.Exists(settingDataPath))
+        {
+            string json = File.ReadAllText(settingDataPath);
+            JsonUtility.FromJsonOverwrite(json, settingData);
+            ApplySettings();
+            Debug.Log("[DataManager] Setting loaded.");
+        }
+        else
+        {
+            Debug.Log("[DataManager] No setting file found. Creating default.");
+            SaveSettingData(); // 초기 저장
+        }
+    }
+
+    private void ApplySettings()
+    {
+        AudioManager.Instance.SetMasterVolume(settingData.masterVolume);
+
+        Screen.SetResolution(
+            settingData.resolution.x,
+            settingData.resolution.y,
+            settingData.screenMode
+        );
+
+        // 추가로 사운드 매니저가 있다면 볼륨 적용
+        // SoundManager.Instance?.SetVolumes(settingData.bgmVolume, settingData.sfxVolume);
     }
 
 }
