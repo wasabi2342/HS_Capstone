@@ -507,6 +507,12 @@ public class PinkPlayerController : ParentPlayerController
         GameObject servant = PhotonNetwork.Instantiate(servantPrefab.name, spawnPos, Quaternion.identity);
         ServantFSM servantFSM = servant.GetComponent<ServantFSM>();
 
+        if(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil == 1)
+        {
+            Debug.Log("º“»Øºˆ µµπﬂ!");
+            servantFSM.TauntEnemy(100f);
+        }
+
         servantFSM.photonView.RPC("RPC_SetOwner", RpcTarget.AllBuffered, ownerViewID);
         photonView.RPC("RPC_RegisterServant", RpcTarget.AllBuffered, servantFSM.photonView.ViewID, ownerViewID);
     }
@@ -629,11 +635,19 @@ public class PinkPlayerController : ParentPlayerController
         float totalShield = 30f * stacks;
         float totalDuration = 2f * stacks;
 
-        if (stacks > 0)
+        if (runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil == 1)
+        {
+            totalShield = 50f * stacks;
+            Debug.Log("ΩØµÂ 50¿∏∑Œ ∫Œø©!");
+        }
+
+            if (stacks > 0)
         {
             AddShield(totalShield, totalDuration);
             Debug.Log($"±√±ÿ±‚ ΩØµÂ: +{totalShield}HP, ¡ˆº” {totalDuration}s (Ω∫≈√ {stacks})");
         }
+
+
     }
     // ±√±ÿ±‚ Ω√¿¸ Ω√¿€
     public void HandleUltimateStart()

@@ -181,6 +181,15 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITaunta
         // TODO: UI 업데이트
     }
 
+    // 도발
+
+    public void TauntEnemy(float tauntDur)
+    {
+        //float tauntDur = 5f; //도발 시간 전달
+        photonView.RPC("RPC_EnableTaunt", RpcTarget.AllBuffered, tauntDur);
+        tauntActive = true;
+    }
+
     // ─── 네트워크 위치/회전 동기화 ─────────────────────────────
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
