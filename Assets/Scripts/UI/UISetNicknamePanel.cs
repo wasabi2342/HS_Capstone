@@ -22,7 +22,7 @@ public class UISetNicknamePanel : UIBase
     {
         if (inputField.text != "")
         {
-            PhotonNetworkManager.Instance.SetNickname(inputField.text);
+            PhotonNetworkConnectManager.Instance.SetNickname(inputField.text);
             PlayerPrefs.SetString("Nickname", inputField.text);
             UIManager.Instance.ClosePeekUI();
         }

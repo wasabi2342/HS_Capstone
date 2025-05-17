@@ -35,14 +35,14 @@ public class UiStartPanel : UIBase
         }
         else
         {
-            PhotonNetworkManager.Instance.ConnectPhoton();
+            PhotonNetworkConnectManager.Instance.ConnectPhoton();
             UIManager.Instance.OpenPanelInOverlayCanvas<UILobbyPanel>();
         }
     }
 
     private void OnClikedSinglePlayButton()
     {
-        PhotonNetworkManager.Instance.ConnectPhotonToSinglePlay();
+        PhotonNetworkConnectManager.Instance.ConnectPhotonToSinglePlay();
 
         if (PhotonNetwork.OfflineMode)
         {
@@ -70,7 +70,7 @@ public class UiStartPanel : UIBase
 
         if (nickname != "")
         {
-            PhotonNetworkManager.Instance.SetNickname(nickname);
+            PhotonNetworkConnectManager.Instance.SetNickname(nickname);
         }
         else
         {
