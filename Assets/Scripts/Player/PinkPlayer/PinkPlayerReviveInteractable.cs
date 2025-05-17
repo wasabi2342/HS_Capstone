@@ -40,28 +40,46 @@ public class PinkPlayerReviveInteractable : GaugeInteraction
         if (otherView.IsMine)
             otherPhotonView = otherView;
 
-        base.OnTriggerEnter(other);
+        Debug.Log("부활 상호작용 enter");
+        if (IsSameTeam(localPhotonView, otherPhotonView))
+        {
+            base.OnTriggerEnter(other);
+        }
     }
 
     protected override void OnTriggerExit(Collider other)
     {
-        base.OnTriggerExit(other);
+        if (pinkPlayer.currentState != PinkPlayerState.Stun)
+        {
+            return;
+        }
+        if (IsSameTeam(localPhotonView, otherPhotonView))
+            base.OnTriggerExit(other);
+
+        Debug.Log("부활 상호작용 exit");
     }
 
     protected override void OnPerformedEvent()
     {
         base.OnPerformedEvent();
+
+        Debug.Log("부활 상호작용 ");
+
         pinkPlayer.Revive();
     }
 
     protected override void OnCanceledEvent()
     {
         base.OnCanceledEvent();
+
+        Debug.Log("부활 상호작용 cancel");
     }
 
     protected override void OnStartedEvent()
     {
         base.OnStartedEvent();
+        
+        Debug.Log("부활 상호작용 start");
     }
 
     private bool IsSameTeam(PhotonView localView, PhotonView otherView)
