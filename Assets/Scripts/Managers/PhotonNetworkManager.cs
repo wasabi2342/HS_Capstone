@@ -169,6 +169,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().SaveRunTimeData();
 
             PhotonNetwork.CurrentRoom.IsOpen = false;
+
             PhotonNetwork.LoadLevel("Level0");
         }
     }
@@ -428,14 +429,17 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         {
             string nextScene = $"{prefix}{curIdx + 1}";
 
-            // 빌드 세팅에 있는지 확인하고 이동
-            if (Application.CanStreamedLevelBeLoaded(nextScene))
+            if (PhotonNetwork.IsMasterClient)
             {
-                PhotonNetwork.LoadLevel(nextScene);
-            }
-            else
-            {
-                Debug.LogError($"{nextScene} 이(가) Build Settings에 없습니다!");
+                // 빌드 세팅에 있는지 확인하고 이동
+                if (Application.CanStreamedLevelBeLoaded(nextScene))
+                {
+                    PhotonNetwork.LoadLevel(nextScene);
+                }
+                else
+                {
+                    Debug.LogError($"{nextScene} 이(가) Build Settings에 없습니다!");
+                }
             }
         }
         else
