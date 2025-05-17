@@ -11,8 +11,8 @@ public class SelectDoor : MonoBehaviourPun, IInteractable
 
     public void OnInteract(InputAction.CallbackContext ctx)
     {
-        Debug.Log("Reward Door 상호작용 함수 호출");
-        if (ctx.started && canInteract)
+        Debug.Log($"Reward Door 상호작용 함수 호출 ctx: {ctx.phase} canInteract:{canInteract}");
+        if (canInteract) 
         {
             Debug.Log("Reward Door 상호작용 시작 - RewardUI 호출");
             canInteract = false;
