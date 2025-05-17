@@ -598,6 +598,8 @@ public class PinkPlayerController : ParentPlayerController
     {
         if (!PhotonNetwork.IsMasterClient) return;
 
+        int myServantsCount = myServants.Count;
+
         // 1) myServants 를 돌며 ForceKill RPC 호출
         foreach (var s in myServants)
         {
@@ -607,7 +609,7 @@ public class PinkPlayerController : ParentPlayerController
         myServants.Clear();
 
         // 2) (버프 로직은 빈 함수로 두었습니다)
-        ApplyUltimateBuff();
+        ApplyUltimateBuff(myServantsCount);
 
         // 3) 궁극기 애니/상태 진입
         if (photonView.IsMine)
@@ -621,9 +623,17 @@ public class PinkPlayerController : ParentPlayerController
     /// 희생된 소환수 개수에 따른 강화 효과 로직
     /// (현재 빈 함수 - 필요시 여기에 버프 코드를 추가하세요)
     /// </summary>
-    private void ApplyUltimateBuff()
+    private void ApplyUltimateBuff(int myServantsCount)
     {
-        // TODO: 궁극기 버프 로직
+        int stacks = myServantsCount;
+        float totalShield = 30f * stacks;
+        float totalDuration = 2f * stacks;
+
+        if (stacks > 0)
+        {
+            AddShield(totalShield, totalDuration);
+            Debug.Log($"궁극기 쉴드: +{totalShield}HP, 지속 {totalDuration}s (스택 {stacks})");
+        }
     }
     // 궁극기 시전 시작
     public void HandleUltimateStart()
@@ -657,7 +667,7 @@ public class PinkPlayerController : ParentPlayerController
             }
         }
         myServants.Clear();
-        ApplyUltimateBuff(servantCount);
+        //ApplyUltimateBuff(servantCount);
         // 애니메이터에서 마지막 일격(FinalStrike) 상태로 전이
         currentState = PinkPlayerState.Ultimate;
         animator.SetTrigger("FinalStrike");
@@ -665,10 +675,10 @@ public class PinkPlayerController : ParentPlayerController
         if (PhotonNetwork.IsConnected)
             photonView.RPC("PlayAnimation", RpcTarget.Others, "FinalStrike");
     }
-    void ApplyUltimateBuff(int servantCount)
-    {
-        //희생된 소환수 개수에 따른 강화 효과
-    }
+    //void ApplyUltimateBuff(int servantCount)
+    //{
+    //    //희생된 소환수 개수에 따른 강화 효과
+    //}
     public int R_attackStack;
 
     // 애니메이션 이벤트로 평타 스택 설정해주기
