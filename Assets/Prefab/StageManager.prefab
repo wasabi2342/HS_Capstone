@@ -72,7 +72,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7948505158231037870}
   - component: {fileID: 396776432407990452}
-  - component: {fileID: 4407771671012598645}
+  - component: {fileID: 1948097548425924842}
   m_Layer: 0
   m_Name: StageManager
   m_TagString: Untagged
@@ -121,7 +121,7 @@ MonoBehaviour:
   coopOrBetrayNPCPosList: []
   isImmediateSpawnList: 
   isEndStage: 0
---- !u!114 &4407771671012598645
+--- !u!114 &1948097548425924842
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -133,9 +133,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 716342486f254b549bb9724f02e6a11e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scalingMode: 1
-  deltaCountMul: 0.65
-  deltaStatMul: 0.4
+  scalingMode: 0
+  deltaCountMul: 0.5
+  deltaStatMul: 0.46
   countCurve:
     serializedVersion: 2
     m_Curve:
@@ -158,7 +158,7 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     m_PreInfinity: 2
-    m_PostInfinity: 1
+    m_PostInfinity: 2
     m_RotationOrder: 4
   statCurve:
     serializedVersion: 2

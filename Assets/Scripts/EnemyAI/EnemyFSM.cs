@@ -133,10 +133,10 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
 
         enemyStatus = Instantiate(enemyStatus);
         int pCnt = PhotonNetwork.CurrentRoom.PlayerCount;
-        float statMul = DifficultyManager.Instance.GetStatMultiplier(pCnt);
-
-        maxHP = hp = enemyStatus.maxHealth * statMul;
-        enemyStatus.attackDamage *= statMul;
+        var diff = DifficultyManager.Instance;
+        maxHP = hp = enemyStatus.maxHealth * diff.HpMul(pCnt);
+        enemyStatus.attackDamage *= diff.AtkMul(pCnt);
+        maxShield = shield = enemyStatus.maxShield * diff.ShieldMul(pCnt);
     }
 
     void Start()

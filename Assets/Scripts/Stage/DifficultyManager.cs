@@ -3,56 +3,53 @@ using UnityEngine;
 using Photon.Pun;
 
 /// <summary>
-///   스테이지(씬)-단위 난이도 조정용 매니저
-///     플레이어 수에 따른 "스폰 마리 수" / "몬스터 스탯" 배율을 계산  
-///     StageManager, MonsterSpawner, EnemyFSM 등에서 읽어 간다  
-///     씬마다 인스펙터 값만 바꾸면 레벨 디자이너가 손쉽게 난이도 튜닝 가능
+/// 플레이어 수(1~4) 별로 개별 배율을 슬라이더로 지정해서 난이도를 조정.
+///   Count  : 스폰 마리 수
+///   Hp / Atk / Shield : 각각의 스탯 배율
 /// </summary>
 [DisallowMultipleComponent]
 public class DifficultyManager : MonoBehaviourPunCallbacks
 {
-    /* ───── 싱글턴 (씬마다 1개) ───── */
     public static DifficultyManager Instance { get; private set; }
     void Awake() => Instance = this;
 
-    /* ───── 배율 계산 방식 ───── */
-    public enum Mode { LinearIncrement, CustomCurve }
-    [Header("▼ Scaling Mode ▼")]
-    public Mode scalingMode = Mode.LinearIncrement;
-
-    /* 선형(1인 기준 + A×(N-1)) ------------------ */
-    [Header("Linear Increment (기본)")]
-    [Tooltip("스폰 마리 수 : 1P=1.0, 이후 + A × (playerCount-1)")]
-    [Range(0f, 2f)] public float deltaCountMul = 0.5f;   // 예) 1→1.0, 2→1.5, 3→2.0, 4→2.5
-    [Tooltip("HP·공격력 : 1P=1.0, 이후 + A × (playerCount-1)")]
-    [Range(0f, 2f)] public float deltaStatMul = 0.4f;   // 예) 1→1.0, 2→1.4, 3→1.8, 4→2.2
-
-    /* 커스텀 AnimationCurve 플레이어 수 -> 배율 관계 곡선으로 조절 ---------------------- */
-    [Header("Custom Curve   (playerCount : 1→4)")]
-    public AnimationCurve countCurve = AnimationCurve.Linear(1, 1f, 4, 2.5f);
-    public AnimationCurve statCurve = AnimationCurve.Linear(1, 1f, 4, 2.2f);
-
-    public float GetCountMultiplier(int playerCount)
+    // ────────────────── Inspector ──────────────────
+    [System.Serializable]
+    public struct MultiplierRow
     {
-        playerCount = Mathf.Clamp(playerCount, 1, 4);
-
-        return scalingMode switch
-        {
-            Mode.LinearIncrement => 1f + deltaCountMul * (playerCount - 1),
-            Mode.CustomCurve => countCurve.Evaluate(playerCount),
-            _ => 1f
-        };
+        [Range(0.1f, 5f)] public float countMul;   // 스폰 마리 수
+        [Range(0.1f, 5f)] public float hpMul;      // 체력
+        [Range(0.1f, 5f)] public float atkMul;     // 공격력
+        [Range(0.1f, 5f)] public float shieldMul;  // 쉴드
     }
 
-    public float GetStatMultiplier(int playerCount)
-    {
-        playerCount = Mathf.Clamp(playerCount, 1, 4);
+    [Header("Player-Count별 배율 (Index 0 = 1P, 3 = 4P)")]
+    [Tooltip("Size를 4 로 유지하세요")]
+    public MultiplierRow[] table = new MultiplierRow[4] {
+        new MultiplierRow{ countMul=1, hpMul=1, atkMul=1, shieldMul=1 },   // 1P
+        new MultiplierRow{ countMul=1.5f, hpMul=1.4f, atkMul=1.3f, shieldMul=1.6f }, // 2P
+        new MultiplierRow{ countMul=2.0f, hpMul=1.8f, atkMul=1.6f, shieldMul=2.0f }, // 3P
+        new MultiplierRow{ countMul=2.5f, hpMul=2.2f, atkMul=2.0f, shieldMul=2.5f }  // 4P
+    };
 
-        return scalingMode switch
+    // ────────────────── API ──────────────────
+    int ClampPC(int pc) => Mathf.Clamp(pc, 1, 4) - 1;   // 1→0, …, 4->3
+
+    public float CountMul(int pc) => table[ClampPC(pc)].countMul;
+    public float HpMul(int pc) => table[ClampPC(pc)].hpMul;
+    public float AtkMul(int pc) => table[ClampPC(pc)].atkMul;
+    public float ShieldMul(int pc) => table[ClampPC(pc)].shieldMul;
+
+#if UNITY_EDITOR
+    // Size가 4가 아니면 자동 보정
+    void OnValidate()
+    {
+        if (table == null || table.Length != 4)
         {
-            Mode.LinearIncrement => 1f + deltaStatMul * (playerCount - 1),
-            Mode.CustomCurve => statCurve.Evaluate(playerCount),
-            _ => 1f
-        };
+            var tmp = new MultiplierRow[4];
+            for (int i = 0; i < Mathf.Min(table?.Length ?? 0, 4); i++) tmp[i] = table[i];
+            table = tmp;
+        }
     }
+#endif
 }

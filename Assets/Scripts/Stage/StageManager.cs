@@ -135,7 +135,7 @@ public class StageManager : MonoBehaviour
 
         /* ───────── 2) 난이도 스케일링 값 계산 ───────── */
         int pCnt = PhotonNetwork.CurrentRoom.PlayerCount;
-        float diffMul = DifficultyManager.Instance.GetCountMultiplier(pCnt);
+        float diffMul = DifficultyManager.Instance.CountMul(pCnt);
         Debug.Log($"[Stage] playerCount={pCnt}, diffMul={diffMul:0.00}");
 
         /* ───────── 3) 몬스터 스폰 ───────── */

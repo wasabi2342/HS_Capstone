@@ -4,9 +4,9 @@ using UnityEngine.AI;
 using Photon.Pun;
 
 /// <summary>
-/// • SpawnArea 안에서 MonsterSpawnInfo 배열대로 몬스터를 Instantiate  
-/// • 부모‑자식 관계 · SpawnArea 참조 · NavMesh 워프를 전 클라이언트에 맞춰 동기화  
-/// • **StageManager**가 wave 마다 SpawnMonsters() 를 호출한다.
+/// SpawnArea 안에서 MonsterSpawnInfo 배열대로 몬스터를 Instantiate  
+///     부모‑자식 관계 · SpawnArea 참조 · NavMesh 워프를 전 클라이언트에 맞춰 동기화  
+///     **StageManager**가 wave 마다 SpawnMonsters() 를 호출한다.
 /// </summary>
 [RequireComponent(typeof(PhotonView))]
 public class MonsterSpawner : MonoBehaviourPun
@@ -22,12 +22,10 @@ public class MonsterSpawner : MonoBehaviourPun
         if (!spawnArea)
             Debug.LogError("[MonsterSpawner] SpawnArea not found!", this);
     }
-
+    
     public void SpawnMonsters(MonsterSpawnInfo[] infos)
     {
         if (!PhotonNetwork.IsMasterClient || spawnArea == null) return;
-        int pCnt = PhotonNetwork.CurrentRoom.PlayerCount;
-        float countMul = DifficultyManager.Instance.GetCountMultiplier(pCnt);
         foreach (var info in infos)
         {
             int spawnCount = info.count;
