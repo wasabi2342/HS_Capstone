@@ -1387,7 +1387,7 @@ public class PinkPlayerController : ParentPlayerController
         }
     }
 
-    public void ReduceReviveTime(float reduceTime = 1.0f)
+    public override void ReduceReviveTime(float reduceTime = 1.0f)
     {
         if (photonView.IsMine)
         {

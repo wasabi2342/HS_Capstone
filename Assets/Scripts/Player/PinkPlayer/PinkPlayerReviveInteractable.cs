@@ -60,12 +60,7 @@ public class PinkPlayerReviveInteractable : GaugeInteraction
 
     protected override void OnTriggerExit(Collider other)
     {
-        if (pinkPlayer.currentState != PinkPlayerState.Stun)
-        {
-            return;
-        }
-        if (IsSameTeam(localPhotonView, otherPhotonView))
-            base.OnTriggerExit(other);
+        base.OnTriggerExit(other);
 
         Debug.Log("부활 상호작용 exit");
     }
