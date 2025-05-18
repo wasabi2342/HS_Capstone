@@ -84,15 +84,20 @@ public class PinkPlayerReviveInteractable : GaugeInteraction
 
     private bool IsSameTeam(PhotonView localView, PhotonView otherView)
     {
-        // TeamId를 가져오는데 실패하면 기본값으로 -1을 사용하고, 기본적으로 같은 팀으로 처리
+        if (localView == null || otherView == null)
+        {
+            return false;
+        }
+
+        // TeamId를 가져오는데 실패하면 기본값으로 -999을 사용하고, 기본적으로 같은 팀으로 처리
         if (!TryGetTeamId(localView, out int myTeamId))
         {
-            myTeamId = -1; // TeamId가 없으면 기본값 -1
+            myTeamId = -999;
         }
 
         if (!TryGetTeamId(otherView, out int otherTeamId))
         {
-            otherTeamId = -1; // TeamId가 없으면 기본값 -1
+            otherTeamId = -999;
         }
 
         // TeamId가 설정되지 않았거나 같은 팀일 때 true 반환
