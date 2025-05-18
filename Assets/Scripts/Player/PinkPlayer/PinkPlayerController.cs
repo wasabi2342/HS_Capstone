@@ -11,6 +11,8 @@ public enum PinkPlayerState { Idle, R_Idle, Run, tackle, BasicAttack, Hit, Dash,
 
 public class PinkPlayerController : ParentPlayerController
 {
+    public PlayerRunTimeData RuntimeData => runTimeData;
+
     [Header("대쉬 설정")]
     public float dashDistance = 2f;
     public float dashDoubleClickThreshold = 0.3f;
@@ -511,7 +513,7 @@ public class PinkPlayerController : ParentPlayerController
         if(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil == 1)
         {
             Debug.Log("소환수 도발!");
-            servantFSM.TauntEnemy(100f);
+            servantFSM.TauntEnemy(30f); // 확실히 알려고 30초 때려박음 --> 원래 3초
         }
 
         servantFSM.photonView.RPC("RPC_SetOwner", RpcTarget.AllBuffered, ownerViewID);

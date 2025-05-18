@@ -48,7 +48,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     [SerializeField]
     protected CharacterStats characterBaseStats;
-    protected PlayerRunTimeData runTimeData;
+    public PlayerRunTimeData runTimeData;
 
     protected Rigidbody rb;
 
