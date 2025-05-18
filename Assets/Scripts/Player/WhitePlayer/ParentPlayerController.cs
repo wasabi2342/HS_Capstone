@@ -524,4 +524,13 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         Debug.Log($"TeamId가 {teamId}로 설정되었습니다.");
     }
 
+    public virtual bool IsStunState()
+    {
+        return false;
+    }
+
+    public virtual void ReduceReviveTime(float reduceTime = 1.0f)
+    {
+
+    }
 }

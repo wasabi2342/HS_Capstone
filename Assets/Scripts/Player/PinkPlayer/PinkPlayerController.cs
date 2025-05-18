@@ -1405,6 +1405,11 @@ public class PinkPlayerController : ParentPlayerController
         ReduceReviveTime(reduceTime);
     }
 
+    public override bool IsStunState()
+    {
+        return currentState == PinkPlayerState.Stun;
+    }
+
     public void Revive()
     {
         if (!photonView.IsMine)

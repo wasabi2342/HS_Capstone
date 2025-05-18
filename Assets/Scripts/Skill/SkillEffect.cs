@@ -90,6 +90,17 @@ public class SkillEffect : MonoBehaviourPun
             if (other.gameObject == RoomManager.Instance.ReturnLocalPlayer())
                 return;
 
+            ParentPlayerController parentPlayerController = other.GetComponent<ParentPlayerController>();
+
+            if (parentPlayerController != null && parentPlayerController.IsStunState())
+            {
+                parentPlayerController.ReduceReviveTime();
+
+                ApplySoundEffect();
+
+                return;
+            }
+
             PhotonView localView = RoomManager.Instance.ReturnLocalPlayer().GetPhotonView();
 
             if (!TryGetTeamId(localView, out int myTeamId) || !TryGetTeamId(otherView, out int otherTeamId))
@@ -142,6 +153,13 @@ public class SkillEffect : MonoBehaviourPun
 
         triggerEvent?.Invoke();
 
+        ApplySoundEffect();
+
+        StartCoroutine(PauseForSeconds());
+    }
+
+    private void ApplySoundEffect()
+    {
         switch (attackerType)
         {
             case AttackerType.WhitePlayer:
@@ -151,8 +169,6 @@ public class SkillEffect : MonoBehaviourPun
                 AudioManager.Instance.PlayOneShot("event:/Character/Character-pink/mace_attack", transform.position);
                 break;
         }
-
-        StartCoroutine(PauseForSeconds());
     }
 
     private IEnumerator PauseForSeconds()

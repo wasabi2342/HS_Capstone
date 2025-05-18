@@ -900,7 +900,7 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
-    public void ReduceReviveTime(float reduceTime = 1.0f)
+    public override void ReduceReviveTime(float reduceTime = 1.0f)
     {
         if(photonView.IsMine)
         {
@@ -916,6 +916,11 @@ public class WhitePlayerController : ParentPlayerController
     public void RPC_ReduceReviveTime(float reduceTime)
     {
         ReduceReviveTime(reduceTime);
+    }
+
+    public override bool IsStunState()
+    {
+        return currentState == WhitePlayerState.Stun;
     }
 
     public void Revive()
