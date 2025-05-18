@@ -8,6 +8,8 @@ public class PinkPlayerReviveInteractable : GaugeInteraction
     private PhotonView otherPhotonView;
     private PhotonView localPhotonView;
 
+    private bool canInteract = true;
+
     private void Awake()
     {
         pinkPlayer = GetComponentInParent<PinkPlayerController>();
@@ -22,8 +24,17 @@ public class PinkPlayerReviveInteractable : GaugeInteraction
         }
 
         // 같은 팀일 때만 부활 상호작용
-        if (IsSameTeam(localPhotonView, otherPhotonView))
+        if (canInteract && IsSameTeam(localPhotonView, otherPhotonView))
         {
+            canInteract = false;
+
+            if (PhotonNetwork.IsConnected)
+            {
+                if (photonView != null)
+                {
+                    photonView.RPC("SyncCanInteract", RpcTarget.Others, false);
+                }
+            }
             base.OnInteract(ctx);
         }
         //whitePlayer.HandleReviveInteraction(ctx);
@@ -41,7 +52,7 @@ public class PinkPlayerReviveInteractable : GaugeInteraction
             otherPhotonView = otherView;
 
         Debug.Log("부활 상호작용 enter");
-        if (IsSameTeam(localPhotonView, otherPhotonView))
+        if (canInteract && IsSameTeam(localPhotonView, otherPhotonView))
         {
             base.OnTriggerEnter(other);
         }
@@ -70,6 +81,16 @@ public class PinkPlayerReviveInteractable : GaugeInteraction
 
     protected override void OnCanceledEvent()
     {
+        canInteract = true;
+
+        if (PhotonNetwork.IsConnected)
+        {
+            if (photonView != null)
+            {
+                photonView.RPC("SyncCanInteract", RpcTarget.Others, true);
+            }
+        }
+
         base.OnCanceledEvent();
 
         Debug.Log("부활 상호작용 cancel");
@@ -78,7 +99,7 @@ public class PinkPlayerReviveInteractable : GaugeInteraction
     protected override void OnStartedEvent()
     {
         base.OnStartedEvent();
-        
+
         Debug.Log("부활 상호작용 start");
     }
 
