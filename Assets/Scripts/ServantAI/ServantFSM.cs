@@ -248,7 +248,7 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITaunta
     {
         if (ownerController == null) return;
 
-        int devil = ownerController.runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil;
+        int devil = ownerController.runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil;
         if (devil != 3) return;
 
 
