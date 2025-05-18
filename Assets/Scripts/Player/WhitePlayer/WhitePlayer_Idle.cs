@@ -32,7 +32,6 @@ public class WhitePlayer_Idle : StateMachineBehaviour
         animator.SetBool("run", false);
         animator.SetBool("revive", false);
         animator.SetInteger("CounterStack", 0);
-        animator.SetBool("AttackContinue", false);
     }
 
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

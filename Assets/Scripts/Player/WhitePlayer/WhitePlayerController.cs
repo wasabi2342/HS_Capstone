@@ -861,10 +861,12 @@ public class WhitePlayerController : ParentPlayerController
         stunCoroutine = StartCoroutine(CoStunDuration());
     }
 
+    private float stunElapsed;
+
     private IEnumerator CoStunDuration()
     {
         float stunDuration = 30f;
-        float elapsed = 0f;
+        stunElapsed = 0f;
 
         if (photonView.IsMine)
         {
@@ -874,13 +876,13 @@ public class WhitePlayerController : ParentPlayerController
             hpBar.enabled = false;  // 기절 상태에선 체력바 비활성화
         }
 
-        while (elapsed < stunDuration && currentState == WhitePlayerState.Stun)
+        while (stunElapsed < stunDuration && currentState == WhitePlayerState.Stun)
         {
-            elapsed += Time.deltaTime;
+            stunElapsed += Time.deltaTime;
 
             if (photonView.IsMine)
             {
-                stunSlider.fillAmount = 1 - (elapsed / stunDuration);
+                stunSlider.fillAmount = 1 - (stunElapsed / stunDuration);
             }
 
             yield return null;
@@ -896,6 +898,24 @@ public class WhitePlayerController : ParentPlayerController
             stunSlider.gameObject.SetActive(false);
             stunOverlay.enabled = false;
         }
+    }
+
+    public void ReduceReviveTime(float reduceTime = 1.0f)
+    {
+        if(photonView.IsMine)
+        {
+            stunElapsed += reduceTime;
+        }
+        else
+        {
+            photonView.RPC("RPC_ReduceReviveTime", photonView.Owner, reduceTime);
+        }
+    }
+
+    [PunRPC]
+    public void RPC_ReduceReviveTime(float reduceTime)
+    {
+        ReduceReviveTime(reduceTime);
     }
 
     public void Revive()
