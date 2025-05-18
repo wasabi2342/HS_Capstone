@@ -429,6 +429,7 @@ public class PinkPlayerController : ParentPlayerController
         if (!(currentState == PinkPlayerState.Charge1 || currentState == PinkPlayerState.Charge2 || currentState == PinkPlayerState.Charge3))
             return;
 
+
         isCharging = false;
 
         animator.SetBool("isCharging", false);
@@ -1077,47 +1078,74 @@ public class PinkPlayerController : ParentPlayerController
     public void CreateChargeHitSkillEffect()
     {
         if (!photonView.IsMine)
-        {
             attackStack = animator.GetInteger("AttackStack");
-        }
 
         // 차징 스킬 데미지 계산
         float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                        runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
 
-        // Photon에 접속 중인지 확인하여 isMine 설정
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
-
-        // 이펙트 경로 및 위치 설정
-        string effectPath;
         Vector3 effectPosition = transform.position;
+        string devil = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil.ToString();
 
-        if (animator.GetBool("Right"))
-        {
-            effectPath = $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
-        }
-        else
-        {
-            effectPath = $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
-        }
+        // ── 1) 기본 Charge Hit 이펙트
+        string hitPath = animator.GetBool("Right")
+            ? $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_right_{devil}"
+            : $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_left_{devil}";
 
-        // 다른 클라이언트에게도 이펙트를 생성하도록 RPC 호출
         if (PhotonNetwork.IsConnected && photonView.IsMine)
+            photonView.RPC("CreateAnimation", RpcTarget.Others, hitPath, effectPosition, true);
+
+        var hitFx = Instantiate(
+            Resources.Load<SkillEffect>(hitPath),
+            effectPosition,
+            Quaternion.identity
+        );
+        hitFx.Init(damage, StartHitlag, isMine,
+                   playerBlessing.FindSkillEffect(
+                       runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID,
+                       this
+                   ));
+        hitFx.transform.parent = transform;
+
+        if (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil == 3)
         {
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true);
+            StartCoroutine(DelayedChargeEffect());
+
+            IEnumerator DelayedChargeEffect()
+            {
+                yield return new WaitForSeconds(1f);
+
+                
+                string chargePath = animator.GetBool("Right")
+                     ? $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_right_{devil}"
+            : $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_left_{devil}";
+
+                // y값만 0.1로 고정
+                Vector3 spawnPos = new Vector3(
+                    effectPosition.x,
+                    0.1f,
+                    effectPosition.z
+                );
+
+                if (PhotonNetwork.IsConnected && photonView.IsMine)
+                    photonView.RPC("CreateAnimation", RpcTarget.Others, chargePath, effectPosition, true);
+
+                var chargeFx = Instantiate(
+                    Resources.Load<SkillEffect>(chargePath),
+                    effectPosition,
+                    Quaternion.identity
+                );
+                chargeFx.Init(damage, StartHitlag, isMine,
+                              playerBlessing.FindSkillEffect(
+                                  runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID,
+                                  this
+                              ));
+                chargeFx.transform.parent = transform;
+            }
         }
-
-        // Photon 연결 여부에 관계없이 로컬에서 이펙트 생성
-        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
-
-        // Init 메서드 호출
-        //skillEffect.Init(damage, StartHitlag, isMine);
-        skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID, this));
-
-
-        // 생성된 이펙트의 부모를 설정
-        skillEffect.transform.parent = transform;
     }
+
 
     // 시프트 스킬 이펙트 생성
     public void CreateShiftSkillEffect()
