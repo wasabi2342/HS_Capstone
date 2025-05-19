@@ -129,6 +129,14 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         }
          
         if (PhotonNetwork.IsMasterClient) ActiveMonsterCount++;
+
+
+        enemyStatus = Instantiate(enemyStatus);
+        int pCnt = PhotonNetwork.CurrentRoom.PlayerCount;
+        var diff = DifficultyManager.Instance;
+        maxHP = hp = enemyStatus.maxHealth * diff.HpMul(pCnt);
+        enemyStatus.attackDamage *= diff.AtkMul(pCnt);
+        maxShield = shield = enemyStatus.maxShield * diff.ShieldMul(pCnt);
     }
 
     void Start()

@@ -17,6 +17,7 @@ public class HitState : BaseState
         SetAgentStopped(true);
         FlashSprite();
         ApplyKnockbackFromLastAttacker();
+        fsm.Anim.speed = 1f;  // 애니메이션 속도 초기화
         fsm.PlayDirectionalAnim("Hit");
 
         /* 체력 0 -> 즉시 DeadState */

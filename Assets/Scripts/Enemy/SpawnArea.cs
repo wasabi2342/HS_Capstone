@@ -46,10 +46,5 @@ public class SpawnArea : MonoBehaviourPun
         Gizmos.color = new Color(1, 0.9f, 0, 0.25f);
         Gizmos.DrawSphere(transform.position, radius);
     }
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, radius);
-    }
 #endif
 }

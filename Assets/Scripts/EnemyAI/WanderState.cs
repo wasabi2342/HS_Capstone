@@ -21,14 +21,20 @@ public class WanderState : BaseState
         {
             SetAgentStopped(false);
             agent.speed = status.moveSpeed;
-            if (agent.stoppingDistance != 0f)      
-                agent.stoppingDistance = 0f;
+            if (agent.stoppingDistance != 0f) agent.stoppingDistance = 0f;
         }
-        fsm.PlayDirectionalAnim("Walk");
 
-        PickDestination();
+        PickDestination();                       // 목적지 먼저 선택
+
+        /* 목적지-기준으로 즉시 방향 설정 */
+        float dx = agent.destination.x - transform.position.x;
+        if (Mathf.Abs(dx) > 0.01f) fsm.ForceFacing(dx);
+
+        fsm.PlayDirectionalAnim("Walk");         // 그다음 애니 재생
+
         detectT = repathT = 0f;
     }
+
 
     public override void Execute()
     {

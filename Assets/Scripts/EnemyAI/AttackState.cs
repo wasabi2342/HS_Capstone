@@ -18,6 +18,7 @@ public class AttackState : BaseState
 
         // 애니메이션 재생 ― Enable/DisableAttack 은
         //   애니메이션 이벤트에서 호출됨
+        fsm.Anim.speed = 1f;  // 애니메이션 속도 초기화
         fsm.PlayDirectionalAnim("Attack");
 
         if (PhotonNetwork.IsMasterClient)

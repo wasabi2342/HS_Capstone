@@ -11,6 +11,7 @@ public class WaitCoolState : BaseState
     {
         RefreshFacingToTarget();
         SetAgentStopped(true);
+        fsm.Anim.speed = 1f;  // 애니메이션 속도 초기화
         fsm.PlayDirectionalAnim("Idle");
 
         if (PhotonNetwork.IsMasterClient)
