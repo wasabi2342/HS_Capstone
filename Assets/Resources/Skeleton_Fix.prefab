@@ -106,12 +106,12 @@ NavMeshAgent:
   m_GameObject: {fileID: 1765914048162278020}
   m_Enabled: 1
   m_AgentTypeID: -334000983
-  m_Radius: 1.065
+  m_Radius: 0.2
   m_Speed: 2
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 0
-  m_StoppingDistance: 0
+  m_StoppingDistance: 0.2
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -215,8 +215,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firePoint: {fileID: 2893147186514860035}
   arrowPrefab: {fileID: 8394826099323771044, guid: 872159c6af7ef2849ad9cd59a5b0dbc0, type: 3}
-  arrowSpeed: 8
-  arrowLife: 3
+  arrowSpeed: 7
+  arrowLife: 20
 --- !u!114 &295578202120813198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -303,7 +303,7 @@ Transform:
   m_GameObject: {fileID: 6383945176252982528}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.45, y: 0.94, z: 0}
+  m_LocalPosition: {x: 0.5, y: 0.94, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
