@@ -493,7 +493,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     [PunRPC]
     public virtual void CreateAnimation(string name, Vector3 pos, bool isChild)
     {
-        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(name), pos, Quaternion.identity);
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(name), transform.position, Quaternion.identity);
         if(isChild)
             skillEffect.transform.parent = transform;
     }
