@@ -3,6 +3,7 @@ using UnityEngine;
 public class ServantAttack : MonoBehaviour, IMonsterAttack
 {
     [SerializeField] GameObject weaponCollider;   // 콜라이더 오브젝트
+    [SerializeField] GameObject spawnCollider;
 
     public void SetColliderRight() => ShiftCollider(+1);
     public void SetColliderLeft() => ShiftCollider(-1);
@@ -16,7 +17,9 @@ public class ServantAttack : MonoBehaviour, IMonsterAttack
 
     /* IMonsterAttack 구현 */
     public void EnableAttack() => weaponCollider.SetActive(true);
-    public void DisableAttack() => weaponCollider.SetActive(false);
+    public void DisableAttack() => weaponCollider.SetActive(false);    
+    public void EnableSpawnAttack() => spawnCollider.SetActive(true);
+    public void DisableSpawnAttack() => spawnCollider.SetActive(false);
     public void Attack(Transform target) { /* 필요시 히트이펙트 */ }
     public void SetDirection(float s)
     {
