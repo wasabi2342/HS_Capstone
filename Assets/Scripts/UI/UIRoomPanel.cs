@@ -4,8 +4,10 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 public class UIRoomPanel : UIBase
@@ -19,15 +21,31 @@ public class UIRoomPanel : UIBase
     [SerializeField]
     private Button startButton;
     [SerializeField]
-    private RectTransform container;
-    [SerializeField]
     private Text roomName;
+
+    [SerializeField]
+    private Image characterImage;
+    [SerializeField]
+    private Button rightArrowButton;
+    [SerializeField]
+    private Button leftArrowButton;
+
+    [SerializeField]
+    private TextMeshProUGUI characterInfoText;
+    [SerializeField]
+    private Button[] skillIcons = new Button[5];
+    [SerializeField]
+    private TextMeshProUGUI skillInfoTest;
+    [SerializeField]
+    private RawImage skillRawImage;
 
     private Dictionary<int, UIPlayerInfoPanel> players = new Dictionary<int, UIPlayerInfoPanel>();
 
     private bool isReady;
     private bool canStart;
     private readonly string DefeaultCharacter = "WhitePlayer";
+
+    private int selectIndex = 0;
 
     public override void OnDisable()
     {
@@ -75,7 +93,18 @@ public class UIRoomPanel : UIBase
         UIPlayerInfoPanel myPanel = Instantiate(playerInfoPanel);
         myPanel.transform.SetParent(content.transform, false);
 
-        myPanel.Init(isReady, PhotonNetwork.LocalPlayer.NickName, DefeaultCharacter, OnClickedSelectCharacterButton);
+        myPanel.Init(isReady, PhotonNetwork.LocalPlayer.NickName, DefeaultCharacter);
+
+        characterInfoText.text = ((Characters)(selectIndex % (int)Characters.Max)).ToString() +"의 정보";
+
+        characterImage.sprite = Resources.Load<Sprite>("Sprite/" + ((Characters)(selectIndex % (int)Characters.Max)).ToString());
+
+        for (int i = 0; i < skillIcons.Length; i++)
+        {
+            skillIcons[i].GetComponent<Image>().sprite = Resources.Load<Sprite>($"SkillIcon/{(Characters)(selectIndex % (int)Characters.Max)}/{(Skills)i}_None");
+            int index = i; // 지역 변수로 캡처
+            skillIcons[i].onClick.AddListener(() => OnClickedSkillIconButton(index));
+        }
 
         if (PhotonNetwork.InRoom)
         {
@@ -122,11 +151,39 @@ public class UIRoomPanel : UIBase
         {
             players.Add(-1, myPanel);
         }
+
+        leftArrowButton.onClick.AddListener(() => OnClickedArrowButton(-1));
+        rightArrowButton.onClick.AddListener(() => OnClickedArrowButton(1));
     }
 
-    public void OnClickedSelectCharacterButton()
+    private void OnClickedSkillIconButton(int index)
     {
-        container.DOAnchorPos(container.anchoredPosition + new Vector2(-2000f, 0f), 0.5f).OnComplete(() => UIManager.Instance.OpenPopupPanelInOverlayCanvas<UISelectCharacterPanel>().SetRoomPanelContainer(container));
+        skillInfoTest.text = DataManager.Instance.FindSkillByBlessingKeyAndCharacter(index, 0, (selectIndex % (int)Characters.Max)).Bless_Discript;
+    }
+
+    private void OnClickedArrowButton(int num)
+    {
+        selectIndex += num;
+
+        selectIndex = Mathf.Abs(selectIndex);
+
+        characterImage.sprite = Resources.Load<Sprite>("Sprite/" + (Characters)(selectIndex % (int)Characters.Max));
+
+        characterInfoText.text = ((Characters)(selectIndex % (int)Characters.Max)).ToString() + "의 정보";
+
+        for (int i = 0; i < skillIcons.Length; i++)
+        {
+            skillIcons[i].GetComponent<Image>().sprite = Resources.Load<Sprite>($"SkillIcon/{(Characters)(selectIndex % (int)Characters.Max)}/{(Skills)i}_None");
+            //int index = i; // 지역 변수로 캡처
+            //skillIcons[i].onClick.AddListener(() => OnClickedSkillIconButton(index));
+        }
+
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
+            {
+                { "IsReady", isReady },
+                { "SelectCharacter", ((Characters)(selectIndex % (int)Characters.Max)).ToString() }
+            });
+
     }
 
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
