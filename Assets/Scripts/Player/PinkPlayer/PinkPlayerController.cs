@@ -34,6 +34,8 @@ public class PinkPlayerController : ParentPlayerController
     [SerializeField] private GameObject timeServantPrefab; // 이는 시간 가호 쉬프트를 먹었을 때 (죽음의 망자들) 사용 될 프리팹
     [SerializeField] private Vector3 servantSpawnOffset = new Vector3(0f, 0.5f, 0f);
     [SerializeField] private int DefaultMaxServants = 8;
+    // 죽이기 전 불러온 소환수 개수를 저장
+    private int ultimateStackLimit = 0;
     private const int TimeMaxServants = 13; // 시간 가호 소환수 최대 개체 수 
 
     private int CurrentMaxServants =>
@@ -623,8 +625,8 @@ public class PinkPlayerController : ParentPlayerController
     private void RPC_UseUltimate()
     {
         if (!PhotonNetwork.IsMasterClient) return;
-
-        int myServantsCount = myServants.Count;
+        int myServantsCount = myServants.Count; // 소환수 개수 먼저 로컬에 저장
+        ultimateStackLimit = myServants.Count; // 불러온 소환수 개수 기억 - 같은 값 저장해주는 거임
 
         // 1) myServants 를 돌며 ForceKill RPC 호출
         foreach (var s in myServants)
@@ -718,20 +720,29 @@ public class PinkPlayerController : ParentPlayerController
     // 애니메이션 이벤트로 평타 스택 설정해주기
     public void OnAttackStack()
     {
-        //if (currentState != PinkPlayerState.BasicAttack) return;
-        // 시간가호  max 13, 그 외엔 8
-        int maxStack = runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil == 2 ? 13 : 8;
+        // 1) Devil 레벨별 cap (8 or 13)
+        int cap = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil == 2
+       ? 13
+       : 8;
+
+        // 2) 진짜 최대 스택은 희생된 소환수 개수(ultimateStackLimit)와 cap 중 작은 쪽
+        int maxStack = Mathf.Min(ultimateStackLimit, cap);
+
+        // 3) 비교 후 초과 시 리턴
         if (R_attackStack >= maxStack)
         {
             Debug.Log($"R_attackStack 최대치({maxStack}) 도달, 더 안올라감");
             return;
         }
+
+        // 4) 스택 증가
         R_attackStack++;
         Debug.Log(R_attackStack);
         animator.SetInteger("R_attackStack", R_attackStack);
         AttackStackUpdate?.Invoke(R_attackStack);
         Debug.Log($"평타 스택 설정: {R_attackStack}");
     }
+
 
     // 쉴드 관련 이벤트로 호출
     public void OnUltimateCastComplete()
