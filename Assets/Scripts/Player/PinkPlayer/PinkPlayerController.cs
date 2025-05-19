@@ -516,13 +516,15 @@ public class PinkPlayerController : ParentPlayerController
 
         int devilLevel = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil;
         // 시간가호->  TimeServant, 그 외엔 기본 Servant
-        GameObject prefabToSpawn = (devilLevel == 2)
-            ? timeServantPrefab
-            : servantPrefab;
+        string prefabName = (devilLevel == 2)
+        ? timeServantPrefab.name    // 인스펙터에 할당된 TimeServant 프리팹의 이름
+        : servantPrefab.name;       // 기존 Servant 프리팹의 이름
+
+        Debug.Log($"[RPC_SpawnServant] devilLevel={devilLevel} → Spawn: {prefabName}");
 
 
         Vector3 spawnPos = transform.position + servantSpawnOffset;
-        GameObject servant = PhotonNetwork.Instantiate(servantPrefab.name, spawnPos, Quaternion.identity);
+        GameObject servant = PhotonNetwork.Instantiate(prefabName, spawnPos, Quaternion.identity);
         ServantFSM servantFSM = servant.GetComponent<ServantFSM>();
 
         if(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil == 1)
