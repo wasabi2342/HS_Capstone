@@ -1391,6 +1391,7 @@ public class PinkPlayerController : ParentPlayerController
     {
         if (photonView.IsMine)
         {
+            OnHitEvent.Invoke();
             stunElapsed += reduceTime;
         }
         else
