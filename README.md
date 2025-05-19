@@ -59,4 +59,5 @@ Unity Engine 구조상 강제할 수 없으므로, 협조 부탁드립니다.
 - 버그를 고쳐야 할 때: 앞에 fix를 붙이기 ex) UI 표시 버그를 고친다면 fix: indicator bug 
 - 중간 피쳐개발을 할 때: 앞에 feat를 붙이기 ex) potion가게 새로운 포션을 개발 한다면 fieat: custom poition develop
 
-
+# 시연영상
+https://youtu.be/xVOEWllwPQY
