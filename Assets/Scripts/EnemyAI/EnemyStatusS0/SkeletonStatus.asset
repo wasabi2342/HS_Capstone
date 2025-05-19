@@ -10,28 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3237e443b654c6545937fc25af82f21a, type: 3}
-  m_Name: DogStatus
+  m_Name: SkeletonStatus
   m_EditorClassIdentifier: 
   enemyName: Default Enemy
   spawnAreaBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 5, y: 5, z: 5}
-  maxHealth: 50
+  maxHealth: 20
   moveSpeed: 1.2
-  chaseSpeedMultiplier: 1.2
-  navMeshSampleDistance: 10
-  maxChaseDistance: 10
-  maxChaseTime: 7
-  headOffset: 2
+  chaseSpeedMultiplier: 1.1
+  navMeshSampleDistance: 3
+  maxChaseDistance: 5
+  maxChaseTime: 5
+  headOffset: 2.8
   hitStunTime: 0.3
   hitKnockbackStrength: 3
-  maxShield: 30
-  detectRange: 7
-  attackRange: 3
+  maxShield: 10
+  detectRange: 10
+  attackRange: 7
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 73792
   waitCoolTime: 0.5
-  attackDuration: 0.7
-  attackCoolTime: 2
+  attackDuration: 1
+  attackCoolTime: 1
   attackDamage: 10

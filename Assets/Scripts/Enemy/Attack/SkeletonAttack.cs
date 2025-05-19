@@ -1,76 +1,49 @@
 ﻿using UnityEngine;
 using Photon.Pun;
 
-public class SkeletonAttack : MonoBehaviour, IMonsterAttack
+/// <summary>
+/// Skeleton(원거리) 전용 공격 컴포넌트
+/// 1) SetDirection() → 현재 바라보는 +/- 방향 기억
+/// 2) Anim_FireArrow() ← 애니메이션 이벤트가 호출
+///    └ MasterClient 에서만 화살을 네트워크 Instantiate
+/// ※ Attack() 은 코루틴 호출 때 중복 발사를 막기 위해 비워 둠
+/// </summary>
+public class SkeletonAttack : MonoBehaviourPun, IMonsterAttack
 {
+    [Header("Prefabs / Points")]
+    [SerializeField] Transform firePoint;          // 화살 출발 지점
+    [SerializeField] GameObject arrowPrefab;       // Resources 혹은 Inspector 등록
+
     [Header("Projectile")]
-    public string projectilePrefabName = "ArrowProjectile";   // Resources/ArrowProjectile.prefab
-    public Transform firePoint;                               // 활 끝
-    public float projectileSpeed = 18f;
-    private readonly Vector3 leftAttackOffset = new Vector3(-0.45f, 1f, 0f);
-    private readonly Vector3 rightAttackOffset = new Vector3(0.45f, 1f, 0f);
+    [SerializeField] float arrowSpeed = 8f;
+    [SerializeField] float arrowLife = 5f;
 
-    /// <summary>EnemyAI 가 공격 anim 재생 직전에 호출</summary>
-    public void Attack(Transform target)
+    float facing = 1f;         // +1 ⇢ Right, -1 ⇢ Left
+    EnemyFSM fsm;
+
+    void Awake() => fsm = GetComponent<EnemyFSM>();
+
+    /* ---------- IMonsterAttack ---------- */
+    public void SetDirection(float dir) => facing = Mathf.Sign(dir);
+    public void EnableAttack() { }            // 근접형이 아니므로 사용 안함
+    public void DisableAttack() { }
+    public void Attack(Transform target) { }   // ★ 코루틴 호출 시 아무것도 안함
+
+    /* ---------- Animation Event ---------- */
+    // Attack 클립 중간 프레임에 이 함수 이름을 등록
+    public void Anim_FireArrow()
     {
-        cachedTarget = target;          // 실제 발사는 애니메이션 이벤트에서
-        Debug.Log($"[SkeletonAttack] Attack() – target = {target?.name}");
+        if (!PhotonNetwork.IsMasterClient) return;
 
-    }
+        // 네트워크 Instantiate
+        Vector3 pos = firePoint ? firePoint.position : transform.position;
+        GameObject go = PhotonNetwork.Instantiate(arrowPrefab.name, pos, Quaternion.identity);
 
-    // ─────────────────────────────
-    // 애니메이션 이벤트용 메서드 ShootArrow
-    // ─────────────────────────────
-    public void ShootArrow()
-    {
-        if (cachedTarget == null || firePoint == null) return;
-        Debug.Log($"[SkeletonAttack] ShootArrow 호출 at {Time.time:F2}s");   // ← 임시 로그
-
-        // 방향계산(y 고정)
-        Vector3 dir = cachedTarget.position - firePoint.position;
-        dir.y = 1f;
-        dir.Normalize();
-
-        // 네트워크 투사체 생성
-        GameObject proj = PhotonNetwork.Instantiate(
-            projectilePrefabName,
-            firePoint.position,
-            Quaternion.LookRotation(dir));
-
-        // 속도 부여
-        if (proj.TryGetComponent(out Rigidbody rb))
-            rb.linearVelocity = dir * projectileSpeed;
-
-        // 데미지 전달
-        if (proj.TryGetComponent(out ArrowProjectile ap) &&
-            TryGetComponent(out EnemyAI ai))
+        if (go.TryGetComponent(out ArrowProjectile proj))
         {
-            ap.overrideDamage = ai.status.damage;
+            Vector3 dir = Vector3.right * facing;          // x축 ±방향
+            proj.Init(gameObject, fsm.EnemyStatusRef.attackDamage,
+                      dir, arrowSpeed, arrowLife);
         }
-
-        cachedTarget = null;   // 재사용 방지
     }
-    public void FirePointLeft()
-    {
-        if (firePoint == null) return;
-        firePoint.localPosition = leftAttackOffset;
-    }
-
-    public void FirePointRight()
-    {
-        if (firePoint == null) return;
-        firePoint.localPosition = rightAttackOffset;
-    }
-    public void EnableAttack() { }   // 애니메이션 이벤트에서 호출
-    public void DisableAttack() { }  // 애니메이션 이벤트에서 호출
-    public void SetDirection(float sign)
-    {
-        if (sign > 0f) FirePointRight();
-        else FirePointLeft();
-    }
-    // ─────────────────────────────
-    // 내부
-    // ─────────────────────────────
-    private Transform cachedTarget;
 }
-

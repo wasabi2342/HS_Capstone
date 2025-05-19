@@ -1,39 +1,36 @@
 ﻿using UnityEngine;
 using Photon.Pun;
 
-/// <summary>
-/// Skeleton 화살 투사체 – 직선 이동·충돌·파괴
-/// </summary>
 [RequireComponent(typeof(Rigidbody))]
 public class ArrowProjectile : MonoBehaviourPun
 {
-    public float speed = 0.2f;   // m/s
-    public float lifeTime = 4f;    // 초
-    public float overrideDamage = -1f; // 음수면 EnemyStatus.damage 사용
+    GameObject owner;
+    float damage;
 
-    float timer;
-    void Awake()
+    public void Init(GameObject ownerObj, float dmg,
+                     Vector3 dir, float speed, float lifeTime)
     {
-        Debug.Log($"[ArrowProjectile] Spawned by {photonView.Owner.NickName}");
+        owner = ownerObj;
+        damage = dmg;
+
+        if (TryGetComponent(out SpriteRenderer sr))
+            sr.flipX = dir.x < 0f;
+        Rigidbody rb = GetComponent<Rigidbody>();
+        rb.useGravity = false;
+        rb.linearVelocity = dir.normalized * speed;  // x축 ±방향
+        transform.forward = dir;
+
+        Destroy(gameObject, lifeTime);           // 안전 파괴
     }
 
-    void FixedUpdate()
-    {
-        transform.position += transform.forward * speed * Time.fixedDeltaTime;
-
-        timer += Time.fixedDeltaTime;
-        if (timer >= lifeTime && photonView.IsMine)
-            PhotonNetwork.Destroy(gameObject);
-    }
     void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("Player")) return;
+        if (!photonView.IsMine) return;          // 마스터만 판정
+        if (other.gameObject == owner) return;   // 자기 자신 무시
 
-        IDamageable dmg = other.GetComponentInParent<IDamageable>();
-        if (dmg != null)
-            //dmg.TakeDamage(overrideDamage > 0 ? overrideDamage : 0f);
+        if (other.TryGetComponent(out IDamageable hp))
+            hp.TakeDamage(damage, transform.position);
 
-        if (photonView.IsMine)
-            PhotonNetwork.Destroy(gameObject);
+        PhotonNetwork.Destroy(gameObject);
     }
 }

@@ -1,54 +1,44 @@
-// ServantSpawnState.cs
 using UnityEngine;
 using System.Collections;
 using Photon.Pun;
 
 public class ServantSpawnState : ServantBaseState
 {
-    [Header("Spawn Settings")]
-    public float spawnAnimDuration = 1.2f;
-    public float damageRadius = 3f;
-    public int damageAmount = 20;
-    public LayerMask enemyLayerMask = 1 << 8; // “Enemy” 레이어
+    private Coroutine invCo;
+    private float invincibleTime = 1f;
 
     public ServantSpawnState(ServantFSM fsm) : base(fsm) { }
 
     public override void Enter()
     {
-        // 1) 스폰 중 무적, 이동 정지
-        agent.isStopped = true;
+        // 1) 스폰 애니메이션
+        fsm.Anim.Play("Spawn", 0);
+        if (fsm.pv.IsMine)
+            fsm.pv.RPC(nameof(fsm.RPC_PlayClip), RpcTarget.Others, "Spawn");
+
+        // 2) 잠시 무적
         fsm.IsInvincible = true;
-        if (fsm.Anim != null)
-        {
-            fsm.pv.RPC(nameof(ServantFSM.RPC_PlayClip), RpcTarget.Others, "Spawn");
-            fsm.Anim.Play("Spawn", 0);
-        }
 
-        // 3) 스폰 위치 범위 내 즉시 데미지
-        var hits = Physics.OverlapSphere(transform.position, damageRadius, enemyLayerMask);
-        foreach (var c in hits)
-            if (c.GetComponentInParent<IDamageable>() is IDamageable d)
-                d.TakeDamage(damageAmount,transform.position, AttackerType.PinkPlayer);
-
-        // 4) 기다림 후 분기
-        if (PhotonNetwork.IsMasterClient)
-            fsm.StartCoroutine(SpawnRoutine());
+        // 4) 무적 해제 타이머
+        invCo = fsm.StartCoroutine(InvincibleRoutine());
     }
 
-    IEnumerator SpawnRoutine()
+    public override void Execute()
     {
-        yield return new WaitForSeconds(spawnAnimDuration);
-
-        // 무적 해제
-        fsm.IsInvincible = false;
-
-        // 주변에 적이 있으면 곧장 공격, 없으면 Wander로
-        if(fsm.TargetEnemy != null && Vector3.SqrMagnitude(fsm.TargetEnemy.position - fsm.transform.position)<=fsm.attackRange * fsm.attackRange)
-            fsm.TransitionToState(typeof(ServantWaitCoolState));
-        else
-            fsm.TransitionToState(typeof(ServantIdleState));
+        // (원하시면 대기→다른 상태로 자동 전환할 로직 추가)
     }
 
-    public override void Execute() { }
-    public override void Exit() { }
+    public override void Exit()
+    {
+        if (invCo != null)
+            fsm.StopCoroutine(invCo);
+        fsm.IsInvincible = false;
+    }
+
+    private IEnumerator InvincibleRoutine()
+    {
+        yield return new WaitForSeconds(invincibleTime);
+        fsm.IsInvincible = false;
+        fsm.TransitionToState(typeof(ServantIdleState));
+    }
 }

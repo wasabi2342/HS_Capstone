@@ -18,6 +18,7 @@ public class DeadState : BaseState
         if (fsm.TryGetComponent(out Collider col)) col.enabled = false;
 
         /* 애니메이션 */
+        fsm.Anim.speed = 1f;  // 애니메이션 속도 초기화
         fsm.PlayDirectionalAnim("Death");
 
         /*  몬스터 카운트 감소 */

@@ -4,8 +4,7 @@ using UnityEngine.AI;
 
 public class ChaseState : BaseState
 {
-    float atkChkT, destT;
-    float chaseTimer = 0f;
+    float atkChkT, destT, chaseTimer = 0f;
     public ChaseState(EnemyFSM f) : base(f) { }
 
     public override void Enter()
@@ -16,9 +15,9 @@ public class ChaseState : BaseState
             agent.speed = status.moveSpeed *
                           (status.chaseSpeedMultiplier > 0 ? status.chaseSpeedMultiplier : 1f);
         }
-        fsm.PlayDirectionalAnim("Walk");
-        chaseTimer = 0f;
-        atkChkT = destT = 0f;
+
+        fsm.PlayDirectionalAnim("Chase");
+        chaseTimer = atkChkT = destT = 0f;
     }
 
     public override void Execute()
@@ -65,7 +64,7 @@ public class ChaseState : BaseState
                 if (!agent.pathPending)
                     agent.SetDestination(detour);
 
-                fsm.PlayDirectionalAnim("Walk");
+                fsm.PlayDirectionalAnim("Chase");
                 return;
             }
             RefreshFacingToTarget();
@@ -78,7 +77,7 @@ public class ChaseState : BaseState
             if (!agent.pathPending)
                 agent.SetDestination(mid);
 
-            fsm.PlayDirectionalAnim("Walk");
+            fsm.PlayDirectionalAnim("Chase");
             return;
         }
 
@@ -99,7 +98,7 @@ public class ChaseState : BaseState
             return;
         }
 
-        fsm.PlayDirectionalAnim("Walk");
+        fsm.PlayDirectionalAnim("Chase");
     }
 
     public override void Exit() { }
