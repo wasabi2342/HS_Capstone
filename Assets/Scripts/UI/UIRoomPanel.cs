@@ -101,7 +101,8 @@ public class UIRoomPanel : UIBase
 
         for (int i = 0; i < skillIcons.Length; i++)
         {
-            skillIcons[i].GetComponent<Image>().sprite = Resources.Load<Sprite>($"SkillIcon/{(Characters)(selectIndex % (int)Characters.Max)}/{(Skills)i}_None");
+            Debug.Log($"SkillIcon/{(Characters)(selectIndex % (int)Characters.Max)}/{(Skills)i}_{Blessings.None}");
+            skillIcons[i].GetComponent<Image>().sprite = Resources.Load<Sprite>($"SkillIcon/{(Characters)(selectIndex % (int)Characters.Max)}/{(Skills)i}_{Blessings.None}");
             int index = i; // 지역 변수로 캡처
             skillIcons[i].onClick.AddListener(() => OnClickedSkillIconButton(index));
         }
