@@ -31,8 +31,15 @@ public class PinkPlayerController : ParentPlayerController
 
     [Header("서번트 소환 설정")]
     [SerializeField] private GameObject servantPrefab;
+    [SerializeField] private GameObject timeServantPrefab; // 이는 시간 가호 쉬프트를 먹었을 때 (죽음의 망자들) 사용 될 프리팹
     [SerializeField] private Vector3 servantSpawnOffset = new Vector3(0f, 0.5f, 0f);
-    [SerializeField] private int maxServants = 8;
+    [SerializeField] private int DefaultMaxServants = 8;
+    private const int TimeMaxServants = 13; // 시간 가호 소환수 최대 개체 수 
+
+    private int CurrentMaxServants =>
+    runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil == 2
+    ? TimeMaxServants
+    : DefaultMaxServants;
 
     private List<ServantFSM> summonedServants = new List<ServantFSM>();
     [Header("궁극기 설정")]
@@ -478,9 +485,9 @@ public class PinkPlayerController : ParentPlayerController
         {
             if (cooldownCheckers[(int)Skills.Shift_L].CanUse() && nextState < PinkPlayerState.Skill)
             {
-                if (myServants.Count >= MAX_SERVANTS)
+                if (myServants.Count >= CurrentMaxServants)
                 {
-                    Debug.Log("최대 소환수 개수에 도달했습니다.");
+                    Debug.Log($"최대 소환수 개수({CurrentMaxServants})에 도달함.");
                     return;
                 }
 
@@ -506,6 +513,14 @@ public class PinkPlayerController : ParentPlayerController
     [PunRPC]
     private void RPC_SpawnServant(int ownerViewID)
     {
+
+        int devilLevel = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil;
+        // 시간가호->  TimeServant, 그 외엔 기본 Servant
+        GameObject prefabToSpawn = (devilLevel == 2)
+            ? timeServantPrefab
+            : servantPrefab;
+
+
         Vector3 spawnPos = transform.position + servantSpawnOffset;
         GameObject servant = PhotonNetwork.Instantiate(servantPrefab.name, spawnPos, Quaternion.identity);
         ServantFSM servantFSM = servant.GetComponent<ServantFSM>();
@@ -702,9 +717,11 @@ public class PinkPlayerController : ParentPlayerController
     public void OnAttackStack()
     {
         //if (currentState != PinkPlayerState.BasicAttack) return;
-        if (R_attackStack >= 8)
+        // 시간가호  max 13, 그 외엔 8
+        int maxStack = runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil == 2 ? 13 : 8;
+        if (R_attackStack >= maxStack)
         {
-            Debug.Log($"R_attackStack 최대치({R_attackStack}) 도달, 더 안올라감");
+            Debug.Log($"R_attackStack 최대치({maxStack}) 도달, 더 안올라감");
             return;
         }
         R_attackStack++;

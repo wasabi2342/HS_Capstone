@@ -239,7 +239,7 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITaunta
                        ?.RemoveServantFromList(this);
     }
 
-    // ─── 여기에 추가: 소환수 Death Animation Event로 호출 ─────────────────
+    // ─── 소환수 죽을 때 데미지 호출 ─────────────────
     /// <summary>
     /// Animation Event로 호출.
     /// Devil 레벨이 3일 때만 사망 이펙트를 생성·동기화합니다.
