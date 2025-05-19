@@ -305,12 +305,12 @@ public class WhitePlayerController : ParentPlayerController
 
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-                //animator.SetBool("Pre-Input", true);
+                animator.SetBool("Pre-Input", true);
 
                 if (PhotonNetwork.IsConnected)
                 {
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                    //photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
+                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
                 }
             }
         }
