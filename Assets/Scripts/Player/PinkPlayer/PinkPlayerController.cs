@@ -1055,6 +1055,11 @@ public class PinkPlayerController : ParentPlayerController
             attackStack = animator.GetInteger("AttackStack");
         }
 
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
         // 평타 데미지 계산
         float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
         float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower +
@@ -1102,6 +1107,11 @@ public class PinkPlayerController : ParentPlayerController
             attackStack = animator.GetInteger("AttackStack");
         }
 
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
         // 차징 스킬 데미지 계산
         float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                        runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
@@ -1143,6 +1153,11 @@ public class PinkPlayerController : ParentPlayerController
     {
         if (!photonView.IsMine)
             attackStack = animator.GetInteger("AttackStack");
+
+        if (!photonView.IsMine)
+        {
+            return;
+        }
 
         // 차징 스킬 데미지 계산
         float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
@@ -1219,6 +1234,11 @@ public class PinkPlayerController : ParentPlayerController
             attackStack = animator.GetInteger("AttackStack");
         }
 
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
         // 시프트 스킬 데미지 계산
         float damage = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                        runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
@@ -1258,6 +1278,11 @@ public class PinkPlayerController : ParentPlayerController
     // 태클 이펙트 생성
     public void CreateTackleSkillEffect()
     {
+
+        if (!photonView.IsMine)
+        {
+            return;
+        }
 
         // 태클 스킬 데미지 계산
         float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
@@ -1300,6 +1325,11 @@ public class PinkPlayerController : ParentPlayerController
     // 스페이스 이펙트 컨테이너에 효과만 나타나도록
     public void CreateSpaceSkillEffect()
     {
+
+        if (!photonView.IsMine)
+        {
+            return;
+        }
         // Photon에 접속 중이 아닐 때 photonView.IsMine 값은 false로 처리
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
