@@ -504,7 +504,7 @@ public class PinkPlayerController : ParentPlayerController
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                    photonView.RPC("RPC_SpawnServant", RpcTarget.MasterClient, photonView.ViewID);
+                    photonView.RPC("RPC_SpawnServant", RpcTarget.MasterClient, photonView.ViewID, runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil);
                 }
             }
 
@@ -513,10 +513,10 @@ public class PinkPlayerController : ParentPlayerController
 
     // 실제 소환수 소환 로직 분리
     [PunRPC]
-    private void RPC_SpawnServant(int ownerViewID)
+    private void RPC_SpawnServant(int ownerViewID, int blessingIndex)
     {
 
-        int devilLevel = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil;
+        int devilLevel = blessingIndex;
         // 시간가호->  TimeServant, 그 외엔 기본 Servant
         string prefabName = (devilLevel == 2)
         ? timeServantPrefab.name    // 인스펙터에 할당된 TimeServant 프리팹의 이름
