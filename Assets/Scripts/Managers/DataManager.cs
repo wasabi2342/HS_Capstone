@@ -17,6 +17,10 @@ public class DataManager : MonoBehaviour
     public List<SpecialEffectData> effectList;
     public List<BlessingEffectLinkData> linkList;
     public List<BasicAttackComboData> basicAttackComboDatas;
+    public List<R_AttackComboData> r_AttackComboDatas;
+
+    public SettingData settingData;
+    private string settingDataPath;
 
     public static DataManager Instance { get; private set; }
 
