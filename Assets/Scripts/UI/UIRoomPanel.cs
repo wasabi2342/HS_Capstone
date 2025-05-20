@@ -79,6 +79,8 @@ public class UIRoomPanel : UIBase
     void Start()
     {
         Init();
+
+        OnClickedSkillIconButton(0);
     }
 
     public override void Init()
@@ -222,6 +224,7 @@ public class UIRoomPanel : UIBase
                 { "SelectCharacter", ((Characters)(selectIndex % (int)Characters.Max)).ToString() }
             });
 
+        OnClickedSkillIconButton(0);
     }
 
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
@@ -272,7 +275,7 @@ public class UIRoomPanel : UIBase
         },
         () =>
         {
-            if(UIManager.Instance.ReturnPeekUI() as UIConfirmPanel)
+            if (UIManager.Instance.ReturnPeekUI() as UIConfirmPanel)
             {
                 UIManager.Instance.ClosePeekUI();
             }
@@ -322,10 +325,12 @@ public class UIRoomPanel : UIBase
         if (!PhotonNetwork.OfflineMode)
         {
             PhotonNetwork.JoinLobby();
+            UIManager.Instance.CloseAllUI();
             UIManager.Instance.OpenPanelInOverlayCanvas<UILobbyPanel>();
         }
         else
         {
+            UIManager.Instance.CloseAllUI();
             UIManager.Instance.OpenPanelInOverlayCanvas<UiStartPanel>();
         }
     }
