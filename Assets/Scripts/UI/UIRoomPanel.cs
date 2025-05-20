@@ -41,6 +41,16 @@ public class UIRoomPanel : UIBase
     [SerializeField]
     private RawImage skillRawImage;
 
+
+    [SerializeField]
+    private Image readyImage;
+    [SerializeField]
+    private Sprite readySprite;
+    [SerializeField]
+    private Sprite unReadySprite;
+    [SerializeField]
+    private TextMeshProUGUI readyText;
+
     private Dictionary<int, UIPlayerInfoPanel> players = new Dictionary<int, UIPlayerInfoPanel>();
 
     private bool isReady;
@@ -298,6 +308,12 @@ public class UIRoomPanel : UIBase
             });
 
             characterImageAnimator.SetBool("ready", isReady);
+
+            readyImage.sprite = isReady ? readySprite : unReadySprite;
+            readyText.text = isReady ? "READY!" : "READY";
+
+            leftArrowButton.interactable = !isReady;
+            rightArrowButton.interactable = !isReady;
         }
     }
 
