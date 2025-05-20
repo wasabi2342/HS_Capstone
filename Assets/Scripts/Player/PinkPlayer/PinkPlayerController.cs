@@ -920,7 +920,7 @@ public class PinkPlayerController : ParentPlayerController
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true, animator.speed);
 
         // Photon에 접속 중이든 아니든, 로컬에서 이펙트를 생성하는 코드
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
@@ -995,7 +995,7 @@ public class PinkPlayerController : ParentPlayerController
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true, animator.speed);
 
         var prefab = Resources.Load<SkillEffect>(effectPath);
         if (prefab == null)
@@ -1045,7 +1045,7 @@ public class PinkPlayerController : ParentPlayerController
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true, animator.speed);
 
         // Photon에 접속 중이든 아니든, 로컬에서 이펙트를 생성하는 코드
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
@@ -1096,7 +1096,7 @@ public class PinkPlayerController : ParentPlayerController
         // 다른 클라이언트에게도 이펙트를 생성하도록 RPC 호출
         if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true, animator.speed);
         }
 
         // Photon 연결 여부에 따른 이펙트 생성
@@ -1146,7 +1146,7 @@ public class PinkPlayerController : ParentPlayerController
         // 다른 클라이언트에게도 이펙트를 생성하도록 RPC 호출
         if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true, animator.speed);
         }
 
         // Photon 연결 여부에 따른 이펙트 생성
@@ -1184,7 +1184,7 @@ public class PinkPlayerController : ParentPlayerController
             : $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_left_{devil}";
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
-            photonView.RPC("CreateAnimation", RpcTarget.Others, hitPath, effectPosition, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, hitPath, effectPosition, true, animator.speed);
 
         var hitFx = Instantiate(
             Resources.Load<SkillEffect>(hitPath),
@@ -1219,7 +1219,7 @@ public class PinkPlayerController : ParentPlayerController
                 );
 
                 if (PhotonNetwork.IsConnected && photonView.IsMine)
-                    photonView.RPC("CreateAnimation", RpcTarget.Others, chargePath, effectPosition, true);
+                    photonView.RPC("CreateAnimation", RpcTarget.Others, chargePath, effectPosition, true, animator.speed);
 
                 var chargeFx = Instantiate(
                     Resources.Load<SkillEffect>(chargePath),
@@ -1273,7 +1273,7 @@ public class PinkPlayerController : ParentPlayerController
         // 다른 클라이언트에게도 이펙트를 생성하도록 RPC 호출
         if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true, animator.speed);
         }
 
         // Photon 연결 여부에 관계없이 로컬에서 이펙트 생성
@@ -1318,7 +1318,7 @@ public class PinkPlayerController : ParentPlayerController
         // 다른 클라이언트에게도 이펙트를 생성하도록 RPC 호출
         if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true, animator.speed);
         }
 
         // Photon 연결 여부에 관계없이 로컬에서 이펙트 생성
@@ -1353,9 +1353,9 @@ public class PinkPlayerController : ParentPlayerController
 
 
     [PunRPC]
-    public override void CreateAnimation(string name, Vector3 pos, bool isChild)
+    public override void CreateAnimation(string name, Vector3 pos, bool isChild, float speed)
     {
-        base.CreateAnimation(name, pos, isChild);
+        base.CreateAnimation(name, pos, isChild, speed);
     }
 
     public void GetUltimateBonus()
