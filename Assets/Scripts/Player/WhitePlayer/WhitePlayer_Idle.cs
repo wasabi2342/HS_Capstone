@@ -10,8 +10,8 @@ public class WhitePlayer_Idle : StateMachineBehaviour
     {
         if (photonView == null)
             photonView = animator.GetComponent<PhotonView>();
-        if (PhotonNetwork.IsConnected && !photonView.IsMine)
-            return;
+        //if (PhotonNetwork.IsConnected && !photonView.IsMine)
+        //    return;
 
         if (whitePlayerController == null)
             whitePlayerController = animator.GetComponent<WhitePlayerController>();

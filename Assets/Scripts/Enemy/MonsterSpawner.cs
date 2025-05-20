@@ -4,14 +4,15 @@ using UnityEngine.AI;
 using Photon.Pun;
 
 /// <summary>
-/// • SpawnArea 안에서 MonsterSpawnInfo 배열대로 몬스터를 Instantiate  
-/// • 부모‑자식 관계 · SpawnArea 참조 · NavMesh 워프를 전 클라이언트에 맞춰 동기화  
-/// • **StageManager**가 wave 마다 SpawnMonsters() 를 호출한다.
+/// SpawnArea 안에서 MonsterSpawnInfo 배열대로 몬스터를 Instantiate  
+///     부모‑자식 관계 · SpawnArea 참조 · NavMesh 워프를 전 클라이언트에 맞춰 동기화  
+///     **StageManager**가 wave 마다 SpawnMonsters() 를 호출한다.
 /// </summary>
 [RequireComponent(typeof(PhotonView))]
 public class MonsterSpawner : MonoBehaviourPun
 {
     [SerializeField] private SpawnArea spawnArea;   // 없어도 부모에서 자동 탐색
+
 
     void Awake()
     {
@@ -21,14 +22,14 @@ public class MonsterSpawner : MonoBehaviourPun
         if (!spawnArea)
             Debug.LogError("[MonsterSpawner] SpawnArea not found!", this);
     }
-
+    
     public void SpawnMonsters(MonsterSpawnInfo[] infos)
     {
         if (!PhotonNetwork.IsMasterClient || spawnArea == null) return;
-
         foreach (var info in infos)
         {
-            for (int i = 0; i < Mathf.Max(1, info.count); i++)
+            int spawnCount = info.count;
+            for (int i = 0; i < spawnCount; i++)
             {
                 /* 1️⃣ 위치 선정 */
                 Vector3 pos = spawnArea.GetRandomPointInsideArea();

@@ -77,7 +77,7 @@ public class UICreateRoomPanel : UIBase
             // 비밀번호를 로비에서 볼 수 있게 설정
             roomOptions.CustomRoomPropertiesForLobby = new string[] { "Password" };
 
-            PhotonNetworkManager.Instance.CreateRoom(roomNameInputField.text, roomOptions);
+            PhotonNetworkConnectManager.Instance.CreateRoom(roomNameInputField.text, roomOptions);
         }
         else
         {

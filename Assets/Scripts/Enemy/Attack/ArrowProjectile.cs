@@ -2,38 +2,53 @@
 using Photon.Pun;
 
 /// <summary>
-/// Skeleton 화살 투사체 – 직선 이동·충돌·파괴
+/// Skeleton 화살 프로젝타일
+///  ─ MasterClient(PhotonView.IsMine)만 판정
+///  ─ Player  Servant 레이어에만 데미지 전달
+///  ─ 충돌 후 즉시 파괴
 /// </summary>
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody), typeof(PhotonView))]
 public class ArrowProjectile : MonoBehaviourPun
 {
-    public float speed = 0.2f;   // m/s
-    public float lifeTime = 4f;    // 초
-    public float overrideDamage = -1f; // 음수면 EnemyStatus.damage 사용
+    GameObject owner;            // 쏜 Skeleton
+    float damage;                // EnemyStatusSO.attackDamage
+    [SerializeField] LayerMask victimMask;
 
-    float timer;
-    void Awake()
+    /* ───── 초기화 ───── */
+    public void Init(GameObject ownerObj, float dmg,
+                     Vector3 dir, float speed, float lifeTime)
     {
-        Debug.Log($"[ArrowProjectile] Spawned by {photonView.Owner.NickName}");
+        owner = ownerObj;
+        damage = dmg;
+
+        var rb = GetComponent<Rigidbody>();
+        rb.useGravity = false;
+        rb.linearVelocity = dir.normalized * speed;
+
+        /* 오른쪽(0°) / 왼쪽(180°) 회전 고정 */
+        transform.rotation = (dir.x < 0)
+            ? Quaternion.Euler(0, 0, 180)
+            : Quaternion.identity;
+
+        Destroy(gameObject, lifeTime);
     }
 
-    void FixedUpdate()
-    {
-        transform.position += transform.forward * speed * Time.fixedDeltaTime;
-
-        timer += Time.fixedDeltaTime;
-        if (timer >= lifeTime && photonView.IsMine)
-            PhotonNetwork.Destroy(gameObject);
-    }
+    /* ───── 충돌 판정 ───── */
     void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("Player")) return;
+        /* MasterClient만 데미지 계산 */
+        if (!photonView.IsMine) return;
 
-        IDamageable dmg = other.GetComponentInParent<IDamageable>();
-        if (dmg != null)
-            //dmg.TakeDamage(overrideDamage > 0 ? overrideDamage : 0f);
+        /* 자기 자신(Skeleton) 무시 */
+        if (other.gameObject == owner) return;
 
-        if (photonView.IsMine)
-            PhotonNetwork.Destroy(gameObject);
+        /* 피해를 줄 레이어인가? */
+        if ((victimMask.value & (1 << other.gameObject.layer)) == 0) return;
+
+        /* IDamageable 찾고 데미지 적용 */
+        if (other.TryGetComponent(out IDamageable hp))
+            hp.TakeDamage(damage, transform.position);
+
+        PhotonNetwork.Destroy(gameObject);      // 화살 파괴 (모두에게 동기화)
     }
 }

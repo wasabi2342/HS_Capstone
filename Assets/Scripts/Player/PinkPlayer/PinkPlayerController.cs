@@ -1505,10 +1505,12 @@ public class PinkPlayerController : ParentPlayerController
         stunCoroutine = StartCoroutine(CoStunDuration());
     }
 
+    private float stunElapsed;
+
     private IEnumerator CoStunDuration()
     {
         float stunDuration = 30f;
-        float elapsed = 0f;
+        stunElapsed = 0f;
 
         if (photonView.IsMine)
         {
@@ -1518,13 +1520,13 @@ public class PinkPlayerController : ParentPlayerController
             hpBar.enabled = false;  // 기절 상태에선 체력바 비활성화
         }
 
-        while (elapsed < stunDuration && currentState == PinkPlayerState.Stun)
+        while (stunElapsed < stunDuration && currentState == PinkPlayerState.Stun)
         {
-            elapsed += Time.deltaTime;
+            stunElapsed += Time.deltaTime;
 
             if (photonView.IsMine)
             {
-                stunSlider.fillAmount = 1 - (elapsed / stunDuration);
+                stunSlider.fillAmount = 1 - (stunElapsed / stunDuration);
             }
 
             yield return null;
@@ -1540,6 +1542,30 @@ public class PinkPlayerController : ParentPlayerController
             stunSlider.gameObject.SetActive(false);
             stunOverlay.enabled = false;
         }
+    }
+
+    public override void ReduceReviveTime(float reduceTime = 1.0f)
+    {
+        if (photonView.IsMine)
+        {
+            OnHitEvent.Invoke();
+            stunElapsed += reduceTime;
+        }
+        else
+        {
+            photonView.RPC("RPC_ReduceReviveTime", photonView.Owner, reduceTime);
+        }
+    }
+
+    [PunRPC]
+    public void RPC_ReduceReviveTime(float reduceTime)
+    {
+        ReduceReviveTime(reduceTime);
+    }
+
+    public override bool IsStunState()
+    {
+        return currentState == PinkPlayerState.Stun;
     }
 
     public void Revive()

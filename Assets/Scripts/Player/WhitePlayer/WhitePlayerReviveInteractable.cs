@@ -8,6 +8,8 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
     private PhotonView otherPhotonView;
     private PhotonView localPhotonView;
 
+    private bool canInteract = true;
+
     private void Awake()
     {
         whitePlayer = GetComponentInParent<WhitePlayerController>();
@@ -22,8 +24,18 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
         }
 
         // 같은 팀일 때만 부활 상호작용
-        if (IsSameTeam(localPhotonView, otherPhotonView))
+        if (canInteract && IsSameTeam(localPhotonView, otherPhotonView))
         {
+            canInteract = false;
+
+            if (PhotonNetwork.IsConnected)
+            {
+                if (photonView != null)
+                {
+                    photonView.RPC("SyncCanInteract", RpcTarget.Others, false);
+                }
+            }
+
             base.OnInteract(ctx);
         }
         //whitePlayer.HandleReviveInteraction(ctx);
@@ -41,7 +53,7 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
             otherPhotonView = otherView;
 
         Debug.Log("부활 상호작용 enter");
-        if (IsSameTeam(localPhotonView, otherPhotonView))
+        if (canInteract && IsSameTeam(localPhotonView, otherPhotonView))
         {
             base.OnTriggerEnter(other);
         }
@@ -49,12 +61,7 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
 
     protected override void OnTriggerExit(Collider other)
     {
-        if (whitePlayer.currentState != WhitePlayerState.Stun)
-        {
-            return;
-        }
-        if (IsSameTeam(localPhotonView, otherPhotonView))
-            base.OnTriggerExit(other);
+        base.OnTriggerExit(other);
 
         Debug.Log("부활 상호작용 exit");
     }
@@ -72,6 +79,16 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
     {
         base.OnCanceledEvent();
 
+        canInteract = true;
+
+        if (PhotonNetwork.IsConnected)
+        {
+            if (photonView != null)
+            {
+                photonView.RPC("SyncCanInteract", RpcTarget.Others, true);
+            }
+        }
+
         Debug.Log("부활 상호작용 cancel");
     }
 
@@ -83,15 +100,20 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
     }
     private bool IsSameTeam(PhotonView localView, PhotonView otherView)
     {
-        // TeamId를 가져오는데 실패하면 기본값으로 -1을 사용하고, 기본적으로 같은 팀으로 처리
+        if (localView == null || otherView == null)
+        {
+            return false;
+        }
+
+        // TeamId를 가져오는데 실패하면 기본값으로 -999을 사용하고, 기본적으로 같은 팀으로 처리
         if (!TryGetTeamId(localView, out int myTeamId))
         {
-            myTeamId = -1; // TeamId가 없으면 기본값 -1
+            myTeamId = -999;
         }
 
         if (!TryGetTeamId(otherView, out int otherTeamId))
         {
-            otherTeamId = -1; // TeamId가 없으면 기본값 -1
+            otherTeamId = -999;
         }
 
         // TeamId가 설정되지 않았거나 같은 팀일 때 true 반환
@@ -108,4 +130,11 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
         teamId = -1;
         return false;
     }
+
+    [PunRPC]
+    public void SyncCanInteract(bool value)
+    {
+        canInteract = value;
+    }
+
 }

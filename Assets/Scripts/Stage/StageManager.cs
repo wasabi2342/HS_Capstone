@@ -1,6 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
 using System.Collections.Generic;
+using System.Linq;
 
 public class StageManager : MonoBehaviour
 {
@@ -86,39 +87,81 @@ public class StageManager : MonoBehaviour
     {
         // 실제 프로젝트 로직에 맞춰 구현
     }
+    // ───────────────────────────────────────────────────────────── StageManager.cs
     void SpawnWave(int waveIdx)
     {
-        currentWave = waveIdx;
+        /* ───────── 0) 유효성 검사 ───────── */
+        if (currentStageSettings == null)
+        { Debug.LogError("[Stage] currentStageSettings 가 NULL!"); return; }
 
-        // --- 첫 웨이브(0)일 땐 SpawnArea 프리팹 생성 ---
+        if (waveIdx < 0 || waveIdx >= currentStageSettings.waves.Length)
+        { Debug.LogError($"[Stage] 잘못된 waveIdx={waveIdx}"); return; }
+
+        currentWave = waveIdx;
+        Debug.Log($"[Stage] ===== SpawnWave({waveIdx}) =====");
+
+        /* ───────── 1) SpawnArea 프리팹 로드 & 웨이브 0 에서만 생성 ───────── */
+        var spawnAreaPrefab = Resources.Load<GameObject>(spawnAreaPrefabName);
+        if (spawnAreaPrefab == null)
+        {
+            Debug.LogError($"[Stage] Resources.Load('{spawnAreaPrefabName}') 실패 ▶ 경로/이름 확인!");
+            return;
+        }
+
         if (waveIdx == 0)
         {
-            foreach (var setting in currentStageSettings.waves[0].spawnAreaSettings)
+            var areaSettings = currentStageSettings.waves[0].spawnAreaSettings;
+            Debug.Log($"[Stage] SpawnArea 생성 개수 = {areaSettings.Length}");
+
+            foreach (var s in areaSettings)
             {
-                var areaGO = PhotonNetwork.Instantiate(
-                    spawnAreaPrefabName, setting.position, spawnAreaRotation);
+                var areaGO = PhotonNetwork.Instantiate(spawnAreaPrefabName, s.position, spawnAreaRotation);
+                Debug.Log($"[Stage]   SpawnArea 인스턴스 {(areaGO ? "OK" : "FAIL")} @ {s.position}");
+
+                if (!areaGO) continue;
                 spawnAreaInstances.Add(areaGO);
 
-                // 반경 설정
+                /* 반경 동기화 */
                 var area = areaGO.GetComponent<SpawnArea>();
-                area.SetRadius(setting.radius);
+                if (area == null)
+                    Debug.LogError("[Stage]   SpawnArea.cs 없음!", areaGO);
+                else
+                {
+                    area.SetRadius(s.radius);
+                    Debug.Log($"[Stage]   반경 r={s.radius}");
+                }
             }
         }
 
-        // --- 해당 웨이브 몬스터만 스폰 ---
+        /* ───────── 2) 난이도 스케일링 값 계산 ───────── */
+        int pCnt = PhotonNetwork.CurrentRoom.PlayerCount;
+        float diffMul = DifficultyManager.Instance.CountMul(pCnt);
+        Debug.Log($"[Stage] playerCount={pCnt}, diffMul={diffMul:0.00}");
+
+        /* ───────── 3) 몬스터 스폰 ───────── */
         for (int i = 0; i < spawnAreaInstances.Count; i++)
         {
-            var spawner = spawnAreaInstances[i]
-                .GetComponentInChildren<MonsterSpawner>();
-            if (spawner != null)
+            var spawner = spawnAreaInstances[i].GetComponentInChildren<MonsterSpawner>();
+            if (spawner == null)
             {
-                var infos = currentStageSettings
-                    .waves[waveIdx].spawnAreaSettings[i]
-                    .monsterSpawnInfos;
-                spawner.SpawnMonsters(infos);
+                Debug.LogWarning($"[Stage] MonsterSpawner 없음 (area idx={i})", spawnAreaInstances[i]);
+                continue;
             }
+
+            /* 원본 -> 스케일링 정보 생성 + 로그 */
+            var baseInfos = currentStageSettings.waves[waveIdx].spawnAreaSettings[i].monsterSpawnInfos;
+            var scaledInfos = baseInfos.Select(info =>
+            {
+                int cnt = Mathf.CeilToInt(info.count * diffMul);
+                Debug.Log($"[Stage]   요청 : {info.monsterPrefabName} ×{cnt}");
+                return new MonsterSpawnInfo { monsterPrefabName = info.monsterPrefabName, count = cnt };
+            }).ToArray();
+
+            spawner.SpawnMonsters(scaledInfos);
         }
     }
+
+
     public void OnAllMonsterCleared()
     {
         if (!PhotonNetwork.IsMasterClient) return; // 마스터 클라이언트만 실행

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -18,7 +19,7 @@ public class UISkillInfoPanel : UIBase
     [SerializeField]
     private UISkillDataSlot[] dataSlots = new UISkillDataSlot[5];
 
-    private System.Action<InputAction.CallbackContext> closeUIAction;
+    private Action<InputAction.CallbackContext> closeUIAction;
 
     private void Start()
     {

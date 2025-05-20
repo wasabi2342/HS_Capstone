@@ -493,9 +493,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     [PunRPC]
     public virtual void CreateAnimation(string name, Vector3 pos, bool isChild, float speed)
     {
-        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(name), pos, Quaternion.identity);
-        skillEffect.SetAttackSpeed(speed);
-        if (isChild)
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(name), transform.position, Quaternion.identity);
+        if(isChild)
             skillEffect.transform.parent = transform;
     }
 
@@ -525,4 +524,13 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         Debug.Log($"TeamId가 {teamId}로 설정되었습니다.");
     }
 
+    public virtual bool IsStunState()
+    {
+        return false;
+    }
+
+    public virtual void ReduceReviveTime(float reduceTime = 1.0f)
+    {
+
+    }
 }

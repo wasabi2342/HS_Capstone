@@ -144,21 +144,6 @@ public class UILobbyPanel : UIBase
         }
     }
 
-
-
-    public override void OnJoinedRoom()
-    {
-        //UIManager.Instance.CloseAllUI();
-        ////캐릭터 선택창 제거를 위한
-        ////UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIRoomPanel>();
-        //
-        //// 임시 코드
-        //if (PhotonNetwork.IsMasterClient)
-        //{
-        //    PhotonNetwork.LoadLevel("Room");
-        //}
-    }
-
     private void OnClickedCreateRoomButton()
     {
         createRoomPanel.transform.SetAsLastSibling();

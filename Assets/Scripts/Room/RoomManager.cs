@@ -184,6 +184,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
+        if (Instance == null)
+            return;
         // 네트워크로 전송되는 Instantiate 시점에 AddPlayerDic() 을 RPC 로 호출해두면 됨
         // 단, 여기에서도 혹시 누락된 원격 플레이어가 있으면 찾아서 사후 처리
         StartCoroutine(LateCheckRemotePlayer(newPlayer.ActorNumber));

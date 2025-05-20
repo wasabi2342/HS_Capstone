@@ -17,7 +17,7 @@ public class IdleState : BaseState
 
         if (PhotonNetwork.IsMasterClient)
             idleCo = fsm.StartCoroutine(IdleTimer());
-
+        fsm.Anim.speed = 1f;  // 애니메이션 속도 초기화
         detectT = 0f;
     }
 
