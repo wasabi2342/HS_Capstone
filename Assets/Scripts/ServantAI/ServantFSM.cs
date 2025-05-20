@@ -11,7 +11,6 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITaunta
     public NavMeshAgent Agent { get; private set; }
     public Animator Anim { get; private set; }
     public IMonsterAttack Attack { get; private set; }
-    public ServantSpawnAttack SpawnAttack { get; private set; }
     public PhotonView pv;
 
     public Transform OwnerPlayer { get; private set; }
@@ -60,7 +59,6 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITaunta
         Anim = GetComponentInChildren<Animator>();
         pv = GetComponent<PhotonView>();
         Attack = GetComponent<IMonsterAttack>();
-        SpawnAttack = GetComponent<ServantSpawnAttack>();
 
         currentHP = maxHealth;
 

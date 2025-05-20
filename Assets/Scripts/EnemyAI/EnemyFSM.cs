@@ -275,7 +275,18 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         nearest = FindNearest(cols);
         Target = nearest;          // 없으면 null
     }
+    void TrySwitchTargetToAttacker(Vector3 hitPos)
+    {
+        const float PICK_RADIUS = 2f;              // 피격 지점 2 m 안
+        Collider[] cols = Physics.OverlapSphere(
+                            hitPos, PICK_RADIUS,
+                            playerMask,                // EnemyFSM에 이미 존재
+                            QueryTriggerInteraction.Ignore);
 
+        Transform nearest = FindNearest(cols);      // EnemyFSM에 이미 구현돼 있음
+        if (nearest && nearest != Target)
+            Target = nearest;
+    }
     Transform FindNearest(Collider[] arr)
     {
         Transform best = null;
@@ -307,6 +318,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         var atkType = (AttackerType)t;
         if (!PhotonNetwork.IsMasterClient) return;
         lastHitPos = atkPos;
+        TrySwitchTargetToAttacker(atkPos);
         float rawDamage = damage;
         /* 실드 → HP 차감 */
         if (shield > 0f)
