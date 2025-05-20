@@ -125,7 +125,7 @@ public class PinkPlayerController : ParentPlayerController
     public void SetMoveInput(Vector2 input)
     {
         moveInput = input;
-     
+
     }
 
     // 이동 처리
@@ -236,7 +236,7 @@ public class PinkPlayerController : ParentPlayerController
 
 
     // 대쉬 처리
- 
+
     public void HandleDash()
     {
         if (currentState == PinkPlayerState.Death
@@ -271,7 +271,7 @@ public class PinkPlayerController : ParentPlayerController
             {
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-                animator.SetBool("basicattack", true);  
+                animator.SetBool("basicattack", true);
                 if (PhotonNetwork.IsConnected)
                 {
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
@@ -279,38 +279,38 @@ public class PinkPlayerController : ParentPlayerController
                 }
                 //photonView.RPC("PlayAnimation", RpcTarget.All, "basicattack");
                 currentState = PinkPlayerState.R_hit1;
-                
+
             }
 
 
 
             if (currentState == PinkPlayerState.R_hit1 || currentState == PinkPlayerState.R_hit2 || currentState == PinkPlayerState.R_hit3)
             {
-                
+
                 animator.SetBool("Pre-Input", true);
-               
+
             }
 
 
 
-          
 
 
-                //else if (currentState == PinkPlayerState.R_hit1 && animator.GetInteger("attackStack") > 2)
-                //{
-                //    animator.SetBool("basicattack", true);
-                //    Vector3 mousePos = GetMouseWorldPosition();
-                //    animator.SetBool("Right", mousePos.x > transform.position.x);
-                //    if (PhotonNetwork.IsConnected)
-                //    {
-                //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
-                //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                //    }
-                //    currentState = PinkPlayerState.R_hit3;
-                //    return;
-                //}
 
-                if (nextState <= PinkPlayerState.BasicAttack && nextState != PinkPlayerState.R_Idle)
+            //else if (currentState == PinkPlayerState.R_hit1 && animator.GetInteger("attackStack") > 2)
+            //{
+            //    animator.SetBool("basicattack", true);
+            //    Vector3 mousePos = GetMouseWorldPosition();
+            //    animator.SetBool("Right", mousePos.x > transform.position.x);
+            //    if (PhotonNetwork.IsConnected)
+            //    {
+            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
+            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+            //    }
+            //    currentState = PinkPlayerState.R_hit3;
+            //    return;
+            //}
+
+            if (nextState <= PinkPlayerState.BasicAttack && nextState != PinkPlayerState.R_Idle)
             {
 
                 Vector3 mousePos = GetMouseWorldPosition();
@@ -529,7 +529,7 @@ public class PinkPlayerController : ParentPlayerController
         GameObject servant = PhotonNetwork.Instantiate(prefabName, spawnPos, Quaternion.identity);
         ServantFSM servantFSM = servant.GetComponent<ServantFSM>();
 
-        if(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil == 1)
+        if (runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil == 1)
         {
             Debug.Log("소환수 도발!");
             servantFSM.TauntEnemy(30f); // 확실히 알려고 30초 때려박음 --> 원래 3초
@@ -637,7 +637,14 @@ public class PinkPlayerController : ParentPlayerController
         myServants.Clear();
 
         // 2) (버프 로직은 빈 함수로 두었습니다)
-        ApplyUltimateBuff(myServantsCount);
+        if (photonView.IsMine)
+        {
+            RPC_ApplyUltimateBuff(myServantsCount);
+        }
+        else
+        {
+            photonView.RPC("RPC_ApplyUltimateBuff", photonView.Owner, myServantsCount);
+        }
 
         // 3) 궁극기 애니/상태 진입
         if (photonView.IsMine)
@@ -647,11 +654,13 @@ public class PinkPlayerController : ParentPlayerController
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "ultimate", true);
         }
     }
+
     /// <summary>
     /// 희생된 소환수 개수에 따른 강화 효과 로직
     /// (현재 빈 함수 - 필요시 여기에 버프 코드를 추가하세요)
     /// </summary>
-    private void ApplyUltimateBuff(int myServantsCount)
+    [PunRPC]
+    private void RPC_ApplyUltimateBuff(int myServantsCount)
     {
         int stacks = myServantsCount;
         float totalShield = 30f * stacks;
@@ -663,7 +672,7 @@ public class PinkPlayerController : ParentPlayerController
             Debug.Log("쉴드 50으로 부여!");
         }
 
-            if (stacks > 0)
+        if (stacks > 0)
         {
             AddShield(totalShield, totalDuration);
             Debug.Log($"궁극기 쉴드: +{totalShield}HP, 지속 {totalDuration}s (스택 {stacks})");
@@ -695,7 +704,7 @@ public class PinkPlayerController : ParentPlayerController
     public void HandleUltimateEndOrFinal()
     {
         int servantCount = myServants.Count;
-        foreach(var servant in myServants)
+        foreach (var servant in myServants)
         {
             if (servant != null)
             {
@@ -866,10 +875,10 @@ public class PinkPlayerController : ParentPlayerController
         // 스택 리셋
         R_attackStack = 0;
 
-        
+
         animator.SetInteger("R_attackStack", R_attackStack);
 
-       
+
         if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
             photonView.RPC("SyncIntegerParameter", RpcTarget.Others, "R_attackStack", R_attackStack);
@@ -891,7 +900,7 @@ public class PinkPlayerController : ParentPlayerController
         float damage = (runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                         runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
 
-       
+
 
         // Photon에 접속 중인지 확인하여 isMine 설정
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
@@ -961,7 +970,7 @@ public class PinkPlayerController : ParentPlayerController
             Debug.Log($"[R-Effect] 최종 계산된 Damage = {damage}");
         }
 
-        
+
 
 
         // Photon에 접속 중인지 확인하여 isMine 설정
@@ -1195,7 +1204,7 @@ public class PinkPlayerController : ParentPlayerController
             {
                 yield return new WaitForSeconds(1f);
 
-                
+
                 string chargePath = animator.GetBool("Right")
                      ? $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_right_{devil}"
             : $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_left_{devil}";
