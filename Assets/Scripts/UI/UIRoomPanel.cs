@@ -296,6 +296,8 @@ public class UIRoomPanel : UIBase
             {
                 { "IsReady", isReady },
             });
+
+            characterImageAnimator.SetBool("ready", isReady);
         }
     }
 
