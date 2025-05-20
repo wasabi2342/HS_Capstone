@@ -529,7 +529,7 @@ public class PinkPlayerController : ParentPlayerController
         GameObject servant = PhotonNetwork.Instantiate(prefabName, spawnPos, Quaternion.identity);
         ServantFSM servantFSM = servant.GetComponent<ServantFSM>();
 
-        if (runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil == 1)
+        if (blessingIndex == 1)
         {
             Debug.Log("소환수 도발!");
             servantFSM.TauntEnemy(30f); // 확실히 알려고 30초 때려박음 --> 원래 3초
