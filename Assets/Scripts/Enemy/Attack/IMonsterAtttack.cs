@@ -7,4 +7,5 @@ public interface IMonsterAttack
     void EnableAttack();            // 콜라이더 ON
     void DisableAttack();           // 콜라이더 OFF
     void SetDirection(float sign);  // +1 = Right, -1 = Left
+    string AnimKey { get; }
 }

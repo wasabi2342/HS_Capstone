@@ -11,6 +11,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     /* ───────── Components ───────── */
     public NavMeshAgent Agent { get; private set; }
     public Animator Anim { get; private set; }
+
     PhotonView pv;
 
     /* ───────── Data ───────── */
@@ -51,7 +52,9 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     public GameObject SlashFxLeft => slashFxLeft;
 
     /* ───────── Attack Helper ───────── */
+    public IMonsterAttack[] AttackPatterns { get; private set; }
     public IMonsterAttack AttackComponent { get; private set; }
+    int attackIdx = -1;
 
     /* ───────── SpawnArea ───────── */
     SpawnArea spawnArea;
@@ -111,7 +114,8 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         maxShield = shield = enemyStatus.maxShield;
 
         /* 캐싱 */
-        AttackComponent = GetComponent<IMonsterAttack>();
+        AttackPatterns = GetComponents<IMonsterAttack>();
+        AttackComponent = AttackPatterns.Length > 0 ? AttackPatterns[0] : null;
         if (sr == null) sr = GetComponentInChildren<SpriteRenderer>(true);
 
         /* ★ EnemyAI 방식 HP/Shield UI 스폰 */
@@ -350,7 +354,31 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
             TransitionToState(typeof(DeadState));
         }
     }
+    public void SelectNextAttackPattern()
+    {
+        if (AttackPatterns == null || AttackPatterns.Length == 0) return;
+        if (AttackPatterns.Length == 1) { AttackComponent = AttackPatterns[0]; return; }
 
+        /* 1) SO가중치 → 총합 계산 */
+        float total = 0f;
+        foreach (var w in enemyStatus.attackWeights) total += w.weight;
+
+        /* 2) 룰렛 */
+        float r = Random.Range(0f, total);
+        float acc = 0f;
+        for (int i = 0; i < enemyStatus.attackWeights.Length; i++)
+        {
+            acc += enemyStatus.attackWeights[i].weight;
+            if (r <= acc)
+            {
+                string want = enemyStatus.attackWeights[i].scriptName;
+                AttackComponent = AttackPatterns.First(p => p.GetType().Name == want);
+                attackIdx = i;
+                return;
+            }
+        }
+        AttackComponent = AttackPatterns[0];      // 안전장치
+    }
     /* ─ HP / Shield UI 동기화 ─ */
     [PunRPC]
     public void UpdateHP(float r)

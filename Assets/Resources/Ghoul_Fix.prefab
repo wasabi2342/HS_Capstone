@@ -102,12 +102,12 @@ GameObject:
   - component: {fileID: 7533604380446736302}
   - component: {fileID: 7763377542229407887}
   - component: {fileID: 1919888365771260053}
-  - component: {fileID: 5100535631980958853}
-  - component: {fileID: 838009920413138150}
-  - component: {fileID: 7289110215044397794}
-  - component: {fileID: -2160177845057009080}
-  - component: {fileID: 7258404619438173730}
   - component: {fileID: 2514247890089528025}
+  - component: {fileID: 7258404619438173730}
+  - component: {fileID: 838009920413138150}
+  - component: {fileID: -2160177845057009080}
+  - component: {fileID: 5100535631980958853}
+  - component: {fileID: 833416226050226733}
   m_Layer: 7
   m_Name: Ghoul_Fix
   m_TagString: Enemy
@@ -291,7 +291,29 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &5100535631980958853
+--- !u!95 &2514247890089528025
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765914048162278020}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 8d955834b23c44a46a58abc7ba9a65fb, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7258404619438173730
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -300,12 +322,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1765914048162278020}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27b8626b102ffcb448208d0c9fc3fbb6, type: 3}
+  m_Script: {fileID: 11500000, guid: ea5701a63c9167542a109c3ca4410808, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponCollider: {fileID: 2400343500577941846}
-  lungeDistance: 1
-  lungeDuration: 0.15
 --- !u!114 &838009920413138150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -318,21 +337,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d145df9c93b686142a943def3695fa55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &7289110215044397794
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765914048162278020}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32e3650fa64b5c947bcb26d0a0da43ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  monsterType: 0
-  targetingCooldown: 3
-  retargetingTimeThreshold: 5
 --- !u!114 &-2160177845057009080
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -360,7 +364,7 @@ MonoBehaviour:
   slashFxLeft: {fileID: 2412206290288059151, guid: 90467a4335a8c894ea6952cfb2759843, type: 3}
   debugMode: 1
   zAlignTolerance: 0.4
---- !u!114 &7258404619438173730
+--- !u!114 &5100535631980958853
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -369,31 +373,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 1765914048162278020}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea5701a63c9167542a109c3ca4410808, type: 3}
+  m_Script: {fileID: 11500000, guid: 27b8626b102ffcb448208d0c9fc3fbb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!95 &2514247890089528025
-Animator:
-  serializedVersion: 7
+  weaponCollider: {fileID: 2400343500577941846}
+  lungeDistance: 0.3
+  lungeDuration: 0.15
+--- !u!114 &833416226050226733
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1765914048162278020}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 8d955834b23c44a46a58abc7ba9a65fb, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f416c9b4e109814c90e0e0b7d72a873, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponCollider: {fileID: 2400343500577941846}
+  lungeDistance: 0.4
+  lungeDuration: 0.1
 --- !u!1 &2400343500577941846
 GameObject:
   m_ObjectHideFlags: 0

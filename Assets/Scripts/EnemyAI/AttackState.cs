@@ -9,17 +9,13 @@ public class AttackState : BaseState
 
     public override void Enter()
     {
+        fsm.SelectNextAttackPattern();
         RefreshFacingToTarget();
         SetAgentStopped(true);
-
         // ─ 방향 넘겨 주기 ─
-        if (fsm.AttackComponent != null)
-            fsm.AttackComponent.SetDirection(fsm.CurrentFacing);   // 🔸
-
-        // 애니메이션 재생 ― Enable/DisableAttack 은
-        //   애니메이션 이벤트에서 호출됨
-        fsm.Anim.speed = 1f;  // 애니메이션 속도 초기화
-        fsm.PlayDirectionalAnim("Attack");
+        fsm.AttackComponent.SetDirection(fsm.CurrentFacing);
+        string clipBase = fsm.AttackComponent?.AnimKey ?? "Attack";
+        fsm.PlayDirectionalAnim(clipBase);
 
         if (PhotonNetwork.IsMasterClient)
             atkCo = fsm.StartCoroutine(AttackRoutine());

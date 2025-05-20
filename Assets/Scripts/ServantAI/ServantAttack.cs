@@ -4,7 +4,7 @@ public class ServantAttack : MonoBehaviour, IMonsterAttack
 {
     [SerializeField] GameObject weaponCollider;   // 콜라이더 오브젝트
     [SerializeField] GameObject spawnCollider;
-
+    public string AnimKey => "Attack1";
     public void SetColliderRight() => ShiftCollider(+1);
     public void SetColliderLeft() => ShiftCollider(-1);
     public void OnAttackAnimationEndEvent() => DisableAttack();
@@ -26,4 +26,5 @@ public class ServantAttack : MonoBehaviour, IMonsterAttack
         if (s >= 0f) SetColliderRight();
         else SetColliderLeft();
     }
+
 }

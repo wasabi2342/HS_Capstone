@@ -32,7 +32,16 @@ public class EnemyStatusSO : ScriptableObject
     public float attackDuration = 1.0f; // 공격 애니메이션/판정 시간 (추정)
     public float attackCoolTime = 2.0f; // 공격 후 쿨다운 (attack cool)
 
-    [Header("Attack Properties")]
+    [Header("공격력")]
     public float attackDamage = 10f; // 공격력
-    // public GameObject attackEffectPrefab; // 공격 이펙트 프리팹 (선택 사항)
+    [Header("공격 패턴")]
+    public AttackWeight[] attackWeights;
+
+    [System.Serializable]
+    public class AttackWeight
+    {
+        public string scriptName;
+        [Range(0f, 1f)]
+        public float weight = 0.5f;
+    }
 }

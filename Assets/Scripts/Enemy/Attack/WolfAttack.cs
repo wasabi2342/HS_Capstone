@@ -25,6 +25,7 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
     private float colliderActiveTimer = 0f; // 콜라이더 활성화 타이머
     private bool isColliderActive = false;  // 콜라이더 활성화 상태 추적
 
+    public string AnimKey => "Attack1";
     void Awake()
     {
         animator = GetComponent<Animator>();

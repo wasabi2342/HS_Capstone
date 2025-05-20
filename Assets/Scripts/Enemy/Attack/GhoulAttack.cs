@@ -9,7 +9,7 @@ public class GhoulAttack : MonoBehaviourPun, IMonsterAttack
 
     [Header("Lunge Settings")]
     [Tooltip("런지(전진) 거리")]
-    [SerializeField] float lungeDistance = 1.0f;
+    [SerializeField] float lungeDistance = 0.2f;
     [Tooltip("런지에 걸리는 시간")]
     [SerializeField] float lungeDuration = 0.15f;
 
@@ -17,6 +17,8 @@ public class GhoulAttack : MonoBehaviourPun, IMonsterAttack
     float facing = 1f;          // +1 ⇒ Right, –1 ⇒ Left
     bool isLunging;
     EnemyFSM fsm;               // 위치 이동에 사용
+
+    public string AnimKey => "Attack1";
 
     void Awake()
     {

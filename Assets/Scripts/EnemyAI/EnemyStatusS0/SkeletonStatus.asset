@@ -20,8 +20,8 @@ MonoBehaviour:
   moveSpeed: 1.2
   chaseSpeedMultiplier: 1.1
   navMeshSampleDistance: 3
-  maxChaseDistance: 5
-  maxChaseTime: 5
+  maxChaseDistance: 30
+  maxChaseTime: 30
   headOffset: 3.2
   hitStunTime: 0.3
   hitKnockbackStrength: 3
@@ -35,3 +35,6 @@ MonoBehaviour:
   attackDuration: 1
   attackCoolTime: 1
   attackDamage: 10
+  attackWeights:
+  - scriptName: SkeletonAttack
+    weight: 0.5
