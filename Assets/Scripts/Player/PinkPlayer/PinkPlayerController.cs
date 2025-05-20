@@ -893,7 +893,7 @@ public class PinkPlayerController : ParentPlayerController
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
-            photonView.RPC("SyncIntegerParameter", RpcTarget.Others, "R_attackStack", R_attackStack);
+            photonView.RPC("SyncIntParameter", RpcTarget.Others, "R_attackStack", R_attackStack);
         }
     }
 
