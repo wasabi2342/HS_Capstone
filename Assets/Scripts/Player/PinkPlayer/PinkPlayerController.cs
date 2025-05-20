@@ -750,6 +750,8 @@ public class PinkPlayerController : ParentPlayerController
         animator.SetInteger("R_attackStack", R_attackStack);
         AttackStackUpdate?.Invoke(R_attackStack);
         Debug.Log($"평타 스택 설정: {R_attackStack}");
+
+        SetIntParameter("R_attackStack", R_attackStack);
     }
 
 
