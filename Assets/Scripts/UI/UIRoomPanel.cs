@@ -11,6 +11,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class UIRoomPanel : UIBase
 {
@@ -50,6 +51,9 @@ public class UIRoomPanel : UIBase
     private Sprite unReadySprite;
     [SerializeField]
     private TextMeshProUGUI readyText;
+    [SerializeField]
+    private VideoPlayer videoPlayer;
+
 
     private Dictionary<int, UIPlayerInfoPanel> players = new Dictionary<int, UIPlayerInfoPanel>();
 
@@ -196,6 +200,9 @@ public class UIRoomPanel : UIBase
                 skillIcons[i].GetComponent<Image>().sprite = Resources.Load<Sprite>($"SkillIcon/SkillInfo/{(Characters)(selectIndex % (int)Characters.Max)}/{(Skills)i}_deactivate");
             }
         }
+
+        videoPlayer.clip = Resources.Load<VideoClip>($"SkillVideo/{(Characters)(selectIndex % (int)Characters.Max)}/{(Skills)index}");
+
     }
 
     private void OnClickedArrowButton(int num)
