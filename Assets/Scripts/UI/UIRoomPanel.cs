@@ -2,6 +2,7 @@ using DG.Tweening;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -21,10 +22,12 @@ public class UIRoomPanel : UIBase
     [SerializeField]
     private Button startButton;
     [SerializeField]
-    private Text roomName;
+    private TextMeshProUGUI roomName;
 
     [SerializeField]
     private Image characterImage;
+    [SerializeField]
+    private Animator characterImageAnimator;
     [SerializeField]
     private Button rightArrowButton;
     [SerializeField]
@@ -66,12 +69,12 @@ public class UIRoomPanel : UIBase
     {
         if (PhotonNetwork.IsMasterClient || !PhotonNetwork.IsConnected)
         {
-            startButton.GetComponentInChildren<Text>().text = "시작";
+            startButton.GetComponentInChildren<TextMeshProUGUI>().text = "시작";
             isReady = true;
         }
         else
         {
-            startButton.GetComponentInChildren<Text>().text = "준비";
+            startButton.GetComponentInChildren<TextMeshProUGUI>().text = "준비";
             isReady = false;
         }
 
@@ -95,14 +98,14 @@ public class UIRoomPanel : UIBase
 
         myPanel.Init(isReady, PhotonNetwork.LocalPlayer.NickName, DefeaultCharacter);
 
-        characterInfoText.text = ((Characters)(selectIndex % (int)Characters.Max)).ToString() +"의 정보";
+        characterInfoText.text = ((Characters)(selectIndex % (int)Characters.Max)).ToString() + "의 정보";
 
-        characterImage.sprite = Resources.Load<Sprite>("Sprite/" + ((Characters)(selectIndex % (int)Characters.Max)).ToString());
+        //characterImage.sprite = Resources.Load<Sprite>("Sprite/" + ((Characters)(selectIndex % (int)Characters.Max)).ToString());
+        characterImageAnimator.SetInteger("Index", (selectIndex % (int)Characters.Max));
 
         for (int i = 0; i < skillIcons.Length; i++)
         {
-            Debug.Log($"SkillIcon/{(Characters)(selectIndex % (int)Characters.Max)}/{(Skills)i}_{Blessings.None}");
-            skillIcons[i].GetComponent<Image>().sprite = Resources.Load<Sprite>($"SkillIcon/{(Characters)(selectIndex % (int)Characters.Max)}/{(Skills)i}_{Blessings.None}");
+            skillIcons[i].GetComponent<Image>().sprite = Resources.Load<Sprite>($"SkillIcon/SkillInfo/{(Characters)(selectIndex % (int)Characters.Max)}/{(Skills)i}_deactivate");
             int index = i; // 지역 변수로 캡처
             skillIcons[i].onClick.AddListener(() => OnClickedSkillIconButton(index));
         }
@@ -160,21 +163,36 @@ public class UIRoomPanel : UIBase
     private void OnClickedSkillIconButton(int index)
     {
         skillInfoTest.text = DataManager.Instance.FindSkillByBlessingKeyAndCharacter(index, 0, (selectIndex % (int)Characters.Max)).Bless_Discript;
+
+        for (int i = 0; i < skillIcons.Length; i++)
+        {
+            if (i == index)
+            {
+                skillIcons[i].GetComponent<Image>().sprite = Resources.Load<Sprite>($"SkillIcon/SkillInfo/{(Characters)(selectIndex % (int)Characters.Max)}/{(Skills)i}_activate");
+            }
+            else
+            {
+                skillIcons[i].GetComponent<Image>().sprite = Resources.Load<Sprite>($"SkillIcon/SkillInfo/{(Characters)(selectIndex % (int)Characters.Max)}/{(Skills)i}_deactivate");
+            }
+        }
     }
 
     private void OnClickedArrowButton(int num)
     {
+        skillInfoTest.text = "";
+
         selectIndex += num;
 
         selectIndex = Mathf.Abs(selectIndex);
 
-        characterImage.sprite = Resources.Load<Sprite>("Sprite/" + (Characters)(selectIndex % (int)Characters.Max));
+        //characterImage.sprite = Resources.Load<Sprite>("Sprite/" + (Characters)(selectIndex % (int)Characters.Max));
+        characterImageAnimator.SetInteger("Index", (selectIndex % (int)Characters.Max));
 
         characterInfoText.text = ((Characters)(selectIndex % (int)Characters.Max)).ToString() + "의 정보";
 
         for (int i = 0; i < skillIcons.Length; i++)
         {
-            skillIcons[i].GetComponent<Image>().sprite = Resources.Load<Sprite>($"SkillIcon/{(Characters)(selectIndex % (int)Characters.Max)}/{(Skills)i}_None");
+            skillIcons[i].GetComponent<Image>().sprite = Resources.Load<Sprite>($"SkillIcon/SkillInfo/{(Characters)(selectIndex % (int)Characters.Max)}/{(Skills)i}_deactivate");
             //int index = i; // 지역 변수로 캡처
             //skillIcons[i].onClick.AddListener(() => OnClickedSkillIconButton(index));
         }
@@ -312,7 +330,7 @@ public class UIRoomPanel : UIBase
         if (PhotonNetwork.LocalPlayer == newMasterClient)
         {
             // 마스터 클라이언트가 나 자신이면 버튼 텍스트와 상태 변경
-            startButton.GetComponentInChildren<Text>().text = "시작";
+            startButton.GetComponentInChildren<TextMeshProUGUI>().text = "시작";
             isReady = true;
 
             // 내 패널 상태도 갱신
