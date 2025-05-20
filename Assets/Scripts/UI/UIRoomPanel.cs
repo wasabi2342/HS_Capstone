@@ -7,14 +7,13 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 public class UIRoomPanel : UIBase
 {
-    [SerializeField]
-    private Button preButton;
     [SerializeField]
     private RectTransform content;
     [SerializeField]
@@ -50,9 +49,16 @@ public class UIRoomPanel : UIBase
 
     private int selectIndex = 0;
 
+    private Action<InputAction.CallbackContext> exitRoom;
+
     public override void OnDisable()
     {
         PhotonNetwork.RemoveCallbackTarget(this);
+
+        if (InputManager.Instance != null && InputManager.Instance.PlayerInput != null)
+        {
+            InputManager.Instance.PlayerInput.actions["ESC"].performed -= exitRoom;
+        }
     }
 
     public override void OnEnable()
@@ -67,6 +73,10 @@ public class UIRoomPanel : UIBase
 
     public override void Init()
     {
+        exitRoom = OnClickedPreButton;
+
+        InputManager.Instance.PlayerInput.actions["ESC"].performed += exitRoom;
+
         if (PhotonNetwork.IsMasterClient || !PhotonNetwork.IsConnected)
         {
             startButton.GetComponentInChildren<TextMeshProUGUI>().text = "시작";
@@ -88,7 +98,6 @@ public class UIRoomPanel : UIBase
         }
 
         startButton.onClick.AddListener(OnClickedStartButton);
-        preButton.onClick.AddListener(OnClickedPreButton);
 
         canStart = true;
         canStart = canStart && isReady;
@@ -96,7 +105,7 @@ public class UIRoomPanel : UIBase
         UIPlayerInfoPanel myPanel = Instantiate(playerInfoPanel);
         myPanel.transform.SetParent(content.transform, false);
 
-        myPanel.Init(isReady, PhotonNetwork.LocalPlayer.NickName, DefeaultCharacter);
+        myPanel.Init(isReady, PhotonNetwork.LocalPlayer.NickName, DefeaultCharacter, PhotonNetwork.IsMasterClient);
 
         characterInfoText.text = ((Characters)(selectIndex % (int)Characters.Max)).ToString() + "의 정보";
 
@@ -140,13 +149,13 @@ public class UIRoomPanel : UIBase
 
                 if (players.TryGetValue(otherPlayer.ActorNumber, out UIPlayerInfoPanel panel))
                 {
-                    panel.Init(isReady, otherPlayer.NickName, character);
+                    panel.Init(isReady, otherPlayer.NickName, character, kvp.Value.IsMasterClient);
                 }
                 else
                 {
                     UIPlayerInfoPanel newPanel = Instantiate(playerInfoPanel);
                     newPanel.transform.SetParent(content.transform, false);
-                    newPanel.Init(isReady, otherPlayer.NickName, character);
+                    newPanel.Init(isReady, otherPlayer.NickName, character, kvp.Value.IsMasterClient);
                     players.Add(otherPlayer.ActorNumber, newPanel);
                 }
             }
@@ -225,29 +234,41 @@ public class UIRoomPanel : UIBase
 
         if (players.TryGetValue(targetPlayer.ActorNumber, out UIPlayerInfoPanel panel))
         {
-            panel.Init(isReady, targetPlayer.NickName, character);
+            panel.Init(isReady, targetPlayer.NickName, character, targetPlayer.IsMasterClient);
         }
         else
         {
             UIPlayerInfoPanel newPanel = Instantiate(playerInfoPanel);
             newPanel.transform.SetParent(content.transform, false);
-            newPanel.Init(isReady, targetPlayer.NickName, character);
+            newPanel.Init(isReady, targetPlayer.NickName, character, targetPlayer.IsMasterClient);
             players.Add(targetPlayer.ActorNumber, newPanel);
         }
 
         CheckCanStart();
     }
 
-    public void OnClickedPreButton()
+    public void OnClickedPreButton(InputAction.CallbackContext ctx)
     {
-        if (PhotonNetwork.InRoom)
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIConfirmPanel>().Init(() =>
         {
-            PhotonNetwork.LeaveRoom();
-        }
-        else
+            if (PhotonNetwork.InRoom)
+            {
+                PhotonNetwork.LeaveRoom();
+            }
+            else
+            {
+                UIManager.Instance.OpenPanelInOverlayCanvas<UiStartPanel>();
+            }
+        },
+        () =>
         {
-            UIManager.Instance.OpenPanelInOverlayCanvas<UiStartPanel>();
-        }
+            if(UIManager.Instance.ReturnPeekUI() as UIConfirmPanel)
+            {
+                UIManager.Instance.ClosePeekUI();
+            }
+        },
+        "방을 나가시겠습니까?"
+        );
     }
 
     public void OnClickedStartButton()
@@ -322,7 +343,7 @@ public class UIRoomPanel : UIBase
 
     public void UpdateMyCharacterImage(string characterName)
     {
-        players[-1].Init(true, PlayerPrefs.GetString("Nickname"), characterName);
+        players[-1].Init(true, PlayerPrefs.GetString("Nickname"), characterName, true);
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
@@ -336,7 +357,7 @@ public class UIRoomPanel : UIBase
             // 내 패널 상태도 갱신
             if (PhotonNetwork.InRoom && players.TryGetValue(PhotonNetwork.LocalPlayer.ActorNumber, out var panel))
             {
-                panel.Init(isReady, PhotonNetwork.LocalPlayer.NickName, (string)PhotonNetwork.LocalPlayer.CustomProperties["SelectCharacter"]);
+                panel.Init(isReady, PhotonNetwork.LocalPlayer.NickName, (string)PhotonNetwork.LocalPlayer.CustomProperties["SelectCharacter"], PhotonNetwork.IsMasterClient);
             }
 
             // CustomProperties에도 반영

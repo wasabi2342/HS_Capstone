@@ -13,17 +13,26 @@ public class UIPlayerInfoPanel : UIBase
     [SerializeField]
     private TextMeshProUGUI nicknameText;
     [SerializeField]
-    private Image ReadyImage;
+    private TextMeshProUGUI readyText;
+    [SerializeField]
+    private TextMeshProUGUI hostText;
 
-    public void Init(bool isReady, string nickname, string character, UnityAction action = null)
+    public void Init(bool isReady, string nickname, string character, bool isMaster, UnityAction action = null)
     {
         if (isReady)
         {
-            ReadyImage.color = Color.green;
+            if (isMaster)
+            {
+                hostText.gameObject.SetActive(true);
+            }
+            else
+            {
+                readyText.gameObject.SetActive(true);
+            }
         }
         else
         {
-            ReadyImage.color = Color.red;
+            readyText.gameObject.SetActive(false);
         }
 
         nicknameText.text = nickname;
