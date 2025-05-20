@@ -78,6 +78,7 @@ Transform:
   - {fileID: 3196422753867012855}
   - {fileID: 6328259880005884213}
   - {fileID: 297107254552112834}
+  - {fileID: 9027814078262596519}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &-2827277185085967684
@@ -401,7 +402,7 @@ MonoBehaviour:
   hitlagTime: 0.117
   shadow: {fileID: 4496898679317726336}
   nicknameText: {fileID: 6949920731095230618}
-  footPivot: {fileID: 0}
+  footPivot: {fileID: 9027814078262596519}
   stunOverlay: {fileID: 0}
   stunSlider: {fileID: 0}
   hpBar: {fileID: 0}
@@ -436,6 +437,14 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   characterBaseStats: {fileID: 11400000, guid: 61ca03da317d77c45b67a57d535d6138, type: 2}
+  runTimeData:
+    attackPower: 0
+    attackSpeed: 0
+    moveSpeed: 0
+    cooldownReductionPercent: 0
+    abilityPower: 0
+    currentHealth: 0
+    skillWithLevel: []
   animator: {fileID: 0}
   attackStack: 0
   damageBuff: 1
@@ -454,8 +463,9 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   servantPrefab: {fileID: 1765914048162278020, guid: 390e2e1b022db20438208f07336db662, type: 3}
+  timeServantPrefab: {fileID: 1765914048162278020, guid: 467de1382c53ab14e8394c25308e7d8a, type: 3}
   servantSpawnOffset: {x: 0, y: 0, z: 0}
-  maxServants: 8
+  DefaultMaxServants: 8
   ultimateDuration: 5
   currentState: 0
   nextState: 0
@@ -1114,6 +1124,37 @@ Transform:
   - {fileID: 6888787723035522949}
   - {fileID: 3691162071401368357}
   - {fileID: 8220500137450944278}
+  m_Father: {fileID: 3671203936979291569}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5222293393027572493
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9027814078262596519}
+  m_Layer: 0
+  m_Name: FootPivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9027814078262596519
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5222293393027572493}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
   m_Father: {fileID: 3671203936979291569}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5273105044984695045

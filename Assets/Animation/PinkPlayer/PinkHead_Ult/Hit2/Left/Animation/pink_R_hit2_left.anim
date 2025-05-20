@@ -110,6 +110,13 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
+  - time: 0
+    functionName: OnAttackStack
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 2
+    messageOptions: 0
   - time: 0.1
     functionName: PinkPlayerSoundEffect
     data: ult_hit
@@ -125,21 +132,14 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 0.4
-    functionName: OnAttackLastAttckEnd
+    functionName: OnAttackAllowNextInput
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 0.4
-    functionName: OnAttackStack
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 2
-    messageOptions: 0
-  - time: 0.4
-    functionName: OnAttackAllowNextInput
+    functionName: OnAttackLastAttckEnd
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

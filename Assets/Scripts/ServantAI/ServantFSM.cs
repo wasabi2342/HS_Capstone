@@ -16,6 +16,12 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITaunta
     public Transform OwnerPlayer { get; private set; }
     public Transform TargetEnemy { get; private set; }
 
+    // PinkPlayerController 참조
+    private PinkPlayerController ownerController =>
+        OwnerPlayer != null
+            ? OwnerPlayer.GetComponent<PinkPlayerController>()
+            : null;
+
     // ─── Stats & Timers ───────────────────────────────────────
     [Header("Stats")]
     public float maxHealth = 100f;
@@ -181,6 +187,15 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITaunta
         // TODO: UI 업데이트
     }
 
+    // 도발
+
+    public void TauntEnemy(float tauntDur)
+    {
+        //float tauntDur = 5f; //도발 시간 전달
+        photonView.RPC("RPC_EnableTaunt", RpcTarget.AllBuffered, tauntDur);
+        tauntActive = true;
+    }
+
     // ─── 네트워크 위치/회전 동기화 ─────────────────────────────
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
@@ -223,4 +238,72 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITaunta
             OwnerPlayer.GetComponent<PinkPlayerController>()
                        ?.RemoveServantFromList(this);
     }
+
+    // ─── 소환수 죽을 때 데미지 호출 ─────────────────
+    /// <summary>
+    /// Animation Event로 호출.
+    /// Devil 레벨이 3일 때만 사망 이펙트를 생성·동기화합니다.
+    /// </summary>
+    public void CreateServantDeathEffect()
+    {
+        if (ownerController == null) return;
+
+        int devil = ownerController.runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil;
+        if (devil != 3) return;
+
+
+        Debug.Log("지옥의 수호자");
+        // 데미지 계산
+        float adc = ownerController.runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient;
+        float apc = ownerController.runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient;
+        float damage = (adc * ownerController.runTimeData.attackPower
+                      + apc * ownerController.runTimeData.abilityPower)
+                       * ownerController.damageBuff;
+
+        // 이펙트 경로 & 위치
+        string side = lastMoveX >= 0f ? "right" : "left";
+        string path = $"SkillEffect/PinkPlayer/pink_servant_death_{side}_{devil}";
+        Vector3 pos = transform.position;
+
+        // 1) 로컬 인스턴스
+        InstantiateDeathEffect(path, pos, damage, /*isMine*/ pv.IsMine);
+
+        // 2) 원격 동기화
+        if (pv.IsMine)
+            pv.RPC(nameof(RPC_CreateServantDeathEffectOnRemote), RpcTarget.OthersBuffered, path, pos, damage);
+    }
+
+    /// <summary>사망 이펙트를 실제 생성하는 헬퍼</summary>
+    private void InstantiateDeathEffect(string path, Vector3 pos, float dmg, bool isMine)
+    {
+        // 1) 이펙트 로드 & 인스턴스
+        var fx = Instantiate(Resources.Load<SkillEffect>(path), pos, Quaternion.identity);
+
+        // 2) PlayerBlessing 컴포넌트에서 SpecialEffect 가져오기
+        var blessingComp = ownerController.GetComponent<PlayerBlessing>();
+        var specialEffect = blessingComp != null
+            ? blessingComp.FindSkillEffect(
+                ownerController.runTimeData.skillWithLevel[(int)Skills.R].skillData.ID,
+                ownerController
+              )
+            : null;
+
+        // 3) Init 호출
+        fx.Init(
+            dmg,
+            ownerController.StartHitlag,
+            isMine,
+            specialEffect
+        );
+
+        // 4) 부모 설정
+        fx.transform.parent = transform;
+    }
+
+    [PunRPC]
+    private void RPC_CreateServantDeathEffectOnRemote(string path, Vector3 pos, float dmg)
+    {
+        InstantiateDeathEffect(path, pos, dmg, /*isMine*/ false);
+    }
 }
+

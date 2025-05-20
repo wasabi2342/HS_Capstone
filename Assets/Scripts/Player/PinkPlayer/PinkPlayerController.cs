@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections;
 using Photon.Pun;
 using UnityEngine.UI;
@@ -11,7 +11,9 @@ public enum PinkPlayerState { Idle, R_Idle, Run, tackle, BasicAttack, Hit, Dash,
 
 public class PinkPlayerController : ParentPlayerController
 {
-    [Header("´ë½¬ ¼³Á¤")]
+    public PlayerRunTimeData RuntimeData => runTimeData;
+
+    [Header("ëŒ€ì‰¬ ì„¤ì •")]
     public float dashDistance = 2f;
     public float dashDoubleClickThreshold = 0.3f;
     public float dashDuration = 0.2f;
@@ -19,25 +21,34 @@ public class PinkPlayerController : ParentPlayerController
     private Vector3 facingDirection = Vector3.right;
     //private float lastDashClickTime = -Mathf.Infinity;
 
-    [Header("Áß½ÉÁ¡ ¼³Á¤")]
-    [Tooltip("±âº» CenterPoint (¾Ö´Ï¸ŞÀÌ¼Ç ÀÌº¥Æ® µî¿¡¼­ »ç¿ë)")]
+    [Header("ì¤‘ì‹¬ì  ì„¤ì •")]
+    [Tooltip("ê¸°ë³¸ CenterPoint (ì• ë‹ˆë©”ì´ì…˜ ì´ë²¤íŠ¸ ë“±ì—ì„œ ì‚¬ìš©)")]
     public Transform centerPoint;
     public float centerPointOffsetDistance = 0.5f;
-    [Tooltip("8¹æÇâ CenterPoint ¹è¿­ (¼ø¼­: 0=À§, 1=¿ì»ó, 2=¿À¸¥ÂÊ, 3=¿ìÇÏ, 4=¾Æ·¡, 5=ÁÂÇÏ, 6=¿ŞÂÊ, 7=ÁÂ»ó)")]
+    [Tooltip("8ë°©í–¥ CenterPoint ë°°ì—´ (ìˆœì„œ: 0=ìœ„, 1=ìš°ìƒ, 2=ì˜¤ë¥¸ìª½, 3=ìš°í•˜, 4=ì•„ë˜, 5=ì¢Œí•˜, 6=ì™¼ìª½, 7=ì¢Œìƒ)")]
     public Transform[] centerPoints = new Transform[8];
     private int currentDirectionIndex = 0;
 
-    [Header("¼­¹øÆ® ¼ÒÈ¯ ¼³Á¤")]
+    [Header("ì„œë²ˆíŠ¸ ì†Œí™˜ ì„¤ì •")]
     [SerializeField] private GameObject servantPrefab;
+    [SerializeField] private GameObject timeServantPrefab; // ì´ëŠ” ì‹œê°„ ê°€í˜¸ ì‰¬í”„íŠ¸ë¥¼ ë¨¹ì—ˆì„ ë•Œ (ì£½ìŒì˜ ë§ìë“¤) ì‚¬ìš© ë  í”„ë¦¬íŒ¹
     [SerializeField] private Vector3 servantSpawnOffset = new Vector3(0f, 0.5f, 0f);
-    [SerializeField] private int maxServants = 8;
+    [SerializeField] private int DefaultMaxServants = 8;
+    // ì£½ì´ê¸° ì „ ë¶ˆëŸ¬ì˜¨ ì†Œí™˜ìˆ˜ ê°œìˆ˜ë¥¼ ì €ì¥
+    private int ultimateStackLimit = 0;
+    private const int TimeMaxServants = 13; // ì‹œê°„ ê°€í˜¸ ì†Œí™˜ìˆ˜ ìµœëŒ€ ê°œì²´ ìˆ˜ 
+
+    private int CurrentMaxServants =>
+    runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil == 2
+    ? TimeMaxServants
+    : DefaultMaxServants;
 
     private List<ServantFSM> summonedServants = new List<ServantFSM>();
-    [Header("±Ã±Ø±â ¼³Á¤")]
+    [Header("ê¶ê·¹ê¸° ì„¤ì •")]
     [SerializeField] private float ultimateDuration = 5f;
     private bool isUltimateActive = false;
 
-    // ÀÌµ¿ ÀÔ·Â ¹× »óÅÂ
+    // ì´ë™ ì…ë ¥ ë° ìƒíƒœ
     private Vector2 moveInput;
     public PinkPlayerState currentState = PinkPlayerState.Idle;
     public PinkPlayerState nextState = PinkPlayerState.Idle;
@@ -109,15 +120,15 @@ public class PinkPlayerController : ParentPlayerController
 
     }
 
-    // ÀÔ·Â Ã³¸® °ü·Ã
+    // ì…ë ¥ ì²˜ë¦¬ ê´€ë ¨
 
     public void SetMoveInput(Vector2 input)
     {
         moveInput = input;
-     
+
     }
 
-    // ÀÌµ¿ Ã³¸®
+    // ì´ë™ ì²˜ë¦¬
 
     private void HandleMovement()
     {
@@ -178,11 +189,11 @@ public class PinkPlayerController : ParentPlayerController
         if (currentState == PinkPlayerState.Run
      || (currentState == PinkPlayerState.R_Idle && animator.GetBool("run")))
         {
-            // ¿©±â¼­¸¸ ¹æÇâ °íÁ¤ °»½Å
+            // ì—¬ê¸°ì„œë§Œ ë°©í–¥ ê³ ì • ê°±ì‹ 
             if (h > 0.01f) facingDirection = Vector3.right;
             else if (h < -0.01f) facingDirection = Vector3.left;
 
-            // ÀÌµ¿
+            // ì´ë™
             Vector3 moveDir = (Mathf.Abs(v) > 0.01f)
                 ? new Vector3(h, 0, v).normalized
                 : new Vector3(h, 0, 0).normalized;
@@ -224,8 +235,8 @@ public class PinkPlayerController : ParentPlayerController
 
 
 
-    // ´ë½¬ Ã³¸®
- 
+    // ëŒ€ì‰¬ ì²˜ë¦¬
+
     public void HandleDash()
     {
         if (currentState == PinkPlayerState.Death
@@ -242,14 +253,14 @@ public class PinkPlayerController : ParentPlayerController
         //if (PhotonNetwork.IsConnected)
         //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "dash", true);
 
-        // ¿©±â¼­´Â ¹«Á¶°Ç facingDirection »ç¿ë
+        // ì—¬ê¸°ì„œëŠ” ë¬´ì¡°ê±´ facingDirection ì‚¬ìš©
         dashDirection = facingDirection;
 
         //StartCoroutine(DoDash());
     }
 
 
-    // ÆòÅ¸
+    // í‰íƒ€
     public void HandleNormalAttack()
     {
 
@@ -260,7 +271,7 @@ public class PinkPlayerController : ParentPlayerController
             {
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-                animator.SetBool("basicattack", true);  
+                animator.SetBool("basicattack", true);
                 if (PhotonNetwork.IsConnected)
                 {
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
@@ -268,38 +279,38 @@ public class PinkPlayerController : ParentPlayerController
                 }
                 //photonView.RPC("PlayAnimation", RpcTarget.All, "basicattack");
                 currentState = PinkPlayerState.R_hit1;
-                
+
             }
 
 
 
             if (currentState == PinkPlayerState.R_hit1 || currentState == PinkPlayerState.R_hit2 || currentState == PinkPlayerState.R_hit3)
             {
-                
+
                 animator.SetBool("Pre-Input", true);
-               
+
             }
 
 
 
-          
 
 
-                //else if (currentState == PinkPlayerState.R_hit1 && animator.GetInteger("attackStack") > 2)
-                //{
-                //    animator.SetBool("basicattack", true);
-                //    Vector3 mousePos = GetMouseWorldPosition();
-                //    animator.SetBool("Right", mousePos.x > transform.position.x);
-                //    if (PhotonNetwork.IsConnected)
-                //    {
-                //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
-                //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                //    }
-                //    currentState = PinkPlayerState.R_hit3;
-                //    return;
-                //}
 
-                if (nextState <= PinkPlayerState.BasicAttack && nextState != PinkPlayerState.R_Idle)
+            //else if (currentState == PinkPlayerState.R_hit1 && animator.GetInteger("attackStack") > 2)
+            //{
+            //    animator.SetBool("basicattack", true);
+            //    Vector3 mousePos = GetMouseWorldPosition();
+            //    animator.SetBool("Right", mousePos.x > transform.position.x);
+            //    if (PhotonNetwork.IsConnected)
+            //    {
+            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
+            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+            //    }
+            //    currentState = PinkPlayerState.R_hit3;
+            //    return;
+            //}
+
+            if (nextState <= PinkPlayerState.BasicAttack && nextState != PinkPlayerState.R_Idle)
             {
 
                 Vector3 mousePos = GetMouseWorldPosition();
@@ -330,7 +341,7 @@ public class PinkPlayerController : ParentPlayerController
                 //currentState = PinkPlayerState.Idle;
                 //attackStack = 0;
                 AttackStackUpdate?.Invoke(attackStack);
-                Debug.Log("°ø°İ ½ºÅÃ 2 µµ´Ş: ÄŞº¸ Á¾·á ¹× ÃÊ±âÈ­");
+                Debug.Log("ê³µê²© ìŠ¤íƒ 2 ë„ë‹¬: ì½¤ë³´ ì¢…ë£Œ ë° ì´ˆê¸°í™”");
                 return;
             }
 
@@ -350,7 +361,7 @@ public class PinkPlayerController : ParentPlayerController
         }
     }
 
-    // ¿ìÅ¬¸¯
+    // ìš°í´ë¦­
 
     public void HandleCharge()
     {
@@ -379,7 +390,7 @@ public class PinkPlayerController : ParentPlayerController
         }
     }
 
-    // Â÷Áö
+    // ì°¨ì§€
 
     private bool isCharging = false;
     private int chargeLevel = 0;
@@ -387,7 +398,7 @@ public class PinkPlayerController : ParentPlayerController
     public float physicalAtk;
     public float magicAtk;
 
-    // ¿ìÅ¬¸¯ ´­·¶À» ¶§ (Â÷Áö ½ÃÀÛ)
+    // ìš°í´ë¦­ ëˆŒë €ì„ ë•Œ (ì°¨ì§€ ì‹œì‘)
     public void StartCharge()
     {
         if (isCharging || currentState == PinkPlayerState.Death)
@@ -420,7 +431,7 @@ public class PinkPlayerController : ParentPlayerController
 
     }
 
-    // ¿ìÅ¬¸¯À» ³õ¾ÒÀ» ¶§ (Â÷Áö Á¾·á)
+    // ìš°í´ë¦­ì„ ë†“ì•˜ì„ ë•Œ (ì°¨ì§€ ì¢…ë£Œ)
     public void ReleaseCharge()
     {
         if (!isCharging || currentState == PinkPlayerState.Death)
@@ -428,6 +439,7 @@ public class PinkPlayerController : ParentPlayerController
 
         if (!(currentState == PinkPlayerState.Charge1 || currentState == PinkPlayerState.Charge2 || currentState == PinkPlayerState.Charge3))
             return;
+
 
         isCharging = false;
 
@@ -442,11 +454,11 @@ public class PinkPlayerController : ParentPlayerController
     }
 
 
-    // ÇÁ·¹ÀÓº° Â÷Áö ·¹º§ ¼³Á¤ (¾Ö´Ï¸ŞÀÌ¼Ç ÀÌº¥Æ®·Î È£Ãâ)
+    // í”„ë ˆì„ë³„ ì°¨ì§€ ë ˆë²¨ ì„¤ì • (ì• ë‹ˆë©”ì´ì…˜ ì´ë²¤íŠ¸ë¡œ í˜¸ì¶œ)
     public void SetChargeLevel(int level)
     {
         chargeLevel = level;
-        animator.SetInteger("chargeLevel", level); // ¾Ö´Ï¸ŞÀÌÅÍ ÆÄ¶ó¹ÌÅÍ ¾÷µ¥ÀÌÆ®
+        animator.SetInteger("chargeLevel", level); // ì• ë‹ˆë©”ì´í„° íŒŒë¼ë¯¸í„° ì—…ë°ì´íŠ¸
 
         switch (level)
         {
@@ -461,23 +473,23 @@ public class PinkPlayerController : ParentPlayerController
                 break;
         }
 
-        Debug.Log($"Â÷Áö ·¹º§: {chargeLevel}, nextState: {nextState}");
+        Debug.Log($"ì°¨ì§€ ë ˆë²¨: {chargeLevel}, nextState: {nextState}");
     }
 
 
 
 
 
-    // Æ¯¼ö °ø°İ
+    // íŠ¹ìˆ˜ ê³µê²©
     public void HandleSpecialAttack()
     {
         if (currentState != PinkPlayerState.Death)
         {
             if (cooldownCheckers[(int)Skills.Shift_L].CanUse() && nextState < PinkPlayerState.Skill)
             {
-                if (myServants.Count >= MAX_SERVANTS)
+                if (myServants.Count >= CurrentMaxServants)
                 {
-                    Debug.Log("ÃÖ´ë ¼ÒÈ¯¼ö °³¼ö¿¡ µµ´ŞÇß½À´Ï´Ù.");
+                    Debug.Log($"ìµœëŒ€ ì†Œí™˜ìˆ˜ ê°œìˆ˜({CurrentMaxServants})ì— ë„ë‹¬í•¨.");
                     return;
                 }
 
@@ -492,20 +504,36 @@ public class PinkPlayerController : ParentPlayerController
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
                     photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                    photonView.RPC("RPC_SpawnServant", RpcTarget.MasterClient, photonView.ViewID);
+                    photonView.RPC("RPC_SpawnServant", RpcTarget.MasterClient, photonView.ViewID, runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil);
                 }
             }
 
         }
     }
 
-    // ½ÇÁ¦ ¼ÒÈ¯¼ö ¼ÒÈ¯ ·ÎÁ÷ ºĞ¸®
+    // ì‹¤ì œ ì†Œí™˜ìˆ˜ ì†Œí™˜ ë¡œì§ ë¶„ë¦¬
     [PunRPC]
-    private void RPC_SpawnServant(int ownerViewID)
+    private void RPC_SpawnServant(int ownerViewID, int blessingIndex)
     {
+
+        int devilLevel = blessingIndex;
+        // ì‹œê°„ê°€í˜¸->  TimeServant, ê·¸ ì™¸ì—” ê¸°ë³¸ Servant
+        string prefabName = (devilLevel == 2)
+        ? timeServantPrefab.name    // ì¸ìŠ¤í™í„°ì— í• ë‹¹ëœ TimeServant í”„ë¦¬íŒ¹ì˜ ì´ë¦„
+        : servantPrefab.name;       // ê¸°ì¡´ Servant í”„ë¦¬íŒ¹ì˜ ì´ë¦„
+
+        Debug.Log($"[RPC_SpawnServant] devilLevel={devilLevel} â†’ Spawn: {prefabName}");
+
+
         Vector3 spawnPos = transform.position + servantSpawnOffset;
-        GameObject servant = PhotonNetwork.Instantiate(servantPrefab.name, spawnPos, Quaternion.identity);
+        GameObject servant = PhotonNetwork.Instantiate(prefabName, spawnPos, Quaternion.identity);
         ServantFSM servantFSM = servant.GetComponent<ServantFSM>();
+
+        if (blessingIndex == 1)
+        {
+            Debug.Log("ì†Œí™˜ìˆ˜ ë„ë°œ!");
+            servantFSM.TauntEnemy(30f); // í™•ì‹¤íˆ ì•Œë ¤ê³  30ì´ˆ ë•Œë ¤ë°•ìŒ --> ì›ë˜ 3ì´ˆ
+        }
 
         servantFSM.photonView.RPC("RPC_SetOwner", RpcTarget.AllBuffered, ownerViewID);
         photonView.RPC("RPC_RegisterServant", RpcTarget.AllBuffered, servantFSM.photonView.ViewID, ownerViewID);
@@ -524,14 +552,14 @@ public class PinkPlayerController : ParentPlayerController
             }
         }
     }
-    /// <summary>ServantFSM ÀÎ½ºÅÏ½º¸¦ ¸®½ºÆ®¿¡ µî·ÏÇÕ´Ï´Ù.</summary>
+    /// <summary>ServantFSM ì¸ìŠ¤í„´ìŠ¤ë¥¼ ë¦¬ìŠ¤íŠ¸ì— ë“±ë¡í•©ë‹ˆë‹¤.</summary>
     public void AddServantToList(ServantFSM servant)
     {
         if (servant != null && !summonedServants.Contains(servant))
             summonedServants.Add(servant);
     }
 
-    /// <summary>ServantFSM ÀÎ½ºÅÏ½º¸¦ ¸®½ºÆ®¿¡¼­ ÇØÁ¦ÇÕ´Ï´Ù.</summary>
+    /// <summary>ServantFSM ì¸ìŠ¤í„´ìŠ¤ë¥¼ ë¦¬ìŠ¤íŠ¸ì—ì„œ í•´ì œí•©ë‹ˆë‹¤.</summary>
     public void RemoveServantFromList(ServantFSM servant)
     {
         if (servant != null)
@@ -540,25 +568,25 @@ public class PinkPlayerController : ParentPlayerController
     private int servantCount = 0;
     private const int maxUltimateStacks = 8;
 
-    // ±Ã±Ø±â
+    // ê¶ê·¹ê¸°
     /// <summary>
-    /// R Å° ÀÔ·ÂÀÌ µé¾î¿ÔÀ» ¶§,
-    /// ÇöÀç »óÅÂ¿¡ µû¶ó ±Ã±Ø±â ½ÃÀÛ or ¸¶Áö¸· ÀÏ°İ ½ÇÇà
+    /// R í‚¤ ì…ë ¥ì´ ë“¤ì–´ì™”ì„ ë•Œ,
+    /// í˜„ì¬ ìƒíƒœì— ë”°ë¼ ê¶ê·¹ê¸° ì‹œì‘ or ë§ˆì§€ë§‰ ì¼ê²© ì‹¤í–‰
     /// </summary>
     public void OnUltimateInput(InputAction.CallbackContext context)
     {
         if (animator == null || currentState == PinkPlayerState.Death)
             return;
         if (!photonView.IsMine) return;
-        // ¹öÆ° ´­¸° ½ÃÁ¡¿¡¸¸
+        // ë²„íŠ¼ ëˆŒë¦° ì‹œì ì—ë§Œ
         if (context.started && !isUltimateActive && cooldownCheckers[(int)Skills.R].CanUse())
         {
-            // MasterClient ±ÇÇÑÀ¸·Î ½ÇÁ¦ ±Ã±Ø±â ½ÇÇà
+            // MasterClient ê¶Œí•œìœ¼ë¡œ ì‹¤ì œ ê¶ê·¹ê¸° ì‹¤í–‰
             photonView.RPC(nameof(RPC_UseUltimate), RpcTarget.MasterClient);
         }
         if (context.started)
         {
-            // ·ÎÄÃ »óÅÂ ¼¼ÆÃ
+            // ë¡œì»¬ ìƒíƒœ ì„¸íŒ…
             R_attackStack = 0;
             currentState = PinkPlayerState.R_Idle;
             animator.SetBool("ultimate", true);
@@ -597,8 +625,10 @@ public class PinkPlayerController : ParentPlayerController
     private void RPC_UseUltimate()
     {
         if (!PhotonNetwork.IsMasterClient) return;
+        int myServantsCount = myServants.Count; // ì†Œí™˜ìˆ˜ ê°œìˆ˜ ë¨¼ì € ë¡œì»¬ì— ì €ì¥
+        ultimateStackLimit = myServants.Count; // ë¶ˆëŸ¬ì˜¨ ì†Œí™˜ìˆ˜ ê°œìˆ˜ ê¸°ì–µ - ê°™ì€ ê°’ ì €ì¥í•´ì£¼ëŠ” ê±°ì„
 
-        // 1) myServants ¸¦ µ¹¸ç ForceKill RPC È£Ãâ
+        // 1) myServants ë¥¼ ëŒë©° ForceKill RPC í˜¸ì¶œ
         foreach (var s in myServants)
         {
             if (s != null && s.photonView != null)
@@ -606,10 +636,17 @@ public class PinkPlayerController : ParentPlayerController
         }
         myServants.Clear();
 
-        // 2) (¹öÇÁ ·ÎÁ÷Àº ºó ÇÔ¼ö·Î µÎ¾ú½À´Ï´Ù)
-        ApplyUltimateBuff();
+        // 2) (ë²„í”„ ë¡œì§ì€ ë¹ˆ í•¨ìˆ˜ë¡œ ë‘ì—ˆìŠµë‹ˆë‹¤)
+        if (photonView.IsMine)
+        {
+            RPC_ApplyUltimateBuff(myServantsCount);
+        }
+        else
+        {
+            photonView.RPC("RPC_ApplyUltimateBuff", photonView.Owner, myServantsCount);
+        }
 
-        // 3) ±Ã±Ø±â ¾Ö´Ï/»óÅÂ ÁøÀÔ
+        // 3) ê¶ê·¹ê¸° ì• ë‹ˆ/ìƒíƒœ ì§„ì…
         if (photonView.IsMine)
         {
             currentState = PinkPlayerState.Ultimate;
@@ -617,15 +654,33 @@ public class PinkPlayerController : ParentPlayerController
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "ultimate", true);
         }
     }
+
     /// <summary>
-    /// Èñ»ıµÈ ¼ÒÈ¯¼ö °³¼ö¿¡ µû¸¥ °­È­ È¿°ú ·ÎÁ÷
-    /// (ÇöÀç ºó ÇÔ¼ö - ÇÊ¿ä½Ã ¿©±â¿¡ ¹öÇÁ ÄÚµå¸¦ Ãß°¡ÇÏ¼¼¿ä)
+    /// í¬ìƒëœ ì†Œí™˜ìˆ˜ ê°œìˆ˜ì— ë”°ë¥¸ ê°•í™” íš¨ê³¼ ë¡œì§
+    /// (í˜„ì¬ ë¹ˆ í•¨ìˆ˜ - í•„ìš”ì‹œ ì—¬ê¸°ì— ë²„í”„ ì½”ë“œë¥¼ ì¶”ê°€í•˜ì„¸ìš”)
     /// </summary>
-    private void ApplyUltimateBuff()
+    [PunRPC]
+    private void RPC_ApplyUltimateBuff(int myServantsCount)
     {
-        // TODO: ±Ã±Ø±â ¹öÇÁ ·ÎÁ÷
+        int stacks = myServantsCount;
+        float totalShield = 30f * stacks;
+        float totalDuration = 2f * stacks;
+
+        if (runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil == 1)
+        {
+            totalShield = 50f * stacks;
+            Debug.Log("ì‰´ë“œ 50ìœ¼ë¡œ ë¶€ì—¬!");
+        }
+
+        if (stacks > 0)
+        {
+            AddShield(totalShield, totalDuration);
+            Debug.Log($"ê¶ê·¹ê¸° ì‰´ë“œ: +{totalShield}HP, ì§€ì† {totalDuration}s (ìŠ¤íƒ {stacks})");
+        }
+
+
     }
-    // ±Ã±Ø±â ½ÃÀü ½ÃÀÛ
+    // ê¶ê·¹ê¸° ì‹œì „ ì‹œì‘
     public void HandleUltimateStart()
     {
         if (currentState == PinkPlayerState.Death || !cooldownCheckers[(int)Skills.R].CanUse())
@@ -645,11 +700,11 @@ public class PinkPlayerController : ParentPlayerController
         }
     }
 
-    // ±Ã±Ø±â Áö¼Ó½Ã°£ÀÌ ´Ù µÇ°Å³ª RÀ» ´Ù½Ã ´©¸¦ ¶§ È£Ãâ
+    // ê¶ê·¹ê¸° ì§€ì†ì‹œê°„ì´ ë‹¤ ë˜ê±°ë‚˜ Rì„ ë‹¤ì‹œ ëˆ„ë¥¼ ë•Œ í˜¸ì¶œ
     public void HandleUltimateEndOrFinal()
     {
         int servantCount = myServants.Count;
-        foreach(var servant in myServants)
+        foreach (var servant in myServants)
         {
             if (servant != null)
             {
@@ -657,33 +712,50 @@ public class PinkPlayerController : ParentPlayerController
             }
         }
         myServants.Clear();
-        ApplyUltimateBuff(servantCount);
-        // ¾Ö´Ï¸ŞÀÌÅÍ¿¡¼­ ¸¶Áö¸· ÀÏ°İ(FinalStrike) »óÅÂ·Î ÀüÀÌ
+        //ApplyUltimateBuff(servantCount);
+        // ì• ë‹ˆë©”ì´í„°ì—ì„œ ë§ˆì§€ë§‰ ì¼ê²©(FinalStrike) ìƒíƒœë¡œ ì „ì´
         currentState = PinkPlayerState.Ultimate;
         animator.SetTrigger("FinalStrike");
         animator.SetTrigger("FinalStrike");
         if (PhotonNetwork.IsConnected)
             photonView.RPC("PlayAnimation", RpcTarget.Others, "FinalStrike");
     }
-    void ApplyUltimateBuff(int servantCount)
-    {
-        //Èñ»ıµÈ ¼ÒÈ¯¼ö °³¼ö¿¡ µû¸¥ °­È­ È¿°ú
-    }
+    //void ApplyUltimateBuff(int servantCount)
+    //{
+    //    //í¬ìƒëœ ì†Œí™˜ìˆ˜ ê°œìˆ˜ì— ë”°ë¥¸ ê°•í™” íš¨ê³¼
+    //}
     public int R_attackStack;
 
-    // ¾Ö´Ï¸ŞÀÌ¼Ç ÀÌº¥Æ®·Î ÆòÅ¸ ½ºÅÃ ¼³Á¤ÇØÁÖ±â
+    // ì• ë‹ˆë©”ì´ì…˜ ì´ë²¤íŠ¸ë¡œ í‰íƒ€ ìŠ¤íƒ ì„¤ì •í•´ì£¼ê¸°
     public void OnAttackStack()
     {
-        //if (currentState != PinkPlayerState.BasicAttack) return;
+        // 1) Devil ë ˆë²¨ë³„ cap (8 or 13)
+        int cap = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil == 2
+       ? 13
+       : 8;
 
+        // 2) ì§„ì§œ ìµœëŒ€ ìŠ¤íƒì€ í¬ìƒëœ ì†Œí™˜ìˆ˜ ê°œìˆ˜(ultimateStackLimit)ì™€ cap ì¤‘ ì‘ì€ ìª½
+        int maxStack = Mathf.Min(ultimateStackLimit, cap);
+
+        // 3) ë¹„êµ í›„ ì´ˆê³¼ ì‹œ ë¦¬í„´
+        if (R_attackStack >= maxStack)
+        {
+            Debug.Log($"R_attackStack ìµœëŒ€ì¹˜({maxStack}) ë„ë‹¬, ë” ì•ˆì˜¬ë¼ê°");
+            return;
+        }
+
+        // 4) ìŠ¤íƒ ì¦ê°€
         R_attackStack++;
         Debug.Log(R_attackStack);
         animator.SetInteger("R_attackStack", R_attackStack);
         AttackStackUpdate?.Invoke(R_attackStack);
-        Debug.Log($"ÆòÅ¸ ½ºÅÃ ¼³Á¤: {R_attackStack}");
+        Debug.Log($"í‰íƒ€ ìŠ¤íƒ ì„¤ì •: {R_attackStack}");
+
+        SetIntParameter("R_attackStack", R_attackStack);
     }
 
-    // ½¯µå °ü·Ã ÀÌº¥Æ®·Î È£Ãâ
+
+    // ì‰´ë“œ ê´€ë ¨ ì´ë²¤íŠ¸ë¡œ í˜¸ì¶œ
     public void OnUltimateCastComplete()
     {
         int stacks = servantCount;
@@ -693,15 +765,15 @@ public class PinkPlayerController : ParentPlayerController
         if (stacks > 0)
         {
             AddShield(totalShield, totalDuration);
-            Debug.Log($"±Ã±Ø±â ½¯µå: +{totalShield}HP, Áö¼Ó {totalDuration}s (½ºÅÃ {stacks})");
-            servantCount = 0;   // ½ºÅÃ ÃÊ±âÈ­
+            Debug.Log($"ê¶ê·¹ê¸° ì‰´ë“œ: +{totalShield}HP, ì§€ì† {totalDuration}s (ìŠ¤íƒ {stacks})");
+            servantCount = 0;   // ìŠ¤íƒ ì´ˆê¸°í™”
         }
     }
 
 
     //public WhitePlayerAttackZone AttackCollider;
 
-    // °ø°İ ¾Ö´Ï¸ŞÀÌ¼Ç ÀÌº¥Æ®¿ë ½ºÅÓ (WhitePlayerController_AttackStack¿¡¼­ È£Ãâ) 
+    // ê³µê²© ì• ë‹ˆë©”ì´ì…˜ ì´ë²¤íŠ¸ìš© ìŠ¤í… (WhitePlayerController_AttackStackì—ì„œ í˜¸ì¶œ) 
 
     public override void StartMouseRCoolDown()
     {
@@ -728,7 +800,7 @@ public class PinkPlayerController : ParentPlayerController
         base.StartSpaceCooldown();
     }
 
-    // ¾Ö´Ï¸ŞÀÌ¼Ç ÀÌº¥Æ® ÇÔ¼ö
+    // ì• ë‹ˆë©”ì´ì…˜ ì´ë²¤íŠ¸ í•¨ìˆ˜
 
     public void OnAttackPreAttckStart()
     {
@@ -737,7 +809,7 @@ public class PinkPlayerController : ParentPlayerController
         {
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", true);
         }
-        Debug.Log("¼±µô ½ÃÀÛ");
+        Debug.Log("ì„ ë”œ ì‹œì‘");
     }
 
     public void OnAttackPreAttckEnd()
@@ -747,7 +819,7 @@ public class PinkPlayerController : ParentPlayerController
         {
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
         }
-        Debug.Log("¼±µô Á¾·á");
+        Debug.Log("ì„ ë”œ ì¢…ë£Œ");
     }
 
     public void OnAttackLastAttckStart()
@@ -757,7 +829,7 @@ public class PinkPlayerController : ParentPlayerController
         {
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState2", true);
         }
-        Debug.Log("ÈÄµô ½ÃÀÛ");
+        Debug.Log("í›„ë”œ ì‹œì‘");
     }
 
     public void OnAttackLastAttckEnd()
@@ -767,7 +839,7 @@ public class PinkPlayerController : ParentPlayerController
         {
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState2", false);
         }
-        Debug.Log("ÈÄµô Á¾·á");
+        Debug.Log("í›„ë”œ ì¢…ë£Œ");
     }
 
     public void OnMoveFront(float value)
@@ -798,17 +870,17 @@ public class PinkPlayerController : ParentPlayerController
         rb.MovePosition(rb.position + movement);
     }
 
-    // ÇÎ¶ÒÀÌ ±Ã±Ø±â ÃÊ±âÈ­ ÀÌº¥Æ® ÇÔ¼ö -> runÀÏ ¶§ ¾µ¶ó°í ¸¸µê
+    // í•‘ëšì´ ê¶ê·¹ê¸° ì´ˆê¸°í™” ì´ë²¤íŠ¸ í•¨ìˆ˜ -> runì¼ ë•Œ ì“¸ë¼ê³  ë§Œë“¦
 
     public void ResetRAttackStack()
     {
-        // ½ºÅÃ ¸®¼Â
+        // ìŠ¤íƒ ë¦¬ì…‹
         R_attackStack = 0;
 
-        
+
         animator.SetInteger("R_attackStack", R_attackStack);
 
-       
+
         if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
             photonView.RPC("SyncIntegerParameter", RpcTarget.Others, "R_attackStack", R_attackStack);
@@ -816,9 +888,9 @@ public class PinkPlayerController : ParentPlayerController
     }
 
 
-    #region ½ºÅ³ ÀÌÆåÆ® »ı¼º
+    #region ìŠ¤í‚¬ ì´í™íŠ¸ ìƒì„±
 
-    // ±Ã±Ø±â ÀÌÆåÆ® »ı¼º
+    // ê¶ê·¹ê¸° ì´í™íŠ¸ ìƒì„±
     public void CreateUltimateEffectStart()
     {
         if (!photonView.IsMine)
@@ -826,17 +898,17 @@ public class PinkPlayerController : ParentPlayerController
             return;
         }
 
-        // ±Ã±Ø±â µ¥¹ÌÁö °è»ê
+        // ê¶ê·¹ê¸° ë°ë¯¸ì§€ ê³„ì‚°
         float damage = (runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                         runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
 
-       
 
-        // Photon¿¡ Á¢¼Ó ÁßÀÎÁö È®ÀÎÇÏ¿© isMine ¼³Á¤
+
+        // Photonì— ì ‘ì† ì¤‘ì¸ì§€ í™•ì¸í•˜ì—¬ isMine ì„¤ì •
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
         Vector3 targetPos = transform.position;
         string effectPath;
-        // ÀÌÆåÆ® °æ·Î ¹× À§Ä¡ ¼³Á¤
+        // ì´í™íŠ¸ ê²½ë¡œ ë° ìœ„ì¹˜ ì„¤ì •
 
         if (animator.GetBool("Right"))
         {
@@ -848,22 +920,22 @@ public class PinkPlayerController : ParentPlayerController
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true, animator.speed);
 
-        // Photon¿¡ Á¢¼Ó ÁßÀÌµç ¾Æ´Ïµç, ·ÎÄÃ¿¡¼­ ÀÌÆåÆ®¸¦ »ı¼ºÇÏ´Â ÄÚµå
+        // Photonì— ì ‘ì† ì¤‘ì´ë“  ì•„ë‹ˆë“ , ë¡œì»¬ì—ì„œ ì´í™íŠ¸ë¥¼ ìƒì„±í•˜ëŠ” ì½”ë“œ
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
 
-        // init ¸Ş¼­µå È£Ãâ
+        // init ë©”ì„œë“œ í˜¸ì¶œ
         //skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine);
         skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.R].skillData.ID, this));
-        // ±Ã±Ø±â ¼Óµµ
+        // ê¶ê·¹ê¸° ì†ë„
         skillEffect.SetAttackSpeed(animator.speed);
 
-        // »ı¼ºµÈ ÀÌÆåÆ®ÀÇ ºÎ¸ğ¸¦ ¼³Á¤
+        // ìƒì„±ëœ ì´í™íŠ¸ì˜ ë¶€ëª¨ë¥¼ ì„¤ì •
         skillEffect.transform.parent = transform;
     }
 
-    // ±Ã±Ø±â È÷Æ® ÀÌÆåÆ® »ı¼º
+    // ê¶ê·¹ê¸° íˆíŠ¸ ì´í™íŠ¸ ìƒì„±
     public void CreateUltimateEffectHit()
     {
         if (!photonView.IsMine)
@@ -871,18 +943,46 @@ public class PinkPlayerController : ParentPlayerController
             return;
         }
 
-        // ±Ã±Ø±â µ¥¹ÌÁö °è»ê
+        // ê¶ê·¹ê¸° ë°ë¯¸ì§€ ê³„ì‚°
         float damage = (runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                         runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
 
-        // Photon¿¡ Á¢¼Ó ÁßÀÎÁö È®ÀÎÇÏ¿© isMine ¼³Á¤
+        Debug.Log($"[R-Effect] ê¸°ë³¸ ë°ë¯¸ì§€: {damage}");
+
+        // Devil ë ˆë²¨ì´ 3ì¼ ë•Œë§Œ ì¶”ê°€ í…Œì´ë¸” ë°ë¯¸ì§€ ì ìš©
+        if (runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil == 3)
+        {
+            int characterId = runTimeData.skillWithLevel[(int)Skills.R].skillData.Character;
+            int comboIndex = R_attackStack;  // í˜„ì¬ ìŠ¤íƒ ìˆ˜
+            float tableDamage = 0f;
+
+            var rCombo = DataManager.Instance.r_AttackComboDatas
+                            .Find(x => x.Character == characterId && x.Combo_Index == comboIndex);
+            if (rCombo != null)
+            {
+                tableDamage = rCombo.Damage;
+                Debug.Log($"[R-Effect] Table Damage (Char:{characterId}, Combo:{comboIndex}) = {tableDamage}");
+            }
+            else
+            {
+                Debug.LogWarning($"[R-Effect] R_AttackComboData ì—†ìŒ (Char:{characterId}, Combo:{comboIndex})");
+            }
+
+            damage += tableDamage;
+            Debug.Log($"[R-Effect] ìµœì¢… ê³„ì‚°ëœ Damage = {damage}");
+        }
+
+
+
+
+        // Photonì— ì ‘ì† ì¤‘ì¸ì§€ í™•ì¸í•˜ì—¬ isMine ì„¤ì •
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
         Vector3 targetPos = transform.position;
 
-        // R_attackStackÀ» 3À¸·Î Å¬·¥ÇÁ
+        // R_attackStackì„ 3ìœ¼ë¡œ í´ë¨í”„
         int maxR_attackStackEffect = Mathf.Min(R_attackStack, 2);
 
-        // ÀÌÆåÆ® °æ·Î ¹× À§Ä¡ ¼³Á¤
+        // ì´í™íŠ¸ ê²½ë¡œ ë° ìœ„ì¹˜ ì„¤ì •
         string effectPath;
 
         if (animator.GetBool("Right"))
@@ -895,28 +995,28 @@ public class PinkPlayerController : ParentPlayerController
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true, animator.speed);
 
         var prefab = Resources.Load<SkillEffect>(effectPath);
         if (prefab == null)
         {
-            Debug.LogError($"[R-Effect] Prefab ·Îµå ½ÇÆĞ! °æ·Î È®ÀÎÇÏ¼¼¿ä: {effectPath}");
+            Debug.LogError($"[R-Effect] Prefab ë¡œë“œ ì‹¤íŒ¨! ê²½ë¡œ í™•ì¸í•˜ì„¸ìš”: {effectPath}");
             return;
         }
-        Debug.Log($"[R-Effect] Prefab ·Îµå ¼º°ø: {prefab.name}");
+        Debug.Log($"[R-Effect] Prefab ë¡œë“œ ì„±ê³µ: {prefab.name}");
 
-        // Photon¿¡ Á¢¼Ó ÁßÀÌµç ¾Æ´Ïµç, ·ÎÄÃ¿¡¼­ ÀÌÆåÆ®¸¦ »ı¼ºÇÏ´Â ÄÚµå
+        // Photonì— ì ‘ì† ì¤‘ì´ë“  ì•„ë‹ˆë“ , ë¡œì»¬ì—ì„œ ì´í™íŠ¸ë¥¼ ìƒì„±í•˜ëŠ” ì½”ë“œ
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
 
-        // Init ¸Ş¼­µå È£Ãâ, ¿©±â¼­ ´Ù½Ã È£ÃâÇÒÁö ¸»Áö °í¹ÎÁß --> ¾Æ¸¶ ±âÈ¹ ³ª¿À¸é ´õ °íÄ¥ ¿¹Á¤
+        // Init ë©”ì„œë“œ í˜¸ì¶œ, ì—¬ê¸°ì„œ ë‹¤ì‹œ í˜¸ì¶œí• ì§€ ë§ì§€ ê³ ë¯¼ì¤‘ --> ì•„ë§ˆ ê¸°íš ë‚˜ì˜¤ë©´ ë” ê³ ì¹  ì˜ˆì •
         //skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine);
         skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
 
-        // »ı¼ºµÈ ÀÌÆåÆ®ÀÇ ºÎ¸ğ¸¦ ¼³Á¤
+        // ìƒì„±ëœ ì´í™íŠ¸ì˜ ë¶€ëª¨ë¥¼ ì„¤ì •
         skillEffect.transform.parent = transform;
     }
 
-    // ±Ã±Ø±â ÀÌÆåÆ® »ı¼º (Finish)
+    // ê¶ê·¹ê¸° ì´í™íŠ¸ ìƒì„± (Finish)
     public void CreateUltimateEffectFinish()
     {
         if (!photonView.IsMine)
@@ -924,15 +1024,15 @@ public class PinkPlayerController : ParentPlayerController
             return;
         }
 
-        // ±Ã±Ø±â µ¥¹ÌÁö °è»ê
+        // ê¶ê·¹ê¸° ë°ë¯¸ì§€ ê³„ì‚°
         float damage = (runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                         runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower);
 
-        // Photon¿¡ Á¢¼Ó ÁßÀÎÁö È®ÀÎÇÏ¿© isMine ¼³Á¤
+        // Photonì— ì ‘ì† ì¤‘ì¸ì§€ í™•ì¸í•˜ì—¬ isMine ì„¤ì •
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
         Vector3 targetPos = transform.position;
 
-        // ÀÌÆåÆ® °æ·Î ¹× À§Ä¡ ¼³Á¤
+        // ì´í™íŠ¸ ê²½ë¡œ ë° ìœ„ì¹˜ ì„¤ì •
         string effectPath;
 
         if (animator.GetBool("Right"))
@@ -945,20 +1045,20 @@ public class PinkPlayerController : ParentPlayerController
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true, animator.speed);
 
-        // Photon¿¡ Á¢¼Ó ÁßÀÌµç ¾Æ´Ïµç, ·ÎÄÃ¿¡¼­ ÀÌÆåÆ®¸¦ »ı¼ºÇÏ´Â ÄÚµå
+        // Photonì— ì ‘ì† ì¤‘ì´ë“  ì•„ë‹ˆë“ , ë¡œì»¬ì—ì„œ ì´í™íŠ¸ë¥¼ ìƒì„±í•˜ëŠ” ì½”ë“œ
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
 
-        // Init ¸Ş¼­µå È£Ãâ, ¿©±â¼­ ´Ù½Ã È£ÃâÇÒÁö ¸»Áö °í¹ÎÁß --> ¾Æ¸¶ ±âÈ¹ ³ª¿À¸é ´õ °íÄ¥ ¿¹Á¤
+        // Init ë©”ì„œë“œ í˜¸ì¶œ, ì—¬ê¸°ì„œ ë‹¤ì‹œ í˜¸ì¶œí• ì§€ ë§ì§€ ê³ ë¯¼ì¤‘ --> ì•„ë§ˆ ê¸°íš ë‚˜ì˜¤ë©´ ë” ê³ ì¹  ì˜ˆì •
         //skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine);
         skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID, this));
 
-        // »ı¼ºµÈ ÀÌÆåÆ®ÀÇ ºÎ¸ğ¸¦ ¼³Á¤
+        // ìƒì„±ëœ ì´í™íŠ¸ì˜ ë¶€ëª¨ë¥¼ ì„¤ì •
         skillEffect.transform.parent = transform;
     }
 
-    // ÆòÅ¸ ÀÌÆåÆ® »ı¼º
+    // í‰íƒ€ ì´í™íŠ¸ ìƒì„±
     public void CreateBasicAttackEffect()
     {
         if (!photonView.IsMine)
@@ -966,15 +1066,20 @@ public class PinkPlayerController : ParentPlayerController
             attackStack = animator.GetInteger("AttackStack");
         }
 
-        // ÆòÅ¸ µ¥¹ÌÁö °è»ê
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
+        // í‰íƒ€ ë°ë¯¸ì§€ ê³„ì‚°
         float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
         float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                         runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * coefficient;
 
-        // Photon¿¡ Á¢¼Ó ÁßÀÎÁö È®ÀÎÇÏ¿© isMine ¼³Á¤
+        // Photonì— ì ‘ì† ì¤‘ì¸ì§€ í™•ì¸í•˜ì—¬ isMine ì„¤ì •
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
-        // ÀÌÆåÆ® °æ·Î ¹× À§Ä¡ ¼³Á¤
+        // ì´í™íŠ¸ ê²½ë¡œ ë° ìœ„ì¹˜ ì„¤ì •
         string effectPath;
         Vector3 effectPosition = transform.position;
 
@@ -985,27 +1090,27 @@ public class PinkPlayerController : ParentPlayerController
         else
         {
             effectPath = $"SkillEffect/PinkPlayer/pink_attack{attackStack}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}";
-            effectPosition = transform.position; // ¿ŞÂÊÀÏ ¶§ À§Ä¡´Â ±âº» À§Ä¡ ±×´ë·Î ¼³Á¤
+            effectPosition = transform.position; // ì™¼ìª½ì¼ ë•Œ ìœ„ì¹˜ëŠ” ê¸°ë³¸ ìœ„ì¹˜ ê·¸ëŒ€ë¡œ ì„¤ì •
         }
 
-        // ´Ù¸¥ Å¬¶óÀÌ¾ğÆ®¿¡°Ôµµ ÀÌÆåÆ®¸¦ »ı¼ºÇÏµµ·Ï RPC È£Ãâ
+        // ë‹¤ë¥¸ í´ë¼ì´ì–¸íŠ¸ì—ê²Œë„ ì´í™íŠ¸ë¥¼ ìƒì„±í•˜ë„ë¡ RPC í˜¸ì¶œ
         if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true, animator.speed);
         }
 
-        // Photon ¿¬°á ¿©ºÎ¿¡ µû¸¥ ÀÌÆåÆ® »ı¼º
+        // Photon ì—°ê²° ì—¬ë¶€ì— ë”°ë¥¸ ì´í™íŠ¸ ìƒì„±
         Debug.Log(effectPath);
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
 
-        // Init ¸Ş¼­µå È£Ãâ
+        // Init ë©”ì„œë“œ í˜¸ì¶œ
         skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
 
-        // »ı¼ºµÈ ÀÌÆåÆ®ÀÇ ºÎ¸ğ¸¦ ¼³Á¤
+        // ìƒì„±ëœ ì´í™íŠ¸ì˜ ë¶€ëª¨ë¥¼ ì„¤ì •
         skillEffect.transform.parent = transform;
     }
 
-    // Â÷Â¡ ÀÌÆåÆ® »ı¼º
+    // ì°¨ì§• ì´í™íŠ¸ ìƒì„±
     public void CreateChargeSkillEffect()
     {
         if (!photonView.IsMine)
@@ -1013,14 +1118,19 @@ public class PinkPlayerController : ParentPlayerController
             attackStack = animator.GetInteger("AttackStack");
         }
 
-        // Â÷Â¡ ½ºÅ³ µ¥¹ÌÁö °è»ê
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
+        // ì°¨ì§• ìŠ¤í‚¬ ë°ë¯¸ì§€ ê³„ì‚°
         float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                        runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
 
-        // Photon¿¡ Á¢¼Ó ÁßÀÎÁö È®ÀÎÇÏ¿© isMine ¼³Á¤
+        // Photonì— ì ‘ì† ì¤‘ì¸ì§€ í™•ì¸í•˜ì—¬ isMine ì„¤ì •
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
-        // ÀÌÆåÆ® °æ·Î ¹× À§Ä¡ ¼³Á¤
+        // ì´í™íŠ¸ ê²½ë¡œ ë° ìœ„ì¹˜ ì„¤ì •
         string effectPath;
         Vector3 effectPosition = transform.position + new Vector3(0f, -0.5f, 0f);
 
@@ -1033,69 +1143,101 @@ public class PinkPlayerController : ParentPlayerController
             effectPath = $"SkillEffect/PinkPlayer/pink_charging{chargeLevel}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
         }
 
-        // ´Ù¸¥ Å¬¶óÀÌ¾ğÆ®¿¡°Ôµµ ÀÌÆåÆ®¸¦ »ı¼ºÇÏµµ·Ï RPC È£Ãâ
+        // ë‹¤ë¥¸ í´ë¼ì´ì–¸íŠ¸ì—ê²Œë„ ì´í™íŠ¸ë¥¼ ìƒì„±í•˜ë„ë¡ RPC í˜¸ì¶œ
         if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true, animator.speed);
         }
 
-        // Photon ¿¬°á ¿©ºÎ¿¡ µû¸¥ ÀÌÆåÆ® »ı¼º
+        // Photon ì—°ê²° ì—¬ë¶€ì— ë”°ë¥¸ ì´í™íŠ¸ ìƒì„±
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
 
-        // Init ¸Ş¼­µå È£Ãâ
+        // Init ë©”ì„œë“œ í˜¸ì¶œ
         //skillEffect.Init(damage, StartHitlag, isMine);
         skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID, this));
 
-        // »ı¼ºµÈ ÀÌÆåÆ®ÀÇ ºÎ¸ğ¸¦ ¼³Á¤
+        // ìƒì„±ëœ ì´í™íŠ¸ì˜ ë¶€ëª¨ë¥¼ ì„¤ì •
         skillEffect.transform.parent = transform;
     }
 
     public void CreateChargeHitSkillEffect()
     {
         if (!photonView.IsMine)
-        {
             attackStack = animator.GetInteger("AttackStack");
+
+        if (!photonView.IsMine)
+        {
+            return;
         }
 
-        // Â÷Â¡ ½ºÅ³ µ¥¹ÌÁö °è»ê
+        // ì°¨ì§• ìŠ¤í‚¬ ë°ë¯¸ì§€ ê³„ì‚°
         float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                        runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
 
-        // Photon¿¡ Á¢¼Ó ÁßÀÎÁö È®ÀÎÇÏ¿© isMine ¼³Á¤
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
-
-        // ÀÌÆåÆ® °æ·Î ¹× À§Ä¡ ¼³Á¤
-        string effectPath;
         Vector3 effectPosition = transform.position;
+        string devil = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil.ToString();
 
-        if (animator.GetBool("Right"))
-        {
-            effectPath = $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
-        }
-        else
-        {
-            effectPath = $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
-        }
+        // â”€â”€ 1) ê¸°ë³¸ Charge Hit ì´í™íŠ¸
+        string hitPath = animator.GetBool("Right")
+            ? $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_right_{devil}"
+            : $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_left_{devil}";
 
-        // ´Ù¸¥ Å¬¶óÀÌ¾ğÆ®¿¡°Ôµµ ÀÌÆåÆ®¸¦ »ı¼ºÇÏµµ·Ï RPC È£Ãâ
         if (PhotonNetwork.IsConnected && photonView.IsMine)
+            photonView.RPC("CreateAnimation", RpcTarget.Others, hitPath, effectPosition, true, animator.speed);
+
+        var hitFx = Instantiate(
+            Resources.Load<SkillEffect>(hitPath),
+            effectPosition,
+            Quaternion.identity
+        );
+        hitFx.Init(damage, StartHitlag, isMine,
+                   playerBlessing.FindSkillEffect(
+                       runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID,
+                       this
+                   ));
+        hitFx.transform.parent = transform;
+
+        if (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil == 3)
         {
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true);
+            StartCoroutine(DelayedChargeEffect());
+
+            IEnumerator DelayedChargeEffect()
+            {
+                yield return new WaitForSeconds(1f);
+
+
+                string chargePath = animator.GetBool("Right")
+                     ? $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_right_{devil}"
+            : $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_left_{devil}";
+
+                // yê°’ë§Œ 0.1ë¡œ ê³ ì •
+                Vector3 spawnPos = new Vector3(
+                    effectPosition.x,
+                    0.1f,
+                    effectPosition.z
+                );
+
+                if (PhotonNetwork.IsConnected && photonView.IsMine)
+                    photonView.RPC("CreateAnimation", RpcTarget.Others, chargePath, effectPosition, true, animator.speed);
+
+                var chargeFx = Instantiate(
+                    Resources.Load<SkillEffect>(chargePath),
+                    effectPosition,
+                    Quaternion.identity
+                );
+                chargeFx.Init(damage, StartHitlag, isMine,
+                              playerBlessing.FindSkillEffect(
+                                  runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID,
+                                  this
+                              ));
+                chargeFx.transform.parent = transform;
+            }
         }
-
-        // Photon ¿¬°á ¿©ºÎ¿¡ °ü°è¾øÀÌ ·ÎÄÃ¿¡¼­ ÀÌÆåÆ® »ı¼º
-        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
-
-        // Init ¸Ş¼­µå È£Ãâ
-        //skillEffect.Init(damage, StartHitlag, isMine);
-        skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID, this));
-
-
-        // »ı¼ºµÈ ÀÌÆåÆ®ÀÇ ºÎ¸ğ¸¦ ¼³Á¤
-        skillEffect.transform.parent = transform;
     }
 
-    // ½ÃÇÁÆ® ½ºÅ³ ÀÌÆåÆ® »ı¼º
+
+    // ì‹œí”„íŠ¸ ìŠ¤í‚¬ ì´í™íŠ¸ ìƒì„±
     public void CreateShiftSkillEffect()
     {
         if (!photonView.IsMine)
@@ -1103,14 +1245,19 @@ public class PinkPlayerController : ParentPlayerController
             attackStack = animator.GetInteger("AttackStack");
         }
 
-        // ½ÃÇÁÆ® ½ºÅ³ µ¥¹ÌÁö °è»ê
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
+        // ì‹œí”„íŠ¸ ìŠ¤í‚¬ ë°ë¯¸ì§€ ê³„ì‚°
         float damage = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                        runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
 
-        // Photon¿¡ Á¢¼Ó ÁßÀÎÁö È®ÀÎÇÏ¿© isMine ¼³Á¤
+        // Photonì— ì ‘ì† ì¤‘ì¸ì§€ í™•ì¸í•˜ì—¬ isMine ì„¤ì •
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
-        // ÀÌÆåÆ® °æ·Î ¹× À§Ä¡ ¼³Á¤
+        // ì´í™íŠ¸ ê²½ë¡œ ë° ìœ„ì¹˜ ì„¤ì •
         string effectPath;
         Vector3 effectPosition = transform.position;
 
@@ -1123,34 +1270,39 @@ public class PinkPlayerController : ParentPlayerController
             effectPath = $"SkillEffect/WhitePlayer/ShiftSkill_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}";
         }
 
-        // ´Ù¸¥ Å¬¶óÀÌ¾ğÆ®¿¡°Ôµµ ÀÌÆåÆ®¸¦ »ı¼ºÇÏµµ·Ï RPC È£Ãâ
+        // ë‹¤ë¥¸ í´ë¼ì´ì–¸íŠ¸ì—ê²Œë„ ì´í™íŠ¸ë¥¼ ìƒì„±í•˜ë„ë¡ RPC í˜¸ì¶œ
         if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true, animator.speed);
         }
 
-        // Photon ¿¬°á ¿©ºÎ¿¡ °ü°è¾øÀÌ ·ÎÄÃ¿¡¼­ ÀÌÆåÆ® »ı¼º
+        // Photon ì—°ê²° ì—¬ë¶€ì— ê´€ê³„ì—†ì´ ë¡œì»¬ì—ì„œ ì´í™íŠ¸ ìƒì„±
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
 
-        // Init ¸Ş¼­µå È£Ãâ
+        // Init ë©”ì„œë“œ í˜¸ì¶œ
         skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this));
 
-        // »ı¼ºµÈ ÀÌÆåÆ®ÀÇ ºÎ¸ğ¸¦ ¼³Á¤
+        // ìƒì„±ëœ ì´í™íŠ¸ì˜ ë¶€ëª¨ë¥¼ ì„¤ì •
         skillEffect.transform.parent = transform;
     }
 
-    // ÅÂÅ¬ ÀÌÆåÆ® »ı¼º
+    // íƒœí´ ì´í™íŠ¸ ìƒì„±
     public void CreateTackleSkillEffect()
     {
 
-        // ÅÂÅ¬ ½ºÅ³ µ¥¹ÌÁö °è»ê
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
+        // íƒœí´ ìŠ¤í‚¬ ë°ë¯¸ì§€ ê³„ì‚°
         float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
                        runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
 
-        // Photon¿¡ Á¢¼Ó ÁßÀÎÁö È®ÀÎÇÏ¿© isMine ¼³Á¤
+        // Photonì— ì ‘ì† ì¤‘ì¸ì§€ í™•ì¸í•˜ì—¬ isMine ì„¤ì •
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
-        // ÀÌÆåÆ® °æ·Î ¹× À§Ä¡ ¼³Á¤
+        // ì´í™íŠ¸ ê²½ë¡œ ë° ìœ„ì¹˜ ì„¤ì •
         string effectPath;
         Vector3 effectPosition = transform.position;
 
@@ -1163,28 +1315,33 @@ public class PinkPlayerController : ParentPlayerController
             effectPath = $"SkillEffect/PinkPlayer/pink_tackle_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
         }
 
-        // ´Ù¸¥ Å¬¶óÀÌ¾ğÆ®¿¡°Ôµµ ÀÌÆåÆ®¸¦ »ı¼ºÇÏµµ·Ï RPC È£Ãâ
+        // ë‹¤ë¥¸ í´ë¼ì´ì–¸íŠ¸ì—ê²Œë„ ì´í™íŠ¸ë¥¼ ìƒì„±í•˜ë„ë¡ RPC í˜¸ì¶œ
         if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true, animator.speed);
         }
 
-        // Photon ¿¬°á ¿©ºÎ¿¡ °ü°è¾øÀÌ ·ÎÄÃ¿¡¼­ ÀÌÆåÆ® »ı¼º
+        // Photon ì—°ê²° ì—¬ë¶€ì— ê´€ê³„ì—†ì´ ë¡œì»¬ì—ì„œ ì´í™íŠ¸ ìƒì„±
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
 
-        // Init ¸Ş¼­µå È£Ãâ
+        // Init ë©”ì„œë“œ í˜¸ì¶œ
         //skillEffect.Init(damage, StartHitlag, isMine);
         skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID, this));
 
-        // »ı¼ºµÈ ÀÌÆåÆ®ÀÇ ºÎ¸ğ¸¦ ¼³Á¤
+        // ìƒì„±ëœ ì´í™íŠ¸ì˜ ë¶€ëª¨ë¥¼ ì„¤ì •
         skillEffect.transform.parent = transform;
     }
 
 
-    // ½ºÆäÀÌ½º ÀÌÆåÆ® ÄÁÅ×ÀÌ³Ê¿¡ È¿°ú¸¸ ³ªÅ¸³ªµµ·Ï
+    // ìŠ¤í˜ì´ìŠ¤ ì´í™íŠ¸ ì»¨í…Œì´ë„ˆì— íš¨ê³¼ë§Œ ë‚˜íƒ€ë‚˜ë„ë¡
     public void CreateSpaceSkillEffect()
     {
-        // Photon¿¡ Á¢¼Ó ÁßÀÌ ¾Æ´Ò ¶§ photonView.IsMine °ªÀº false·Î Ã³¸®
+
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+        // Photonì— ì ‘ì† ì¤‘ì´ ì•„ë‹ ë•Œ photonView.IsMine ê°’ì€ falseë¡œ ì²˜ë¦¬
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/EffectContainer"), transform.position, Quaternion.identity);
@@ -1196,14 +1353,14 @@ public class PinkPlayerController : ParentPlayerController
 
 
     [PunRPC]
-    public override void CreateAnimation(string name, Vector3 pos, bool isChild)
+    public override void CreateAnimation(string name, Vector3 pos, bool isChild, float speed)
     {
-        base.CreateAnimation(name, pos, isChild);
+        base.CreateAnimation(name, pos, isChild, speed);
     }
 
     public void GetUltimateBonus()
     {
-        Debug.Log("±Ã±Ø±â ³³µµ ¹öÇÁ");
+        Debug.Log("ê¶ê·¹ê¸° ë‚©ë„ ë²„í”„");
     }
 
     public void UltimateMove(float distance)
@@ -1218,7 +1375,7 @@ public class PinkPlayerController : ParentPlayerController
         {
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", true);
         }
-        Debug.Log("ÀÚÀ¯»óÅÂ");
+        Debug.Log("ììœ ìƒíƒœ");
     }
 
     public void OnAttackAnimationEnd()
@@ -1234,7 +1391,7 @@ public class PinkPlayerController : ParentPlayerController
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", false);
             photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
         }
-        Debug.Log(" ¾Ö´Ï¸ŞÀÌ¼Ç Á¾·á");
+        Debug.Log(" ì• ë‹ˆë©”ì´ì…˜ ì¢…ë£Œ");
     }
 
     public void InitAttackStak()
@@ -1244,7 +1401,7 @@ public class PinkPlayerController : ParentPlayerController
     }
 
 
-    // ÇÇ°İ ¹× »ç¸Á Ã³¸®
+    // í”¼ê²© ë° ì‚¬ë§ ì²˜ë¦¬
     public override void TakeDamage(float damage, Vector3 attackerPos, AttackerType attackerType = AttackerType.Default)
     {
         if (currentState == PinkPlayerState.Death || currentState == PinkPlayerState.Stun)
@@ -1272,7 +1429,7 @@ public class PinkPlayerController : ParentPlayerController
 
         base.TakeDamage(damage, attackerPos);
 
-        Debug.Log("ÇÃ·¹ÀÌ¾î Ã¼·Â: " + runTimeData.currentHealth);
+        Debug.Log("í”Œë ˆì´ì–´ ì²´ë ¥: " + runTimeData.currentHealth);
 
         if (runTimeData.currentHealth <= 0)
         {
@@ -1313,7 +1470,7 @@ public class PinkPlayerController : ParentPlayerController
     public override void UpdateHP(float hp)
     {
         base.UpdateHP(hp);
-        Debug.Log(photonView.ViewID + "ÇÃ·¹ÀÌ¾î Ã¼·Â: " + runTimeData.currentHealth);
+        Debug.Log(photonView.ViewID + "í”Œë ˆì´ì–´ ì²´ë ¥: " + runTimeData.currentHealth);
 
         if (runTimeData.currentHealth <= 0)
         {
@@ -1323,19 +1480,19 @@ public class PinkPlayerController : ParentPlayerController
             }
         }
 
-        Debug.Log(photonView.ViewID + " ÇÃ·¹ÀÌ¾î Ã¼·Â ¾÷µ¥ÀÌÆ®µÊ: " + runTimeData.currentHealth);
+        Debug.Log(photonView.ViewID + " í”Œë ˆì´ì–´ ì²´ë ¥ ì—…ë°ì´íŠ¸ë¨: " + runTimeData.currentHealth);
     }
 
-    // ±âÀı
+    // ê¸°ì ˆ
 
-    // GaugeInteraction Å¬·¡½º ÂüÁ¶
+    // GaugeInteraction í´ë˜ìŠ¤ ì°¸ì¡°
     private GaugeInteraction gaugeInteraction;
 
     private Coroutine stunCoroutine;
     private void EnterStunState()
     {
         currentState = PinkPlayerState.Stun;
-        Debug.Log("ÇÃ·¹ÀÌ¾î ±âÀı");
+        Debug.Log("í”Œë ˆì´ì–´ ê¸°ì ˆ");
         animator.SetBool("stun", true);
         if (PhotonNetwork.IsConnected)
         {
@@ -1360,7 +1517,7 @@ public class PinkPlayerController : ParentPlayerController
             stunOverlay.enabled = true;
             stunSlider.gameObject.SetActive(true);
             stunSlider.fillAmount = 1f;
-            hpBar.enabled = false;  // ±âÀı »óÅÂ¿¡¼± Ã¼·Â¹Ù ºñÈ°¼ºÈ­
+            hpBar.enabled = false;  // ê¸°ì ˆ ìƒíƒœì—ì„  ì²´ë ¥ë°” ë¹„í™œì„±í™”
         }
 
         while (stunElapsed < stunDuration && currentState == PinkPlayerState.Stun)
@@ -1375,7 +1532,7 @@ public class PinkPlayerController : ParentPlayerController
             yield return null;
         }
 
-        if (currentState == PinkPlayerState.Stun)  // ¿©ÀüÈ÷ ±âÀı»óÅÂ¶ó¸é
+        if (currentState == PinkPlayerState.Stun)  // ì—¬ì „íˆ ê¸°ì ˆìƒíƒœë¼ë©´
         {
             TransitionToDeath();
         }
@@ -1441,8 +1598,8 @@ public class PinkPlayerController : ParentPlayerController
                 photonView.RPC("SyncBoolParameter", RpcTarget.Others, "revive", true);
             }
 
-            photonView.RPC("UpdateHP", RpcTarget.All, 20f); // ¿©±â¼­ Ã¼·Â ¾÷µ¥ÀÌÆ®
-            Debug.Log("ÇÃ·¹ÀÌ¾î ºÎÈ°");
+            photonView.RPC("UpdateHP", RpcTarget.All, 20f); // ì—¬ê¸°ì„œ ì²´ë ¥ ì—…ë°ì´íŠ¸
+            Debug.Log("í”Œë ˆì´ì–´ ë¶€í™œ");
         }
     }
 
@@ -1456,12 +1613,12 @@ public class PinkPlayerController : ParentPlayerController
     private void TransitionToDeath()
     {
         currentState = PinkPlayerState.Death;
-        Debug.Log("ÇÃ·¹ÀÌ¾î »ç¸Á");
+        Debug.Log("í”Œë ˆì´ì–´ ì‚¬ë§");
         if (photonView.IsMine)
         {
             stunSlider.gameObject.SetActive(false);
             stunOverlay.enabled = false;
-            hpBar.enabled = false;  // »ç¸Á½Ã Ã¼·Â¹Ù ºñÈ°¼ºÈ­
+            hpBar.enabled = false;  // ì‚¬ë§ì‹œ ì²´ë ¥ë°” ë¹„í™œì„±í™”
         }
 
         if (animator != null)

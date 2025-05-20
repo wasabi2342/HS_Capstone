@@ -496,7 +496,7 @@ public class WhitePlayerController : ParentPlayerController
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, false);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, false, animator.speed);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.R].skillData.ID, this) : null);
     }
@@ -531,7 +531,7 @@ public class WhitePlayerController : ParentPlayerController
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true, animator.speed);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this) : null);
 
@@ -572,7 +572,7 @@ public class WhitePlayerController : ParentPlayerController
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true, animator.speed);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this) : null);
         skillEffect.transform.parent = transform;
@@ -642,7 +642,7 @@ public class WhitePlayerController : ParentPlayerController
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true, animator.speed);
 
         skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, null);
         skillEffect.transform.parent = transform;
@@ -667,9 +667,9 @@ public class WhitePlayerController : ParentPlayerController
     #endregion
 
     [PunRPC]
-    public override void CreateAnimation(string name, Vector3 pos, bool isChild)
+    public override void CreateAnimation(string name, Vector3 pos, bool isChild, float speed)
     {
-        base.CreateAnimation(name, pos, isChild);
+        base.CreateAnimation(name, pos, isChild, speed);
     }
 
     public void GetUltimateBonus()
