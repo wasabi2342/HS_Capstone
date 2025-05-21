@@ -293,6 +293,24 @@ public class UIRoomPanel : UIBase
 
     public void OnClickedStartButton()
     {
+
+        if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("SelectCharacter"))
+        {
+            string character = (string)PhotonNetwork.LocalPlayer.CustomProperties["SelectCharacter"];
+            if(character == "PinkPlayer")
+            {
+                if(!(UIManager.Instance.ReturnPeekUI() as UIDialogPanel))
+                {
+                    UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("개발 중인 캐릭터입니다");
+                    return;
+                }
+            }
+        }
+        else
+        {
+            return;
+        }
+
         if (PhotonNetwork.IsMasterClient)
         {
             if (canStart)

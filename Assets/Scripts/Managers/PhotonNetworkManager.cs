@@ -427,7 +427,9 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
         if (RoomManager.Instance != null)
         {
-            RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().damageBuff *= damageBuff;
+            ParentPlayerController parentPlayerController = RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>();
+            parentPlayerController.damageBuff *= damageBuff;
+            parentPlayerController.RecoverHealth(20f);
         }
 
         if (UIManager.Instance.ReturnPeekUI() as UICoopOrBetrayPanel)
