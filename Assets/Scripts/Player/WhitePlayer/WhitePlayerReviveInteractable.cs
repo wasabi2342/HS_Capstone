@@ -9,6 +9,7 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
     private PhotonView localPhotonView;
 
     private bool canInteract = true;
+    private bool canInteractRevive = false;
 
     private void Awake()
     {
@@ -23,6 +24,9 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
             return;
         }
 
+        if (!canInteractRevive)
+            return;
+
         // 같은 팀일 때만 부활 상호작용
         if (canInteract && IsSameTeam(localPhotonView, otherPhotonView))
         {
@@ -32,7 +36,7 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
             {
                 if (photonView != null)
                 {
-                    photonView.RPC("SyncCanInteract", RpcTarget.Others, false);
+                    photonView.RPC("RPC_SyncCanInteract", RpcTarget.Others, false);
                 }
             }
 
@@ -56,6 +60,7 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
         if (canInteract && IsSameTeam(localPhotonView, otherPhotonView))
         {
             base.OnTriggerEnter(other);
+            canInteractRevive = true;
         }
     }
 
@@ -63,6 +68,7 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
     {
         base.OnTriggerExit(other);
 
+        canInteractRevive = false;
         Debug.Log("부활 상호작용 exit");
     }
 
@@ -85,7 +91,7 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
         {
             if (photonView != null)
             {
-                photonView.RPC("SyncCanInteract", RpcTarget.Others, true);
+                photonView.RPC("RPC_SyncCanInteract", RpcTarget.Others, true);
             }
         }
 
@@ -132,7 +138,7 @@ public class WhitePlayerReviveInteractable : GaugeInteraction
     }
 
     [PunRPC]
-    public void SyncCanInteract(bool value)
+    public void RPC_SyncCanInteract(bool value)
     {
         canInteract = value;
     }
