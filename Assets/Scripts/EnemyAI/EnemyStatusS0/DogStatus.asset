@@ -16,18 +16,18 @@ MonoBehaviour:
   spawnAreaBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 5, y: 5, z: 5}
-  maxHealth: 50
-  moveSpeed: 3
+  maxHealth: 80
+  moveSpeed: 2.5
   chaseSpeedMultiplier: 1.2
   navMeshSampleDistance: 10
-  maxChaseDistance: 40
+  maxChaseDistance: 100
   maxChaseTime: 30
   headOffset: 2
   hitStunTime: 0.3
   hitKnockbackStrength: 3
   maxShield: 30
-  detectRange: 7
-  attackRange: 4
+  detectRange: 15
+  attackRange: 3
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 73792
@@ -35,6 +35,3 @@ MonoBehaviour:
   attackDuration: 0.7
   attackCoolTime: 2
   attackDamage: 10
-  attackWeights:
-  - scriptName: DogAttack
-    weight: 0.5

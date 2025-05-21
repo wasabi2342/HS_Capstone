@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1622c721f4ae1704d8431444108cf455, type: 3}
+  m_Name: Level3
+  m_EditorClassIdentifier: 
+  waves:
+  - spawnAreaSettings:
+    - position: {x: 105, y: 6, z: 12}
+      radius: 15
+      monsterSpawnInfos:
+      - monsterPrefabName: Ghoul_Fix
+        count: 7
+    - position: {x: 115, y: 6, z: 24}
+      radius: 4
+      monsterSpawnInfos:
+      - monsterPrefabName: Wolf_Fix
+        count: 1
+    - position: {x: 95, y: 6, z: 0}
+      radius: 4
+      monsterSpawnInfos:
+      - monsterPrefabName: Wolf_Fix
+        count: 1
+    - position: {x: 115, y: 6, z: 24}
+      radius: 4
+      monsterSpawnInfos:
+      - monsterPrefabName: Wolf_Fix
+        count: 1
+    - position: {x: 95, y: 6, z: 0}
+      radius: 4
+      monsterSpawnInfos:
+      - monsterPrefabName: Wolf_Fix
+        count: 1

@@ -16,13 +16,13 @@ MonoBehaviour:
   spawnAreaBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 5, y: 5, z: 5}
-  maxHealth: 20
+  maxHealth: 50
   moveSpeed: 1.2
   chaseSpeedMultiplier: 1.1
   navMeshSampleDistance: 3
-  maxChaseDistance: 30
-  maxChaseTime: 30
-  headOffset: 3.2
+  maxChaseDistance: 70
+  maxChaseTime: 20
+  headOffset: 3
   hitStunTime: 0.3
   hitKnockbackStrength: 3
   maxShield: 10
@@ -35,6 +35,3 @@ MonoBehaviour:
   attackDuration: 1
   attackCoolTime: 1
   attackDamage: 10
-  attackWeights:
-  - scriptName: SkeletonAttack
-    weight: 0.5

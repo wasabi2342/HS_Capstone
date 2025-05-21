@@ -20,13 +20,13 @@ MonoBehaviour:
   moveSpeed: 1.1
   chaseSpeedMultiplier: 1.15
   navMeshSampleDistance: 3
-  maxChaseDistance: 30
+  maxChaseDistance: 40
   maxChaseTime: 20
   headOffset: 2.7
   hitStunTime: 0.3
   hitKnockbackStrength: 3
   maxShield: 30
-  detectRange: 5
+  detectRange: 10
   attackRange: 1.5
   playerLayerMask:
     serializedVersion: 2
@@ -35,8 +35,3 @@ MonoBehaviour:
   attackDuration: 1
   attackCoolTime: 2
   attackDamage: 10
-  attackWeights:
-  - scriptName: GhoulAttack
-    weight: 0.5
-  - scriptName: GhoulLongAttack
-    weight: 0.5
