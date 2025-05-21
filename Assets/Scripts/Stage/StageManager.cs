@@ -208,7 +208,7 @@ public class StageManager : MonoBehaviour
                 }
                 for (int i = 0; i < isImmediateSpawnList.Count; i++)
                 {
-                    if (isImmediateSpawnList[i])
+                    if (!isImmediateSpawnList[i])
                     {
                         GameObject coopOrBetrayNPC = Resources.Load<GameObject>(CoopOrBetrayNPCPrefabNameList[i]);
                         if (coopOrBetrayNPC != null)

@@ -1,45 +1,42 @@
 using Photon.Pun;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class UIPlayerInfoPanel : UIBase
 {
+    //[SerializeField]
+    //private Button selectCharacterButton;
     [SerializeField]
-    private Button selectCharacterButton;
+    private Image characterImage;
     [SerializeField]
-    private Text nicknameText;
+    private TextMeshProUGUI nicknameText;
     [SerializeField]
-    private Image ReadyImage;
+    private TextMeshProUGUI readyText;
+    [SerializeField]
+    private TextMeshProUGUI hostText;
 
-    public void Init(bool isReady, string nickname, string character, UnityAction action = null)
+    public void Init(bool isReady, string nickname, string character, bool isMaster, UnityAction action = null)
     {
         if (isReady)
         {
-            ReadyImage.color = Color.green;
-
-            if (PhotonNetwork.IsMasterClient || !PhotonNetwork.InRoom)
+            if (isMaster)
             {
-                selectCharacterButton.interactable = true;
+                hostText.gameObject.SetActive(true);
             }
             else
             {
-                selectCharacterButton.interactable = false;
+                readyText.gameObject.SetActive(true);
             }
         }
         else
         {
-            ReadyImage.color = Color.red;
-            selectCharacterButton.interactable = true;
+            readyText.gameObject.SetActive(false);
         }
 
         nicknameText.text = nickname;
 
-        selectCharacterButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprite/" + character);
-
-        if (action != null)
-        {
-            selectCharacterButton.onClick.AddListener(action);
-        }
+        characterImage.sprite = Resources.Load<Sprite>("Sprite/" + character);
     }
 }
