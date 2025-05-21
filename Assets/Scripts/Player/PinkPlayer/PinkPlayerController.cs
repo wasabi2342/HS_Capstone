@@ -626,7 +626,17 @@ public class PinkPlayerController : ParentPlayerController
     {
         if (!PhotonNetwork.IsMasterClient) return;
         int myServantsCount = myServants.Count; // 소환수 개수 먼저 로컬에 저장
-        ultimateStackLimit = myServants.Count; // 불러온 소환수 개수 기억 - 같은 값 저장해주는 거임
+        int devilLevelR = runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil;// 불러온 소환수 개수 기억 - 같은 값 저장해주는 거임
+
+        // 2) Devil == 2 이면 스택 제한 무제한, 아니면 소환수 개수만큼 제한
+        if (devilLevelR == 2)
+        {
+            ultimateStackLimit = int.MaxValue;
+        }
+        else
+        {
+            ultimateStackLimit = myServantsCount;
+        }
 
         // 1) myServants 를 돌며 ForceKill RPC 호출
         foreach (var s in myServants)
@@ -729,29 +739,29 @@ public class PinkPlayerController : ParentPlayerController
     // 애니메이션 이벤트로 평타 스택 설정해주기
     public void OnAttackStack()
     {
-        // 1) Devil 레벨별 cap (8 or 13)
-        int cap = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil == 2
-       ? 13
-       : 8;
+        int devilLevelR = runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil;
 
-        // 2) 진짜 최대 스택은 희생된 소환수 개수(ultimateStackLimit)와 cap 중 작은 쪽
-        int maxStack = Mathf.Min(ultimateStackLimit, cap);
-
-        // 3) 비교 후 초과 시 리턴
-        if (R_attackStack >= maxStack)
+        // Devil == 2 이면 무제한으로 계속 증가
+        if (devilLevelR == 2)
         {
-            Debug.Log($"R_attackStack 최대치({maxStack}) 도달, 더 안올라감");
-            return;
+            R_attackStack++;
+        }
+        else
+        {
+            // 기존 cap/limit 로직
+            int cap = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil == 2 ? 13 : 8;
+            int maxStack = Mathf.Min(ultimateStackLimit, cap);
+            if (R_attackStack >= maxStack) return;
+            R_attackStack++;
         }
 
-        // 4) 스택 증가
-        R_attackStack++;
-        Debug.Log(R_attackStack);
+        // 증가 후 동기화
+        Debug.Log($"R_attackStack: {R_attackStack}");
         animator.SetInteger("R_attackStack", R_attackStack);
         AttackStackUpdate?.Invoke(R_attackStack);
-        Debug.Log($"평타 스택 설정: {R_attackStack}");
+    
 
-        SetIntParameter("R_attackStack", R_attackStack);
+    SetIntParameter("R_attackStack", R_attackStack);
     }
 
 
@@ -883,7 +893,7 @@ public class PinkPlayerController : ParentPlayerController
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
-            photonView.RPC("SyncIntegerParameter", RpcTarget.Others, "R_attackStack", R_attackStack);
+            photonView.RPC("SyncIntParameter", RpcTarget.Others, "R_attackStack", R_attackStack);
         }
     }
 
