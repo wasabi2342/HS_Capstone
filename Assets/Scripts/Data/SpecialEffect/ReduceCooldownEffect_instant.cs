@@ -16,7 +16,10 @@ public class ReduceCooldownEffect_instant : BaseSpecialEffect
         foreach (char c in strKey)
         {
             if (char.IsDigit(c))
+            {
                 playerController.cooldownCheckers[int.Parse(c.ToString())].ReduceCooldown(value);
+                Debug.Log((Skills)int.Parse(c.ToString()) + "스킬" + value + "만큼 쿨타임 감소");
+            }
         }
     }
 
