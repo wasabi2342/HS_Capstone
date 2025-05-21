@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: 2ed2d34d-c332-4d3a-bf77-658ac469bb45
+    AppIdRealtime: 8dbaab98-4171-45e7-8dfc-f8db4a913d38
     AppIdFusion: 
     AppIdChat: 
     AppIdVoice: 
@@ -35,102 +35,69 @@ MonoBehaviour:
   StartInOfflineMode: 0
   RpcList:
   - ClickRpc
-  - DestroyRpc
-  - DestroySpaceship
-  - Fire
-  - RespawnSpaceship
-  - ShowStageReadyPanel
-  - UpdateReadyPlayer
-  - OpenReadyPanel
-  - UpdateHP
-  - AddPlayerInArray
-  - AddPlayerInDictionary
+  - CreateAnimation
   - DamageToMaster
-  - 
-  - UpdatePlayerDic
-  - SyncChaseState
-  - SyncDamage
-  - SyncDeath
-  - SyncState
-  - PlayAnimation
-  - SyncPreInput
-  - SyncBoolParameter
-  - SyncIntParameter
-  - RPC_PlayAnimation
-  - RPC_SetParent
-  - RPC_UpdateHP
-  - RPC_Interact
-  - RPC_TransitionStage
-  - ReviveRPC
-  - RPC_FlashSprite
-  - RPC_ShowVoteUI
-  - RPC_SubmitVote
-  - RPC_VoteResult
-  - RPC_AnnounceResult
-  - RPC_AnnounceWinner
-  - RPC_DecideReward
-  - RPC_SetCheckMark
-  - RPC_CancelAllVotes
-  - RPC_AddCheckMark
-  - RPC_ConfirmVote
-  - RPC_OpenUI
-  - RPC_ResetUI
-  - RPC_OpenRewardUIForAll
-  - RPC_FinalizeRewardSelection
-  - RPC_RemoveMyCheckIcon
-  - RPC_RemoveMyVote
-  - RPC_UpdateCountdown
-  - RPC_UpdateFinalReward
-  - EnterPlayer
-  - RPC_SetMaster
-  - RPC_ShowNextStageCountdown
-  - 
+  - DamageToMaster_RPC
+  - DestroyRpc
+  - ForceKill
   - Interact
+  - OpenReadyPanel
+  - PlayAnimation
   - PopupBlessingPanel
   - PopupDialogPanel
+  - ReviveRPC
+  - RPC_AddCheckMark
+  - RPC_ApplyKnockback
   - RPC_ApplyMonsterBuff
   - RPC_ApplyPlayerBuff
-  - RPC_SpawnServant
-  - RPC_SpawnServant_Stack
-  - SuccessLeverInteraction
-  - SyncCanInteract
-  - RPC_Flash
-  - RPC_PlayAnim
-  - UpdateShield
-  - RPC_SetRadius
-  - RPC_LinkSpawnArea
+  - RPC_ApplyUltimateBuff
+  - RPC_ConfirmVote
+  - RPC_CreateServantDeathEffectOnRemote
   - RPC_DestroyHPBar
-  - RPC_ShieldBreakFx
-  - RPC_RequestDamage
-  - CreateAnimation
-  - RPC_Stun
-  - RPC_SpawnBloodEffect
-  - RPC_SaveRunTimeData
-  - RPC_ApplyKnockback
+  - RPC_EnableTaunt
+  - RPC_FinalizeRewardSelection
+  - RPC_Flash
+  - RPC_GotoPVPArea
   - RPC_HandleAttackEnd
-  - RPC_Attack
-  - PlayAttackAnimRPC
+  - RPC_LinkSpawnArea
+  - RPC_NextStage
+  - RPC_OpenRewardUIForAll
+  - RPC_OpenUI
+  - RPC_PlayAnim
+  - RPC_PlayAnimation
   - RPC_PlayClip
-  - RPC_SpawnBloodFx
-  - RPC_SpawnHitFx
-  - RPC_ShowDamage
+  - RPC_ReduceReviveTime
+  - RPC_RegisterServant
+  - RPC_RemoveMyCheckIcon
+  - RPC_RemoveMyVote
   - RPC_ReportPlayerDeath
   - RPC_ReportPlayerRevive
   - RPC_ResetGame
-  - ForceKill
-  - RPC_RegisterServant
+  - RPC_SaveRunTimeData
+  - RPC_SetMaster
   - RPC_SetOwner
+  - RPC_SetParent
+  - RPC_SetRadius
+  - RPC_ShieldBreakFx
+  - RPC_ShowDamage
+  - RPC_ShowNextStageCountdown
+  - RPC_SpawnBloodEffect
+  - RPC_SpawnHitFx
+  - RPC_SpawnServant
+  - RPC_Stun
+  - RPC_SyncCanInteract
   - RPC_TakeDamage
+  - RPC_UpdateCountdown
+  - RPC_UpdateFinalReward
   - RPC_UseUltimate
-  - RPC_EnableTaunt
-  - DamageToMaster_RPC
+  - SuccessLeverInteraction
+  - SyncBoolParameter
+  - SyncCanInteract
+  - SyncIntParameter
   - TakeDamageRPC
-  - RPC_GotoPVPArea
-  - RPC_NextStage
-  - RPC_ReduceReviveTime
-  - RPC_CreateServantDeathEffectOnRemote
-  - ApplyUltimateBuff
-  - RPC_ApplyUltimateBuff
+  - UpdateHP
+  - UpdateReadyPlayer
+  - UpdateShield
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
