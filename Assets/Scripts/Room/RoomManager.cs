@@ -76,7 +76,48 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        StartCoroutine(Co_Start());
+        //StartCoroutine(Co_Start());
+        openMenuAction = OpenMenuPanel;
+        InputManager.Instance.PlayerInput.actions["OpenMenu"].performed += openMenuAction;
+
+        PhotonNetworkManager.Instance.SetIsInPvPArea(isInPvPArea);
+
+        // 키 정의
+        string key = "SelectCharacter";
+
+        // 순서 기반 인덱스 구하기
+        List<Player> playerList = PhotonNetwork.PlayerList.ToList(); // ActorNumber 순
+        int myIndex = playerList.IndexOf(PhotonNetwork.LocalPlayer);
+
+        // 인덱스 범위 확인
+        if (myIndex < 0 || myIndex >= spawnPointList.Count)
+        {
+            Debug.LogWarning("스폰 포인트를 찾을 수 없습니다.");
+            return;
+            //yield break; // 코루틴 종료
+        }
+
+        spawnPos = spawnPointList[myIndex] + new Vector3(0, 1.5f, 0);
+
+        // 룸에 연결되어 있고 커스텀 프로퍼티에 해당 키가 있으면 안전하게 꺼내기
+        if (PhotonNetwork.IsConnected
+            && PhotonNetwork.CurrentRoom != null
+            && PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(key, out var val)
+            && val is string charName)
+        {
+            Debug.Log($"Loaded character name: {charName}");
+            CreateCharacter(charName, spawnPos, Quaternion.identity, isInVillage);
+        }
+        else
+        {
+            // 키가 없거나 오프라인 모드일 때 기본 플레이어로 생성
+            CreateCharacter(defaultPlayer.name, spawnPos, Quaternion.identity, isInVillage);
+        }
+
+        if (UICamera != null)
+        {
+            UIManager.Instance.SetRenderCamera(UICamera);
+        }
     }
 
     private void OnDisable()

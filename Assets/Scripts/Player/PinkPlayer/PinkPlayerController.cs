@@ -68,7 +68,34 @@ public class PinkPlayerController : ParentPlayerController
     {
         base.Start();
 
-        StartCoroutine(Co_Start());
+        //StartCoroutine(Co_Start());
+
+        currentState = PinkPlayerState.Idle;
+
+        if (photonView.IsMine)
+        {
+            if (photonView.IsMine)
+            {
+
+                if (stunOverlay != null) stunOverlay.enabled = false;
+                if (stunSlider != null) stunSlider.gameObject.SetActive(false);
+                if (hpBar != null) hpBar.enabled = true;
+
+                gaugeInteraction = GetComponentInChildren<GaugeInteraction>();
+
+                var eventController = GetComponent<PinkPlayercontroller_event>();
+                if (eventController != null)
+                {
+                    //eventController.OnInteractionEvent += HandleReviveInteraction;
+                }
+
+                if (runTimeData.currentHealth <= 0)
+                {
+                    TransitionToDeath();
+                }
+
+            }
+        }
     }
 
     IEnumerator Co_Start()
@@ -759,9 +786,9 @@ public class PinkPlayerController : ParentPlayerController
         Debug.Log($"R_attackStack: {R_attackStack}");
         animator.SetInteger("R_attackStack", R_attackStack);
         AttackStackUpdate?.Invoke(R_attackStack);
-    
 
-    SetIntParameter("R_attackStack", R_attackStack);
+
+        SetIntParameter("R_attackStack", R_attackStack);
     }
 
 
@@ -1486,7 +1513,8 @@ public class PinkPlayerController : ParentPlayerController
         {
             if (currentState != PinkPlayerState.Stun)
             {
-                currentState = PinkPlayerState.Stun;
+                if (photonView.IsMine)
+                    EnterStunState();
             }
         }
 
