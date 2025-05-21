@@ -304,6 +304,11 @@ public class UICoopOrBetrayPanel : UIBase
 
         if (coopCount == choices.Count)
         {
+            if (alreadyChoice)
+                return;
+
+            alreadyChoice = true;
+
             Debug.Log("���� ����!");
             // �������� ���� �ο�
             switch (coopType)
@@ -355,6 +360,11 @@ public class UICoopOrBetrayPanel : UIBase
         }
         else
         {
+            if (alreadyChoice)
+                return;
+
+            alreadyChoice = true;
+
             Debug.Log("�Ϻ� ���");
             // ����� ����� ����
             switch (coopType)
