@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 public enum CoopType
@@ -65,6 +66,8 @@ public class UICoopOrBetrayPanel : UIBase
     private TextMeshProUGUI betrayBodyText;
 
     private CoopType coopType;
+
+    private bool alreadyChoice = false;
 
     private void OnDisable()
     {
@@ -315,6 +318,11 @@ public class UICoopOrBetrayPanel : UIBase
         }
         else if (betrayCount == choices.Count)
         {
+            if (alreadyChoice)
+                return;
+
+            alreadyChoice = true;
+
             Debug.Log("���� ���!");
             // �������� ����� �ο�
             switch (coopType)
