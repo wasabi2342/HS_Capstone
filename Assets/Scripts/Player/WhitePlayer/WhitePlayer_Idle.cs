@@ -55,7 +55,10 @@ public class WhitePlayer_Idle : StateMachineBehaviour
             case WhitePlayerState.Run:
                 animator.SetBool("run", true);
                 if (PhotonNetwork.IsConnected)
-                    whitePlayerController.SetTriggerParameter("run");
+                {
+                    whitePlayerController.SetTriggerParameter("runStart");
+                    whitePlayerController.SetBoolParameter("run", true);
+                }
                 whitePlayerController.currentState = WhitePlayerState.Run;
                 break;
             case WhitePlayerState.BasicAttack:

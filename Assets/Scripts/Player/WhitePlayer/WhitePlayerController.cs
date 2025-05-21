@@ -164,7 +164,7 @@ public class WhitePlayerController : ParentPlayerController
                 {
                     animator.SetBool("run", false);
                     if (PhotonNetwork.IsConnected)
-                        SetTriggerParameter("runCancel");
+                        SetBoolParameter("run", false);
                 }
             }
         }
@@ -178,7 +178,7 @@ public class WhitePlayerController : ParentPlayerController
             {
                 animator.SetBool("run", false);
                 if (PhotonNetwork.IsConnected)
-                    SetTriggerParameter("runCancel");
+                    SetBoolParameter("run", false);
             }
             return;
 
