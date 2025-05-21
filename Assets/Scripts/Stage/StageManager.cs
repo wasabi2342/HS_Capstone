@@ -61,6 +61,18 @@ public class StageManager : MonoBehaviour
                     }
                 }
             }
+            if (isEndStage)
+            {
+                GameObject blessingNPC = Resources.Load<GameObject>(blessingNPCPrefabName);
+
+                if (blessingNPC != null)
+                {
+                    PhotonNetwork.Instantiate(
+                    blessingNPCPrefabName,
+                    blessingSpawn.position,
+                    blessingSpawn.rotation);
+                }
+            }
             //PhotonNetwork.Instantiate(blessingNPCPrefabName, Vector3.zero, Quaternion.identity);
             //PhotonNetwork.Instantiate(doorPrefabName, new Vector3(10,0,0), Quaternion.identity);
             //if (coopOrBetrayNPCPos != null)
@@ -199,12 +211,15 @@ public class StageManager : MonoBehaviour
                     rewardSpawn.position,
                     rewardSpawn.rotation);
                 }
-                if (blessingNPC != null)
+                if (!isEndStage)
                 {
-                    PhotonNetwork.Instantiate(
-                    blessingNPCPrefabName,
-                    blessingSpawn.position,
-                    blessingSpawn.rotation);
+                    if (blessingNPC != null)
+                    {
+                        PhotonNetwork.Instantiate(
+                        blessingNPCPrefabName,
+                        blessingSpawn.position,
+                        blessingSpawn.rotation);
+                    }
                 }
                 for (int i = 0; i < isImmediateSpawnList.Count; i++)
                 {

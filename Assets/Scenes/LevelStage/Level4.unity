@@ -49998,6 +49998,37 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 21c5415a9a5ee6a46893fddad9466b1f, type: 2}
   m_BuildHeightMesh: 0
+--- !u!1 &1796473416
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1796473417}
+  m_Layer: 0
+  m_Name: GameObject (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1796473417
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796473416}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 39.77945, y: -26.333126, z: -1.144019}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1799474950
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -60752,7 +60783,7 @@ PrefabInstance:
     - target: {fileID: 396776432407990452, guid: 571105cf74ec453488d8aa1cf2fc7ea3, type: 3}
       propertyPath: coopOrBetrayNPCPos
       value: 
-      objectReference: {fileID: 1043152806}
+      objectReference: {fileID: 1796473417}
     - target: {fileID: 1018312648120570847, guid: 571105cf74ec453488d8aa1cf2fc7ea3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 106
@@ -60903,3 +60934,4 @@ SceneRoots:
   - {fileID: 22842169}
   - {fileID: 8952268857497696306}
   - {fileID: 803328529}
+  - {fileID: 1796473417}
