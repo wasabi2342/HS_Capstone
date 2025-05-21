@@ -9563,6 +9563,37 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: a75855b11f00e4448af7f21548293b38, type: 2}
   m_BuildHeightMesh: 0
+--- !u!1 &295934954
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 295934955}
+  m_Layer: 0
+  m_Name: GameObject (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &295934955
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 295934954}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 61.61436, y: -275.74054, z: -0.1638279}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &296245064
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16318,12 +16349,14 @@ MonoBehaviour:
   blessingNPCPrefabName: BlessingNPC
   CoopOrBetrayNPCPrefabName: CoopOrBetrayNPC2
   currentStageSettings: {fileID: 11400000, guid: 10f5c10819042a446bd9add299598473, type: 2}
-  coopOrBetrayNPCPos: {fileID: 1043152806}
+  coopOrBetrayNPCPos: {fileID: 295934955}
   rewardSpawn: {fileID: 1227425870}
   blessingSpawn: {fileID: 1209672931}
-  CoopOrBetrayNPCPrefabNameList: []
-  coopOrBetrayNPCPosList: []
-  isImmediateSpawnList: 
+  CoopOrBetrayNPCPrefabNameList:
+  - CoopOrBetrayNPC2
+  coopOrBetrayNPCPosList:
+  - {fileID: 1043152806}
+  isImmediateSpawnList: 01
   isEndStage: 0
 --- !u!4 &524594070
 Transform:
@@ -61523,3 +61556,4 @@ SceneRoots:
   - {fileID: 1461750767}
   - {fileID: 1714940976}
   - {fileID: 1924065344}
+  - {fileID: 295934955}
