@@ -32,6 +32,8 @@ public class WhitePlayer_Idle : StateMachineBehaviour
         animator.SetBool("run", false);
         animator.SetBool("revive", false);
         animator.SetInteger("CounterStack", 0);
+        if (PhotonNetwork.IsConnected)
+            whitePlayerController.SetTriggerParameter("idle");
     }
 
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -95,8 +97,8 @@ public class WhitePlayer_Idle : StateMachineBehaviour
             case WhitePlayerState.Dash:
                 animator.SetBool("dash",true);
                 whitePlayerController.currentState = WhitePlayerState.Dash;
-                //if (PhotonNetwork.IsConnected)
-                //    whitePlayerController.SetBoolParameter("dash", true);
+                if (PhotonNetwork.IsConnected)
+                    whitePlayerController.SetTriggerParameter("dash");
                 break;
         }
 
