@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 35d00d018d14abb4795f5230d93a8533, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 20, y: 20}
@@ -127,6 +127,8 @@ MonoBehaviour:
   animator: {fileID: 8461356788456601100}
   hitlagTime: 0.0819
   attackerType: 2
+  animationSpeed: 1
+  childEffect: {fileID: 0}
 --- !u!65 &6887810469769819488
 BoxCollider:
   m_ObjectHideFlags: 0

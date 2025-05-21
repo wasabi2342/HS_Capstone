@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 35d00d018d14abb4795f5230d93a8533, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 20, y: 20}
@@ -100,7 +100,7 @@ Animator:
   m_GameObject: {fileID: 3471236542467713534}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 3f85b629b3c8ea441b1a437dc466036b, type: 2}
+  m_Controller: {fileID: 9100000, guid: 4f4f4f3d73d00c846901f27450935e17, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -124,9 +124,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6714531c8cf89f142aa576a25ef10be5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 8461356788456601100}
+  animator: {fileID: 0}
   hitlagTime: 0.0819
   attackerType: 2
+  animationSpeed: 1
+  childEffect: {fileID: 0}
 --- !u!65 &6887810469769819488
 BoxCollider:
   m_ObjectHideFlags: 0
