@@ -95,8 +95,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
                 animator.speed = runTimeData.attackSpeed;
 
-                if (isInPVPArea)
-                    runTimeData.currentHealth = characterBaseStats.maxHP;
+                //if (isInPVPArea)
+                //    runTimeData.currentHealth = characterBaseStats.maxHP;
 
                 // 내 체력으로 동기화
                 photonView.RPC("UpdateHP", RpcTarget.OthersBuffered, runTimeData.currentHealth);
