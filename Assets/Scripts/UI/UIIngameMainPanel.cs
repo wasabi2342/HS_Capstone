@@ -54,7 +54,13 @@ public class UIIngameMainPanel : UIBase
 
     private void Start()
     {
-        StartCoroutine(Co_Start());
+        //StartCoroutine(Co_Start());
+
+        openBlessingInfoAction = OpenBlessingInfoPanel;
+        InputManager.Instance.PlayerInput.actions["OpenBlessingInfo"].performed += openBlessingInfoAction;
+
+        RoomManager.Instance.UIUpdate += AddPartyPlayerHPbar;
+        Init();
     }
 
     IEnumerator Co_Start()

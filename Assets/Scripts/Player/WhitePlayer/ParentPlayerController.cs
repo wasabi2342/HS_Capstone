@@ -86,7 +86,51 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     protected virtual void Start()
     {
-        StartCoroutine(Co_Start());
+        //StartCoroutine(Co_Start());
+        if (PhotonNetwork.IsConnected)
+        {
+            if (photonView.IsMine)
+            {
+                runTimeData.LoadFromJsonFile();
+
+                animator.speed = runTimeData.attackSpeed;
+
+                //if (isInPVPArea)
+                //    runTimeData.currentHealth = characterBaseStats.maxHP;
+
+                // 내 체력으로 동기화
+                photonView.RPC("UpdateHP", RpcTarget.OthersBuffered, runTimeData.currentHealth);
+                nicknameText.text = PhotonNetwork.CurrentRoom.Players[photonView.Owner.ActorNumber].NickName;
+                nicknameText.color = new Color32(102, 204, 255, 255);
+
+                // UI 갱신용 invoke
+                OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
+
+                // pvp 테스트 임시 코드
+                //SetTeamId(PhotonNetwork.LocalPlayer.ActorNumber);
+            }
+            else
+            {
+                RoomManager.Instance.AddPlayerDic(photonView.Owner.ActorNumber, gameObject);
+                nicknameText.text = PhotonNetwork.CurrentRoom.Players[photonView.Owner.ActorNumber].NickName;
+
+                // 나와 팀 ID 비교
+                object myTeamIdObj, otherTeamIdObj;
+                PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("TeamId", out myTeamIdObj);
+                photonView.Owner.CustomProperties.TryGetValue("TeamId", out otherTeamIdObj);
+
+                if (myTeamIdObj != null && otherTeamIdObj != null && !myTeamIdObj.Equals(otherTeamIdObj))
+                {
+                    // 팀 ID 다르면 빨간색
+                    nicknameText.color = Color.red;
+                }
+                else
+                {
+                    // 같은 팀 또는 TeamId 없음
+                    nicknameText.color = new Color32(102, 255, 102, 255);
+                }
+            }
+        }
     }
 
     IEnumerator Co_Start()
