@@ -545,6 +545,17 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         photonView.RPC("SyncIntParameter", RpcTarget.Others, parameter, value);
     }
 
+    [PunRPC]
+    public virtual void SyncFloatParameter(string parameter, float value)
+    {
+        animator.SetFloat(parameter, value);
+    }
+
+    public virtual void SetFloatParameter(string parameter, float value)
+    {
+        photonView.RPC("SyncFloatParameter", RpcTarget.Others, parameter, value);
+    }
+
     public string ReturnCharacterName()
     {
         return characterBaseStats.name;

@@ -71,7 +71,7 @@ public class WhitePlayerController : ParentPlayerController
                 animator.SetInteger("mouseRightBlessing", runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil);
             }
 
-            if(runTimeData.currentHealth <= 0)
+            if (runTimeData.currentHealth <= 0)
             {
                 TransitionToDeath();
             }
@@ -163,6 +163,8 @@ public class WhitePlayerController : ParentPlayerController
                 if (animator.GetBool("run"))
                 {
                     animator.SetBool("run", false);
+                    if (PhotonNetwork.IsConnected)
+                        SetBoolParameter("run", false);
                 }
             }
         }
@@ -175,6 +177,8 @@ public class WhitePlayerController : ParentPlayerController
             if (animator.GetBool("run"))
             {
                 animator.SetBool("run", false);
+                if (PhotonNetwork.IsConnected)
+                    SetBoolParameter("run", false);
             }
             return;
 
@@ -200,6 +204,9 @@ public class WhitePlayerController : ParentPlayerController
 
             animator.SetFloat("moveX", h);
             animator.SetFloat("moveY", v);
+
+            SetFloatParameter("moveX", h);
+            SetFloatParameter("moveY", v);
         }
 
         //if (animator != null)
