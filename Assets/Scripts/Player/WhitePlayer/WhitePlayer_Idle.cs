@@ -65,36 +65,36 @@ public class WhitePlayer_Idle : StateMachineBehaviour
                 animator.SetBool("Right", mousePos.x > whitePlayerController.transform.position.x);
                 
                 animator.SetBool("basicattack", true);
-                if (PhotonNetwork.IsConnected)
-                {
-                    whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
-                    whitePlayerController.SetBoolParameter("basicattack", true);
-                    whitePlayerController.SetBoolParameter("Right", mousePos.x > whitePlayerController.transform.position.x);
-                }
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
+                //    whitePlayerController.SetBoolParameter("basicattack", true);
+                //    whitePlayerController.SetBoolParameter("Right", mousePos.x > whitePlayerController.transform.position.x);
+                //}
                 break;
             case WhitePlayerState.Guard:
                 animator.SetBool("guard", true);
                 whitePlayerController.currentState = WhitePlayerState.Guard;
-                if (PhotonNetwork.IsConnected)
-                    whitePlayerController.SetBoolParameter("guard", true);
+                //if (PhotonNetwork.IsConnected)
+                //    whitePlayerController.SetBoolParameter("guard", true);
                 break;
             case WhitePlayerState.Skill:
                 animator.SetBool("skill", true);
                 whitePlayerController.currentState = WhitePlayerState.Skill;
-                if (PhotonNetwork.IsConnected)
-                    whitePlayerController.SetBoolParameter("skill", true);
+                //if (PhotonNetwork.IsConnected)
+                //    whitePlayerController.SetBoolParameter("skill", true);
                 break;
             case WhitePlayerState.Ultimate:
                 animator.SetBool("ultimate", true);
                 whitePlayerController.currentState = WhitePlayerState.Ultimate;
-                if (PhotonNetwork.IsConnected)
-                    whitePlayerController.SetBoolParameter("ultimate", true);
+                //if (PhotonNetwork.IsConnected)
+                //    whitePlayerController.SetBoolParameter("ultimate", true);
                 break;
             case WhitePlayerState.Dash:
                 animator.SetBool("dash",true);
                 whitePlayerController.currentState = WhitePlayerState.Dash;
-                if (PhotonNetwork.IsConnected)
-                    whitePlayerController.SetBoolParameter("dash", true);
+                //if (PhotonNetwork.IsConnected)
+                //    whitePlayerController.SetBoolParameter("dash", true);
                 break;
         }
 

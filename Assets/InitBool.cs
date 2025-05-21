@@ -40,10 +40,10 @@ public class InitBool : StateMachineBehaviour
         {
             return;
         }
-        if (photonView.IsMine)
-        {
-            parentPlayerController.SetBoolParameter(parameter, boolValue);
-        }
+        //if (photonView.IsMine)
+        //{
+        //    parentPlayerController.SetBoolParameter(parameter, boolValue);
+        //}
         animator.speed = 1.0f;
     }
 
