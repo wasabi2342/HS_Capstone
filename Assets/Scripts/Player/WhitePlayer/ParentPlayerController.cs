@@ -15,6 +15,10 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     protected SpriteRenderer shadow;
     [SerializeField]
     protected TextMeshProUGUI nicknameText;
+    [SerializeField]
+    protected RuntimeAnimatorController myController;
+    [SerializeField]
+    protected RuntimeAnimatorController othersController;
 
     public Transform footPivot;
 
@@ -77,6 +81,18 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         playerBlessing = GetComponent<PlayerBlessing>();
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
+
+        if(myController != null && othersController != null)
+        {
+            if (photonView.IsMine)
+            {
+                animator.runtimeAnimatorController = myController;
+            }
+            else
+            {
+                animator.runtimeAnimatorController = othersController;
+            }
+        }
 
         if (animator == null)
         {
@@ -529,6 +545,27 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         photonView.RPC("SyncIntParameter", RpcTarget.Others, parameter, value);
     }
 
+    [PunRPC]
+    public virtual void SyncFloatParameter(string parameter, float value)
+    {
+        animator.SetFloat(parameter, value);
+    }
+
+    public virtual void SetFloatParameter(string parameter, float value)
+    {
+        photonView.RPC("SyncFloatParameter", RpcTarget.Others, parameter, value);
+    }
+
+    [PunRPC]
+    public virtual void SyncTriggerParameter(string parameter)
+    {
+        animator.SetTrigger(parameter);
+    }
+
+    public virtual void SetTriggerParameter(string parameter)
+    {
+        photonView.RPC("SyncTriggerParameter", RpcTarget.Others, parameter);
+    }
     public string ReturnCharacterName()
     {
         return characterBaseStats.name;
@@ -576,5 +613,18 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     public virtual void ReduceReviveTime(float reduceTime = 1.0f)
     {
 
+    }
+
+    public void SyncAnimation(string stateName)
+    {
+        if (!photonView.IsMine)
+            return;
+        photonView.RPC("RPC_SyncAnimation", RpcTarget.Others, stateName);
+    }
+
+    [PunRPC]
+    public void RPC_SyncAnimation(string stateName)
+    {
+        animator.Play(stateName);
     }
 }

@@ -71,7 +71,7 @@ public class WhitePlayerController : ParentPlayerController
                 animator.SetInteger("mouseRightBlessing", runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil);
             }
 
-            if(runTimeData.currentHealth <= 0)
+            if (runTimeData.currentHealth <= 0)
             {
                 TransitionToDeath();
             }
@@ -152,10 +152,10 @@ public class WhitePlayerController : ParentPlayerController
                 if (!animator.GetBool("Pre-Input"))
                 {
                     animator.SetBool("Pre-Input", true);
-                    if (PhotonNetwork.IsConnected)
-                    {
-                        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                    }
+                    //if (PhotonNetwork.IsConnected)
+                    //{
+                    //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
+                    //}
                 }
             }
             else if (nextState > WhitePlayerState.Run)
@@ -163,6 +163,8 @@ public class WhitePlayerController : ParentPlayerController
                 if (animator.GetBool("run"))
                 {
                     animator.SetBool("run", false);
+                    if (PhotonNetwork.IsConnected)
+                        SetBoolParameter("run", false);
                 }
             }
         }
@@ -175,6 +177,8 @@ public class WhitePlayerController : ParentPlayerController
             if (animator.GetBool("run"))
             {
                 animator.SetBool("run", false);
+                if (PhotonNetwork.IsConnected)
+                    SetBoolParameter("run", false);
             }
             return;
 
@@ -200,6 +204,9 @@ public class WhitePlayerController : ParentPlayerController
 
             animator.SetFloat("moveX", h);
             animator.SetFloat("moveY", v);
+
+            SetFloatParameter("moveX", h);
+            SetFloatParameter("moveY", v);
         }
 
         //if (animator != null)
@@ -293,11 +300,11 @@ public class WhitePlayerController : ParentPlayerController
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
                 animator.SetBool("basicattack", true);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
-                }
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
+                //}
                 //photonView.RPC("PlayAnimation", RpcTarget.All, "basicattack");
                 currentState = WhitePlayerState.Counter;
                 return;
@@ -307,11 +314,11 @@ public class WhitePlayerController : ParentPlayerController
                 animator.SetBool("Counter", true);
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Counter", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                }
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Counter", true);
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                //}
                 return;
             }
             else if (nextState < WhitePlayerState.BasicAttack && cooldownCheckers[(int)Skills.Mouse_L].CanUse())
@@ -319,10 +326,10 @@ public class WhitePlayerController : ParentPlayerController
 
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                }
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                //}
                 nextState = WhitePlayerState.BasicAttack;
             }
 
@@ -333,11 +340,11 @@ public class WhitePlayerController : ParentPlayerController
                 animator.SetBool("Right", mousePos.x > transform.position.x);
                 animator.SetBool("Pre-Input", true);
 
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                }
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
+                //}
             }
         }
     }
@@ -355,12 +362,12 @@ public class WhitePlayerController : ParentPlayerController
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
 
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                }
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                //}
             }
 
         }
@@ -380,12 +387,12 @@ public class WhitePlayerController : ParentPlayerController
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
 
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                }
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                //}
             }
         }
     }
@@ -441,10 +448,10 @@ public class WhitePlayerController : ParentPlayerController
             return;
 
         animator.SetBool("CancleState", true);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", true);
-        }
+        //if (PhotonNetwork.IsConnected)
+        //{
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", true);
+        //}
         Debug.Log("선딜 시작");
     }
 
@@ -454,10 +461,10 @@ public class WhitePlayerController : ParentPlayerController
             return;
 
         animator.SetBool("CancleState", false);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
-        }
+        //if (PhotonNetwork.IsConnected)
+        //{
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
+        //}
         Debug.Log("선딜 종료");
     }
 
@@ -722,10 +729,10 @@ public class WhitePlayerController : ParentPlayerController
             return;
 
         animator.SetBool("FreeState", true);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", true);
-        }
+        //if (PhotonNetwork.IsConnected)
+        //{
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", true);
+        //}
         Debug.Log("자유상태");
     }
 
@@ -739,12 +746,12 @@ public class WhitePlayerController : ParentPlayerController
         animator.SetBool("Pre-Attack", false);
         animator.SetBool("FreeState", false);
         animator.SetBool("CancleState", false);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", false);
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", false);
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
-        }
+        //if (PhotonNetwork.IsConnected)
+        //{
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", false);
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", false);
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
+        //}
         Debug.Log(" 애니메이션 종료");
     }
 
@@ -770,12 +777,12 @@ public class WhitePlayerController : ParentPlayerController
                 animator.SetBool("Pre-Input", true);
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                }
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                //}
             }
         }
     }
@@ -797,10 +804,10 @@ public class WhitePlayerController : ParentPlayerController
             if (currentState == WhitePlayerState.Guard)
             {
                 animator.SetBool("parry", true);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "parry", true);
-                }
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "parry", true);
+                //}
                 //photonView.RPC("PlayAnimation", RpcTarget.All, "parry");
 
                 currentState = WhitePlayerState.Parry;
@@ -832,10 +839,10 @@ public class WhitePlayerController : ParentPlayerController
                 //photonView.RPC("PlayAnimation", RpcTarget.All, "hit");
 
                 animator.SetBool("hit", true);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "hit", true);
-                }
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "hit", true);
+                //}
                 currentState = WhitePlayerState.Hit;
             }
             //StartCoroutine(CoHitReaction());
@@ -877,10 +884,10 @@ public class WhitePlayerController : ParentPlayerController
         currentState = WhitePlayerState.Stun;
         Debug.Log("플레이어 기절");
         animator.SetBool("stun", true);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "stun", true);
-        }
+        //if (PhotonNetwork.IsConnected)
+        //{
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "stun", true);
+        //}
 
         if (stunCoroutine != null)
             StopCoroutine(stunCoroutine);
@@ -978,10 +985,10 @@ public class WhitePlayerController : ParentPlayerController
             }
 
             animator.SetBool("revive", true);
-            if (PhotonNetwork.IsConnected)
-            {
-                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "revive", true);
-            }
+            //if (PhotonNetwork.IsConnected)
+            //{
+            //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "revive", true);
+            //}
 
             photonView.RPC("UpdateHP", RpcTarget.All, 20f); // 여기서 체력 업데이트
             Debug.Log("플레이어 부활");
@@ -1020,10 +1027,10 @@ public class WhitePlayerController : ParentPlayerController
         if (animator != null)
         {
             animator.SetBool("die", true);
-            if (PhotonNetwork.IsConnected)
-            {
-                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "die", true);
-            }
+            //if (PhotonNetwork.IsConnected)
+            //{
+            //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "die", true);
+            //}
         }
     }
 

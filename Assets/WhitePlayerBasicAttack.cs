@@ -20,12 +20,13 @@ public class WhitePlayerBasicAttack : StateMachineBehaviour
         animator.SetBool("CancleState", false);
         animator.SetBool("FreeState", false);
         animator.SetBool("basicattack", false);
+        animator.SetBool("AttackContinue", false);
 
         whitePlayerController.attackStack = attackStack;
         whitePlayerController.AttackStackUpdate?.Invoke(whitePlayerController.attackStack);
-        
+
         animator.SetInteger("AttackStack", attackStack);
-        
+
         whitePlayerController.currentState = WhitePlayerState.BasicAttack;
         whitePlayerController.nextState = WhitePlayerState.Idle;
     }
@@ -40,19 +41,20 @@ public class WhitePlayerBasicAttack : StateMachineBehaviour
         if (whitePlayerController == null)
             whitePlayerController = animator.GetComponent<WhitePlayerController>();
 
-        if(whitePlayerController.nextState == WhitePlayerState.BasicAttack)
+        if (whitePlayerController.nextState == WhitePlayerState.BasicAttack)
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
-            }
+            animator.SetBool("AttackContinue", true);
+            //if (PhotonNetwork.IsConnected)
+            //{
+            //    whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
+            //}
         }
         else
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
-            }
+            //if (PhotonNetwork.IsConnected)
+            // {
+            //    whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
+            // }
         }
     }
 
