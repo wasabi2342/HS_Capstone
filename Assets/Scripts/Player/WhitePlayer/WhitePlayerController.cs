@@ -688,7 +688,7 @@ public class WhitePlayerController : ParentPlayerController
         {
             return;
         }
-
+        Debug.Log("스페이스바 이펙트 생성");
         // Photon에 접속 중이 아닐 때 photonView.IsMine 값은 false로 처리
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
