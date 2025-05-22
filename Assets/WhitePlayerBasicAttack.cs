@@ -20,6 +20,7 @@ public class WhitePlayerBasicAttack : StateMachineBehaviour
         animator.SetBool("CancleState", false);
         animator.SetBool("FreeState", false);
         animator.SetBool("basicattack", false);
+        animator.SetBool("AttackContinue", false);
 
         whitePlayerController.attackStack = attackStack;
         whitePlayerController.AttackStackUpdate?.Invoke(whitePlayerController.attackStack);
@@ -42,6 +43,7 @@ public class WhitePlayerBasicAttack : StateMachineBehaviour
 
         if (whitePlayerController.nextState == WhitePlayerState.BasicAttack)
         {
+            animator.SetBool("AttackContinue", true);
             //if (PhotonNetwork.IsConnected)
             //{
             //    whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
