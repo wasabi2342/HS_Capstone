@@ -15,6 +15,8 @@ public class UIManager : MonoBehaviour
     private Canvas overlayCanvas;
     [SerializeField]
     private Canvas cameraCanvas;
+    [SerializeField]
+    private TargetIndicator targetIndicator;
 
     private CanvasScaler scaler;
 
@@ -39,6 +41,7 @@ public class UIManager : MonoBehaviour
     public void SetRenderCamera(Camera camera)
     {
         cameraCanvas.worldCamera = camera;
+        targetIndicator.SetCamera(camera);
     }
 
     void Start()
@@ -157,6 +160,8 @@ public class UIManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        OffTargetIndicator();
+
         CloseAllUI();
         if (scene.name.StartsWith("Level")||scene.name=="StageTest1" || scene.name == "Tutorial" || scene.name == "PvP")
         {
@@ -174,5 +179,16 @@ public class UIManager : MonoBehaviour
     {
         CloseAllUI();
         OpenPanelInOverlayCanvas<T>();
+    }
+
+    public void OnTargetIndicator(Transform target)
+    {
+        targetIndicator.SetTarget(target);
+        targetIndicator.gameObject.SetActive(true);
+    }
+
+    public void OffTargetIndicator()
+    {
+        targetIndicator.gameObject.SetActive(false);
     }
 }

@@ -658,4 +658,14 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
         StartCoroutine(ResetGame("알파버전 클리어하셨습니다."));
     }
+
+    [PunRPC]
+    public void RPC_OnTargetIndicator(int viewID)
+    {
+        PhotonView targetView = PhotonView.Find(viewID);
+        if (targetView != null)
+        {
+            UIManager.Instance.OnTargetIndicator(targetView.transform);
+        }
+    }
 }
