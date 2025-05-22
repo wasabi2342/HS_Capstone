@@ -5,11 +5,6 @@ public class ReduceCooldownEffect_instant : BaseSpecialEffect
 {
     public override void ApplyEffect()
     {
-        if (!isFirstTime)
-        {
-            return;
-        }
-
         int intKey = (int)duration;
         string strKey = intKey.ToString();
 
