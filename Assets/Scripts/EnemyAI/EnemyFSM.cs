@@ -11,7 +11,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     /* ───────── Components ───────── */
     public NavMeshAgent Agent { get; private set; }
     public Animator Anim { get; private set; }
-
+    public DebuffController debuff;
     PhotonView pv;
 
     /* ───────── Data ───────── */
@@ -94,7 +94,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         Agent = GetComponent<NavMeshAgent>();
         Anim = GetComponentInChildren<Animator>();
         pv = GetComponent<PhotonView>();
-
+        debuff = GetComponent<DebuffController>();
         Agent.updateRotation = false;
         Agent.updatePosition = Agent.updateRotation = PhotonNetwork.IsMasterClient;
 

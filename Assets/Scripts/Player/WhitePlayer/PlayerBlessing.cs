@@ -108,9 +108,9 @@ public class PlayerBlessing : MonoBehaviourPun
         float duration = skillWithLevel.skillData.debuffDuration;
         float value = skillWithLevel.skillData.debuffValue;
 
-        if (fsm.debuffController != null)
+        if (fsm.debuff != null)
         {
-            fsm.debuffController.ApplyDebuff(effectType, duration, value);
+            fsm.debuff.ApplyDebuff(effectType, duration, value);
         }
     }
 

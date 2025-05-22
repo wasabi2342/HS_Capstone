@@ -72,7 +72,6 @@ public class MonsterSpawner : MonoBehaviourPun
         if (mPV == null || aPV == null) return;
         if (!aPV.TryGetComponent(out SpawnArea sa)) return;
 
-        if (mPV.TryGetComponent(out EnemyAI ai)) ai.SetSpawnArea(sa);
         if (mPV.TryGetComponent(out EnemyFSM fsm)) fsm.SetSpawnArea(sa);
     }
 }
