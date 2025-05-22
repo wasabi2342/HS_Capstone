@@ -48,7 +48,6 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
             if (weaponCollider is SphereCollider sc) defaultCenter = sc.center;
             if (weaponCollider is CapsuleCollider cc) defaultCenter = cc.center;
         }
-
         // 기본 비활성화
         weaponColliderObject.SetActive(false);
     }

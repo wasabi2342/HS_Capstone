@@ -12,8 +12,6 @@ using Photon.Pun;
 public class MonsterSpawner : MonoBehaviourPun
 {
     [SerializeField] private SpawnArea spawnArea;   // 없어도 부모에서 자동 탐색
-
-
     void Awake()
     {
         if (!spawnArea)

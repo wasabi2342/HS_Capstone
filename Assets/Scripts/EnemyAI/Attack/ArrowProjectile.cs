@@ -13,7 +13,6 @@ public class ArrowProjectile : MonoBehaviourPun
     GameObject owner;            // 쏜 Skeleton
     float damage;                // EnemyStatusSO.attackDamage
     [SerializeField] LayerMask victimMask;
-
     /* ───── 초기화 ───── */
     public void Init(GameObject ownerObj, float dmg,
                      Vector3 dir, float speed, float lifeTime)

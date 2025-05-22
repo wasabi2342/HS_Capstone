@@ -12,7 +12,6 @@ public class GhoulAttack : MonoBehaviourPun, IMonsterAttack
     [SerializeField] float lungeDistance = 0.2f;
     [Tooltip("런지에 걸리는 시간")]
     [SerializeField] float lungeDuration = 0.15f;
-
     /* ───────── 내부 상태 ───────── */
     float facing = 1f;          // +1 ⇒ Right, –1 ⇒ Left
     bool isLunging;
