@@ -16,6 +16,17 @@ public class FlameArea : MonoBehaviourPun
         this.damage = damage;
 
         StartCoroutine(GenerateEffect(duration));
+
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC("RPC_Init", RpcTarget.Others, duration);
+        }
+    }
+
+    [PunRPC]
+    public void RPC_Init(float duration)
+    {
+        StartCoroutine(GenerateEffect(duration));
     }
 
     private IEnumerator GenerateEffect(float duration)
@@ -38,7 +49,7 @@ public class FlameArea : MonoBehaviourPun
 
         if (isLast)
         {
-            if (PhotonNetwork.IsConnected)
+            if (PhotonNetwork.IsConnected && photonView.IsMine)
             {
                 PhotonNetwork.Destroy(gameObject);
             }

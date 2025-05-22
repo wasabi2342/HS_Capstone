@@ -11,10 +11,12 @@ public class CreateFireArea : BaseSpecialEffect
 
         if (PhotonNetwork.IsConnected)
         {
+            Debug.Log("포톤으로 생성");
             PhotonNetwork.Instantiate("SkillEffect/WhitePlayer/Space_FlameArea", playerController.footPivot.position, Quaternion.Euler(90, rotationY, 0)).GetComponent<FlameArea>().Init(value * playerController.ReturnAbilityPower() * playerController.damageBuff, duration);
         }
         else
         {
+            Debug.Log("Instantiate로 생성");
             Instantiate(Resources.Load<FlameArea>("SkillEffect/WhitePlayer/Space_FlameArea"), playerController.footPivot.position, Quaternion.Euler(90, rotationY, 0)).Init(value * playerController.ReturnAbilityPower(), duration);
         }
     }
