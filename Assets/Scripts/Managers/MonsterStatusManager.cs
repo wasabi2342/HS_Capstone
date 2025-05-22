@@ -3,13 +3,13 @@ using UnityEngine;
 
 public class MonsterStatusManager : MonoBehaviour
 {
-
+    
     public static MonsterStatusManager instance;
 
     [SerializeField]
-    private List<EnemyStatus> enemyStatusList;
+    private List<EnemyStatusSO> enemyStatusList;
 
-    private Dictionary<EnemyStatus, float> originalDamageDict = new Dictionary<EnemyStatus, float>();
+    private Dictionary<EnemyStatusSO, float> originalDamageDict = new Dictionary<EnemyStatusSO, float>();
 
     private void Awake()
     {
@@ -27,7 +27,7 @@ public class MonsterStatusManager : MonoBehaviour
     {
         foreach (var enemy in enemyStatusList)
         {
-            originalDamageDict[enemy] = enemy.damage;
+            originalDamageDict[enemy] = enemy.attackDamage;
         }
     }
 
@@ -39,7 +39,7 @@ public class MonsterStatusManager : MonoBehaviour
     {
         foreach (var enemy in enemyStatusList)
         {
-            enemy.damage *= value;
+            enemy.attackDamage *= value;
         }
     }
 
@@ -52,7 +52,7 @@ public class MonsterStatusManager : MonoBehaviour
         {
             if (originalDamageDict.ContainsKey(enemy))
             {
-                enemy.damage = originalDamageDict[enemy];
+                enemy.attackDamage = originalDamageDict[enemy];
             }
         }
     }

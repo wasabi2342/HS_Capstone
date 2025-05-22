@@ -93,9 +93,9 @@ public class PlayerBlessing : MonoBehaviourPun
         }
     }
 
-    public void TryApplyDebuffOnHit(SkillWithLevel skillWithLevel, EnemyAI enemyAI)
+    public void TryApplyDebuffOnHit(SkillWithLevel skillWithLevel, EnemyFSM fsm)
     {
-        if (skillWithLevel == null || enemyAI == null)
+        if (skillWithLevel == null || fsm == null)
             return;
 
         if (skillWithLevel.level <= 0)
@@ -108,9 +108,9 @@ public class PlayerBlessing : MonoBehaviourPun
         float duration = skillWithLevel.skillData.debuffDuration;
         float value = skillWithLevel.skillData.debuffValue;
 
-        if (enemyAI.debuffController != null)
+        if (fsm.debuffController != null)
         {
-            enemyAI.debuffController.ApplyDebuff(effectType, duration, value);
+            fsm.debuffController.ApplyDebuff(effectType, duration, value);
         }
     }
 
