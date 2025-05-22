@@ -104,10 +104,10 @@ GameObject:
   - component: {fileID: 1919888365771260053}
   - component: {fileID: 2514247890089528025}
   - component: {fileID: 7258404619438173730}
-  - component: {fileID: 838009920413138150}
   - component: {fileID: -2160177845057009080}
-  - component: {fileID: 5100535631980958853}
-  - component: {fileID: 833416226050226733}
+  - component: {fileID: 1417909197211573444}
+  - component: {fileID: 3675014081365635838}
+  - component: {fileID: 8712754739784628131}
   m_Layer: 7
   m_Name: Ghoul_Fix
   m_TagString: Enemy
@@ -325,18 +325,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea5701a63c9167542a109c3ca4410808, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &838009920413138150
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765914048162278020}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d145df9c93b686142a943def3695fa55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-2160177845057009080
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -349,7 +337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 540694d8dc4888a48a5e91cdabf50ed7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debuff: {fileID: 838009920413138150}
+  debuff: {fileID: 8712754739784628131}
   enemyStatus: {fileID: 11400000, guid: 76bc9309206a3954192353895a39b007, type: 2}
   spawnPosition: {x: 0, y: 0, z: 0}
   playerMask:
@@ -365,7 +353,7 @@ MonoBehaviour:
   slashFxLeft: {fileID: 2412206290288059151, guid: 90467a4335a8c894ea6952cfb2759843, type: 3}
   debugMode: 1
   zAlignTolerance: 0.4
---- !u!114 &5100535631980958853
+--- !u!114 &1417909197211573444
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -378,9 +366,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponCollider: {fileID: 2400343500577941846}
-  lungeDistance: 0.3
+  lungeDistance: 0.2
   lungeDuration: 0.15
---- !u!114 &833416226050226733
+--- !u!114 &3675014081365635838
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -395,6 +383,18 @@ MonoBehaviour:
   weaponCollider: {fileID: 2400343500577941846}
   lungeDistance: 0.4
   lungeDuration: 0.1
+--- !u!114 &8712754739784628131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765914048162278020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d145df9c93b686142a943def3695fa55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2400343500577941846
 GameObject:
   m_ObjectHideFlags: 0

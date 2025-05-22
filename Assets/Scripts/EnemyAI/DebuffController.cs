@@ -11,7 +11,6 @@ public class DebuffController : MonoBehaviour
     {
         fsm = GetComponent<EnemyFSM>();
     }
-
     public void ApplyDebuff(SpecialEffectType type, float duration, float value)
     {
         switch (type)
