@@ -1629,6 +1629,8 @@ public class PinkPlayerController : ParentPlayerController
                 stunCoroutine = null;
             }
 
+            SetTriggerParameter("revive");
+
             currentState = PinkPlayerState.Idle;
 
             if (photonView.IsMine)
