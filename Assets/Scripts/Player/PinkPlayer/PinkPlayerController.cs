@@ -1009,9 +1009,6 @@ public class PinkPlayerController : ParentPlayerController
             Debug.Log($"[R-Effect] 최종 계산된 Damage = {damage}");
         }
 
-
-
-
         // Photon에 접속 중인지 확인하여 isMine 설정
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
         Vector3 targetPos = transform.position;
@@ -1032,7 +1029,7 @@ public class PinkPlayerController : ParentPlayerController
         }
 
         if (PhotonNetwork.IsConnected && photonView.IsMine)
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true, animator.speed);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, false, animator.speed);
 
         var prefab = Resources.Load<SkillEffect>(effectPath);
         if (prefab == null)
@@ -1050,7 +1047,7 @@ public class PinkPlayerController : ParentPlayerController
         skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
 
         // 생성된 이펙트의 부모를 설정
-        skillEffect.transform.parent = transform;
+        // skillEffect.transform.parent = transform;
     }
 
     // 궁극기 이펙트 생성 (Finish)
@@ -1256,7 +1253,7 @@ public class PinkPlayerController : ParentPlayerController
                 );
 
                 if (PhotonNetwork.IsConnected && photonView.IsMine)
-                    photonView.RPC("CreateAnimation", RpcTarget.Others, chargePath, effectPosition, true, animator.speed);
+                    photonView.RPC("CreateAnimation", RpcTarget.Others, chargePath, effectPosition, false, animator.speed);
 
                 var chargeFx = Instantiate(
                     Resources.Load<SkillEffect>(chargePath),
@@ -1268,7 +1265,7 @@ public class PinkPlayerController : ParentPlayerController
                                   runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID,
                                   this
                               ));
-                chargeFx.transform.parent = transform;
+                //chargeFx.transform.parent = transform;
             }
         }
     }
@@ -1340,33 +1337,38 @@ public class PinkPlayerController : ParentPlayerController
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
         // 이펙트 경로 및 위치 설정
+        string damageEffectPath;
         string effectPath;
         Vector3 effectPosition = transform.position;
 
         if (animator.GetBool("Right"))
         {
-            effectPath = $"SkillEffect/PinkPlayer/pink_tackle_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
+            damageEffectPath = $"SkillEffect/PinkPlayer/pink_tackle_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
+            effectPath = "SkillEffect/PinkPlayer/pink_tackle_back_right_0";
         }
         else
         {
-            effectPath = $"SkillEffect/PinkPlayer/pink_tackle_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
+            damageEffectPath = $"SkillEffect/PinkPlayer/pink_tackle_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
+            effectPath = "SkillEffect/PinkPlayer/pink_tackle_back_left_0";
         }
 
         // 다른 클라이언트에게도 이펙트를 생성하도록 RPC 호출
         if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
-            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true, animator.speed);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, damageEffectPath, effectPosition, true, animator.speed);
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, false, animator.speed);
         }
 
         // Photon 연결 여부에 관계없이 로컬에서 이펙트 생성
+        SkillEffect skillDamageEffect = Instantiate(Resources.Load<SkillEffect>(damageEffectPath), effectPosition, Quaternion.identity);
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
 
         // Init 메서드 호출
         //skillEffect.Init(damage, StartHitlag, isMine);
-        skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID, this));
+        skillDamageEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID, this));
 
         // 생성된 이펙트의 부모를 설정
-        skillEffect.transform.parent = transform;
+        skillDamageEffect.transform.parent = transform;
     }
 
 
