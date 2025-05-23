@@ -975,6 +975,8 @@ public class WhitePlayerController : ParentPlayerController
                 stunCoroutine = null;
             }
 
+            SetTriggerParameter("revive");
+
             currentState = WhitePlayerState.Idle;
 
             if (photonView.IsMine)
