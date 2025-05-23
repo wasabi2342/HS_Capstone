@@ -28,7 +28,7 @@ AnimationClip:
       value: {fileID: -4228601470932342717, guid: 63e4854f791547f4fbe0d0730efb6496, type: 3}
     - time: 0.26
       value: {fileID: 3809371600405888044, guid: 63e4854f791547f4fbe0d0730efb6496, type: 3}
-    - time: 0.3599999
+    - time: 0.36
       value: {fileID: -7743593224927572325, guid: 63e4854f791547f4fbe0d0730efb6496, type: 3}
     attribute: m_Sprite
     path: 
@@ -62,7 +62,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.3699999
+    m_StopTime: 0.37
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -81,4 +81,18 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 0.26
+    functionName: OnAttackCollider
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.36
+    functionName: OffAttackCollider
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

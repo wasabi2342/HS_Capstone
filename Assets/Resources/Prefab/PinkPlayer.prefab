@@ -50,7 +50,6 @@ GameObject:
   - component: {fileID: 5749815652098805473}
   - component: {fileID: 3277823158435553033}
   - component: {fileID: 2403682794470514799}
-  - component: {fileID: -3063841993787379930}
   - component: {fileID: 1681571723047062326}
   m_Layer: 6
   m_Name: PinkPlayer
@@ -402,6 +401,8 @@ MonoBehaviour:
   hitlagTime: 0.117
   shadow: {fileID: 4496898679317726336}
   nicknameText: {fileID: 6949920731095230618}
+  myController: {fileID: 0}
+  othersController: {fileID: 0}
   footPivot: {fileID: 9027814078262596519}
   stunOverlay: {fileID: 0}
   stunSlider: {fileID: 0}
@@ -496,21 +497,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 11400000, guid: 3939f00e561c88749b28afda4b9c5f12, type: 2}
   - {fileID: 11400000, guid: 71f296c4da421d946a460d603f3d6ff9, type: 2}
---- !u!114 &-3063841993787379930
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 673988289270443858}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6728c3e99c1a84041a6c17abac602762, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  servantPrefabName: Servant
-  spawnDelay: 3
-  spawnOffset: {x: -2, y: 0, z: 0}
 --- !u!114 &1681571723047062326
 MonoBehaviour:
   m_ObjectHideFlags: 0
