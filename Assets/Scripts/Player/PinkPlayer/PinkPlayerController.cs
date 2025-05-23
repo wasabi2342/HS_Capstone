@@ -228,6 +228,8 @@ public class PinkPlayerController : ParentPlayerController
 
             animator.SetFloat("moveX", h);
             animator.SetFloat("moveY", v);
+            SetFloatParameter("moveX", h);
+            SetFloatParameter("moveY", v);
         }
     }
 
