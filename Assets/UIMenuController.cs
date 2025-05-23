@@ -22,6 +22,8 @@ public class UIMenuPanel : UIBase
     [SerializeField]
     private Button gotoStartUIButton;
     [SerializeField]
+    private Button escapeButton;
+    [SerializeField]
     private TMP_Dropdown resolutionDropdown;
     [SerializeField]
     private TMP_Dropdown windowDropdown;
@@ -48,6 +50,22 @@ public class UIMenuPanel : UIBase
 
     public override void Init()
     {
+        if (RoomManager.Instance == null)
+        {
+            escapeButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            escapeButton.onClick.AddListener(() =>
+            {
+                RoomManager.Instance.EscapePlayer();
+                if (UIManager.Instance.ReturnPeekUI() as UIMenuPanel)
+                {
+                    UIManager.Instance.ClosePeekUI();
+                }
+            });
+        }
+
         closeUIAction = CloseUI;
         InputManager.Instance.PlayerInput.actions["ESC"].performed += closeUIAction;
 
