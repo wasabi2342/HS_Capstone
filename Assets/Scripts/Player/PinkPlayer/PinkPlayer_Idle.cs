@@ -35,6 +35,11 @@ public class PinkPlayer_Idle : StateMachineBehaviour
                 break;
             case PinkPlayerState.Run:
                 animator.SetBool("run", true);
+                if (PhotonNetwork.IsConnected)
+                {
+                    pinkPlayerController.SetTriggerParameter("runStart");
+                    pinkPlayerController.SetBoolParameter("run", true);
+                }
                 pinkPlayerController.currentState = PinkPlayerState.Run;
                 break;
             case PinkPlayerState.BasicAttack:

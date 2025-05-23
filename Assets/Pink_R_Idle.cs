@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 
 public class Pink_R_Idle : StateMachineBehaviour
@@ -35,6 +36,11 @@ public class Pink_R_Idle : StateMachineBehaviour
         {
             case PinkPlayerState.Run:
                 animator.SetBool("run", true);
+                if (PhotonNetwork.IsConnected)
+                {
+                    pc.SetTriggerParameter("R_runStart");
+                    pc.SetBoolParameter("run", true);
+                }
                 pc.currentState = PinkPlayerState.Run;
                 break;
         }

@@ -187,6 +187,8 @@ public class PinkPlayerController : ParentPlayerController
                 if (animator.GetBool("run"))
                 {
                     animator.SetBool("run", false);
+                    if (PhotonNetwork.IsConnected)
+                        SetBoolParameter("run", false);
                 }
             }
         }
@@ -199,6 +201,8 @@ public class PinkPlayerController : ParentPlayerController
             if (animator.GetBool("run"))
             {
                 animator.SetBool("run", false);
+                if (PhotonNetwork.IsConnected)
+                    SetBoolParameter("run", false);
             }
             return;
 
