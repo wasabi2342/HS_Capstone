@@ -65,8 +65,34 @@ AnimationClip:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
   m_ClipBindingConstant:
-    genericBindings: []
-    pptrCurveMapping: []
+    genericBindings:
+    - serializedVersion: 2
+      path: 0
+      attribute: 0
+      script: {fileID: 0}
+      typeID: 212
+      customType: 23
+      isPPtrCurve: 1
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+    pptrCurveMapping:
+    - {fileID: 9077502814976635158, guid: 626cb0eb0eba1de48b470911a50433d1, type: 3}
+    - {fileID: -1250359955155664464, guid: 626cb0eb0eba1de48b470911a50433d1, type: 3}
+    - {fileID: -2457420456459967646, guid: 626cb0eb0eba1de48b470911a50433d1, type: 3}
+    - {fileID: -7417470421941674227, guid: 626cb0eb0eba1de48b470911a50433d1, type: 3}
+    - {fileID: 3735873066811322502, guid: 626cb0eb0eba1de48b470911a50433d1, type: 3}
+    - {fileID: -8785390119470398008, guid: 626cb0eb0eba1de48b470911a50433d1, type: 3}
+    - {fileID: -1212289905104751343, guid: 626cb0eb0eba1de48b470911a50433d1, type: 3}
+    - {fileID: -3354970027370107402, guid: 626cb0eb0eba1de48b470911a50433d1, type: 3}
+    - {fileID: 4293883809357002957, guid: 626cb0eb0eba1de48b470911a50433d1, type: 3}
+    - {fileID: -9102862541825455316, guid: 626cb0eb0eba1de48b470911a50433d1, type: 3}
+    - {fileID: 3234462692046882851, guid: 626cb0eb0eba1de48b470911a50433d1, type: 3}
+    - {fileID: 6189418600125045344, guid: 626cb0eb0eba1de48b470911a50433d1, type: 3}
+    - {fileID: -8236559304481219149, guid: 626cb0eb0eba1de48b470911a50433d1, type: 3}
+    - {fileID: -3173348726155850571, guid: 626cb0eb0eba1de48b470911a50433d1, type: 3}
+    - {fileID: 7655035463462790473, guid: 626cb0eb0eba1de48b470911a50433d1, type: 3}
+    - {fileID: -1213808761872951121, guid: 626cb0eb0eba1de48b470911a50433d1, type: 3}
+    - {fileID: -1213808761872951121, guid: 626cb0eb0eba1de48b470911a50433d1, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
@@ -91,4 +117,18 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 0.81
+    functionName: OnAttackCollider
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 1.31
+    functionName: OffAttackCollider
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
