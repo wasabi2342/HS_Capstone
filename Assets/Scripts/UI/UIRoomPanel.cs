@@ -293,23 +293,24 @@ public class UIRoomPanel : UIBase
 
     public void OnClickedStartButton()
     {
+        // 핑뚝이 선택을 위한 코드 주석 
 
-        if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("SelectCharacter"))
-        {
-            string character = (string)PhotonNetwork.LocalPlayer.CustomProperties["SelectCharacter"];
-            if(character == "PinkPlayer")
-            {
-                if(!(UIManager.Instance.ReturnPeekUI() as UIDialogPanel))
-                {
-                    UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("개발 중인 캐릭터입니다");
-                    return;
-                }
-            }
-        }
-        else
-        {
-            return;
-        }
+        //if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("SelectCharacter"))
+        //{
+        //    string character = (string)PhotonNetwork.LocalPlayer.CustomProperties["SelectCharacter"];
+        //    if(character == "PinkPlayer")
+        //    {
+        //        if(!(UIManager.Instance.ReturnPeekUI() as UIDialogPanel))
+        //        {
+        //            UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("개발 중인 캐릭터입니다");
+        //            return;
+        //        }
+        //    }
+        //}
+        //else
+        //{
+        //    return;
+        //}
 
         if (PhotonNetwork.IsMasterClient)
         {
