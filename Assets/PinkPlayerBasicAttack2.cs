@@ -15,7 +15,7 @@ public class PinkPlayerBasicAttack2 : StateMachineBehaviour
         animator.SetInteger("AttackStack", pinkPlayerController.attackStack);
         pinkPlayerController.SetIntParameter("AttackStack", pinkPlayerController.attackStack);
         pinkPlayerController.AttackStackUpdate?.Invoke(pinkPlayerController.attackStack);
-
+        pinkPlayerController.CreateBasicAttackEffect();
         animator.SetBool("AttackContinue", false);
         animator.SetBool("Pre-Attack", false);
         animator.SetBool("Pre-Input", false);
