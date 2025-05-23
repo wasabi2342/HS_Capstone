@@ -24,8 +24,7 @@ public class PinkPlayerReviveInteractable : GaugeInteraction
             return;
         }
 
-        if (!canInteractRevive)
-            return;
+    
 
         // 같은 팀일 때만 부활 상호작용
         if (IsSameTeam(localPhotonView, otherPhotonView))

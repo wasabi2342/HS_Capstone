@@ -1540,10 +1540,10 @@ public class PinkPlayerController : ParentPlayerController
         currentState = PinkPlayerState.Stun;
         Debug.Log("플레이어 기절");
         animator.SetBool("stun", true);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "stun", true);
-        }
+        //if (PhotonNetwork.IsConnected)
+        //{
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "stun", true);
+        //}
 
         if (stunCoroutine != null)
             StopCoroutine(stunCoroutine);
@@ -1639,13 +1639,18 @@ public class PinkPlayerController : ParentPlayerController
             }
 
             animator.SetBool("revive", true);
-            if (PhotonNetwork.IsConnected)
-            {
-                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "revive", true);
-            }
+            //if (PhotonNetwork.IsConnected)
+            //{
+            //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "revive", true);
+            //}
 
             photonView.RPC("UpdateHP", RpcTarget.All, 20f); // 여기서 체력 업데이트
             Debug.Log("플레이어 부활");
+
+            if (PhotonNetworkManager.Instance != null)
+            {
+                PhotonNetworkManager.Instance.ReportPlayerRevive(photonView.Owner.ActorNumber);
+            }
         }
     }
 
@@ -1660,6 +1665,12 @@ public class PinkPlayerController : ParentPlayerController
     {
         currentState = PinkPlayerState.Death;
         Debug.Log("플레이어 사망");
+
+        if (PhotonNetworkManager.Instance != null)
+        {
+            PhotonNetworkManager.Instance.ReportPlayerDeath(photonView.Owner.ActorNumber);
+        }
+
         if (photonView.IsMine)
         {
             stunSlider.gameObject.SetActive(false);
@@ -1670,31 +1681,39 @@ public class PinkPlayerController : ParentPlayerController
         if (animator != null)
         {
             animator.SetBool("die", true);
-            if (PhotonNetwork.IsConnected)
-            {
-                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "die", true);
-            }
+            //if (PhotonNetwork.IsConnected)
+            //{
+            //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "die", true);
+            //}
         }
     }
 
 
     public override void EnterInvincibleState()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
         base.EnterInvincibleState();
     }
 
     public override void ExitInvincibleState()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
         base.ExitInvincibleState();
     }
 
     public override void EnterSuperArmorState()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
         base.EnterSuperArmorState();
     }
 
     public override void ExitSuperArmorState()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
         base.ExitSuperArmorState();
     }
 
