@@ -4,6 +4,7 @@ public enum EnemyState
     Wander,     // 배회
     Idle,       // 대기
     Chase,      // 추격
+    Detour,     // 우회
     Return,     // 귀환
     WaitCool,   // 공격 준비 대기
     Attack,     // 공격

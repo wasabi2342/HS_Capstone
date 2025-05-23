@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Photon.Pun;
+using UnityEngine.SceneManagement;
 
 public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITauntable
 {
@@ -37,12 +38,15 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITaunta
     public float attackCoolTime = 1f;
 
     [Header("Detection")]
-    public LayerMask enemyLayerMask;
+    [SerializeField] LayerMask enemyLayerMask;
+    [SerializeField] LayerMask playerLayerMask;
+
     [Header("Taunt")]
     public bool tauntActive;
     public float tauntEndTime;
 
     float currentHP;
+    bool isPvpScene;
 
     // ─── Invincibility ───────────────────────────────────────
     public bool IsInvincible { get; set; } = false;
@@ -83,8 +87,8 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITaunta
     void Start()
     {
         // 마스터 클라이언트만 FSM 시작
-        if (PhotonNetwork.IsMasterClient)
-            TransitionToState(typeof(ServantSpawnState));
+        isPvpScene = SceneManager.GetActiveScene().name.Contains("PVP");
+        TransitionToState(typeof(ServantWanderState));
     }
 
     void Update()
@@ -115,18 +119,37 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITaunta
     /// <summary>가장 가까운 적 탐지</summary>
     public void DetectEnemy()
     {
-        Collider[] cols = Physics.OverlapSphere(transform.position, detectRange, enemyLayerMask);
-        float best = float.MaxValue;
-        Transform pick = null;
-        foreach (var c in cols)
-            if (c.CompareTag("Enemy"))
-            {
-                float d = (c.transform.position - transform.position).sqrMagnitude;
-                if (d < best) { best = d; pick = c.transform; }
-            }
+        // 1) 어떤 레이어를 볼지 결정
+        LayerMask mask = isPvpScene
+            ? enemyLayerMask | playerLayerMask   // PVP = 전부
+            : enemyLayerMask;                    // PVE = 몬스터만
 
+        // 2) 가장 가까운 IDamageable 찾기
+        Collider[] cols = Physics.OverlapSphere(transform.position, detectRange, mask);
+        float closest = float.MaxValue;
+        Transform pick = null;
+
+        foreach (var c in cols)
+        {
+            // Owner 자기 자신은 절대 타깃이 되면 안 됨
+            if (OwnerPlayer != null && c.transform.IsChildOf(OwnerPlayer)) continue;
+
+            // IDamageable 있는가?
+            if (c.GetComponentInParent<IDamageable>() == null) continue;
+
+            float d = (c.transform.position - transform.position).sqrMagnitude;
+            if (d < closest)
+            {
+                closest = d;
+                pick = c.transform;
+            }
+        }
         TargetEnemy = pick;
     }
+
+    // 외부에서 읽을 수 있게 프로퍼티 하나 노출
+    public bool IsPvpScene => isPvpScene;
+
 
     // ─── Animation 동기화 ─────────────────────────────────────
     public void PlayDirectionalAnim(string action)
