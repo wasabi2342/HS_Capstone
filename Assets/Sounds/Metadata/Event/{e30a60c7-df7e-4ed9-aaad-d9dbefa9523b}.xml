@@ -5,7 +5,7 @@
 			<value>IAI_Sheathing</value>
 		</property>
 		<property name="outputFormat">
-			<value>1</value>
+			<value>2</value>
 		</property>
 		<relationship name="folder">
 			<destination>{9378d00e-121b-4d39-8e2e-81414e9b901f}</destination>
@@ -56,7 +56,7 @@
 			<destination>{792165ab-2456-4353-8846-fb9563750771}</destination>
 		</relationship>
 		<relationship name="output">
-			<destination>{dcef9976-f8e9-43a9-9c6c-ae1a81b3a2fa}</destination>
+			<destination>{e3165063-90d6-42c7-b086-65dccc75172b}</destination>
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{fbfcd1bd-075f-4f7c-b62a-0331da93a4fe}" />
@@ -130,6 +130,7 @@
 	</object>
 	<object class="MixerBusEffectChain" id="{34cbf73e-1885-4add-afc3-f670cfe33566}">
 		<relationship name="effects">
+			<destination>{f690b4a2-4bd2-448b-afa9-c9fb5b73b749}</destination>
 			<destination>{acdd203d-ce77-45d7-b6b9-0c28112d1268}</destination>
 		</relationship>
 	</object>
@@ -173,6 +174,7 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{443e526a-05e5-40e3-b6a4-2090d141cb97}" />
+	<object class="SpatialiserEffect" id="{f690b4a2-4bd2-448b-afa9-c9fb5b73b749}" />
 	<object class="MixerBusFader" id="{acdd203d-ce77-45d7-b6b9-0c28112d1268}" />
 	<object class="MixerBusFader" id="{4b9cffe1-4d75-4737-a22a-e3021c20bf43}" />
 </objects>

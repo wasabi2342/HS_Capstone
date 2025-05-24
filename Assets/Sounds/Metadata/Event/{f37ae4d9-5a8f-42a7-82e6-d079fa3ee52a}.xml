@@ -5,7 +5,7 @@
 			<value>katana_huge slash</value>
 		</property>
 		<property name="outputFormat">
-			<value>1</value>
+			<value>2</value>
 		</property>
 		<relationship name="folder">
 			<destination>{9378d00e-121b-4d39-8e2e-81414e9b901f}</destination>
@@ -57,7 +57,7 @@
 			<destination>{f66130e4-8c97-4165-8ed6-0d5da9edc8a9}</destination>
 		</relationship>
 		<relationship name="output">
-			<destination>{dcef9976-f8e9-43a9-9c6c-ae1a81b3a2fa}</destination>
+			<destination>{e3165063-90d6-42c7-b086-65dccc75172b}</destination>
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{0b9652d2-2813-459f-8c6c-5fa632e263c8}" />
@@ -297,6 +297,7 @@
 	</object>
 	<object class="MixerBusEffectChain" id="{9f6a7447-5422-4aca-9cb0-66271f883c61}">
 		<relationship name="effects">
+			<destination>{8481c9a4-32f2-4d71-ba88-6c9e70bea054}</destination>
 			<destination>{cb5d7756-fd95-4672-8c29-ed71b8579a01}</destination>
 		</relationship>
 	</object>
@@ -365,6 +366,7 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{5cfa2022-05ea-4b41-a058-2dd6a8202c9e}" />
+	<object class="SpatialiserEffect" id="{8481c9a4-32f2-4d71-ba88-6c9e70bea054}" />
 	<object class="MixerBusFader" id="{cb5d7756-fd95-4672-8c29-ed71b8579a01}" />
 	<object class="MixerBusFader" id="{d5e72a5b-f092-4bc1-b01a-be8e76158967}" />
 	<object class="SFXReverbEffect" id="{f5deb5a0-1843-4627-b4cc-43b20d0a8c16}">
