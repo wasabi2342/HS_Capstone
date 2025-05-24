@@ -49,7 +49,6 @@ public class WhitePlayerController : ParentPlayerController
     {
         base.Start();
 
-        //StartCoroutine(Co_Start());
         currentState = WhitePlayerState.Idle;
 
         if (photonView.IsMine || !PhotonNetwork.IsConnected)
@@ -71,37 +70,10 @@ public class WhitePlayerController : ParentPlayerController
                 animator.SetInteger("mouseRightBlessing", runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil);
             }
 
-            if (runTimeData.currentHealth <= 0)
-            {
-                TransitionToDeath();
-            }
-        }
-    }
-
-    IEnumerator Co_Start()
-    {
-        yield return new WaitForFixedUpdate();
-
-        currentState = WhitePlayerState.Idle;
-
-        if (photonView.IsMine || !PhotonNetwork.IsConnected)
-        {
-            if (stunOverlay != null) stunOverlay.enabled = false;
-            if (stunSlider != null) stunSlider.gameObject.SetActive(false);
-            if (hpBar != null) hpBar.enabled = true;
-
-            gaugeInteraction = GetComponentInChildren<GaugeInteraction>();
-
-            var eventController = GetComponent<WhitePlayercontroller_event>();
-            if (eventController != null)
-            {
-                //eventController.OnInteractionEvent += HandleReviveInteraction;
-            }
-
-            if (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil != null && runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil != 0)
-            {
-                animator.SetInteger("mouseRightBlessing", runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil);
-            }
+            //if (runTimeData.currentHealth <= 0)
+            //{
+            //    TransitionToDeath();
+            //}
         }
     }
 

@@ -68,8 +68,6 @@ public class PinkPlayerController : ParentPlayerController
     {
         base.Start();
 
-        //StartCoroutine(Co_Start());
-
         currentState = PinkPlayerState.Idle;
 
         if (photonView.IsMine)
@@ -89,42 +87,13 @@ public class PinkPlayerController : ParentPlayerController
                     //eventController.OnInteractionEvent += HandleReviveInteraction;
                 }
 
-                if (runTimeData.currentHealth <= 0)
-                {
-                    TransitionToDeath();
-                }
+                //if (runTimeData.currentHealth <= 0)
+                //{
+                //    TransitionToDeath();
+                //}
 
             }
         }
-    }
-
-    IEnumerator Co_Start()
-    {
-        yield return new WaitForFixedUpdate();
-
-        currentState = PinkPlayerState.Idle;
-
-        if (photonView.IsMine)
-        {
-            if (photonView.IsMine)
-            {
-
-                if (stunOverlay != null) stunOverlay.enabled = false;
-                if (stunSlider != null) stunSlider.gameObject.SetActive(false);
-                if (hpBar != null) hpBar.enabled = true;
-
-                gaugeInteraction = GetComponentInChildren<GaugeInteraction>();
-
-                var eventController = GetComponent<PinkPlayercontroller_event>();
-                if (eventController != null)
-                {
-                    //eventController.OnInteractionEvent += HandleReviveInteraction;
-                }
-            }
-        }
-    }
-    private void Update()
-    {
     }
 
     private void FixedUpdate()
