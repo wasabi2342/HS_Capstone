@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
 using TMPro;
+using FMODUnity;
 
 public class ParentPlayerController : MonoBehaviourPun, IDamageable
 {
@@ -106,6 +107,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         {
             if (photonView.IsMine)
             {
+                gameObject.AddComponent<StudioListener>();
+
                 runTimeData.LoadFromJsonFile();
 
                 animator.speed = runTimeData.attackSpeed;
