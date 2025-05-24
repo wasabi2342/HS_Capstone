@@ -5,10 +5,7 @@ public class WhitePlayerSoundEvent : MonoBehaviourPun
 {
     private void PlaySound(string fullPath)
     {
-        if (photonView.IsMine)
-        {
-            AudioManager.Instance.PlayOneShot(fullPath, transform.position);
-        }
+        AudioManager.Instance.PlayOneShot(fullPath, transform.position);
     }
 
     public void WhitePlayerSoundEffect(string source)
