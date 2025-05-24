@@ -5,7 +5,7 @@
 			<value>katana_DashAttack</value>
 		</property>
 		<property name="outputFormat">
-			<value>1</value>
+			<value>2</value>
 		</property>
 		<relationship name="folder">
 			<destination>{9378d00e-121b-4d39-8e2e-81414e9b901f}</destination>
@@ -58,7 +58,7 @@
 			<destination>{6213bd0a-c44e-49f8-b1bf-8f00de0373f2}</destination>
 		</relationship>
 		<relationship name="output">
-			<destination>{dcef9976-f8e9-43a9-9c6c-ae1a81b3a2fa}</destination>
+			<destination>{e3165063-90d6-42c7-b086-65dccc75172b}</destination>
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{86b38480-506a-44ac-b64d-d2ffee05571b}">
@@ -321,6 +321,7 @@
 	</object>
 	<object class="MixerBusEffectChain" id="{3ca7b128-53c7-4888-ac1d-4210c41f29e6}">
 		<relationship name="effects">
+			<destination>{df74aa49-71ff-445f-a8fa-0a6e2a99d717}</destination>
 			<destination>{7c64cc0d-8d89-4f0c-954b-5b3d91ad66e3}</destination>
 		</relationship>
 	</object>
@@ -396,6 +397,7 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{8401935f-d7dd-4336-8877-7457748bf4e3}" />
+	<object class="SpatialiserEffect" id="{df74aa49-71ff-445f-a8fa-0a6e2a99d717}" />
 	<object class="MixerBusFader" id="{7c64cc0d-8d89-4f0c-954b-5b3d91ad66e3}" />
 	<object class="MixerBusFader" id="{177cb1bc-a7d6-40e4-a1d2-6a27dee46ea4}" />
 	<object class="PitchShifterEffect" id="{e66280a8-4ac6-4cef-ae7c-a78b269a6c56}" />
