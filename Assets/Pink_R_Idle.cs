@@ -43,6 +43,12 @@ public class Pink_R_Idle : StateMachineBehaviour
                 }
                 pc.currentState = PinkPlayerState.Run;
                 break;
+
+            case PinkPlayerState.R_hit:
+                animator.SetBool("basicattack", true);
+                break;
+                
+
         }
 
         // 1) move 입력이 와서 아직 전이 안 된 경우 → Run

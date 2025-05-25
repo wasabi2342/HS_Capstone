@@ -7,7 +7,7 @@ using Unity.VisualScripting;
 using System;
 using System.Collections.Generic;
 
-public enum PinkPlayerState { Idle, R_Idle, Run, tackle, BasicAttack, Hit, Dash, Skill, Ultimate, R_hit1, R_hit2, R_hit3, R_finish, Charge1, Charge2, Charge3, Stun, Revive, Death }
+public enum PinkPlayerState { Idle, R_Idle, Run, tackle, BasicAttack, Hit, Dash, Skill, Ultimate, R_hit, R_finish, Charge1, Charge2, Charge3, Stun, Revive, Death }
 
 public class PinkPlayerController : ParentPlayerController
 {
@@ -273,23 +273,25 @@ public class PinkPlayerController : ParentPlayerController
             {
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-                animator.SetBool("basicattack", true);
+                //animator.SetBool("basicattack", true);
                 //if (PhotonNetwork.IsConnected)
                 //{
                 //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
                 //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
                 //}
                 //photonView.RPC("PlayAnimation", RpcTarget.All, "basicattack");
-                currentState = PinkPlayerState.R_hit1;
+                nextState = PinkPlayerState.R_hit;
 
             }
 
 
 
-            if (currentState == PinkPlayerState.R_hit1 || currentState == PinkPlayerState.R_hit2 || currentState == PinkPlayerState.R_hit3)
+            if (currentState == PinkPlayerState.R_hit)
             {
-
+                Vector3 mousePos = GetMouseWorldPosition();
+                animator.SetBool("Right", mousePos.x > transform.position.x);
                 animator.SetBool("Pre-Input", true);
+                nextState = PinkPlayerState.R_hit;
 
             }
 
