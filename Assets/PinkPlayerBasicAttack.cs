@@ -62,10 +62,15 @@ public class PinkPlayerBasicAttack : StateMachineBehaviour
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-    //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //
-    //}
+    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        animator.SetBool("Pre-Attack", false);
+        animator.SetBool("Pre-Input", false);
+        animator.SetBool("CancleState", false);
+        animator.SetBool("FreeState", false);
+        animator.SetBool("basicattack", false);
+        animator.SetBool("AttackContinue", false);
+    }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
     //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
