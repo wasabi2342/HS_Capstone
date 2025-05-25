@@ -266,7 +266,7 @@ public class PinkPlayerController : ParentPlayerController
     public void HandleNormalAttack()
     {
 
-        if (currentState != PinkPlayerState.Death || currentState == PinkPlayerState.Stun)
+        if (currentState != PinkPlayerState.Death || currentState != PinkPlayerState.Stun)
         {
 
             if (currentState == PinkPlayerState.R_Idle)
@@ -274,11 +274,11 @@ public class PinkPlayerController : ParentPlayerController
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
                 animator.SetBool("basicattack", true);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
-                }
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
+                //}
                 //photonView.RPC("PlayAnimation", RpcTarget.All, "basicattack");
                 currentState = PinkPlayerState.R_hit1;
 
@@ -293,59 +293,35 @@ public class PinkPlayerController : ParentPlayerController
 
             }
 
-
-
-
-
-
-            //else if (currentState == PinkPlayerState.R_hit1 && animator.GetInteger("attackStack") > 2)
-            //{
-            //    animator.SetBool("basicattack", true);
-            //    Vector3 mousePos = GetMouseWorldPosition();
-            //    animator.SetBool("Right", mousePos.x > transform.position.x);
-            //    if (PhotonNetwork.IsConnected)
-            //    {
-            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
-            //        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-            //    }
-            //    currentState = PinkPlayerState.R_hit3;
-            //    return;
-            //}
-
-            if (nextState <= PinkPlayerState.BasicAttack && nextState != PinkPlayerState.R_Idle)
+            if (nextState < PinkPlayerState.BasicAttack && nextState != PinkPlayerState.R_Idle)
             {
 
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
                 animator.SetBool("Pre-Input", true);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                }
-                currentState = PinkPlayerState.BasicAttack;
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                //}
                 nextState = PinkPlayerState.BasicAttack;
             }
 
-            if (attackStack == 2)
-            {
 
-            }
-
-            if (attackStack > 2)
-            {
-                animator.SetBool("Pre-Attack", false);
-                animator.SetBool("Pre-Input", false);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", false);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", false);
-                }
-                //currentState = PinkPlayerState.Idle;
-                //attackStack = 0;
-                AttackStackUpdate?.Invoke(attackStack);
-                Debug.Log("공격 스택 2 도달: 콤보 종료 및 초기화");
-                return;
-            }
+            //if (attackStack > 2)
+            //{
+            //    animator.SetBool("Pre-Attack", false);
+            //    animator.SetBool("Pre-Input", false);
+            //    //if (PhotonNetwork.IsConnected)
+            //    //{
+            //    //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", false);
+            //    //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", false);
+            //    //}
+            //    //currentState = PinkPlayerState.Idle;
+            //    //attackStack = 0;
+            //    AttackStackUpdate?.Invoke(attackStack);
+            //    Debug.Log("공격 스택 2 도달: 콤보 종료 및 초기화");
+            //    return;
+            //}
 
             if (currentState == PinkPlayerState.BasicAttack)
             {
@@ -354,11 +330,11 @@ public class PinkPlayerController : ParentPlayerController
                 animator.SetBool("Right", mousePos.x > transform.position.x);
                 animator.SetBool("Pre-Input", true);
 
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                }
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
+                //}
             }
         }
     }

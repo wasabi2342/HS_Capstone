@@ -1,50 +1,70 @@
+using Photon.Pun;
 using UnityEngine;
 
-public class PinkPlayerBasicAttack1 : StateMachineBehaviour
+public class PinkPlayerBasicAttack : StateMachineBehaviour
 {
-    PinkPlayerController pinkPlayerController;
+    private PinkPlayerController pinkPlayerController;
+    private PhotonView photonView;
+
+    [SerializeField]
+    private int attackStack;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        
+
         if (pinkPlayerController == null)
             pinkPlayerController = animator.GetComponent<PinkPlayerController>();
-        
-        pinkPlayerController.attackStack = 1;
-        Debug.Log(pinkPlayerController.attackStack);
-        animator.SetInteger("AttackStack", pinkPlayerController.attackStack);
-        pinkPlayerController.SetIntParameter("AttackStack", pinkPlayerController.attackStack);
-        pinkPlayerController.AttackStackUpdate?.Invoke(pinkPlayerController.attackStack);
-        pinkPlayerController.CreateBasicAttackEffect();
 
-        animator.SetBool("AttackContinue", false);
         animator.SetBool("Pre-Attack", false);
         animator.SetBool("Pre-Input", false);
         animator.SetBool("CancleState", false);
         animator.SetBool("FreeState", false);
-        animator.SetBool("run", false);
-        animator.SetBool("revive", false);
+        animator.SetBool("basicattack", false);
+        animator.SetBool("AttackContinue", false);
+
+        pinkPlayerController.attackStack = attackStack;
+        pinkPlayerController.CreateBasicAttackEffect();
+        pinkPlayerController.AttackStackUpdate?.Invoke(pinkPlayerController.attackStack);
+
+        animator.SetInteger("AttackStack", attackStack);
+
+        pinkPlayerController.currentState = PinkPlayerState.BasicAttack;
+        pinkPlayerController.nextState = PinkPlayerState.Idle;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        if (photonView == null)
+            photonView = animator.GetComponent<PhotonView>();
+        if (PhotonNetwork.IsConnected && !photonView.IsMine)
+            return;
         if (pinkPlayerController == null)
             pinkPlayerController = animator.GetComponent<PinkPlayerController>();
 
         if (pinkPlayerController.nextState == PinkPlayerState.BasicAttack)
         {
             animator.SetBool("AttackContinue", true);
-            pinkPlayerController.SetBoolParameter("AttackContinue", true);
-            pinkPlayerController.currentState = PinkPlayerState.BasicAttack;
-            pinkPlayerController.nextState = PinkPlayerState.Idle;
+            //if (PhotonNetwork.IsConnected)
+            //{
+            //    whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
+            //}
+        }
+        else
+        {
+            //if (PhotonNetwork.IsConnected)
+            // {
+            //    whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
+            // }
         }
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     //{
-    //    
+    //
     //}
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

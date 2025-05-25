@@ -265,7 +265,7 @@ public class WhitePlayerController : ParentPlayerController
     public void HandleNormalAttack()
     {
 
-        if (currentState != WhitePlayerState.Death)
+        if (currentState != WhitePlayerState.Death || currentState != WhitePlayerState.Stun)
         {
             if (currentState == WhitePlayerState.Parry)
             {
