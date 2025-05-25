@@ -581,4 +581,19 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     {
         animator.Play(stateName);
     }
+
+    public void SyncTriggerAnimation(string trigger)
+    {
+        if (!photonView.IsMine)
+            return;
+
+        photonView.RPC("RPC_SyncTriggerAnimation", RpcTarget.Others, trigger);
+    }
+
+
+    [PunRPC]
+    public void RPC_SyncTriggerAnimation(string trigger)
+    {
+        animator.SetTrigger(trigger);
+    }
 }

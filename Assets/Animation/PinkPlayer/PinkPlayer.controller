@@ -333,7 +333,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5eee74b2cda8eeb4785bfe7e5330109e, type: 3}
   m_Name: 
@@ -601,7 +601,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5eee74b2cda8eeb4785bfe7e5330109e, type: 3}
   m_Name: 
@@ -2194,6 +2194,7 @@ AnimatorState:
   - {fileID: 4885165537286159191}
   - {fileID: -7087317392833162945}
   - {fileID: -4468768206232269017}
+  - {fileID: 8916596655505790216}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -3894,6 +3895,19 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &2227957689468403261
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 804befcaa5de2b947a5e75c1fcc8bf03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  triggerName: R_Hit_L
 --- !u!114 &2262411454542640143
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5313,6 +5327,7 @@ AnimatorState:
   - {fileID: 1265234465931648115}
   - {fileID: -8290289370776464358}
   - {fileID: 5529860604574358564}
+  - {fileID: 2227957689468403261}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -5538,6 +5553,19 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &8916596655505790216
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 804befcaa5de2b947a5e75c1fcc8bf03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  triggerName: R_Hit_R
 --- !u!1107 &8930316810015035170
 AnimatorStateMachine:
   serializedVersion: 6
@@ -5567,7 +5595,7 @@ AnimatorStateMachine:
     m_Position: {x: 910, y: 220, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 7521441715930083022}
-    m_Position: {x: 590, y: 310, z: 0}
+    m_Position: {x: 600, y: 310, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 3423458875492916394}
     m_Position: {x: -210, y: 510, z: 0}
