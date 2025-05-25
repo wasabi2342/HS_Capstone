@@ -1096,54 +1096,54 @@ public class PinkPlayerController : ParentPlayerController
     }
 
     // 차징 이펙트 생성
-    //public void CreateChargeSkillEffect()
-    //{
-    //    if (!photonView.IsMine)
-    //    {
-    //        attackStack = animator.GetInteger("AttackStack");
-    //    }
+    public void CreateChargeSkillEffect()
+    {
+        if (!photonView.IsMine)
+        {
+            attackStack = animator.GetInteger("AttackStack");
+        }
 
-    //    if (!photonView.IsMine)
-    //    {
-    //        return;
-    //    }
+        if (!photonView.IsMine)
+        {
+            return;
+        }
 
-    //    // 차징 스킬 데미지 계산
-    //    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
-    //                   runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
+        // 차징 스킬 데미지 계산
+        float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower +
+                       runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
 
-    //    // Photon에 접속 중인지 확인하여 isMine 설정
-    //    bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
+        // Photon에 접속 중인지 확인하여 isMine 설정
+        bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
 
-    //    // 이펙트 경로 및 위치 설정
-    //    string effectPath;
-    //    Vector3 effectPosition = transform.position + new Vector3(0f, -0.5f, 0f);
+        // 이펙트 경로 및 위치 설정
+        string effectPath;
+        Vector3 effectPosition = transform.position + new Vector3(0f, -0.5f, 0f);
 
-    //    if (animator.GetBool("Right"))
-    //    {
-    //        effectPath = $"SkillEffect/PinkPlayer/pink_charging{chargeLevel}_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
-    //    }
-    //    else
-    //    {
-    //        effectPath = $"SkillEffect/PinkPlayer/pink_charging{chargeLevel}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
-    //    }
+        if (animator.GetBool("Right"))
+        {
+            effectPath = $"SkillEffect/PinkPlayer/pink_charging{chargeLevel}_right_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
+        }
+        else
+        {
+            effectPath = $"SkillEffect/PinkPlayer/pink_charging{chargeLevel}_left_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
+        }
 
-    //    // 다른 클라이언트에게도 이펙트를 생성하도록 RPC 호출
-    //    if (PhotonNetwork.IsConnected && photonView.IsMine)
-    //    {
-    //        photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true, animator.speed);
-    //    }
+        // 다른 클라이언트에게도 이펙트를 생성하도록 RPC 호출
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+        {
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, effectPosition, true, animator.speed);
+        }
 
-    //    // Photon 연결 여부에 따른 이펙트 생성
-    //    SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
+        // Photon 연결 여부에 따른 이펙트 생성
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), effectPosition, Quaternion.identity);
 
-    //    // Init 메서드 호출
-    //    //skillEffect.Init(damage, StartHitlag, isMine);
-    //    skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID, this));
+        // Init 메서드 호출
+        //skillEffect.Init(damage, StartHitlag, isMine);
+        skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID, this));
 
-    //    // 생성된 이펙트의 부모를 설정
-    //    skillEffect.transform.parent = transform;
-    //}
+        // 생성된 이펙트의 부모를 설정
+        skillEffect.transform.parent = transform;
+    }
 
     public void CreateChargeHitSkillEffect()
     {
