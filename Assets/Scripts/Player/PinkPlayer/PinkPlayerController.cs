@@ -733,7 +733,9 @@ public class PinkPlayerController : ParentPlayerController
         {
             // 기존 cap/limit 로직
             int cap = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil == 2 ? 13 : 8;
-            int maxStack = Mathf.Min(ultimateStackLimit, cap);
+            // 최소 3 보장되도록 보정
+            int safeLimit = Mathf.Max(2, ultimateStackLimit);
+            int maxStack = Mathf.Min(safeLimit, cap);
             if (R_attackStack >= maxStack) return;
             R_attackStack++;
         }

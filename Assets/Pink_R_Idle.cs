@@ -47,7 +47,11 @@ public class Pink_R_Idle : StateMachineBehaviour
             case PinkPlayerState.R_hit:
                 animator.SetBool("basicattack", true);
                 break;
-                
+
+            case PinkPlayerState.BasicAttack:
+                animator.SetBool("basicattack", true);
+                break;
+
 
         }
 
