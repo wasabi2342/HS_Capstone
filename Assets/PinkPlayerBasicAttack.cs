@@ -12,9 +12,10 @@ public class PinkPlayerBasicAttack : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        
-
-        if (pinkPlayerController == null)
+        if (photonView == null)
+            photonView = animator.GetComponent<PhotonView>();
+        if (PhotonNetwork.IsConnected && !photonView.IsMine)
+            if (pinkPlayerController == null)
             pinkPlayerController = animator.GetComponent<PinkPlayerController>();
 
         animator.SetBool("Pre-Attack", false);
