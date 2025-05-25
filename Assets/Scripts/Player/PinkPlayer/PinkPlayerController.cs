@@ -718,7 +718,10 @@ public class PinkPlayerController : ParentPlayerController
 
     // 애니메이션 이벤트로 평타 스택 설정해주기
     public void OnAttackStack()
+
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
         int devilLevelR = runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil;
 
         // Devil == 2 이면 무제한으로 계속 증가
@@ -794,46 +797,56 @@ public class PinkPlayerController : ParentPlayerController
 
     public void OnAttackPreAttckStart()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
         animator.SetBool("CancleState", true);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", true);
-        }
+        //if (PhotonNetwork.IsConnected)
+        //{
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", true);
+        //}
         Debug.Log("선딜 시작");
     }
 
     public void OnAttackPreAttckEnd()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
         animator.SetBool("CancleState", false);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
-        }
+        //if (PhotonNetwork.IsConnected)
+        //{
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
+        //}
         Debug.Log("선딜 종료");
     }
 
     public void OnAttackLastAttckStart()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
         animator.SetBool("CancleState2", true);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState2", true);
-        }
+        //if (PhotonNetwork.IsConnected)
+        //{
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState2", true);
+        //}
         Debug.Log("후딜 시작");
     }
 
     public void OnAttackLastAttckEnd()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
         animator.SetBool("CancleState2", false);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState2", false);
-        }
+        //if (PhotonNetwork.IsConnected)
+        //{
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState2", false);
+        //}
         Debug.Log("후딜 종료");
     }
 
     public void OnMoveFront(float value)
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
         transform.Translate((GetMouseWorldPosition() - transform.position).normalized * value);
     }
 
@@ -864,6 +877,8 @@ public class PinkPlayerController : ParentPlayerController
 
     public void ResetRAttackStack()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
         // 스택 리셋
         R_attackStack = 0;
 
@@ -871,10 +886,10 @@ public class PinkPlayerController : ParentPlayerController
         animator.SetInteger("R_attackStack", R_attackStack);
 
 
-        if (PhotonNetwork.IsConnected && photonView.IsMine)
-        {
-            photonView.RPC("SyncIntParameter", RpcTarget.Others, "R_attackStack", R_attackStack);
-        }
+        //if (PhotonNetwork.IsConnected && photonView.IsMine)
+        //{
+        //    photonView.RPC("SyncIntParameter", RpcTarget.Others, "R_attackStack", R_attackStack);
+        //}
     }
 
 
@@ -1362,32 +1377,38 @@ public class PinkPlayerController : ParentPlayerController
 
     public void OnAttackAllowNextInput()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
         animator.SetBool("FreeState", true);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", true);
-        }
+        //if (PhotonNetwork.IsConnected)
+        //{
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", true);
+        //}
         Debug.Log("자유상태");
     }
 
     public void OnAttackAnimationEnd()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
         attackStack = 0;
         AttackStackUpdate?.Invoke(attackStack);
         animator.SetBool("Pre-Attack", false);
         animator.SetBool("FreeState", false);
         animator.SetBool("CancleState", false);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", false);
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", false);
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
-        }
+        //if (PhotonNetwork.IsConnected)
+        //{
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", false);
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", false);
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
+        //}
         Debug.Log(" 애니메이션 종료");
     }
 
     public void InitAttackStak()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
         attackStack = 0;
         AttackStackUpdate?.Invoke(attackStack);
     }
