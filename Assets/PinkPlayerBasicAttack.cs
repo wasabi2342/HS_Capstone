@@ -15,7 +15,8 @@ public class PinkPlayerBasicAttack : StateMachineBehaviour
         if (photonView == null)
             photonView = animator.GetComponent<PhotonView>();
         if (PhotonNetwork.IsConnected && !photonView.IsMine)
-            if (pinkPlayerController == null)
+            return;
+        if (pinkPlayerController == null)
             pinkPlayerController = animator.GetComponent<PinkPlayerController>();
 
         animator.SetBool("Pre-Attack", false);
