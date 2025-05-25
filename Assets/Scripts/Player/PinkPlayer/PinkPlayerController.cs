@@ -295,7 +295,7 @@ public class PinkPlayerController : ParentPlayerController
 
             }
 
-            if (nextState < PinkPlayerState.BasicAttack && nextState != PinkPlayerState.R_Idle)
+            if (nextState < PinkPlayerState.BasicAttack && nextState != PinkPlayerState.R_Idle && cooldownCheckers[(int)Skills.Mouse_L].CanUse())
             {
 
                 Vector3 mousePos = GetMouseWorldPosition();
@@ -325,7 +325,7 @@ public class PinkPlayerController : ParentPlayerController
             //    return;
             //}
 
-            if (currentState == PinkPlayerState.BasicAttack)
+            if (currentState == PinkPlayerState.BasicAttack && cooldownCheckers[(int)Skills.Mouse_L].CanUse())
             {
 
                 Vector3 mousePos = GetMouseWorldPosition();
