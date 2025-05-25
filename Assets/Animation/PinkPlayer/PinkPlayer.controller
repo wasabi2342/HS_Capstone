@@ -2008,13 +2008,13 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 781824486790173061}
-    m_Position: {x: 1280, y: -80, z: 0}
+    m_Position: {x: 1260, y: -100, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 3270681627717696340}
     m_Position: {x: 1260, y: 50, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -1183777281672245355}
-    m_Position: {x: 230, y: -100, z: 0}
+    m_Position: {x: 250, y: -90, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4404167246823784921}
     m_Position: {x: 230, y: 90, z: 0}
@@ -2032,7 +2032,7 @@ AnimatorStateMachine:
   m_AnyStatePosition: {x: 50, y: 20, z: 0}
   m_EntryPosition: {x: 50, y: 120, z: 0}
   m_ExitPosition: {x: 800, y: 120, z: 0}
-  m_ParentStateMachinePosition: {x: 760, y: -40, z: 0}
+  m_ParentStateMachinePosition: {x: 800, y: -130, z: 0}
   m_DefaultState: {fileID: 781824486790173061}
 --- !u!1101 &-2954069032346652762
 AnimatorStateTransition:
@@ -2449,14 +2449,11 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 1
-    m_ConditionEvent: basicattack
-    m_EventTreshold: 0
-  - m_ConditionMode: 6
-    m_ConditionEvent: AttackStack
-    m_EventTreshold: 1
   - m_ConditionMode: 2
     m_ConditionEvent: Right
+    m_EventTreshold: 0
+  - m_ConditionMode: 1
+    m_ConditionEvent: basicattack
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -1183777281672245355}
@@ -2540,9 +2537,6 @@ AnimatorStateTransition:
   - m_ConditionMode: 1
     m_ConditionEvent: basicattack
     m_EventTreshold: 0
-  - m_ConditionMode: 6
-    m_ConditionEvent: AttackStack
-    m_EventTreshold: 1
   - m_ConditionMode: 1
     m_ConditionEvent: Right
     m_EventTreshold: 0

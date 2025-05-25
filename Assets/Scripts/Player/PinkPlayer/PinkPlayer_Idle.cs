@@ -43,11 +43,11 @@ public class PinkPlayer_Idle : StateMachineBehaviour
                 pinkPlayerController.currentState = PinkPlayerState.Run;
                 break;
             case PinkPlayerState.BasicAttack:
-                pinkPlayerController.attackStack++;
+                //pinkPlayerController.attackStack++;
                 Debug.Log(pinkPlayerController.attackStack);
-                animator.SetInteger("AttackStack", pinkPlayerController.attackStack);
-                pinkPlayerController.SetIntParameter("AttackStack", pinkPlayerController.attackStack);
-                pinkPlayerController.AttackStackUpdate?.Invoke(pinkPlayerController.attackStack);
+                //animator.SetInteger("AttackStack", pinkPlayerController.attackStack);
+                //pinkPlayerController.SetIntParameter("AttackStack", pinkPlayerController.attackStack);
+                //pinkPlayerController.AttackStackUpdate?.Invoke(pinkPlayerController.attackStack);
                 animator.SetBool("basicattack", true);
                 pinkPlayerController.SetBoolParameter("basicattack", true);
                 pinkPlayerController.currentState = PinkPlayerState.BasicAttack;
