@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Photon.Pun;
 using UnityEngine.AI;
+using Unity.AppUI.Core;
 
 /// <summary>
 /// 타깃과 정면은 맞췄지만 z 오차가 클 때
@@ -13,7 +14,7 @@ public class DetourState : BaseState
     const float MAX_TIME = 1.2f;    // 우회 시도 시간 한계
     const float END_DIST = 0.05f;   // “도달” 판정 거리
     const float NEAR_FACTOR = 1.3f;    // 근접 판정 배수(attackRange × n)
-    const float LATERAL_MUL = 2f;      // 좌/우로 비켜갈 배수
+    const float LATERAL_MUL = 1.2f;      // 좌/우로 비켜갈 배수
 
     /* ───────── 상태 ───────── */
     Vector3 detourPos;
@@ -24,7 +25,9 @@ public class DetourState : BaseState
     // ───────────────────────── Enter ─────────────────────────
     public override void Enter()
     {
-        float side = Mathf.Sign(fsm.CurrentFacing);     // -1 좌 / +1 우
+        float side = Mathf.Sign(transform.position.x
+            -fsm.Target.position.x); //      멀어지는 방향
+         if (side == 0) side = Mathf.Sign(fsm.CurrentFacing);
         float atkR = status.attackRange;
 
         detourPos = fsm.Target.position;
@@ -88,7 +91,10 @@ public class DetourState : BaseState
         }
 
         /* 4) 방향 & 애니메이션 유지 */
-        RefreshFacingToTarget();
+        Vector3 vel = agent.velocity;
+        float dirX = Mathf.Abs(vel.x) > 0.01f ? vel.x : (fsm.Target.position.x - transform.position.x);
+
+        fsm.ForceFacing(dirX);      // ← 이동·타깃 둘 중 큰 x-방향
         fsm.PlayDirectionalAnim("Chase");
     }
 

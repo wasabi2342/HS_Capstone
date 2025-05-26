@@ -29,10 +29,13 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     [SerializeField] LayerMask playerMask;      // Player 레이어만
     [SerializeField] LayerMask servantMask;     // Servant 레이어만
 
-    /* ───────── Facing ───────── */
-    float lastMoveX = 1f;                       // +1 ⇒ Right , -1 ⇒ Left
+    /* Facing */
+    float lastMoveX = 1f;
     public float CurrentFacing => lastMoveX;
     public void ForceFacing(float s) => lastMoveX = s >= 0 ? 1f : -1f;
+
+    /* ★ 추가: 플레이어 기준 좌/우 선호 라인  */
+    [HideInInspector] public float preferredSide = 0f;   // -1 왼쪽, +1 오른쪽
     private Vector3 lastHitPos;
     public Vector3 LastHitPos => lastHitPos; // 공격자 위치
 
@@ -83,7 +86,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     const float GIZMO_Y = .05f;
 
     /* ───────── Attack Alignment ───────── */
-    [Header("Attack Alignment")] public float zAlignTolerance = .4f;
+    [Header("Attack Alignment")] public float zAlignTolerance = .75f;
 
     /* ───────── Static Counter ───────── */
     public static int ActiveMonsterCount = 0;

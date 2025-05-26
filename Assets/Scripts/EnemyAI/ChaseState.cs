@@ -3,57 +3,52 @@ using Photon.Pun;
 using UnityEngine.AI;
 
 /// <summary>
-/// 자연스러운 대각선 추적 + 정렬 실패 타임아웃 + 자동 Detour 로직 통합 버전
+/// 항상 플레이어 측면을 목표로 하는 추적 + 실패 시 Detour 전환
 /// </summary>
 public class ChaseState : BaseState
 {
-    /* ───────── 튜닝 파라미터 ───────── */
-    const float REP_PATH_INTERVAL = 0.20f;   // 경로 재계산 주기
-    const float DETOUR_LATERAL = 1.5f;      // 옆으로 비켜갈 배율 (attackRange × n)
-    const float NO_ALIGN_TIME = 1.5f;    // n 초 동안 WaitCool에 못 들어가면 Detour
-    const float NEAR_FACTOR = 1.25f;   // “근접” 판정 배율(attackRange × n)
+    /* ─── 튜닝 ─── */
+    const float REP_INT = 0.18f;   // NavMesh 경로 재계산 주기
+    const float SIDE_OFFSET_M = 0.5f;    // 측면 오프셋(attackRange × n)
+    const float ALIGN_TOL = 0.75f;   // z축 정렬 허용 오차
+    const float NO_ALIGN_TIME = 1.5f;    // WaitCool 미진입 타임아웃
 
-    /* ───────── 상태 변수 ───────── */
-    bool detouring;           
-    float repathT;             // 경로 재계산 타이머
-    float chaseTimer;          // 최대 추적 시간
-    float noAlignTimer;        
+    /* ─── 상태 ─── */
+    float repT, chaseTimer, noAlignT;
+    Vector3 sideTarget;    // 현재 측면 목표
 
     public ChaseState(EnemyFSM f) : base(f) { }
 
-    // ─────────────────────────── Enter ───────────────────────────
+    // ───────────────────────────── Enter ─────────────────────────────
     public override void Enter()
     {
-        detouring = false;
-        repathT = 0f;
-        chaseTimer = 0f;
-        noAlignTimer = 0f;
+        repT = chaseTimer = noAlignT = 0f;
 
         if (agent)
         {
             SetAgentStopped(false);
-            agent.speed = status.moveSpeed *
-                                     (status.chaseSpeedMultiplier > 0 ? status.chaseSpeedMultiplier : 1f);
-            agent.stoppingDistance = status.attackRange;
-            agent.autoBraking = true;    // 부드러운 감속
+            agent.speed = status.moveSpeed * status.chaseSpeedMultiplier;
+            agent.stoppingDistance = status.attackRange * 0.4f;
+            agent.autoBraking = true;
+            agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
         }
 
         fsm.PlayDirectionalAnim("Chase");
     }
 
-    // ────────────────────────── Execute ──────────────────────────
+    // ───────────────────────────── Execute ────────────────────────────
     public override void Execute()
     {
-        if (!PhotonNetwork.IsMasterClient) return;     // AI 처리 책임
+        if (!PhotonNetwork.IsMasterClient) return;
 
-        /* 0) 타깃 유효성 */
+        /* 0) 타깃 확인 */
         if (fsm.Target == null || !fsm.Target.gameObject.activeInHierarchy)
         {
             fsm.TransitionToState(typeof(WanderState));
             return;
         }
 
-        /* 1) 최대 거리‧시간 초과 */
+        /* 1) 추적 한계 */
         chaseTimer += Time.deltaTime;
         if (chaseTimer > status.maxChaseTime ||
             (fsm.Target.position - fsm.spawnPosition).sqrMagnitude >
@@ -64,95 +59,60 @@ public class ChaseState : BaseState
             return;
         }
 
-        /* 2) 위치‧정렬 데이터 계산 */
-        float xDiff = fsm.Target.position.x - transform.position.x;
-        float xAbs = Mathf.Abs(xDiff);
-        float zDiff = fsm.GetZDiffAbs();
-        float tol = fsm.zAlignTolerance;
-        float atkR = status.attackRange;
+        /* 2) ───── 측면 목표 계산 ───── */
+        float side = Mathf.Sign(transform.position.x - fsm.Target.position.x);
+        if (side == 0) side = 1f;                               // 정확히 중앙이면 오른쪽 선택
 
-        bool aligned = fsm.IsAlignedAndInRange();
-        bool near = fsm.GetTarget2DDistSq() <= atkR * atkR * NEAR_FACTOR * NEAR_FACTOR;
+        sideTarget = fsm.Target.position;
+        sideTarget.x += side * status.attackRange * SIDE_OFFSET_M;
+        sideTarget.y = transform.position.y;              // 지면 유지
 
-        /* 3) ───── 정렬 성공 → WaitCoolState 전환 ───── */
-        if (aligned)
+        /* 3) 경로 재계산 */
+        repT += Time.deltaTime;
+        if (repT >= REP_INT && !agent.pathPending)
+        {
+            agent.SetDestination(sideTarget);
+            repT = 0f;
+        }
+
+        /* 4) 정렬 판정 */
+        float zAbs = Mathf.Abs(transform.position.z - fsm.Target.position.z);
+        bool inRange = fsm.GetTarget2DDistSq() <= status.attackRange * status.attackRange;
+
+        if (zAbs <= ALIGN_TOL && inRange)
         {
             agent.isStopped = true;
             fsm.TransitionToState(typeof(WaitCoolState));
             return;
         }
 
-        /* 4) ───── WaitCool 미진입 타이머 ───── */
-        if (near && !detouring)      // 근접 상태에서만 카운트
-            noAlignTimer += Time.deltaTime;
-        else
-            noAlignTimer = 0f;
+        /* 5) WaitCool 미진입 타이머 */
+        noAlignT += Time.deltaTime;
 
-        if (noAlignTimer >= NO_ALIGN_TIME)
+        if (noAlignT >= NO_ALIGN_TIME)
         {
-            if (fsm.debugMode)
-                Debug.Log($"[Chase] {NO_ALIGN_TIME}s 내 정렬 실패 → DetourState", fsm);
-            fsm.TransitionToState(typeof(DetourState));
+            noAlignT = 0f;
+            fsm.TransitionToState(typeof(DetourState));   // 한번 우회해서 재정렬
             return;
         }
 
-        /* 5) ───── Detour 진입 조건 ─────
-               - 거의 정면(xAbs ≤ tol)
-               - 근접
-               - z 오차가 tol 초과 */
-        if (!detouring &&
-            zDiff > tol &&
-            xAbs <= tol &&
-            near)
-        {
-            float side = Mathf.Sign(fsm.CurrentFacing); // -1 좌 / +1 우
-            Vector3 det = fsm.Target.position;
-            det.x += side * atkR * DETOUR_LATERAL;
-            det.y = transform.position.y;
-
-            agent.stoppingDistance = 0f;
-            agent.SetDestination(det);
-            detouring = true;
-            return;
-        }
-
-        /* 6) ───── Detour 진행 중 판정 ───── */
-        if (detouring)
-        {
-            if (!agent.pathPending &&
-                agent.remainingDistance <= agent.stoppingDistance + 0.05f)
-            {
-                detouring = false;
-                agent.stoppingDistance = atkR;   // 원래 값 복구
-            }
-            else
-            {
-                // Detour 중엔 다른 로직 생략
-                RefreshFacingToTarget();
-                fsm.PlayDirectionalAnim("Chase");
-                return;
-            }
-        }
-
-        /* 7) ───── 평상시 추적 경로 재계산 ───── */
-        repathT += Time.deltaTime;
-        if (repathT >= REP_PATH_INTERVAL && !agent.pathPending)
-        {
-            Vector3 dest = fsm.Target.position;
-            dest.y = transform.position.y;
-            agent.SetDestination(dest);
-            repathT = 0f;
-        }
-
-        /* 8) ───── 방향 & 애니메이션 동기화 ───── */
-        RefreshFacingToTarget();
+        /* 6) 방향 & 애니메이션 */
+        RefreshFacingToMoveOrTarget(agent.velocity);
         fsm.PlayDirectionalAnim("Chase");
     }
 
-    // ─────────────────────────── Exit ───────────────────────────
+    // ───────────────────────────── Exit ──────────────────────────────
     public override void Exit()
     {
         if (agent) agent.autoBraking = false;
-        detouring = false;
+    }
+
+    /* ────────────── 보조 ────────────── */
+    void RefreshFacingToMoveOrTarget(Vector3 vel)
+    {
+        float dir = Mathf.Abs(vel.x) > 0.01f
+            ? vel.x
+            : (fsm.Target.position.x - transform.position.x);
+        fsm.ForceFacing(dir);
     }
 }
