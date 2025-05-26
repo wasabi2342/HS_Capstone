@@ -441,6 +441,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     #endregion
 
+    private List<float> attackSpeedBuffs = new List<float>();
+
     public virtual void BuffAttackSpeed(float value, float duration)
     {
         StartCoroutine(BuffAttackSpeedTimer(value, duration));
@@ -448,11 +450,64 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     private IEnumerator BuffAttackSpeedTimer(float value, float duration)
     {
-        animator.speed = runTimeData.attackSpeed * value;
+        attackSpeedBuffs.Add(value);
+        UpdateAttackSpeed();
+
+        Debug.Log("공격속도버프 적용됨. 현재 스택 수: " + attackSpeedBuffs.Count);
 
         yield return new WaitForSeconds(duration);
 
-        animator.speed = runTimeData.attackSpeed;
+        attackSpeedBuffs.Remove(value);
+        UpdateAttackSpeed();
+
+        Debug.Log("공격속도버프 제거됨. 현재 스택 수: " + attackSpeedBuffs.Count);
+    }
+
+    private void UpdateAttackSpeed()
+    {
+        float totalMultiplier = 1f;
+        foreach (float buff in attackSpeedBuffs)
+        {
+            totalMultiplier *= buff;
+        }
+
+        animator.speed = runTimeData.attackSpeed * totalMultiplier;
+        Debug.Log("공격속도 : " + animator.speed);
+    }
+
+    private List<float> moveSpeedBuffs = new List<float>();
+
+    public virtual void BuffMoveSpeed(float value, float duration)
+    {
+        Debug.Log("이동속도버프 value:" + value + "duration" + duration);
+        StartCoroutine(BuffMoveSpeedTimer(value, duration));
+    }
+
+    private IEnumerator BuffMoveSpeedTimer(float value, float duration)
+    {
+        moveSpeedBuffs.Add(value);
+        UpdateMoveSpeed();
+
+        Debug.Log("이동속도버프 적용됨. 현재 스택 수: " + moveSpeedBuffs.Count);
+
+        yield return new WaitForSeconds(duration);
+
+        moveSpeedBuffs.Remove(value);
+        UpdateMoveSpeed();
+
+        Debug.Log("이동속도버프 제거됨. 현재 스택 수: " + moveSpeedBuffs.Count);
+    }
+
+    private void UpdateMoveSpeed()
+    {
+        float totalMultiplier = 1f;
+        foreach (float buff in moveSpeedBuffs)
+        {
+            totalMultiplier *= buff;
+        }
+
+        runTimeData.moveSpeed = characterBaseStats.moveSpeed * totalMultiplier;
+        Debug.Log("이동속도 : " + runTimeData.moveSpeed + "totalMultiplier : " + totalMultiplier);
     }
 
     private IEnumerator PauseForSeconds()
