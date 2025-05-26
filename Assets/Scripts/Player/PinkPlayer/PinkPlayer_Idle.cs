@@ -72,9 +72,9 @@ public class PinkPlayer_Idle : StateMachineBehaviour
                 pinkPlayerController.currentState = PinkPlayerState.Skill;
                 break;
             case PinkPlayerState.Ultimate:
+                pinkPlayerController.isUltimateActive = true;
                 animator.SetBool("ultimate", true);
                 pinkPlayerController.SetBoolParameter("ultimate", true);
-                pinkPlayerController.isUltimateActive = true;
                 pinkPlayerController.currentState = PinkPlayerState.Ultimate;
                 break;
             case PinkPlayerState.Dash:

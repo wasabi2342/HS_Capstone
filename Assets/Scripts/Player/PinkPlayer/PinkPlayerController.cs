@@ -576,6 +576,8 @@ public class PinkPlayerController : ParentPlayerController
 
         }
 
+        Debug.Log("isUltimateActive" + isUltimateActive);
+        
         if (isUltimateActive)
         {
             Vector3 mousePos = GetMouseWorldPosition();
