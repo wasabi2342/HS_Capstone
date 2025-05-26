@@ -7,7 +7,7 @@ using Unity.VisualScripting;
 using System;
 using System.Collections.Generic;
 
-public enum PinkPlayerState { Idle, R_Idle, Run, tackle, BasicAttack, Hit, Dash, Skill, Ultimate, R_hit, R_finish, Charge1, Charge2, Charge3, Stun, Revive, Death }
+public enum PinkPlayerState { Idle, R_Idle, Run, tackle, BasicAttack, Hit, Dash, Skill, Ultimate, R_hit, Charge1, Charge2, Charge3, R_finish, Stun, Revive, Death }
 
 public class PinkPlayerController : ParentPlayerController
 {
@@ -46,7 +46,7 @@ public class PinkPlayerController : ParentPlayerController
     private List<ServantFSM> summonedServants = new List<ServantFSM>();
     [Header("궁극기 설정")]
     [SerializeField] private float ultimateDuration = 5f;
-    private bool isUltimateActive = false;
+    public bool isUltimateActive = false;
 
     // 이동 입력 및 상태
     private Vector2 moveInput;
@@ -563,12 +563,10 @@ public class PinkPlayerController : ParentPlayerController
         {
             // MasterClient 권한으로 실제 궁극기 실행
             photonView.RPC(nameof(RPC_UseUltimate), RpcTarget.MasterClient);
-        }
-        if (context.started)
-        {
+
             // 로컬 상태 세팅
             R_attackStack = 0;
-            currentState = PinkPlayerState.R_Idle;
+            nextState = PinkPlayerState.Ultimate;
             animator.SetBool("ultimate", true);
 
 
@@ -576,29 +574,52 @@ public class PinkPlayerController : ParentPlayerController
             bool isRight = mousePos.x > transform.position.x;
             animator.SetBool("Right", isRight);
 
-
-            if (PhotonNetwork.IsConnected)
-            {
-                photonView.RPC(
-                    "SyncBoolParameter",
-                    RpcTarget.Others,
-                    "ultimate",
-                    true
-                );
-                photonView.RPC(
-                    "SyncIntParameter",
-                    RpcTarget.Others,
-                    "R_attackStack",
-                    R_attackStack
-                );
-                photonView.RPC(
-                    "SyncBoolParameter",
-                    RpcTarget.Others,
-                    "Right",
-                    isRight
-                );
-            }
         }
+
+        if (isUltimateActive)
+        {
+            Vector3 mousePos = GetMouseWorldPosition();
+            bool isRight = mousePos.x > transform.position.x;
+            animator.SetBool("Right", isRight);
+
+            nextState = PinkPlayerState.R_finish;
+        }
+            
+        //if (context.started)
+        //{
+        //    // 로컬 상태 세팅
+        //    R_attackStack = 0;
+        //    currentState = PinkPlayerState.R_Idle;
+        //    animator.SetBool("ultimate", true);
+
+
+        //    Vector3 mousePos = GetMouseWorldPosition();
+        //    bool isRight = mousePos.x > transform.position.x;
+        //    animator.SetBool("Right", isRight);
+
+
+        //    if (PhotonNetwork.IsConnected)
+        //    {
+        //        photonView.RPC(
+        //            "SyncBoolParameter",
+        //            RpcTarget.Others,
+        //            "ultimate",
+        //            true
+        //        );
+        //        photonView.RPC(
+        //            "SyncIntParameter",
+        //            RpcTarget.Others,
+        //            "R_attackStack",
+        //            R_attackStack
+        //        );
+        //        photonView.RPC(
+        //            "SyncBoolParameter",
+        //            RpcTarget.Others,
+        //            "Right",
+        //            isRight
+        //        );
+        //    }
+        //}
     }
 
     [PunRPC]

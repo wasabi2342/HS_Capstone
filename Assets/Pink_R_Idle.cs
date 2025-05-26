@@ -52,6 +52,10 @@ public class Pink_R_Idle : StateMachineBehaviour
                 animator.SetBool("basicattack", true);
                 break;
 
+            case PinkPlayerState.R_finish:
+                animator.SetBool("ultimate", true);
+                break;
+
 
         }
 
