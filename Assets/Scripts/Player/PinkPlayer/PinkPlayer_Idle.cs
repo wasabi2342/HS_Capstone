@@ -15,6 +15,7 @@ public class PinkPlayer_Idle : StateMachineBehaviour
         if (pinkPlayerController == null)
             pinkPlayerController = animator.GetComponent<PinkPlayerController>();
         pinkPlayerController.currentState = PinkPlayerState.Idle;
+        pinkPlayerController.isUltimateActive = false;
         animator.SetBool("Pre-Attack", false);
         animator.SetBool("Pre-Input", false);
         animator.SetBool("CancleState", false);

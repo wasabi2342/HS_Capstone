@@ -6,6 +6,7 @@ public class PinkPlayer_R_Start : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.GetComponent<PinkPlayerController>().isUltimateActive = true;
+        Debug.Log("궁상태 시작" + animator.GetComponent<PinkPlayerController>().isUltimateActive);
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
