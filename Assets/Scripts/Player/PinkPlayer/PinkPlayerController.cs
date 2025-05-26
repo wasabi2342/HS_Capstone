@@ -381,6 +381,9 @@ public class PinkPlayerController : ParentPlayerController
     // 우클릭 눌렀을 때 (차지 시작)
     public void StartCharge()
     {
+
+        if (!cooldownCheckers[(int)Skills.Mouse_R].CanUse())
+            return;
         if (isCharging || currentState == PinkPlayerState.Death)
             return;
         if (currentState == PinkPlayerState.tackle)
