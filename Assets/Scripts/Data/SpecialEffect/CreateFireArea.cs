@@ -16,6 +16,10 @@ public class CreateFireArea : BaseSpecialEffect
         if (Mathf.Abs(moveX) > 0.1f && Mathf.Abs(moveY) > 0.1f)
         {
             rotationY = moveY > 0 ? 45f : -45f;
+
+            // 오른쪽 방향이면 각도 뒤집기
+            if (moveX > 0)
+                rotationY *= -1f;
         }
 
         // flip 여부
