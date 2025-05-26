@@ -901,8 +901,22 @@ public class PinkPlayerController : ParentPlayerController
     {
         if (!photonView.IsMine && PhotonNetwork.IsConnected)
             return;
+        Vector3 movement;
+        float h = moveInput.x;
+        float v = moveInput.y;
+        bool isMoving = (Mathf.Abs(h) > 0.01f || Mathf.Abs(v) > 0.01f);
 
-        Vector3 movement = dashDirection * value;
+        if (isMoving)
+        {
+            movement = (Mathf.Abs(v) > 0.01f)
+                  ? new Vector3(h, 0, v).normalized
+                  : new Vector3(h, 0, 0).normalized;
+
+            movement = movement * value;
+        }
+
+
+        else { movement = dashDirection * value; }
         rb.MovePosition(rb.position + movement);
     }
 
