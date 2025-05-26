@@ -679,6 +679,7 @@ public class PinkPlayerController : ParentPlayerController
         float totalShield = 30f * stacks;
         float totalDuration = 2f * stacks;
 
+        StartCoroutine(R_Time(totalDuration));
         if (runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil == 1)
         {
             totalShield = 50f * stacks;
@@ -693,6 +694,13 @@ public class PinkPlayerController : ParentPlayerController
 
 
     }
+
+    public  IEnumerator R_Time(float totalDuration)
+    {
+        yield return new WaitForSeconds(totalDuration);
+        nextState = PinkPlayerState.R_finish;
+    }
+
     // 궁극기 시전 시작
     public void HandleUltimateStart()
     {
