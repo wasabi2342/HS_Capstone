@@ -5,6 +5,7 @@ public class BuffAttackSpeedEffect : BaseSpecialEffect
 {
     public override void ApplyEffect()
     {
+        Debug.Log("공격속도 버프 가호");
         playerController.BuffAttackSpeed(value, duration);
     }
 
