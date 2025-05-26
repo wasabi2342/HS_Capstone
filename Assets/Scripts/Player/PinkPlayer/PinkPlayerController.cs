@@ -159,6 +159,7 @@ public class PinkPlayerController : ParentPlayerController
 
     private void HandleMovement()
     {
+        if (IsInputLocked) return;
         if (currentState == PinkPlayerState.Death || currentState == PinkPlayerState.Stun)
         {
             return;
@@ -224,7 +225,7 @@ public class PinkPlayerController : ParentPlayerController
             Vector3 moveDir = (Mathf.Abs(v) > 0.01f)
                 ? new Vector3(h, 0, v).normalized
                 : new Vector3(h, 0, 0).normalized;
-            rb.MovePosition(rb.position + moveDir * runTimeData.moveSpeed * Time.fixedDeltaTime);
+            rb.MovePosition(rb.position + moveDir * MoveSpeed * Time.fixedDeltaTime);
 
             animator.SetFloat("moveX", h);
             animator.SetFloat("moveY", v);

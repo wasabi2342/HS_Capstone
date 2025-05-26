@@ -29,7 +29,7 @@ public class ChaseState : BaseState
             SetAgentStopped(false);
             agent.speed = status.moveSpeed * status.chaseSpeedMultiplier;
             agent.stoppingDistance = status.attackRange * 0.4f;
-            agent.autoBraking = true;
+            agent.autoBraking = false;
             agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
         }
 

@@ -135,6 +135,7 @@ public class WhitePlayerController : ParentPlayerController
     // 이동 처리
     private void HandleMovement()
     {
+        if (IsInputLocked) return;
         if (currentState == WhitePlayerState.Death || currentState == WhitePlayerState.Stun)
         {
             return;
@@ -200,7 +201,7 @@ public class WhitePlayerController : ParentPlayerController
             Vector3 moveDir = (Mathf.Abs(v) > 0.01f)
                 ? new Vector3(h, 0, v).normalized
                 : new Vector3(h, 0, 0).normalized;
-            rb.MovePosition(rb.position + moveDir * runTimeData.moveSpeed * Time.fixedDeltaTime);
+            rb.MovePosition(rb.position + moveDir * MoveSpeed * Time.fixedDeltaTime);
 
             animator.SetFloat("moveX", h);
             animator.SetFloat("moveY", v);

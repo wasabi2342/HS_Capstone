@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using System.Linq;
 using TMPro;
 
-public class ParentPlayerController : MonoBehaviourPun, IDamageable
+public class ParentPlayerController : MonoBehaviourPun, IDamageable, IMovable
 {
     [SerializeField]
     protected float hitlagTime = 0.117f;
@@ -70,6 +70,15 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     private bool isInPVPArea;
 
+    private bool inputLocked = false;   // 이동/입력 잠금 여부
+
+    public float MoveSpeed
+    {
+        get => runTimeData.moveSpeed;
+        set => runTimeData.moveSpeed = value;
+    }
+    public void StopMove(bool stop) => inputLocked = stop;
+    protected bool IsInputLocked => inputLocked;
     #region Unity Lifecycle
 
     protected virtual void Awake()
