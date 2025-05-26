@@ -27,33 +27,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 860
---- !u!114 &-9009184024976535784
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Character/Character-pink/spear stab 2
-  m_EditorClassIdentifier: 
-  Path: event:/Character/Character-pink/spear stab 2
-  Guid:
-    Data1: -1611310778
-    Data2: 1274913276
-    Data3: -1973528171
-    Data4: -376832231
-  Banks:
-  - {fileID: -5749200132036131284}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 330
 --- !u!114 &-8917169209386959595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,10 +204,10 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/SFX.bank
   Name: SFX
   StudioPath: bank:/SFX
-  lastModified: 638837278536233443
+  lastModified: 638838918907977824
   FileSizes:
   - Name: Desktop
-    Value: 2949344
+    Value: 3054304
   Exists: 1
 --- !u!114 &-5712910688963151768
 MonoBehaviour:
@@ -890,7 +863,6 @@ MonoBehaviour:
   - {fileID: -8539296801695312464}
   - {fileID: -5618424677551829039}
   - {fileID: -1689733945531993320}
-  - {fileID: -9009184024976535784}
   - {fileID: -184997842002377253}
   - {fileID: -4800117603744366642}
   - {fileID: -3372262641047401666}
@@ -915,7 +887,6 @@ MonoBehaviour:
   - {fileID: 2235705644299970354}
   - {fileID: 6712662815053751999}
   - {fileID: 573639610389716061}
-  - {fileID: 6740366837098494442}
   - {fileID: 2107491773004500857}
   - {fileID: -1639280650373276659}
   - {fileID: -1950758905514337693}
@@ -935,12 +906,15 @@ MonoBehaviour:
   - {fileID: 3904678262385365224}
   - {fileID: 4151679015071637659}
   - {fileID: 2815744165791865577}
+  - {fileID: 2897161663339227033}
+  - {fileID: 1089961081553891598}
+  - {fileID: 6388217154414576374}
   EditorParameters: []
   MasterBanks:
   - {fileID: 7615206358843715136}
   StringsBanks:
   - {fileID: 937915744167907725}
-  cacheTime: 638837278536233443
+  cacheTime: 638838918907977824
   cacheVersion: 131846
 --- !u!114 &241547184550738655
 MonoBehaviour:
@@ -1017,7 +991,7 @@ MonoBehaviour:
   Banks:
   - {fileID: -5749200132036131284}
   IsStream: 0
-  Is3D: 0
+  Is3D: 1
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
@@ -1038,11 +1012,38 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638837080925092041
+  lastModified: 638838918905760497
   FileSizes:
   - Name: Desktop
-    Value: 3810
+    Value: 3858
   Exists: 1
+--- !u!114 &1089961081553891598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-pink/spear attack
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-pink/spear attack
+  Guid:
+    Data1: -1687628849
+    Data2: 1177396579
+    Data3: 1353228211
+    Data4: -554423789
+  Banks:
+  - {fileID: -5749200132036131284}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 800
 --- !u!114 &1284256337427851988
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1118,7 +1119,7 @@ MonoBehaviour:
   Banks:
   - {fileID: -5749200132036131284}
   IsStream: 0
-  Is3D: 0
+  Is3D: 1
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
@@ -1205,6 +1206,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 750
+--- !u!114 &2897161663339227033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-pink/spear
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-pink/spear
+  Guid:
+    Data1: -1611310778
+    Data2: 1274913276
+    Data3: -1973528171
+    Data4: -376832231
+  Banks:
+  - {fileID: -5749200132036131284}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 300
 --- !u!114 &3243081455721358825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1394,6 +1422,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 950
+--- !u!114 &6388217154414576374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-pink/knight dead
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-pink/knight dead
+  Guid:
+    Data1: 1655336945
+    Data2: 1148257961
+    Data3: -1960667242
+    Data4: -1391883229
+  Banks:
+  - {fileID: -5749200132036131284}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1000
 --- !u!114 &6505644286338637616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1415,7 +1470,7 @@ MonoBehaviour:
   Banks:
   - {fileID: -5749200132036131284}
   IsStream: 0
-  Is3D: 0
+  Is3D: 1
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
@@ -1448,33 +1503,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 15046
---- !u!114 &6740366837098494442
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Character/Character-pink/spear stab
-  m_EditorClassIdentifier: 
-  Path: event:/Character/Character-pink/spear stab
-  Guid:
-    Data1: -1687628849
-    Data2: 1177396579
-    Data3: 1353228211
-    Data4: -554423789
-  Banks:
-  - {fileID: -5749200132036131284}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 300
 --- !u!114 &6745083309051647943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1652,7 +1680,7 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638837080925077012
+  lastModified: 638838918905740433
   FileSizes:
   - Name: Desktop
     Value: 3471104
