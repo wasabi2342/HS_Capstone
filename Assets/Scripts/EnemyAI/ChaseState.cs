@@ -10,7 +10,7 @@ public class ChaseState : BaseState
     /* ─── 튜닝 ─── */
     const float REP_INT = 0.18f;   // NavMesh 경로 재계산 주기
     const float SIDE_OFFSET_M = 0.5f;    // 측면 오프셋(attackRange × n)
-    const float ALIGN_TOL = 0.75f;   // z축 정렬 허용 오차
+    const float ALIGN_TOL = 1f;   // z축 정렬 허용 오차
     const float NO_ALIGN_TIME = 1.5f;    // WaitCool 미진입 타임아웃
 
     /* ─── 상태 ─── */
@@ -79,9 +79,13 @@ public class ChaseState : BaseState
         float zAbs = Mathf.Abs(transform.position.z - fsm.Target.position.z);
         bool inRange = fsm.GetTarget2DDistSq() <= status.attackRange * status.attackRange;
 
-        if (zAbs <= ALIGN_TOL && inRange)
+        /* 추가: 실제 속도 기반으로 “도착” 판정 */
+        float velSq = agent.velocity.sqrMagnitude;        // 현재 이동 속도^2
+
+        // > 거의 멈춘 상태 + 사정거리 + z 오차 < 허용치  → WaitCool 진입
+        if (velSq < 0.01f && zAbs <= ALIGN_TOL && inRange)
         {
-            agent.isStopped = true;
+            agent.isStopped = true;                       // 멈춰서 Idle 애니 재생
             fsm.TransitionToState(typeof(WaitCoolState));
             return;
         }

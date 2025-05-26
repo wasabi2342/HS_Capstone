@@ -86,7 +86,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     const float GIZMO_Y = .05f;
 
     /* ───────── Attack Alignment ───────── */
-    [Header("Attack Alignment")] public float zAlignTolerance = .75f;
+    [Header("Attack Alignment")] public float zAlignTolerance = .4f;
 
     /* ───────── Static Counter ───────── */
     public static int ActiveMonsterCount = 0;
