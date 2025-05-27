@@ -1253,39 +1253,39 @@ public class PinkPlayerController : ParentPlayerController
 
         if (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil == 3)
         {
-            StartCoroutine(DelayedChargeEffect());
+            //StartCoroutine(DelayedChargeEffect());
 
-            IEnumerator DelayedChargeEffect()
-            {
-                yield return new WaitForSeconds(1f);
+            //IEnumerator DelayedChargeEffect()
+            //{
+            //    yield return new WaitForSeconds(1f);
 
 
-                string chargePath = animator.GetBool("Right")
-                     ? $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_right_{devil}"
-            : $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_left_{devil}";
+            //    string chargePath = animator.GetBool("Right")
+            //         ? $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_right_{devil}"
+            //: $"SkillEffect/PinkPlayer/pink_charge_hit{chargeLevel}_left_{devil}";
 
-                // y값만 0.1로 고정
-                Vector3 spawnPos = new Vector3(
-                    effectPosition.x,
-                    0.1f,
-                    effectPosition.z
-                );
+            //    // y값만 0.1로 고정
+            //    Vector3 spawnPos = new Vector3(
+            //        effectPosition.x,
+            //        0.1f,
+            //        effectPosition.z
+            //    );
 
-                if (PhotonNetwork.IsConnected && photonView.IsMine)
-                    photonView.RPC("CreateAnimation", RpcTarget.Others, chargePath, effectPosition, false, animator.speed);
+            //    if (PhotonNetwork.IsConnected && photonView.IsMine)
+            //        photonView.RPC("CreateAnimation", RpcTarget.Others, chargePath, effectPosition, false, animator.speed);
 
-                var chargeFx = Instantiate(
-                    Resources.Load<SkillEffect>(chargePath),
-                    effectPosition,
-                    Quaternion.identity
-                );
-                chargeFx.Init(damage, StartHitlag, isMine,
-                              playerBlessing.FindSkillEffect(
-                                  runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID,
-                                  this
-                              ));
-                //chargeFx.transform.parent = transform;
-            }
+            //    var chargeFx = Instantiate(
+            //        Resources.Load<SkillEffect>(chargePath),
+            //        effectPosition,
+            //        Quaternion.identity
+            //    );
+            //    chargeFx.Init(damage, StartHitlag, isMine,
+            //                  playerBlessing.FindSkillEffect(
+            //                      runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID,
+            //                      this
+            //                  ));
+            //    //chargeFx.transform.parent = transform;
+            //}
         }
     }
 
