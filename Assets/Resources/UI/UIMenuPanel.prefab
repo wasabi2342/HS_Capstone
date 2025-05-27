@@ -274,6 +274,7 @@ GameObject:
   - component: {fileID: 5743805607922311324}
   - component: {fileID: 6386288772147251956}
   - component: {fileID: 6840405292791068011}
+  - component: {fileID: 9176162333382205435}
   m_Layer: 5
   m_Name: StunButton
   m_TagString: Untagged
@@ -298,7 +299,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 141.5, y: -675}
+  m_AnchoredPosition: {x: 141.5, y: -740}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1495051554513779188
@@ -416,6 +417,37 @@ MonoBehaviour:
       Data4: -969076227
     Path: event:/UI/hologram sound2
   Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &9176162333382205435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 80648074192828082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
+  Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
   AllowFadeout: 1
@@ -514,6 +546,7 @@ GameObject:
   - component: {fileID: 7602338222245999014}
   - component: {fileID: 1861519958666092008}
   - component: {fileID: 1819123756553727010}
+  - component: {fileID: 5951858728613782287}
   m_Layer: 5
   m_Name: ShieldButton
   m_TagString: Untagged
@@ -538,7 +571,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 141.5, y: -415}
+  m_AnchoredPosition: {x: 141.5, y: -480}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4419572535033055577
@@ -656,6 +689,37 @@ MonoBehaviour:
       Data4: -969076227
     Path: event:/UI/hologram sound2
   Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &5951858728613782287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 186457343189375428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
+  Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
   AllowFadeout: 1
@@ -716,6 +780,7 @@ GameObject:
   - component: {fileID: 2493494166643577337}
   - component: {fileID: 7071343568034607754}
   - component: {fileID: 5456119333750720289}
+  - component: {fileID: 3494707812505128966}
   m_Layer: 5
   m_Name: StatInfoButton
   m_TagString: Untagged
@@ -740,7 +805,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 141.5, y: -285}
+  m_AnchoredPosition: {x: 141.5, y: -350}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8244547507158595796
@@ -857,6 +922,37 @@ MonoBehaviour:
       Data3: -447177284
       Data4: -969076227
     Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &3494707812505128966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 307062255156544970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
   Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
@@ -1086,13 +1182,13 @@ MonoBehaviour:
   m_text: "\uC2A4\uD0EF \uC815\uBCF4"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -1151,7 +1247,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &472757266265792959
@@ -1222,13 +1318,13 @@ MonoBehaviour:
   m_text: "\uC870\uC791 \uBC29\uBC95\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -1287,7 +1383,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &473891731401606208
@@ -1346,6 +1442,7 @@ GameObject:
   - component: {fileID: 2973242350432462000}
   - component: {fileID: 6599892094770168411}
   - component: {fileID: 6354396515570937829}
+  - component: {fileID: 4381385947633517239}
   m_Layer: 5
   m_Name: HudButton
   m_TagString: Untagged
@@ -1487,6 +1584,37 @@ MonoBehaviour:
       Data3: -447177284
       Data4: -969076227
     Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &4381385947633517239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 474715823526909970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
   Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
@@ -1909,6 +2037,7 @@ GameObject:
   - component: {fileID: 5071589614267332642}
   - component: {fileID: 7531467668147641177}
   - component: {fileID: 5839701502647521888}
+  - component: {fileID: 3257710139495952973}
   m_Layer: 5
   m_Name: BackToGame
   m_TagString: Untagged
@@ -2038,6 +2167,37 @@ MonoBehaviour:
       Data3: -447177284
       Data4: -969076227
     Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &3257710139495952973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861346369174685227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
   Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
@@ -2767,6 +2927,7 @@ GameObject:
   - component: {fileID: 6074610042370352190}
   - component: {fileID: 4397511863188316574}
   - component: {fileID: 4620043435025925159}
+  - component: {fileID: 7858540193948341127}
   m_Layer: 5
   m_Name: PinkPlayerButton
   m_TagString: Untagged
@@ -2791,7 +2952,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 141.5, y: -220}
+  m_AnchoredPosition: {x: 141.5, y: -285}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5290895354046975653
@@ -2908,6 +3069,37 @@ MonoBehaviour:
       Data3: -447177284
       Data4: -969076227
     Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &7858540193948341127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1391588547880396557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
   Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
@@ -3277,7 +3469,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0.00020750685}
-  m_SizeDelta: {x: 0, y: 700}
+  m_SizeDelta: {x: 0, y: 765}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2376417224569850694
 MonoBehaviour:
@@ -3332,6 +3524,7 @@ GameObject:
   - component: {fileID: 4682614767518292288}
   - component: {fileID: 3691407626223545635}
   - component: {fileID: 375630948973456548}
+  - component: {fileID: 229098789011861425}
   m_Layer: 5
   m_Name: EscapePlayer
   m_TagString: Untagged
@@ -3461,6 +3654,37 @@ MonoBehaviour:
       Data3: -447177284
       Data4: -969076227
     Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &229098789011861425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1847477585055509707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
   Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
@@ -3869,8 +4093,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7558167045268157323}
   m_HandleRect: {fileID: 746806404995375471}
   m_Direction: 2
-  m_Value: 0.9999991
-  m_Size: 0.71428573
+  m_Value: 0.9999992
+  m_Size: 0.5882353
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4024,6 +4248,7 @@ GameObject:
   - component: {fileID: 8004460587103693775}
   - component: {fileID: 6494575639683112379}
   - component: {fileID: 8402579760083326175}
+  - component: {fileID: 3794600949563758290}
   m_Layer: 5
   m_Name: RewardButton
   m_TagString: Untagged
@@ -4048,7 +4273,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 141.5, y: -480}
+  m_AnchoredPosition: {x: 141.5, y: -545}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5733561280351940139
@@ -4166,6 +4391,37 @@ MonoBehaviour:
       Data4: -969076227
     Path: event:/UI/hologram sound2
   Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &3794600949563758290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2152624625484316818}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
+  Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
   AllowFadeout: 1
@@ -4262,6 +4518,7 @@ GameObject:
   - component: {fileID: 8149561441512137644}
   - component: {fileID: 36678265699597300}
   - component: {fileID: 2429269947942801749}
+  - component: {fileID: 3549803099192299976}
   m_Layer: 5
   m_Name: SoundButton
   m_TagString: Untagged
@@ -4404,6 +4661,37 @@ MonoBehaviour:
       Data4: -969076227
     Path: event:/UI/hologram sound2
   Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &3549803099192299976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2254517755744933161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
+  Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
   AllowFadeout: 1
@@ -4482,13 +4770,13 @@ MonoBehaviour:
   m_text: "\uAE30\uC808 \uBC0F \uC0AC\uB9DD"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -4547,7 +4835,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &2352711948996976232
@@ -4727,7 +5015,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "WhitePlayer\r\n\r\n\uAE30\uBCF8\uC815\uBCF4 \uBC0F \uC2A4\uD0AC\r\n\r\n\uC88C\uD074\uB9AD
+  m_text: "[\uBBF8\uB974\uC2DC\uC544]\r\n\r\n\uAE30\uBCF8\uC815\uBCF4 \uBC0F \uC2A4\uD0AC\r\n\r\n\uC88C\uD074\uB9AD
     : 4\uD68C\uC5D0 \uAC78\uCCD0 \uB0A0\uCE74\uB85C\uC6B4 \uCE74\uD0C0\uB098\uB85C
     \uC801\uC744 \uBCB1\uB2C8\uB2E4. \r\n\uC6B0\uD074\uB9AD : \uD328\uB9C1\uC744
     \uC2E4\uC2DC\uD569\uB2C8\uB2E4. \uD0C0\uC774\uBC0D\uC5D0 \uB9DE\uCDB0 \uD328\uB9C1\uC5D0
@@ -4933,6 +5221,7 @@ GameObject:
   - component: {fileID: 9178891002299537055}
   - component: {fileID: 2496552919077261726}
   - component: {fileID: 8782680273439445898}
+  - component: {fileID: 5339242850997147770}
   m_Layer: 5
   m_Name: BlessButton
   m_TagString: Untagged
@@ -4957,7 +5246,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 141.5, y: -350}
+  m_AnchoredPosition: {x: 141.5, y: -415}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5165528643339594614
@@ -5074,6 +5363,37 @@ MonoBehaviour:
       Data3: -447177284
       Data4: -969076227
     Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &5339242850997147770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2748894666488491017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
   Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
@@ -5279,6 +5599,7 @@ GameObject:
   - component: {fileID: 5520294627473296231}
   - component: {fileID: 2239607128095096930}
   - component: {fileID: 6330656500098324726}
+  - component: {fileID: 5865192248288462722}
   m_Layer: 5
   m_Name: ControllButton
   m_TagString: Untagged
@@ -5421,6 +5742,37 @@ MonoBehaviour:
       Data4: -969076227
     Path: event:/UI/hologram sound2
   Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &5865192248288462722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3086761094012782174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
+  Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
   AllowFadeout: 1
@@ -5496,18 +5848,16 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'PinkPlayer
-
-'
+  m_text: "\uBA54\uB9AC\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -5566,7 +5916,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &3172056604531593599
@@ -5783,6 +6133,7 @@ GameObject:
   - component: {fileID: 7035455699139206198}
   - component: {fileID: 942299925308502935}
   - component: {fileID: 6956320219821662464}
+  - component: {fileID: 640970919160546671}
   m_Layer: 5
   m_Name: BetrayButton
   m_TagString: Untagged
@@ -5807,7 +6158,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 141.5, y: -610}
+  m_AnchoredPosition: {x: 141.5, y: -675}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &350071577425215687
@@ -5924,6 +6275,37 @@ MonoBehaviour:
       Data3: -447177284
       Data4: -969076227
     Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &640970919160546671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3261647493022307663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
   Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
@@ -6306,8 +6688,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 300, y: 500}
+  m_AnchoredPosition: {x: 0, y: 39}
+  m_SizeDelta: {x: 300, y: 450}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7890692152890616359
 CanvasRenderer:
@@ -6551,13 +6933,13 @@ MonoBehaviour:
   m_text: "\uBCF4\uC0C1"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -6616,7 +6998,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &3585779193476535952
@@ -6969,6 +7351,7 @@ GameObject:
   - component: {fileID: 1077178979450464263}
   - component: {fileID: 8385443473440247119}
   - component: {fileID: 2822011476478308622}
+  - component: {fileID: 3545818896730557872}
   m_Layer: 5
   m_Name: QuitGame
   m_TagString: Untagged
@@ -7098,6 +7481,37 @@ MonoBehaviour:
       Data3: -447177284
       Data4: -969076227
     Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &3545818896730557872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3802073888965785952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
   Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
@@ -7486,6 +7900,7 @@ GameObject:
   - component: {fileID: 7682557342485833254}
   - component: {fileID: 5190780713305853929}
   - component: {fileID: 2191166628179486249}
+  - component: {fileID: 6906329893076273692}
   m_Layer: 5
   m_Name: OptionButton
   m_TagString: Untagged
@@ -7627,6 +8042,37 @@ MonoBehaviour:
       Data3: -447177284
       Data4: -969076227
     Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &6906329893076273692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4250023804239813945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
   Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
@@ -8055,7 +8501,7 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2805884815192008221}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.285714}
+  m_AnchorMin: {x: 0, y: 0.41176444}
   m_AnchorMax: {x: 1, y: 0.99999976}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
@@ -8593,13 +9039,13 @@ MonoBehaviour:
   m_text: "\uBAAC\uC2A4\uD130 \uC274\uB4DC"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -8658,7 +9104,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &5229005223786499044
@@ -8674,6 +9120,7 @@ GameObject:
   - component: {fileID: 7464669869140404993}
   - component: {fileID: 262439136456391599}
   - component: {fileID: 287676516204992393}
+  - component: {fileID: 2461659359862081174}
   m_Layer: 5
   m_Name: PlayGuideButton
   m_TagString: Untagged
@@ -8816,6 +9263,37 @@ MonoBehaviour:
       Data4: -969076227
     Path: event:/UI/hologram sound2
   Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &2461659359862081174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5229005223786499044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
+  Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
   AllowFadeout: 1
@@ -8894,13 +9372,13 @@ MonoBehaviour:
   m_text: "\uC0AC\uC6A9\uC790 \uC778\uD130\uD398\uC774\uC2A4"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -8959,7 +9437,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &5388749093283156688
@@ -9572,13 +10050,13 @@ MonoBehaviour:
   m_text: "\uD50C\uB808\uC774 \uAC00\uC774\uB4DC\n\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -9637,7 +10115,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &6266766956543257559
@@ -9947,6 +10425,7 @@ GameObject:
   - component: {fileID: 1688046102250855801}
   - component: {fileID: 5532480769640917408}
   - component: {fileID: 823427192763920664}
+  - component: {fileID: 7234487600188885756}
   m_Layer: 5
   m_Name: InteractionButton
   m_TagString: Untagged
@@ -9971,7 +10450,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 141.5, y: -545}
+  m_AnchoredPosition: {x: 141.5, y: -610}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4733727259522517961
@@ -10088,6 +10567,37 @@ MonoBehaviour:
       Data3: -447177284
       Data4: -969076227
     Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &7234487600188885756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6337292936269872088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
   Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
@@ -10507,6 +11017,7 @@ GameObject:
   - component: {fileID: 7280861253380798637}
   - component: {fileID: 9217930790051126191}
   - component: {fileID: 5129116984480540573}
+  - component: {fileID: 3105678696786728123}
   m_Layer: 5
   m_Name: GuideButton
   m_TagString: Untagged
@@ -10648,6 +11159,37 @@ MonoBehaviour:
       Data3: -447177284
       Data4: -969076227
     Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &3105678696786728123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6748506787444268763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
   Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
@@ -10802,13 +11344,13 @@ MonoBehaviour:
   m_text: "\uAC00\uD638"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -10867,7 +11409,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &6960363379702615129
@@ -12006,13 +12548,13 @@ MonoBehaviour:
   m_text: "\uC0C1\uD638\uC791\uC6A9"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -12071,7 +12613,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &7443024252575903593
@@ -12162,6 +12704,7 @@ GameObject:
   - component: {fileID: 223617589809561881}
   - component: {fileID: 8817185879416108338}
   - component: {fileID: 6196122954062706512}
+  - component: {fileID: 73162379299777788}
   m_Layer: 5
   m_Name: BackToStartUI
   m_TagString: Untagged
@@ -12291,6 +12834,37 @@ MonoBehaviour:
       Data3: -447177284
       Data4: -969076227
     Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &73162379299777788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7447329430840627687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
   Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
@@ -12851,13 +13425,13 @@ MonoBehaviour:
   m_text: "\uD611\uB825\uACFC \uBC30\uC2E0"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -12916,7 +13490,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &7685112278497578562
@@ -13058,18 +13632,16 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'WhitePlayer
-
-'
+  m_text: "\uBBF8\uB974\uC2DC\uC544\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
-  m_sharedMaterial: {fileID: 3322218612174647105, guid: 4754303b08c21da4b978ecca154d8722, type: 2}
+  m_sharedMaterial: {fileID: -7118996021178317856, guid: 28150bab87cb05a40ae1b94f4bc30c93, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -13128,7 +13700,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &8014939792454687089
@@ -13219,6 +13791,7 @@ GameObject:
   - component: {fileID: 7520479559749945160}
   - component: {fileID: 3338118782814148666}
   - component: {fileID: 155297603850114428}
+  - component: {fileID: 8874724705993386478}
   m_Layer: 5
   m_Name: GraphicButton
   m_TagString: Untagged
@@ -13360,6 +13933,37 @@ MonoBehaviour:
       Data3: -447177284
       Data4: -969076227
     Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &8874724705993386478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8150121101042692915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
   Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
@@ -13549,6 +14153,7 @@ GameObject:
   - component: {fileID: 8484821051747157744}
   - component: {fileID: 7160834363650152220}
   - component: {fileID: 4692483033473687313}
+  - component: {fileID: 2271464445694030304}
   m_Layer: 5
   m_Name: BackToMenu
   m_TagString: Untagged
@@ -13678,6 +14283,37 @@ MonoBehaviour:
       Data3: -447177284
       Data4: -969076227
     Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &2271464445694030304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8279083944366178216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
   Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
@@ -14207,7 +14843,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "PinkPlayer\r\n\r\n\uAE30\uBCF8\uC815\uBCF4 \uBC0F \uC2A4\uD0AC\r\n\r\n\uC88C\uD074\uB9AD
+  m_text: "[\uBA54\uB9AC]\r\n\r\n\uAE30\uBCF8\uC815\uBCF4 \uBC0F \uC2A4\uD0AC\r\n\r\n\uC88C\uD074\uB9AD
     : 2\uD68C\uC5D0 \uAC78\uCCD0 \uAC70\uB300\uD55C \uCCA0\uD1F4\uB97C \uD718\uB450\uB985\uB2C8\uB2E4.
     \r\n\uC6B0\uD074\uB9AD : \uC804\uBC29\uC744 \uCCA0\uD1F4\uB85C \uAC15\uD558\uAC8C
     \uB0B4\uB824\uCC0D\uC2B5\uB2C8\uB2E4. \uC2A4\uD0AC\uD0A4\uB97C \uAFB9 \uB204\uB974\uBA74
@@ -14380,6 +15016,7 @@ GameObject:
   - component: {fileID: 7368698591558497607}
   - component: {fileID: 23058750078573794}
   - component: {fileID: 5752612018190263362}
+  - component: {fileID: 3693318427732753335}
   m_Layer: 5
   m_Name: WhitePlayerButton
   m_TagString: Untagged
@@ -14521,6 +15158,37 @@ MonoBehaviour:
       Data3: -447177284
       Data4: -969076227
     Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &3693318427732753335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8687917316204230114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
   Event: 
   EventPlayTrigger: 20
   EventStopTrigger: 0
