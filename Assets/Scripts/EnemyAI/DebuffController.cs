@@ -1,96 +1,113 @@
-﻿// Assets/Scripts/Common/DebuffController.cs
+﻿
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using Photon.Pun;
 
-/// <summary>
-/// DOT / Slow / Bind ─ 몬스터·플레이어 공용 디버프 컨트롤러
-/// </summary>
 [RequireComponent(typeof(PhotonView))]
 public class DebuffController : MonoBehaviour
 {
-    /* ───── 캐시 ───── */
-    IDamageable dmg;
-    NavMeshAgent agent;
-    IMovable mv;
+    /* ───── 타입 캐시 ───── */
+    IDamageable damageable;
+    NavMeshAgent agent;      // 몬스터만 있을 수도
+    IMovable movable;    // 플레이어만 있을 수도
     Animator anim;
     PhotonView pv;
 
+    /* ───── 코루틴 핸들 ───── */
     Coroutine dotCo, slowCo, bindCo;
 
+    /* ───── 속도 원본 백업 ───── */
+    float baseAgentSpeed = -1f;   // −1f ⇒ 아직 미초기화
+    float baseMoveSpeed = -1f;
+
+    /* ─────────────────────────────────────── 초기화 ─────────────────────────────────────── */
     void Awake()
     {
-        dmg = GetComponent<IDamageable>();
+        damageable = GetComponent<IDamageable>();
         agent = GetComponent<NavMeshAgent>();
-        mv = GetComponent<IMovable>();
+        movable = GetComponent<IMovable>();
         anim = GetComponent<Animator>();
         pv = GetComponent<PhotonView>();
     }
 
-    /* ────────────────  퍼블릭 API  ──────────────── */
-    public void ApplyDebuff(SpecialEffectType type, float dur, float val)
+    /* ───────────────────────────────── 디버프 적용 API ───────────────────────────────── */
+    /// <summary>
+    /// <para>type  : SpecialEffectType.Dot / Slow / Bind</para>
+    /// <para>dur   : 지속시간(초)</para>
+    /// <para>value : DOT 은 초당 데미지, Slow 는 rate(0.3 = 30 %↓), Bind 는 0</para>
+    /// </summary>
+    public void ApplyDebuff(SpecialEffectType type, float dur, float value)
     {
-        if (!pv.IsMine) return;                   // 권한 있는 클라이언트만 로직
+        if (!pv.IsMine) return;                     // 권한 없는 복제본은 무시
 
         switch (type)
         {
-            case SpecialEffectType.Dot: Restart(ref dotCo, Co_DOT(dur, val)); break;
-            case SpecialEffectType.Slow: Restart(ref slowCo, Co_Slow(dur, val)); break;
-            case SpecialEffectType.Bind: Restart(ref bindCo, Co_Bind(dur)); break;
+            case SpecialEffectType.Dot:
+                Restart(ref dotCo, Co_DOT(dur, value));
+                break;
+
+            case SpecialEffectType.Slow:
+                RestoreBaseSpeed();                 // 겹칠 때 기준 속도 복구
+                Restart(ref slowCo, Co_Slow(dur, Mathf.Clamp01(value)));
+                break;
+
+            case SpecialEffectType.Bind:
+                Restart(ref bindCo, Co_Bind(dur));
+                break;
         }
     }
 
-    /* ──────────────── DOT ──────────────── */
+    /* ───────────────────────────── DOT ───────────────────────────── */
     IEnumerator Co_DOT(float dur, float dps)
     {
         for (float t = 0f; t < dur; t += 1f)
         {
-            dmg?.TakeDamage(dps, transform.position, AttackerType.Debuff);
+            damageable?.TakeDamage(dps, transform.position, AttackerType.Debuff);
             yield return new WaitForSeconds(1f);
         }
     }
 
-    /* ──────────────── Slow ──────────────── */
+    /* ───────────────────────────── Slow ───────────────────────────── */
     IEnumerator Co_Slow(float dur, float rate)
     {
-        float baseAgentSpd = agent ? agent.speed : 0f;
-        float baseMoveSpd = mv != null ? mv.MoveSpeed : 0f;
+        /* 최초 한 번만 원본 캐싱 */
+        if (baseAgentSpeed < 0f && agent) baseAgentSpeed = agent.speed;
+        if (baseMoveSpeed < 0f && movable != null) baseMoveSpeed = movable.MoveSpeed;
 
-        for (float t = 0f; t < dur; t += 0.1f)
+        /* 지속적으로 감속 유지 (0.1 초 간격) */
+        float t = 0f;
+        while (t < dur)
         {
-            if (agent) agent.speed = baseAgentSpd * (1f - rate);
-            if (mv != null) mv.MoveSpeed = baseMoveSpd * (1f - rate);
+            if (agent) agent.speed = baseAgentSpeed * (1f - rate);
+            if (movable != null) movable.MoveSpeed = baseMoveSpeed * (1f - rate);
+
             yield return new WaitForSeconds(0.1f);
+            t += 0.1f;
         }
 
-        if (agent) agent.speed = baseAgentSpd;
-        if (mv != null) mv.MoveSpeed = baseMoveSpd;
+        /* 완전 복구 */
+        RestoreBaseSpeed();
+        slowCo = null;
     }
 
-    /* ──────────────── Bind ────────────────
-       1. 모든 이동 정지
-       2. Animator.speed = 0 (RPC로 전체 동기화)
-    ─────────────────────────────────────── */
-    // ... (DOT / Slow 부분은 이전과 동일)
-
+    /* ───────────────────────────── Bind ───────────────────────────── */
     IEnumerator Co_Bind(float dur)
     {
         float originalAnimSpeed = anim ? anim.speed : 1f;
 
-        float rpcTick = 0f;                 // 모든 클라이언트에 주기적 재전송
+        float rpcTick = 0f;
         float t = 0f;
         while (t < dur)
         {
-            /* ───────── 1) 이동 완전 정지 ───────── */
+            /* 이동/입력 완전 정지 */
             if (agent) agent.isStopped = true;
-            if (mv != null) mv.StopMove(true);
+            if (movable != null) movable.StopMove(true);
 
-            /* ───────── 2) 애니메이션 멈춤 ───────── */
-            if (anim && anim.speed != 0f) anim.speed = 0f;     // Owner 쪽 즉시 보정
+            /* 애니메이터 로컬 즉시 보정 */
+            if (anim && anim.speed != 0f) anim.speed = 0f;
 
-            /*     다른 클라이언트도 상태-엔트리에서 speed=1 로 덮어쓰므로
-                   0.2 초마다 RPC 로 ‘다시 0’ 을 강제 적용한다                */
+            /* 0.2 초 주기로 ‘speed = 0’ RPC 재적용 → FSM Enter() 덮어쓰기 대응 */
             rpcTick += Time.deltaTime;
             if (rpcTick >= 0.2f)
             {
@@ -102,24 +119,29 @@ public class DebuffController : MonoBehaviour
             t += Time.deltaTime;
         }
 
-        /* ───── 복구 ───── */
+        /* 복구 */
         if (agent) agent.isStopped = false;
-        if (mv != null) mv.StopMove(false);
+        if (movable != null) movable.StopMove(false);
         pv.RPC(nameof(RPC_SetAnimSpeed), RpcTarget.AllBuffered, originalAnimSpeed);
+        bindCo = null;
     }
 
-
-    /* ──────────────── RPC ──────────────── */
     [PunRPC]
     void RPC_SetAnimSpeed(float spd)
     {
-        if (anim != null) anim.speed = spd;
+        if (anim) anim.speed = spd;
     }
 
-    /* ──────────────── 헬퍼 ──────────────── */
-    void Restart(ref Coroutine co, IEnumerator next)
+    /* ───────────────────────────── 헬퍼 ───────────────────────────── */
+    void Restart(ref Coroutine co, IEnumerator routine)
     {
         if (co != null) StopCoroutine(co);
-        co = StartCoroutine(next);
+        co = StartCoroutine(routine);
+    }
+
+    void RestoreBaseSpeed()
+    {
+        if (baseAgentSpeed >= 0f && agent) agent.speed = baseAgentSpeed;
+        if (baseMoveSpeed >= 0f && movable != null) movable.MoveSpeed = baseMoveSpeed;
     }
 }
