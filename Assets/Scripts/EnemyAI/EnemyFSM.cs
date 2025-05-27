@@ -28,7 +28,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     /* ────────── Detect ──────────── */
     [SerializeField] LayerMask playerMask;      // Player 레이어만
     [SerializeField] LayerMask servantMask;     // Servant 레이어만
-
+    internal float TolOutCache { get; set; }
     /* Facing */
     float lastMoveX = 1f;
     public float CurrentFacing => lastMoveX;
@@ -472,6 +472,12 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         => GetTarget2DDistSq() <= enemyStatus.attackRange * enemyStatus.attackRange;
     public bool IsAlignedAndInRange()
         => IsTargetInAttackRange() && GetZDiffAbs() <= zAlignTolerance;
+    public bool IsTargetInDetectRange()
+    {
+        if (!Target) return false;
+        float detectR = enemyStatus.detectRange;
+        return GetTarget2DDistSq() <= detectR * detectR;
+    }
 
     /* ───────── Scene Gizmo ───────── */
 #if UNITY_EDITOR

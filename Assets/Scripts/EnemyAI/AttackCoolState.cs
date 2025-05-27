@@ -1,46 +1,49 @@
 using UnityEngine;
-using System.Collections;
 using Photon.Pun;
 
 public class AttackCoolState : BaseState
 {
-    Coroutine coolCo;
+    float timer;
+
     public AttackCoolState(EnemyFSM f) : base(f) { }
 
+    /* ── 들어올 때 ────────────────────────────── */
     public override void Enter()
     {
-        RefreshFacingToTarget();
-        SetAgentStopped(true);
-        fsm.Anim.speed = 1f;  // 애니메이션 속도 초기화
+        timer = 0f;
+        SetAgentStopped(true);                 // 제자리 대기
         fsm.PlayDirectionalAnim("Idle");
-
-        if (PhotonNetwork.IsMasterClient)
-            coolCo = fsm.StartCoroutine(CoolTime());
     }
 
+    /* ── 매 프레임 ────────────────────────────── */
     public override void Execute()
     {
         if (!PhotonNetwork.IsMasterClient) return;
 
-        RefreshFacingToTarget();
-        fsm.PlayDirectionalAnim("Idle");
+        /* 1) 쿨타임 카운트 */
+        timer += Time.deltaTime;
+        if (timer < status.attackCoolTime)     // ★ 쿨타임 끝날 때까지 아무것도 안 함
+        {
+            RefreshFacingToTarget();           // 바라보는 방향만 유지
+            return;
+        }
+
+        /* 2) 쿨타임이 끝난 뒤 분기 */
+        if (fsm.IsTargetInDetectRange())       // 탐지 반경 안 → 추적 재개
+        {
+            SetAgentStopped(false);
+            fsm.TransitionToState(typeof(ChaseState));
+        }
+        else                                   // 멀어짐 → 순찰/귀환
+        {
+            fsm.Target = null;
+            fsm.TransitionToState(typeof(WanderState));  // 필요하면 ReturnState
+        }
     }
 
-    IEnumerator CoolTime()
-    {
-        // 공격 후 쿨타임 대기
-        yield return new WaitForSeconds(status.attackCoolTime);
-        if (!PhotonNetwork.IsMasterClient) yield break;
-
-        // 플레이어가 아직 정렬(거리 & Z) 조건을 만족하면 Wander로 가지 않고 바로 WaitCoolState로 전환
-        bool immediate = fsm.Target && fsm.IsAlignedAndInRange();
-
-        fsm.TransitionToState(immediate ? typeof(WaitCoolState) : typeof(WanderState));
-    }
-
+    /* ── 나갈 때 ────────────────────────────── */
     public override void Exit()
     {
-        if (coolCo != null && PhotonNetwork.IsMasterClient)
-            fsm.StopCoroutine(coolCo);
+        SetAgentStopped(false);                // 다음 상태가 이동 가능하도록
     }
 }
