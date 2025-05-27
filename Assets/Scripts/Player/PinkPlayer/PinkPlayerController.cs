@@ -1185,7 +1185,7 @@ public class PinkPlayerController : ParentPlayerController
 
         // 이펙트 경로 및 위치 설정
         string effectPath;
-        Vector3 effectPosition = transform.position + new Vector3(0f, -0.5f, 0f);
+        Vector3 effectPosition = transform.position + new Vector3(0f, -1f, 0f);
 
         if (animator.GetBool("Right"))
         {
