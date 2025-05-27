@@ -383,4 +383,9 @@ public class RoomManager : MonoBehaviourPunCallbacks
             other.transform.position = spawnPos;
         }
     }
+
+    public void EscapePlayer()
+    {
+        ReturnLocalPlayer().transform.position = spawnPos;
+    }
 }

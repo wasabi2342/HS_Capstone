@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1833830455336559825}
   - component: {fileID: 7972269249468344496}
   - component: {fileID: 4449256905092305566}
+  - component: {fileID: 2158673752011265450}
   m_Layer: 5
   m_Name: SelectButton
   m_TagString: Untagged
@@ -120,6 +121,37 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2158673752011265450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2768474076478368256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &7703212471369198879
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,6 +262,7 @@ MonoBehaviour:
   - {fileID: 8970710441243093167}
   - {fileID: 2001858806725703480}
   selectButton: {fileID: 4449256905092305566}
+  isSelected: 0
 --- !u!1001 &504130580326227250
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -349,14 +382,17 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7204916906532319048, guid: 5086c9b9970a00743bdc6905251fa4e2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7330971999768614072}
   m_SourcePrefab: {fileID: 100100000, guid: 5086c9b9970a00743bdc6905251fa4e2, type: 3}
 --- !u!114 &2001858806725703480 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2105168865588603402, guid: 5086c9b9970a00743bdc6905251fa4e2, type: 3}
   m_PrefabInstance: {fileID: 504130580326227250}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 7278390768196203130}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
@@ -367,6 +403,42 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4849806606466767900, guid: 5086c9b9970a00743bdc6905251fa4e2, type: 3}
   m_PrefabInstance: {fileID: 504130580326227250}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7278390768196203130 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7204916906532319048, guid: 5086c9b9970a00743bdc6905251fa4e2, type: 3}
+  m_PrefabInstance: {fileID: 504130580326227250}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7330971999768614072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7278390768196203130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1833831016
+      Data2: 1084460773
+      Data3: 1217945474
+      Data4: 1623246063
+    Path: event:/UI/card_draw
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1001 &5973228449458454280
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -478,19 +550,58 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7204916906532319048, guid: 5086c9b9970a00743bdc6905251fa4e2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4598377191390130796}
   m_SourcePrefab: {fileID: 100100000, guid: 5086c9b9970a00743bdc6905251fa4e2, type: 3}
 --- !u!224 &1272498656870736660 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4849806606466767900, guid: 5086c9b9970a00743bdc6905251fa4e2, type: 3}
   m_PrefabInstance: {fileID: 5973228449458454280}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &3537624100281962560 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7204916906532319048, guid: 5086c9b9970a00743bdc6905251fa4e2, type: 3}
+  m_PrefabInstance: {fileID: 5973228449458454280}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4598377191390130796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3537624100281962560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1833831016
+      Data2: 1084460773
+      Data3: 1217945474
+      Data4: 1623246063
+    Path: event:/UI/card_draw
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!114 &5751699589076129026 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2105168865588603402, guid: 5086c9b9970a00743bdc6905251fa4e2, type: 3}
   m_PrefabInstance: {fileID: 5973228449458454280}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 3537624100281962560}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
@@ -607,8 +718,47 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7204916906532319048, guid: 5086c9b9970a00743bdc6905251fa4e2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2894868934755582290}
   m_SourcePrefab: {fileID: 100100000, guid: 5086c9b9970a00743bdc6905251fa4e2, type: 3}
+--- !u!1 &194872713131650541 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7204916906532319048, guid: 5086c9b9970a00743bdc6905251fa4e2, type: 3}
+  m_PrefabInstance: {fileID: 7010224952757469861}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2894868934755582290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 194872713131650541}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1833831016
+      Data2: 1084460773
+      Data3: 1217945474
+      Data4: 1623246063
+    Path: event:/UI/card_draw
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!224 &2451272226150489785 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4849806606466767900, guid: 5086c9b9970a00743bdc6905251fa4e2, type: 3}
@@ -619,7 +769,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2105168865588603402, guid: 5086c9b9970a00743bdc6905251fa4e2, type: 3}
   m_PrefabInstance: {fileID: 7010224952757469861}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 194872713131650541}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}

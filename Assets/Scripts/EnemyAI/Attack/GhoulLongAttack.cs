@@ -12,7 +12,6 @@ public class GhoulLongAttack : MonoBehaviourPun, IMonsterAttack
     [Header("Long-Lunge")]
     [SerializeField] float lungeDistance = 0.4f;    // 전진 거리
     [SerializeField] float lungeDuration = 0.1f;   // 이동 시간
-
     EnemyFSM fsm;
     bool isLunging;
     float facing = 1f;                              // +1 -> Right, –1 -> Left

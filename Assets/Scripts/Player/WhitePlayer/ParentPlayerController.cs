@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
 using TMPro;
+using FMODUnity;
 
 public class ParentPlayerController : MonoBehaviourPun, IDamageable, IMovable
 {
@@ -111,11 +112,12 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable, IMovable
 
     protected virtual void Start()
     {
-        //StartCoroutine(Co_Start());
         if (PhotonNetwork.IsConnected)
         {
             if (photonView.IsMine)
             {
+                gameObject.AddComponent<StudioListener>();
+
                 runTimeData.LoadFromJsonFile();
 
                 animator.speed = runTimeData.attackSpeed;
@@ -123,55 +125,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable, IMovable
                 //if (isInPVPArea)
                 //    runTimeData.currentHealth = characterBaseStats.maxHP;
 
-                // 내 체력으로 동기화
-                photonView.RPC("UpdateHP", RpcTarget.OthersBuffered, runTimeData.currentHealth);
-                nicknameText.text = PhotonNetwork.CurrentRoom.Players[photonView.Owner.ActorNumber].NickName;
-                nicknameText.color = new Color32(102, 204, 255, 255);
-
-                // UI 갱신용 invoke
-                OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
-
-                // pvp 테스트 임시 코드
-                //SetTeamId(PhotonNetwork.LocalPlayer.ActorNumber);
-            }
-            else
-            {
-                RoomManager.Instance.AddPlayerDic(photonView.Owner.ActorNumber, gameObject);
-                nicknameText.text = PhotonNetwork.CurrentRoom.Players[photonView.Owner.ActorNumber].NickName;
-
-                // 나와 팀 ID 비교
-                object myTeamIdObj, otherTeamIdObj;
-                PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("TeamId", out myTeamIdObj);
-                photonView.Owner.CustomProperties.TryGetValue("TeamId", out otherTeamIdObj);
-
-                if (myTeamIdObj != null && otherTeamIdObj != null && !myTeamIdObj.Equals(otherTeamIdObj))
-                {
-                    // 팀 ID 다르면 빨간색
-                    nicknameText.color = Color.red;
-                }
-                else
-                {
-                    // 같은 팀 또는 TeamId 없음
-                    nicknameText.color = new Color32(102, 255, 102, 255);
-                }
-            }
-        }
-    }
-
-    IEnumerator Co_Start()
-    {
-        yield return new WaitForFixedUpdate();
-
-        if (PhotonNetwork.IsConnected)
-        {
-            if (photonView.IsMine)
-            {
-                runTimeData.LoadFromJsonFile();
-                
-                animator.speed = runTimeData.attackSpeed;
-                
-                if (isInPVPArea)
-                    runTimeData.currentHealth = characterBaseStats.maxHP;
+                RecoverHealth(20f);
 
                 // 내 체력으로 동기화
                 photonView.RPC("UpdateHP", RpcTarget.OthersBuffered, runTimeData.currentHealth);
@@ -496,6 +450,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable, IMovable
 
     #endregion
 
+    private List<float> attackSpeedBuffs = new List<float>();
+
     public virtual void BuffAttackSpeed(float value, float duration)
     {
         StartCoroutine(BuffAttackSpeedTimer(value, duration));
@@ -503,11 +459,64 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable, IMovable
 
     private IEnumerator BuffAttackSpeedTimer(float value, float duration)
     {
-        animator.speed = runTimeData.attackSpeed * value;
+        attackSpeedBuffs.Add(value);
+        UpdateAttackSpeed();
+
+        Debug.Log("공격속도버프 적용됨. 현재 스택 수: " + attackSpeedBuffs.Count);
 
         yield return new WaitForSeconds(duration);
 
-        animator.speed = runTimeData.attackSpeed;
+        attackSpeedBuffs.Remove(value);
+        UpdateAttackSpeed();
+
+        Debug.Log("공격속도버프 제거됨. 현재 스택 수: " + attackSpeedBuffs.Count);
+    }
+
+    private void UpdateAttackSpeed()
+    {
+        float totalMultiplier = 1f;
+        foreach (float buff in attackSpeedBuffs)
+        {
+            totalMultiplier *= buff;
+        }
+
+        animator.speed = runTimeData.attackSpeed * totalMultiplier;
+        Debug.Log("공격속도 : " + animator.speed);
+    }
+
+    private List<float> moveSpeedBuffs = new List<float>();
+
+    public virtual void BuffMoveSpeed(float value, float duration)
+    {
+        Debug.Log("이동속도버프 value:" + value + "duration" + duration);
+        StartCoroutine(BuffMoveSpeedTimer(value, duration));
+    }
+
+    private IEnumerator BuffMoveSpeedTimer(float value, float duration)
+    {
+        moveSpeedBuffs.Add(value);
+        UpdateMoveSpeed();
+
+        Debug.Log("이동속도버프 적용됨. 현재 스택 수: " + moveSpeedBuffs.Count);
+
+        yield return new WaitForSeconds(duration);
+
+        moveSpeedBuffs.Remove(value);
+        UpdateMoveSpeed();
+
+        Debug.Log("이동속도버프 제거됨. 현재 스택 수: " + moveSpeedBuffs.Count);
+    }
+
+    private void UpdateMoveSpeed()
+    {
+        float totalMultiplier = 1f;
+        foreach (float buff in moveSpeedBuffs)
+        {
+            totalMultiplier *= buff;
+        }
+
+        runTimeData.moveSpeed = characterBaseStats.moveSpeed * totalMultiplier;
+        Debug.Log("이동속도 : " + runTimeData.moveSpeed + "totalMultiplier : " + totalMultiplier);
     }
 
     private IEnumerator PauseForSeconds()
@@ -635,5 +644,20 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable, IMovable
     public void RPC_SyncAnimation(string stateName)
     {
         animator.Play(stateName);
+    }
+
+    public void SyncTriggerAnimation(string trigger)
+    {
+        if (!photonView.IsMine)
+            return;
+
+        photonView.RPC("RPC_SyncTriggerAnimation", RpcTarget.Others, trigger);
+    }
+
+
+    [PunRPC]
+    public void RPC_SyncTriggerAnimation(string trigger)
+    {
+        animator.SetTrigger(trigger);
     }
 }

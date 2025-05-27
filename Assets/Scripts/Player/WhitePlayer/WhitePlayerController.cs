@@ -35,11 +35,7 @@ public class WhitePlayerController : ParentPlayerController
     public WhitePlayerState nextState = WhitePlayerState.Idle;
 
     protected override void Awake()
-
     {
-        //AttackCollider = GetComponentInChildren<WhitePlayerAttackZone>();
-
-
         base.Awake();
         facingDirection = Vector3.right;
     }
@@ -49,7 +45,6 @@ public class WhitePlayerController : ParentPlayerController
     {
         base.Start();
 
-        //StartCoroutine(Co_Start());
         currentState = WhitePlayerState.Idle;
 
         if (photonView.IsMine || !PhotonNetwork.IsConnected)
@@ -59,44 +54,6 @@ public class WhitePlayerController : ParentPlayerController
             if (hpBar != null) hpBar.enabled = true;
 
             gaugeInteraction = GetComponentInChildren<GaugeInteraction>();
-
-            var eventController = GetComponent<WhitePlayercontroller_event>();
-            if (eventController != null)
-            {
-                //eventController.OnInteractionEvent += HandleReviveInteraction;
-            }
-
-            if (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil != null && runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil != 0)
-            {
-                animator.SetInteger("mouseRightBlessing", runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil);
-            }
-
-            if (runTimeData.currentHealth <= 0)
-            {
-                TransitionToDeath();
-            }
-        }
-    }
-
-    IEnumerator Co_Start()
-    {
-        yield return new WaitForFixedUpdate();
-
-        currentState = WhitePlayerState.Idle;
-
-        if (photonView.IsMine || !PhotonNetwork.IsConnected)
-        {
-            if (stunOverlay != null) stunOverlay.enabled = false;
-            if (stunSlider != null) stunSlider.gameObject.SetActive(false);
-            if (hpBar != null) hpBar.enabled = true;
-
-            gaugeInteraction = GetComponentInChildren<GaugeInteraction>();
-
-            var eventController = GetComponent<WhitePlayercontroller_event>();
-            if (eventController != null)
-            {
-                //eventController.OnInteractionEvent += HandleReviveInteraction;
-            }
 
             if (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil != null && runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil != 0)
             {
@@ -119,7 +76,6 @@ public class WhitePlayerController : ParentPlayerController
             return;
         }
 
-
         UpdateCenterPoint();
         HandleMovement();
 
@@ -129,7 +85,6 @@ public class WhitePlayerController : ParentPlayerController
     public void SetMoveInput(Vector2 input)
     {
         moveInput = input;
-
     }
 
     // 이동 처리
@@ -153,10 +108,6 @@ public class WhitePlayerController : ParentPlayerController
                 if (!animator.GetBool("Pre-Input"))
                 {
                     animator.SetBool("Pre-Input", true);
-                    //if (PhotonNetwork.IsConnected)
-                    //{
-                    //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                    //}
                 }
             }
             else if (nextState > WhitePlayerState.Run)
@@ -185,11 +136,8 @@ public class WhitePlayerController : ParentPlayerController
 
         }
 
-
         if (currentState != WhitePlayerState.Run)
             return;
-
-
 
         if (currentState == WhitePlayerState.Run)
         {
@@ -209,12 +157,6 @@ public class WhitePlayerController : ParentPlayerController
             SetFloatParameter("moveX", h);
             SetFloatParameter("moveY", v);
         }
-
-        //if (animator != null)
-        //{
-        //    animator.SetFloat("moveX", h);
-        //    animator.SetFloat("moveY", v);
-        //}
     }
 
     private void UpdateCenterPoint()
@@ -246,9 +188,6 @@ public class WhitePlayerController : ParentPlayerController
 
     private Vector3 lastFacingDirection = Vector3.right;
 
-
-
-
     public void HandleDash()
     {
         if (currentState == WhitePlayerState.Death
@@ -260,53 +199,20 @@ public class WhitePlayerController : ParentPlayerController
             return;
 
         nextState = WhitePlayerState.Dash;
-        //animator.ResetTrigger("run");
-        //animator.SetBool("dash", true);
-        //if (PhotonNetwork.IsConnected)
-        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "dash", true);
 
-        // 여기서는 무조건 facingDirection 사용
         dashDirection = facingDirection;
-
-        //StartCoroutine(DoDash());
     }
-
-
-    //private IEnumerator DoDash()
-    //{
-    //    Vector3 startPos = transform.position;
-    //    Vector3 targetPos = startPos + dashDirection * dashDistance;
-    //    float elapsed = 0f;
-
-    //    while (elapsed < dashDuration)
-    //    {
-    //        transform.position = Vector3.Lerp(startPos, targetPos, elapsed / dashDuration);
-    //        elapsed += Time.deltaTime;
-    //        yield return null;
-    //    }
-
-    //    transform.position = targetPos;
-    //    animator.SetBool("dash", false);
-    //    currentState = WhitePlayerState.Idle;
-    //}
-
 
     public void HandleNormalAttack()
     {
 
-        if (currentState != WhitePlayerState.Death)
+        if (currentState != WhitePlayerState.Death || currentState != WhitePlayerState.Stun)
         {
             if (currentState == WhitePlayerState.Parry)
             {
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
                 animator.SetBool("basicattack", true);
-                //if (PhotonNetwork.IsConnected)
-                //{
-                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
-                //}
-                //photonView.RPC("PlayAnimation", RpcTarget.All, "basicattack");
                 currentState = WhitePlayerState.Counter;
                 return;
             }
@@ -315,11 +221,6 @@ public class WhitePlayerController : ParentPlayerController
                 animator.SetBool("Counter", true);
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-                //if (PhotonNetwork.IsConnected)
-                //{
-                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Counter", true);
-                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                //}
                 return;
             }
             else if (nextState < WhitePlayerState.BasicAttack && cooldownCheckers[(int)Skills.Mouse_L].CanUse())
@@ -327,10 +228,6 @@ public class WhitePlayerController : ParentPlayerController
 
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-                //if (PhotonNetwork.IsConnected)
-                //{
-                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                //}
                 nextState = WhitePlayerState.BasicAttack;
             }
 
@@ -340,12 +237,6 @@ public class WhitePlayerController : ParentPlayerController
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
                 animator.SetBool("Pre-Input", true);
-
-                //if (PhotonNetwork.IsConnected)
-                //{
-                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                //}
             }
         }
     }
@@ -362,13 +253,6 @@ public class WhitePlayerController : ParentPlayerController
                 animator.SetBool("Pre-Input", true);
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-
-                //if (PhotonNetwork.IsConnected)
-                //{
-                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
-                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                //}
             }
 
         }
@@ -387,19 +271,9 @@ public class WhitePlayerController : ParentPlayerController
                 animator.SetBool("Pre-Input", true);
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-
-                //if (PhotonNetwork.IsConnected)
-                //{
-                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
-                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                //}
             }
         }
     }
-
-
-    //public WhitePlayerAttackZone AttackCollider;
 
     // 공격 애니메이션 이벤트용 스텁 (WhitePlayerController_AttackStack에서 호출) 
 
@@ -449,10 +323,6 @@ public class WhitePlayerController : ParentPlayerController
             return;
 
         animator.SetBool("CancleState", true);
-        //if (PhotonNetwork.IsConnected)
-        //{
-        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", true);
-        //}
         Debug.Log("선딜 시작");
     }
 
@@ -462,10 +332,6 @@ public class WhitePlayerController : ParentPlayerController
             return;
 
         animator.SetBool("CancleState", false);
-        //if (PhotonNetwork.IsConnected)
-        //{
-        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
-        //}
         Debug.Log("선딜 종료");
     }
 
@@ -474,16 +340,27 @@ public class WhitePlayerController : ParentPlayerController
         if (!photonView.IsMine && PhotonNetwork.IsConnected)
             return;
 
-        //transform.Translate((GetMouseWorldPosition() - transform.position).normalized * value);
         rb.MovePosition(rb.position + ((GetMouseWorldPosition() - transform.position).normalized * value));
     }
 
     public void OnMoveFront2(float value)
     {
-        if (!photonView.IsMine && PhotonNetwork.IsConnected)
-            return;
+        Vector3 movement;
+        float h = moveInput.x;
+        float v = moveInput.y;
+        bool isMoving = (Mathf.Abs(h) > 0.01f || Mathf.Abs(v) > 0.01f);
 
-        Vector3 movement = dashDirection * value;
+        if (isMoving)
+        {
+            movement = (Mathf.Abs(v) > 0.01f)
+                  ? new Vector3(h, 0, v).normalized
+                  : new Vector3(h, 0, 0).normalized;
+
+            movement = movement * value;
+        }
+
+
+        else { movement = dashDirection * value; }
         rb.MovePosition(rb.position + movement);
     }
     public Vector3 GetMouseWorldPosition()
@@ -975,6 +852,8 @@ public class WhitePlayerController : ParentPlayerController
                 StopCoroutine(stunCoroutine);
                 stunCoroutine = null;
             }
+
+            SetTriggerParameter("revive");
 
             currentState = WhitePlayerState.Idle;
 

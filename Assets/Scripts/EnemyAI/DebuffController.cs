@@ -25,7 +25,9 @@ public class DebuffController : MonoBehaviour
         movable = GetComponent<IMovable>();           
     }
 
+
     /* ────────────────  퍼블릭 API  ──────────────── */
+
     public void ApplyDebuff(SpecialEffectType type, float duration, float value)
     {
         switch (type)

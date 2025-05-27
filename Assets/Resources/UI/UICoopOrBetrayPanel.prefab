@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 5885945718356130457}
   - component: {fileID: 4805617381251180427}
   - component: {fileID: 3372896508177749298}
+  - component: {fileID: 4984998229149035898}
+  - component: {fileID: 4244801996006767037}
   m_Layer: 5
   m_Name: BetrayConfirmButton (Legacy)
   m_TagString: Untagged
@@ -120,6 +122,68 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4984998229149035898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 291132464830357184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &4244801996006767037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 291132464830357184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &549903342289754274
 GameObject:
   m_ObjectHideFlags: 0
@@ -499,6 +563,8 @@ GameObject:
   - component: {fileID: 3353425417745691954}
   - component: {fileID: 5357522548813269689}
   - component: {fileID: 1068876109246716709}
+  - component: {fileID: 6207057568854888311}
+  - component: {fileID: 3421598937656964445}
   m_Layer: 5
   m_Name: CoopConfirmButton (Legacy)
   m_TagString: Untagged
@@ -607,6 +673,68 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6207057568854888311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1260342536071270234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: -1179803482
+      Data2: 1318404902
+      Data3: -578390141
+      Data4: -100641355
+    Path: event:/UI/click
+  Event: 
+  EventPlayTrigger: 20
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!114 &3421598937656964445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1260342536071270234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1779947910
+      Data2: 1139663812
+      Data3: -447177284
+      Data4: -969076227
+    Path: event:/UI/hologram sound2
+  Event: 
+  EventPlayTrigger: 17
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &1915815248132461231
 GameObject:
   m_ObjectHideFlags: 0
@@ -620,6 +748,7 @@ GameObject:
   - component: {fileID: 2673872160895375961}
   - component: {fileID: 733030713679550091}
   - component: {fileID: 46609028681582646}
+  - component: {fileID: 2302540455976525985}
   m_Layer: 5
   m_Name: UICoopOrBetrayPanel
   m_TagString: Untagged
@@ -763,6 +892,37 @@ MonoBehaviour:
   coopBodyText: {fileID: 4581255108183061865}
   betaryHeaderText: {fileID: 5979279480737667733}
   betrayBodyText: {fileID: 5611733448075756700}
+--- !u!114 &2302540455976525985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1915815248132461231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1861532323
+      Data2: 1162245835
+      Data3: -668245343
+      Data4: -549524691
+    Path: event:/UI/cooporbetray
+  Event: 
+  EventPlayTrigger: 11
+  EventStopTrigger: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &2774739896366052264
 GameObject:
   m_ObjectHideFlags: 0

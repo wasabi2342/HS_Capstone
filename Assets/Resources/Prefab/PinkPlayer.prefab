@@ -205,7 +205,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 673988289270443858}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
   m_Name: 
@@ -402,8 +402,10 @@ MonoBehaviour:
   hitlagTime: 0.117
   shadow: {fileID: 4496898679317726336}
   nicknameText: {fileID: 6949920731095230618}
+
   myController: {fileID: 0}
   othersController: {fileID: 0}
+
   footPivot: {fileID: 9027814078262596519}
   stunOverlay: {fileID: 0}
   stunSlider: {fileID: 0}
@@ -469,6 +471,7 @@ MonoBehaviour:
   servantSpawnOffset: {x: 0, y: 0, z: 0}
   DefaultMaxServants: 8
   ultimateDuration: 5
+  isUltimateActive: 0
   currentState: 0
   nextState: 0
   physicalAtk: 0
@@ -498,6 +501,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 11400000, guid: 3939f00e561c88749b28afda4b9c5f12, type: 2}
   - {fileID: 11400000, guid: 71f296c4da421d946a460d603f3d6ff9, type: 2}
+
 --- !u!114 &1681571723047062326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -511,6 +515,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &2160729584509410412
+
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

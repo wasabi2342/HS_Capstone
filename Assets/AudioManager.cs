@@ -4,6 +4,7 @@ using FMOD.Studio;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
+
 public enum SoundType
 {
     defaultType,
@@ -14,6 +15,12 @@ public enum SoundType
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
+
+    //fmod 사운드 버스
+    private VCA vcaMaster;
+    private VCA vcaBGM;
+    private VCA vcaSFX;
+
 
     [Range(0f, 1f)]
     public float masterVolume = 1.0f;
@@ -33,6 +40,23 @@ public class AudioManager : MonoBehaviour
         {
             Destroy(this);
         }
+
+        //fmod 사운드 버스
+        vcaMaster = RuntimeManager.GetVCA("vca:/VCA_Master");
+        vcaBGM = RuntimeManager.GetVCA("vca:/VCA_BGM");
+        vcaSFX = RuntimeManager.GetVCA("vca:/VCA_SFX");
+
+        if (DataManager.Instance != null && DataManager.Instance.settingData != null)
+        {
+            float master = DataManager.Instance.settingData.masterVolume;
+            float bgm = DataManager.Instance.settingData.bgmVolume;
+            float sfx = DataManager.Instance.settingData.sfxVolume;
+
+            vcaMaster.setVolume(master);
+            vcaBGM.setVolume(bgm);
+            vcaSFX.setVolume(sfx);
+        }
+
     }
 
     private void OnEnable()
@@ -91,11 +115,10 @@ public class AudioManager : MonoBehaviour
     public void SetMasterVolume(float volume)
     {
         masterVolume = Mathf.Clamp01(volume);
-        foreach (var pair in loopingSounds)
-        {
-            pair.Value.setVolume(masterVolume);
-        }
+        if (vcaMaster.isValid())
+            vcaMaster.setVolume(masterVolume);
     }
+
 
     public void PlayCharacterSFX(string characterType, string actionName, Vector3 position)
     {
@@ -172,4 +195,21 @@ public class AudioManager : MonoBehaviour
     {
         return currentBGMInstance;
     }
+
+    //사운드 버스 제어
+    public void SetVCAMasterVolume(float volume)
+    {
+        vcaMaster.setVolume(volume);
+    }
+
+    public void SetVCABGMVolume(float volume)
+    {
+        vcaBGM.setVolume(volume);
+    }
+
+    public void SetVCASFXVolume(float volume)
+    {
+        vcaSFX.setVolume(volume);
+    }
+
 }

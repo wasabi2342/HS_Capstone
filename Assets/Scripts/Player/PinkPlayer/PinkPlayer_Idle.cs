@@ -8,9 +8,14 @@ public class PinkPlayer_Idle : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        if (photonView == null)
+            photonView = animator.GetComponent<PhotonView>();
+        if (PhotonNetwork.IsConnected && !photonView.IsMine)
+            return;
         if (pinkPlayerController == null)
             pinkPlayerController = animator.GetComponent<PinkPlayerController>();
         pinkPlayerController.currentState = PinkPlayerState.Idle;
+        pinkPlayerController.isUltimateActive = false;
         animator.SetBool("Pre-Attack", false);
         animator.SetBool("Pre-Input", false);
         animator.SetBool("CancleState", false);
@@ -35,14 +40,19 @@ public class PinkPlayer_Idle : StateMachineBehaviour
                 break;
             case PinkPlayerState.Run:
                 animator.SetBool("run", true);
+                if (PhotonNetwork.IsConnected)
+                {
+                    pinkPlayerController.SetTriggerParameter("runStart");
+                    pinkPlayerController.SetBoolParameter("run", true);
+                }
                 pinkPlayerController.currentState = PinkPlayerState.Run;
                 break;
             case PinkPlayerState.BasicAttack:
-                pinkPlayerController.attackStack++;
+                //pinkPlayerController.attackStack++;
                 Debug.Log(pinkPlayerController.attackStack);
-                animator.SetInteger("AttackStack", pinkPlayerController.attackStack);
-                pinkPlayerController.SetIntParameter("AttackStack", pinkPlayerController.attackStack);
-                pinkPlayerController.AttackStackUpdate?.Invoke(pinkPlayerController.attackStack);
+                //animator.SetInteger("AttackStack", pinkPlayerController.attackStack);
+                //pinkPlayerController.SetIntParameter("AttackStack", pinkPlayerController.attackStack);
+                //pinkPlayerController.AttackStackUpdate?.Invoke(pinkPlayerController.attackStack);
                 animator.SetBool("basicattack", true);
                 pinkPlayerController.SetBoolParameter("basicattack", true);
                 pinkPlayerController.currentState = PinkPlayerState.BasicAttack;
@@ -63,6 +73,7 @@ public class PinkPlayer_Idle : StateMachineBehaviour
                 pinkPlayerController.currentState = PinkPlayerState.Skill;
                 break;
             case PinkPlayerState.Ultimate:
+                pinkPlayerController.isUltimateActive = true;
                 animator.SetBool("ultimate", true);
                 pinkPlayerController.SetBoolParameter("ultimate", true);
                 pinkPlayerController.currentState = PinkPlayerState.Ultimate;

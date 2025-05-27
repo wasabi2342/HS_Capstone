@@ -269,12 +269,14 @@ public class DataManager : MonoBehaviour
         if (File.Exists(settingDataPath))
         {
             string json = File.ReadAllText(settingDataPath);
+            settingData = new SettingData();
             JsonUtility.FromJsonOverwrite(json, settingData);
             ApplySettings();
             Debug.Log("[DataManager] Setting loaded.");
         }
         else
         {
+            settingData = new SettingData();
             Debug.Log("[DataManager] No setting file found. Creating default.");
             SaveSettingData(); // 초기 저장
         }
@@ -282,17 +284,33 @@ public class DataManager : MonoBehaviour
 
     private void ApplySettings()
     {
-        AudioManager.Instance.SetMasterVolume(settingData.masterVolume);
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.SetVCAMasterVolume(settingData.masterVolume);
+            AudioManager.Instance.SetVCABGMVolume(settingData.bgmVolume);
+            AudioManager.Instance.SetVCASFXVolume(settingData.sfxVolume);
+        }
 
         Screen.SetResolution(
             settingData.resolution.x,
             settingData.resolution.y,
             settingData.screenMode
         );
-
-        // 추가로 사운드 매니저가 있다면 볼륨 적용
-        // SoundManager.Instance?.SetVolumes(settingData.bgmVolume, settingData.sfxVolume);
     }
 
+
+    //기본 설정값
+    [System.Serializable]
+    public class SettingData
+    {
+        public float masterVolume = 0.5f;
+        public float bgmVolume = 0.5f;
+        public float sfxVolume = 0.5f;
+
+        public Vector2Int resolution = new Vector2Int(1920, 1080);
+        public FullScreenMode screenMode = FullScreenMode.FullScreenWindow;
+
+        public bool tutorialCompleted = false;
+    }
 }
 

@@ -20,7 +20,6 @@ public class SpawnArea : MonoBehaviourPun
         if (PhotonNetwork.InRoom)
             photonView.RPC(nameof(RPC_SetRadius), RpcTarget.OthersBuffered, r);
     }
-
     public float GetRadius() => radius;
 
     public Vector3 GetRandomPointInsideArea()

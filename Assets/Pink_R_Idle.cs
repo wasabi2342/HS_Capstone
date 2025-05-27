@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 
 public class Pink_R_Idle : StateMachineBehaviour
@@ -35,8 +36,27 @@ public class Pink_R_Idle : StateMachineBehaviour
         {
             case PinkPlayerState.Run:
                 animator.SetBool("run", true);
+                if (PhotonNetwork.IsConnected)
+                {
+                    pc.SetTriggerParameter("R_runStart");
+                    pc.SetBoolParameter("run", true);
+                }
                 pc.currentState = PinkPlayerState.Run;
                 break;
+
+            case PinkPlayerState.R_hit:
+                animator.SetBool("basicattack", true);
+                break;
+
+            case PinkPlayerState.BasicAttack:
+                animator.SetBool("basicattack", true);
+                break;
+
+            case PinkPlayerState.R_finish:
+                animator.SetBool("ultimate", true);
+                break;
+
+
         }
 
         // 1) move 입력이 와서 아직 전이 안 된 경우 → Run

@@ -22,6 +22,8 @@ public class UIMenuPanel : UIBase
     [SerializeField]
     private Button gotoStartUIButton;
     [SerializeField]
+    private Button escapeButton;
+    [SerializeField]
     private TMP_Dropdown resolutionDropdown;
     [SerializeField]
     private TMP_Dropdown windowDropdown;
@@ -48,6 +50,22 @@ public class UIMenuPanel : UIBase
 
     public override void Init()
     {
+        if (RoomManager.Instance == null)
+        {
+            escapeButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            escapeButton.onClick.AddListener(() =>
+            {
+                RoomManager.Instance.EscapePlayer();
+                if (UIManager.Instance.ReturnPeekUI() as UIMenuPanel)
+                {
+                    UIManager.Instance.ClosePeekUI();
+                }
+            });
+        }
+
         closeUIAction = CloseUI;
         InputManager.Instance.PlayerInput.actions["ESC"].performed += closeUIAction;
 
@@ -75,12 +93,21 @@ public class UIMenuPanel : UIBase
 
         resolutionDropdown.onValueChanged.AddListener(OnResolutionDropdownValueChanged);
         windowDropdown.onValueChanged.AddListener(OnWindowDropdownValueChanged);
-        masterVolumeSlider.onValueChanged.AddListener(OnMasterVolumeSliderValueChanged);
 
-        masterVolumeSlider.value = AudioManager.Instance.masterVolume;
+        //사운드 제어
+        masterVolumeSlider.onValueChanged.AddListener(OnMasterVolumeSliderValueChanged);
+        bgmVolumeSlider.onValueChanged.AddListener(OnBGMVolumeSliderValueChanged);
+        sfxVolumeSlider.onValueChanged.AddListener(OnSFXVolumeSliderValueChanged);
+
+        masterVolumeSlider.value = DataManager.Instance.settingData.masterVolume;
+        bgmVolumeSlider.value = DataManager.Instance.settingData.bgmVolume;
+        sfxVolumeSlider.value = DataManager.Instance.settingData.sfxVolume;
+
 
         InitializeResolutionDropdown();
         InitializeWindowModeDropdown();
+
+
     }
 
     public void CloseUI(InputAction.CallbackContext ctx)
@@ -222,12 +249,28 @@ public class UIMenuPanel : UIBase
         }
     }
 
+    //사운드 제어
     private void OnMasterVolumeSliderValueChanged(float value)
     {
         AudioManager.Instance.SetMasterVolume(value);
         DataManager.Instance.settingData.masterVolume = value;
         DataManager.Instance.SaveSettingData();
     }
+
+    private void OnBGMVolumeSliderValueChanged(float value)
+    {
+        AudioManager.Instance.SetVCABGMVolume(value);
+        DataManager.Instance.settingData.bgmVolume = value;
+        DataManager.Instance.SaveSettingData();
+    }
+
+    private void OnSFXVolumeSliderValueChanged(float value)
+    {
+        AudioManager.Instance.SetVCASFXVolume(value);
+        DataManager.Instance.settingData.sfxVolume = value;
+        DataManager.Instance.SaveSettingData();
+    }
+
 
     private void OnDisable()
     {

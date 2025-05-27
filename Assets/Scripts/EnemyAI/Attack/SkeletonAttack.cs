@@ -28,7 +28,6 @@ public class SkeletonAttack : MonoBehaviourPun, IMonsterAttack
     void ShiftFirePoint(int dir)
     {
         if (!firePoint) return;
-
         Vector3 lp = firePoint.localPosition;
         lp.x = Mathf.Abs(lp.x) * dir;      // 기준값 × 부호
         firePoint.localPosition = lp;
