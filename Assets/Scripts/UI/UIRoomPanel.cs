@@ -123,7 +123,9 @@ public class UIRoomPanel : UIBase
 
         myPanel.Init(isReady, PhotonNetwork.LocalPlayer.NickName, DefeaultCharacter, PhotonNetwork.IsMasterClient);
 
-        characterInfoText.text = ((Characters)(selectIndex % (int)Characters.Max)).ToString() + "의 정보";
+        //characterInfoText.text = ((Characters)(selectIndex % (int)Characters.Max)).ToString() + "의 정보";
+
+        characterInfoText.text = DataManager.Instance.characterDescriptions[selectIndex % (int)Characters.Max].characterName + "\n" + DataManager.Instance.characterDescriptions[selectIndex % (int)Characters.Max].description;
 
         //characterImage.sprite = Resources.Load<Sprite>("Sprite/" + ((Characters)(selectIndex % (int)Characters.Max)).ToString());
         characterImageAnimator.SetInteger("Index", (selectIndex % (int)Characters.Max));
@@ -216,7 +218,7 @@ public class UIRoomPanel : UIBase
         //characterImage.sprite = Resources.Load<Sprite>("Sprite/" + (Characters)(selectIndex % (int)Characters.Max));
         characterImageAnimator.SetInteger("Index", (selectIndex % (int)Characters.Max));
 
-        characterInfoText.text = ((Characters)(selectIndex % (int)Characters.Max)).ToString() + "의 정보";
+        characterInfoText.text = DataManager.Instance.characterDescriptions[selectIndex % (int)Characters.Max].characterName + "\n" + DataManager.Instance.characterDescriptions[selectIndex % (int)Characters.Max].description;
 
         for (int i = 0; i < skillIcons.Length; i++)
         {

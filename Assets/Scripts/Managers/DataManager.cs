@@ -18,6 +18,7 @@ public class DataManager : MonoBehaviour
     public List<BlessingEffectLinkData> linkList;
     public List<BasicAttackComboData> basicAttackComboDatas;
     public List<R_AttackComboData> r_AttackComboDatas;
+    public List<CharacterDescription> characterDescriptions;
 
     public SettingData settingData;
     private string settingDataPath;
@@ -41,6 +42,7 @@ public class DataManager : MonoBehaviour
         linkList = LoadBlessingEffectLinkCsv("CSV/Bless_Special_Table");
         basicAttackComboDatas = LoadComboCsv("CSV/Norm_Attack_Table");
         r_AttackComboDatas = LoadComboCsv2("CSV/R_Attack_Table");
+        characterDescriptions = LoadCharacterDescriptionCsv("CSV/Character_Description");
     }
 
     private void Start()
@@ -190,6 +192,27 @@ public class DataManager : MonoBehaviour
             data.Character = int.Parse(values[1]);
             data.Combo_Index = int.Parse(values[2]);
             data.Damage = float.Parse(values[3]);
+
+            list.Add(data);
+        }
+        return list;
+    }
+
+    private List<CharacterDescription> LoadCharacterDescriptionCsv(string resourcePath)
+    {
+        var list = new List<CharacterDescription>();
+        TextAsset csvFile = Resources.Load<TextAsset>(resourcePath);
+        if (csvFile == null) return list;
+
+        var lines = csvFile.text.Split('\n');
+        for (int i = 1; i < lines.Length; i++)
+        {
+            var values = lines[i].Trim().Split(',');
+            if (values.Length < 2) continue;
+
+            var data = ScriptableObject.CreateInstance<CharacterDescription>();
+            data.characterName = values[0];
+            data.description = values[1];
 
             list.Add(data);
         }
