@@ -261,33 +261,35 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         detT += Time.deltaTime;
         if (detT < DET_INT) return;
         detT = 0f;
-        /* 0) 활성 도발 확인 */
+
+        // 0) 도발 우선
         ITauntable[] taunts = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
                                     .OfType<ITauntable>()
                                     .Where(t => t.IsActive)
                                     .ToArray();
         if (taunts.Length > 0)
         {
-            Target = taunts[0].TauntPoint;          // 하나만 선택
+            Target = taunts[0].TauntPoint;
             return;
         }
 
-        /* 1) 플레이어 찾기 */
-        Collider[] cols = Physics.OverlapSphere(
-                transform.position, enemyStatus.detectRange,
-                playerMask, QueryTriggerInteraction.Ignore);
+        // 1) 플레이어와 서번트를 모두 감지
+        Collider[] playerCols = Physics.OverlapSphere(transform.position, enemyStatus.detectRange, playerMask, QueryTriggerInteraction.Ignore);
+        Collider[] servantCols = Physics.OverlapSphere(transform.position, enemyStatus.detectRange, servantMask, QueryTriggerInteraction.Ignore);
 
-        Transform nearest = FindNearest(cols);
-        if (nearest) { Target = nearest; return; }
+        Transform nearestPlayer = FindNearest(playerCols);
+        Transform nearestServant = FindNearest(servantCols);
 
-        /* 2) 소환수 찾기 */
-        cols = Physics.OverlapSphere(
-                transform.position, enemyStatus.detectRange,
-                servantMask, QueryTriggerInteraction.Ignore);
+        float playerDist = nearestPlayer ? (nearestPlayer.position - transform.position).sqrMagnitude : float.PositiveInfinity;
+        float servantDist = nearestServant ? (nearestServant.position - transform.position).sqrMagnitude : float.PositiveInfinity;
 
-        nearest = FindNearest(cols);
-        Target = nearest;          // 없으면 null
+        // 2) 거리 기반 우선순위 결정
+        if (playerDist < servantDist)
+            Target = nearestPlayer;
+        else
+            Target = nearestServant;
     }
+
     void TrySwitchTargetToAttacker(Vector3 hitPos)
     {
         const float PICK_RADIUS = 2f;              // 피격 지점 2 m 안
