@@ -208,7 +208,7 @@ NavMeshAgent:
   m_Height: 1.74
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 2
+  m_ObstacleAvoidanceType: 1
 --- !u!136 &2690218350716682373
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -350,6 +350,9 @@ MonoBehaviour:
   enemyLayerMask:
     serializedVersion: 2
     m_Bits: 128
+  playerLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
   tauntActive: 0
   tauntEndTime: 0
 --- !u!114 &7471104878824668836
