@@ -49,7 +49,7 @@ public class SkillEffect : MonoBehaviourPun
     /// </summary>
     /// <param name="damage"> 데미지 </param>
     /// <param name="triggerEvent"> 역경직 이벤트 </param>
-    public void Init(float damage, Action triggerEvent, bool isMine = false, BaseSpecialEffect specialEffect = null)
+    public void Init(float damage, Action triggerEvent = null, bool isMine = false, BaseSpecialEffect specialEffect = null)
     {
         this.damage = damage;
         this.triggerEvent += triggerEvent;
