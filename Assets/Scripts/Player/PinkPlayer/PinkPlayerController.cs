@@ -1185,7 +1185,7 @@ public class PinkPlayerController : ParentPlayerController
 
         // 이펙트 경로 및 위치 설정
         string effectPath;
-        Vector3 effectPosition = transform.position + new Vector3(0f, -1f, 0f);
+        Vector3 effectPosition = transform.position + new Vector3(0f, -0.5f, 0f);
 
         if (animator.GetBool("Right"))
         {
@@ -1228,7 +1228,7 @@ public class PinkPlayerController : ParentPlayerController
                        runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
 
         bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
-        Vector3 effectPosition = transform.position;
+        Vector3 effectPosition = transform.position + new Vector3(0f, -0.5f, 0f);
         string devil = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil.ToString();
 
         // ── 1) 기본 Charge Hit 이펙트
