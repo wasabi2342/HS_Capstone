@@ -246,8 +246,8 @@ public class PinkPlayerController : ParentPlayerController
 
         if (!cooldownCheckers[(int)Skills.Space].CanUse())
             return;
-
-        nextState = PinkPlayerState.Dash;
+        if (nextState < PinkPlayerState.Dash)
+            nextState = PinkPlayerState.Dash;
         //animator.ResetTrigger("run");
         //animator.SetBool("dash", true);
         //if (PhotonNetwork.IsConnected)
@@ -278,7 +278,8 @@ public class PinkPlayerController : ParentPlayerController
                 //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
                 //}
                 //photonView.RPC("PlayAnimation", RpcTarget.All, "basicattack");
-                nextState = PinkPlayerState.R_hit;
+                if (nextState < PinkPlayerState.R_hit)
+                    nextState = PinkPlayerState.R_hit;
 
             }
 
@@ -289,7 +290,8 @@ public class PinkPlayerController : ParentPlayerController
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
                 animator.SetBool("Pre-Input", true);
-                nextState = PinkPlayerState.R_hit;
+                if (nextState < PinkPlayerState.R_hit)
+                    nextState = PinkPlayerState.R_hit;
 
             }
 
@@ -560,7 +562,7 @@ public class PinkPlayerController : ParentPlayerController
             return;
         if (!photonView.IsMine) return;
         // 버튼 눌린 시점에만
-        if (context.started && !isUltimateActive && cooldownCheckers[(int)Skills.R].CanUse())
+        if (context.started && !isUltimateActive && cooldownCheckers[(int)Skills.R].CanUse() && nextState < PinkPlayerState.Ultimate)
         {
             // MasterClient 권한으로 실제 궁극기 실행
             photonView.RPC(nameof(RPC_UseUltimate), RpcTarget.MasterClient);
@@ -578,8 +580,8 @@ public class PinkPlayerController : ParentPlayerController
         }
 
         Debug.Log("isUltimateActive" + isUltimateActive);
-        
-        if (isUltimateActive)
+
+        if (isUltimateActive && nextState < PinkPlayerState.R_finish)
         {
             Vector3 mousePos = GetMouseWorldPosition();
             bool isRight = mousePos.x > transform.position.x;
@@ -587,7 +589,7 @@ public class PinkPlayerController : ParentPlayerController
 
             nextState = PinkPlayerState.R_finish;
         }
-            
+
         //if (context.started)
         //{
         //    // 로컬 상태 세팅
@@ -692,14 +694,15 @@ public class PinkPlayerController : ParentPlayerController
             AddShield(totalShield, totalDuration);
             Debug.Log($"궁극기 쉴드: +{totalShield}HP, 지속 {totalDuration}s (스택 {stacks})");
         }
-
-
     }
 
-    public  IEnumerator R_Time(float totalDuration)
+    public IEnumerator R_Time(float totalDuration)
     {
+        Debug.Log("궁 사용 체크 시작");
         yield return new WaitForSeconds(totalDuration);
-        nextState = PinkPlayerState.R_finish;
+        Debug.Log("궁 사용 종료");
+        if (nextState < PinkPlayerState.R_finish)
+            nextState = PinkPlayerState.R_finish;
     }
 
     // 궁극기 시전 시작
@@ -1060,7 +1063,7 @@ public class PinkPlayerController : ParentPlayerController
 
         // Init 메서드 호출, 여기서 다시 호출할지 말지 고민중 --> 아마 기획 나오면 더 고칠 예정
         //skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine);
-        skillEffect.Init(damage, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
+        skillEffect.Init(damage, null, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
 
         // 생성된 이펙트의 부모를 설정
         // skillEffect.transform.parent = transform;
