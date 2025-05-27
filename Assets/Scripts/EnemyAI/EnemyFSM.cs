@@ -28,11 +28,14 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     /* ────────── Detect ──────────── */
     [SerializeField] LayerMask playerMask;      // Player 레이어만
     [SerializeField] LayerMask servantMask;     // Servant 레이어만
-
-    /* ───────── Facing ───────── */
-    float lastMoveX = 1f;                       // +1 ⇒ Right , -1 ⇒ Left
+    internal float TolOutCache { get; set; }
+    /* Facing */
+    float lastMoveX = 1f;
     public float CurrentFacing => lastMoveX;
     public void ForceFacing(float s) => lastMoveX = s >= 0 ? 1f : -1f;
+
+    /* ★ 추가: 플레이어 기준 좌/우 선호 라인  */
+    [HideInInspector] public float preferredSide = 0f;   // -1 왼쪽, +1 오른쪽
     private Vector3 lastHitPos;
     public Vector3 LastHitPos => lastHitPos; // 공격자 위치
 
@@ -95,13 +98,15 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         Anim = GetComponentInChildren<Animator>();
         pv = GetComponent<PhotonView>();
         debuff = GetComponent<DebuffController>();
+        Agent.updatePosition = PhotonNetwork.IsMasterClient;
         Agent.updateRotation = false;
-        Agent.updatePosition = Agent.updateRotation = PhotonNetwork.IsMasterClient;
+        Agent.updateUpAxis = false;  // 2D 평면일 땐 선택
 
         /* FSM 상태 등록 */
         states[typeof(WanderState)] = new WanderState(this);
         states[typeof(IdleState)] = new IdleState(this);
         states[typeof(ChaseState)] = new ChaseState(this);
+        states[typeof(DetourState)] = new DetourState(this);
         states[typeof(ReturnState)] = new ReturnState(this);
         states[typeof(WaitCoolState)] = new WaitCoolState(this);
         states[typeof(AttackState)] = new AttackState(this);
@@ -141,6 +146,8 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         maxHP = hp = enemyStatus.maxHealth * diff.HpMul(pCnt);
         enemyStatus.attackDamage *= diff.AtkMul(pCnt);
         maxShield = shield = enemyStatus.maxShield * diff.ShieldMul(pCnt);
+
+
     }
 
     void Start()
@@ -222,6 +229,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         _ when t == typeof(WanderState) => EnemyState.Wander,
         _ when t == typeof(IdleState) => EnemyState.Idle,
         _ when t == typeof(ChaseState) => EnemyState.Chase,
+        _ when t == typeof(DetourState) => EnemyState.Detour,
         _ when t == typeof(ReturnState) => EnemyState.Return,
         _ when t == typeof(WaitCoolState) => EnemyState.WaitCool,
         _ when t == typeof(AttackState) => EnemyState.Attack,
@@ -235,6 +243,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         EnemyState.Wander => typeof(WanderState),
         EnemyState.Idle => typeof(IdleState),
         EnemyState.Chase => typeof(ChaseState),
+        EnemyState.Detour => typeof(DetourState),
         EnemyState.Return => typeof(ReturnState),
         EnemyState.WaitCool => typeof(WaitCoolState),
         EnemyState.Attack => typeof(AttackState),
@@ -463,6 +472,12 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         => GetTarget2DDistSq() <= enemyStatus.attackRange * enemyStatus.attackRange;
     public bool IsAlignedAndInRange()
         => IsTargetInAttackRange() && GetZDiffAbs() <= zAlignTolerance;
+    public bool IsTargetInDetectRange()
+    {
+        if (!Target) return false;
+        float detectR = enemyStatus.detectRange;
+        return GetTarget2DDistSq() <= detectR * detectR;
+    }
 
     /* ───────── Scene Gizmo ───────── */
 #if UNITY_EDITOR

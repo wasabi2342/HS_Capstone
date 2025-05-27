@@ -51,6 +51,7 @@ GameObject:
   - component: {fileID: 3277823158435553033}
   - component: {fileID: 2403682794470514799}
   - component: {fileID: 1681571723047062326}
+  - component: {fileID: 2160729584509410412}
   m_Layer: 6
   m_Name: PinkPlayer
   m_TagString: Player
@@ -401,8 +402,10 @@ MonoBehaviour:
   hitlagTime: 0.117
   shadow: {fileID: 4496898679317726336}
   nicknameText: {fileID: 6949920731095230618}
-  myController: {fileID: 9100000, guid: 3c6c69cbf5d53c849a25c4a05428990a, type: 2}
-  othersController: {fileID: 9100000, guid: 6b44f3f5a5855f34c9411b9c84a2186b, type: 2}
+
+  myController: {fileID: 0}
+  othersController: {fileID: 0}
+
   footPivot: {fileID: 9027814078262596519}
   stunOverlay: {fileID: 0}
   stunSlider: {fileID: 0}
@@ -498,9 +501,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 11400000, guid: 3939f00e561c88749b28afda4b9c5f12, type: 2}
   - {fileID: 11400000, guid: 71f296c4da421d946a460d603f3d6ff9, type: 2}
-  - {fileID: 11400000, guid: 5c8fe6de3123a4149828b42f6234d4d4, type: 2}
-  - {fileID: 0}
-  - {fileID: 11400000, guid: 14f56dd736b20114ab750ff14daebc24, type: 2}
+
 --- !u!114 &1681571723047062326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -511,6 +512,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 215ac8956e7a9f64f997f88809d5456e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2160729584509410412
+
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673988289270443858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d145df9c93b686142a943def3695fa55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &751039827282177349
