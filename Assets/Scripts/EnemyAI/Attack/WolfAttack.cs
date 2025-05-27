@@ -16,19 +16,20 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
     [Tooltip("공격 콜라이더 최대 유지 시간 (초)")]
     public float maxColliderActiveTime = 0.5f; // 콜라이더 활성화 최대 시간
 
-    // ───────── 내부 캐시 ─────────
     private Collider weaponCollider;
     private Vector3 defaultCenter;
     private bool isCharging;
-    private Transform chargeTarget;
-    private Animator animator;
-    private float colliderActiveTimer = 0f; // 콜라이더 활성화 타이머
-    private bool isColliderActive = false;  // 콜라이더 활성화 상태 추적
+    private float colliderActiveTimer = 0f;
+    private bool isColliderActive = false;
 
+    private float attackDirection = 1f; // +1 오른쪽 / -1 왼쪽
+    private EnemyFSM fsm;
+    private Animator animator;
     public string AnimKey => "Attack1";
     void Awake()
     {
         animator = GetComponent<Animator>();
+        fsm = GetComponent<EnemyFSM>();
 
         if (weaponColliderObject == null)
         {
@@ -43,23 +44,19 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
         }
         else
         {
-            // Collider 종류별로 기본 center 저장
             if (weaponCollider is BoxCollider bc) defaultCenter = bc.center;
             if (weaponCollider is SphereCollider sc) defaultCenter = sc.center;
             if (weaponCollider is CapsuleCollider cc) defaultCenter = cc.center;
         }
-        // 기본 비활성화
+
         weaponColliderObject.SetActive(false);
     }
 
     void Update()
     {
-        // 콜라이더 활성화 상태 확인 및 타이머 관리
         if (isColliderActive)
         {
             colliderActiveTimer += Time.deltaTime;
-            
-            // 최대 활성화 시간 초과 시 강제로 비활성화
             if (colliderActiveTimer >= maxColliderActiveTime)
             {
                 Debug.LogWarning("[WolfAttack] Attack collider was active too long. Forcing disable.");
@@ -68,23 +65,24 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
         }
     }
 
-    /// <summary>
-    /// FSM AttackState 에서 호출 (윈드업 후에)
-    /// 플레이어 방향으로 돌진을 시작합니다.
-    /// </summary>
     public void Attack(Transform target)
     {
-        if (isCharging || target == null) return;
+        if (isCharging) return;
         isCharging = true;
-        chargeTarget = target;
         StartCoroutine(ChargeAttackRoutine());
     }
 
     private IEnumerator ChargeAttackRoutine()
     {
+        // NavMeshAgent 위치 갱신 막기
+        if (fsm.Agent != null)
+        {
+            fsm.Agent.isStopped = true;
+            fsm.Agent.updatePosition = false;
+        }
+
+        Vector3 dir = (attackDirection >= 0f) ? Vector3.right : Vector3.left;
         Vector3 startPos = transform.position;
-        Vector3 targetPos = new Vector3(chargeTarget.position.x, transform.position.y, chargeTarget.position.z);
-        Vector3 dir = (targetPos - startPos).normalized;
 
         float traveled = 0f;
         while (traveled < maxChargeDistance)
@@ -99,21 +97,27 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
         }
 
         isCharging = false;
+
+        // 돌진 후 위치를 NavMeshAgent에도 강제 동기화
+        if (fsm.Agent != null)
+        {
+            fsm.Agent.Warp(transform.position);
+            fsm.Agent.updatePosition = true;
+            fsm.Agent.isStopped = false;
+        }
     }
 
-    /// <summary>애니메이션 이벤트: 콜라이더 켜기</summary>
     public void EnableAttack()
     {
         if (weaponColliderObject)
         {
             weaponColliderObject.SetActive(true);
             isColliderActive = true;
-            colliderActiveTimer = 0f; // 타이머 리셋
+            colliderActiveTimer = 0f;
             Debug.Log("[WolfAttack] Attack collider enabled");
         }
     }
 
-    /// <summary>애니메이션 이벤트: 콜라이더 끄기</summary>
     public void DisableAttack()
     {
         if (weaponColliderObject)
@@ -124,40 +128,36 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
         }
     }
 
-    /// <summary>애니메이션 이벤트: 오른쪽 공격 시 호출</summary>
     public void SetColliderRight()
     {
         if (weaponCollider == null) return;
         Vector3 c = defaultCenter;
         c.x = Mathf.Abs(defaultCenter.x);
-
-        if (weaponCollider is BoxCollider bc) bc.center = c;
-        if (weaponCollider is SphereCollider sc) sc.center = c;
-        if (weaponCollider is CapsuleCollider cc) cc.center = c;
+        SetColliderCenter(c);
     }
 
-    /// <summary>애니메이션 이벤트: 왼쪽 공격 시 호출</summary>
     public void SetColliderLeft()
     {
         if (weaponCollider == null) return;
         Vector3 c = defaultCenter;
         c.x = -Mathf.Abs(defaultCenter.x);
-
-        if (weaponCollider is BoxCollider bc) bc.center = c;
-        if (weaponCollider is SphereCollider sc) sc.center = c;
-        if (weaponCollider is CapsuleCollider cc) cc.center = c;
+        SetColliderCenter(c);
     }
 
-    /// <summary>
-    /// FSM AttackState.Execute 에서 방향(+1/-1) 전달용
-    /// </summary>
+    private void SetColliderCenter(Vector3 center)
+    {
+        if (weaponCollider is BoxCollider bc) bc.center = center;
+        if (weaponCollider is SphereCollider sc) sc.center = center;
+        if (weaponCollider is CapsuleCollider cc) cc.center = center;
+    }
+
     public void SetDirection(float sign)
     {
+        attackDirection = sign;
         if (sign >= 0f) SetColliderRight();
         else SetColliderLeft();
     }
 
-    /// <summary>애니메이션 이벤트: 공격 애니 끝날 때 호출</summary>
     public void OnAttackAnimationEndEvent()
     {
         DisableAttack();
