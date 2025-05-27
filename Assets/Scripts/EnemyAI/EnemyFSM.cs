@@ -346,6 +346,8 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
             if (shield == 0f && prevShield > 0f)
                 pv.RPC(nameof(RPC_ShieldBreakFx), RpcTarget.All);
         }
+        bool fromRight = atkPos.x < transform.position.x;
+        pv.RPC(nameof(RPC_SpawnHitFx), RpcTarget.All, transform.position, fromRight);
         bool stillShielded = shield > 0f;
         float prevHP = hp;
         hp = Mathf.Max(0f, hp - damage);
@@ -354,9 +356,9 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         pv.RPC(nameof(RPC_ShowDamage), RpcTarget.All, rawDamage);
         if (atkType != AttackerType.Debuff && !stillShielded)
         {
-            bool fromRight = atkPos.x < transform.position.x;
+            
             //pv.RPC(nameof(RPC_ApplyKnockback), RpcTarget.All, atkPos);
-            pv.RPC(nameof(RPC_SpawnHitFx), RpcTarget.All, transform.position, fromRight);
+            
             TransitionToState(hp <= 0f ? typeof(DeadState) : typeof(HitState));
         }
         else if (hp <= 0f)
