@@ -146,10 +146,6 @@ public class PinkPlayerController : ParentPlayerController
                 if (!animator.GetBool("Pre-Input"))
                 {
                     animator.SetBool("Pre-Input", true);
-                    //if (PhotonNetwork.IsConnected)
-                    //{
-                    //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                    //}
                 }
             }
             else if (nextState > PinkPlayerState.Run)
@@ -202,6 +198,7 @@ public class PinkPlayerController : ParentPlayerController
 
             animator.SetFloat("moveX", h);
             animator.SetFloat("moveY", v);
+
             SetFloatParameter("moveX", h);
             SetFloatParameter("moveY", v);
         }
