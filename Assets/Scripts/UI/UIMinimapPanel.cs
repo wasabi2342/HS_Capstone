@@ -25,9 +25,6 @@ public class UIMinimapPanel : UIBase
     [Tooltip("씬 안의 ‘MinimapCamera’ 태그를 가진 카메라를 자동으로 물고 옵니다.")]
     [SerializeField] string minimapCameraTag = "MinimapCamera";
 
-    [Tooltip("보상 문 프리팹에 지정된 Tag 이름")]
-    [SerializeField] string rewardDoorTag = "RewardDoor";
-
     [Space(4)]
     [Tooltip("미니맵에서 제외할 ‘Servant’ 레이어 이름")]
     [SerializeField] string servantLayerName = "Servant";
@@ -116,14 +113,13 @@ public class UIMinimapPanel : UIBase
         }
 
         // 보상 문
-        if (!string.IsNullOrEmpty(rewardDoorTag) && rewardDoorIconPrefab != null)
+
+        foreach (var door in GameObject.FindGameObjectsWithTag("NPC"))
         {
-            foreach (var door in GameObject.FindGameObjectsWithTag(rewardDoorTag))
-            {
                 int id = door.GetInstanceID();
                 wanted[id] = (door.transform, rewardDoorIconPrefab);
-            }
         }
+        
 
         /* 2) 아이콘 생성/재사용 & 위치 갱신 */
         Rect rect = minimapImage.rectTransform.rect;
