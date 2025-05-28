@@ -88,7 +88,7 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITaunta
     {
         // 마스터 클라이언트만 FSM 시작
         isPvpScene = SceneManager.GetActiveScene().name.Contains("PVP");
-        TransitionToState(typeof(ServantWanderState));
+        TransitionToState(typeof(ServantSpawnState));
     }
 
     void Update()

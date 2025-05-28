@@ -59,7 +59,7 @@ public class ChaseState : BaseState
             agent.speed = status.moveSpeed * status.chaseSpeedMultiplier;
             agent.stoppingDistance = stopDist;
             agent.autoBraking = false;
-            agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
+            agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
             agent.acceleration = 40;
             agent.angularSpeed = 720;
             agent.SetDestination(transform.position); // 목적지 초기화

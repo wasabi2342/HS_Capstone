@@ -21,7 +21,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
 
 
     /* ───────── Status ───────── */
-    float maxHP, hp;    
+    float maxHP, hp;
     public float currentHP => hp;
     float maxShield, shield;
     private bool isDead;
@@ -131,12 +131,12 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
             uiHP = go.GetComponent<UIEnemyHealthBar>();
             float y = enemyStatus.headOffset;
             if (Mathf.Approximately(y, 0f) && sr)
-                y = sr.bounds.size.y;                  
+                y = sr.bounds.size.y;
             uiHP.Init(transform, Vector3.up * y);
             uiHP.SetHP(1f);
             uiHP.SetShield(maxShield > 0 ? 1f : 0f);
         }
-         
+
         if (PhotonNetwork.IsMasterClient) ActiveMonsterCount++;
 
 
@@ -171,10 +171,10 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         }
 
         /* FSM 실행 / 네트워크 보간 */
-        if (PhotonNetwork.IsMasterClient) 
+        if (PhotonNetwork.IsMasterClient)
         {
             CurrentState?.Execute();
-            
+
             // 체력이 0 이하이고 아직 DeadState가 아니면 죽음 처리
             if (hp <= 0f && !(CurrentState is DeadState))
             {
@@ -189,7 +189,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
             transform.rotation = Quaternion.Slerp(transform.rotation, netRot, Time.deltaTime * NET_SMOOTH);
             lastMoveX = netFacing;
         }
-        
+
         UpdateFacingFromVelocity();
     }
 
@@ -254,40 +254,42 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     };
 
     /* ────────────────── Detect Target (Taunt > Player > Servant) ──────────────────── */
-    float detT; 
+    float detT;
     const float DET_INT = .2f;
     public void DetectTarget()
     {
         detT += Time.deltaTime;
         if (detT < DET_INT) return;
         detT = 0f;
-        /* 0) 활성 도발 확인 */
+
+        // 0) 도발 우선
         ITauntable[] taunts = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
                                     .OfType<ITauntable>()
                                     .Where(t => t.IsActive)
                                     .ToArray();
         if (taunts.Length > 0)
         {
-            Target = taunts[0].TauntPoint;          // 하나만 선택
+            Target = taunts[0].TauntPoint;
             return;
         }
 
-        /* 1) 플레이어 찾기 */
-        Collider[] cols = Physics.OverlapSphere(
-                transform.position, enemyStatus.detectRange,
-                playerMask, QueryTriggerInteraction.Ignore);
+        // 1) 플레이어와 서번트를 모두 감지
+        Collider[] playerCols = Physics.OverlapSphere(transform.position, enemyStatus.detectRange, playerMask, QueryTriggerInteraction.Ignore);
+        Collider[] servantCols = Physics.OverlapSphere(transform.position, enemyStatus.detectRange, servantMask, QueryTriggerInteraction.Ignore);
 
-        Transform nearest = FindNearest(cols);
-        if (nearest) { Target = nearest; return; }
+        Transform nearestPlayer = FindNearest(playerCols);
+        Transform nearestServant = FindNearest(servantCols);
 
-        /* 2) 소환수 찾기 */
-        cols = Physics.OverlapSphere(
-                transform.position, enemyStatus.detectRange,
-                servantMask, QueryTriggerInteraction.Ignore);
+        float playerDist = nearestPlayer ? (nearestPlayer.position - transform.position).sqrMagnitude : float.PositiveInfinity;
+        float servantDist = nearestServant ? (nearestServant.position - transform.position).sqrMagnitude : float.PositiveInfinity;
 
-        nearest = FindNearest(cols);
-        Target = nearest;          // 없으면 null
+        // 2) 거리 기반 우선순위 결정
+        if (playerDist < servantDist)
+            Target = nearestPlayer;
+        else
+            Target = nearestServant;
     }
+
     void TrySwitchTargetToAttacker(Vector3 hitPos)
     {
         const float PICK_RADIUS = 2f;              // 피격 지점 2 m 안
@@ -318,7 +320,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         if (isDead) return;
         pv.RPC(nameof(DamageToMaster_RPC), RpcTarget.MasterClient, damage, atkPos, (int)t);
     }
-      
+
     public void DamageToMaster(float damage, Vector3 attackerPos)
     {
         // ‘Default’ 타입으로 실제 RPC 호출
@@ -344,17 +346,19 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
             if (shield == 0f && prevShield > 0f)
                 pv.RPC(nameof(RPC_ShieldBreakFx), RpcTarget.All);
         }
-
+        bool fromRight = atkPos.x < transform.position.x;
+        pv.RPC(nameof(RPC_SpawnHitFx), RpcTarget.All, transform.position, fromRight);
+        bool stillShielded = shield > 0f;
         float prevHP = hp;
         hp = Mathf.Max(0f, hp - damage);
         float deltaHP = prevHP - hp;
         pv.RPC(nameof(UpdateHP), RpcTarget.AllBuffered, hp / maxHP);
         pv.RPC(nameof(RPC_ShowDamage), RpcTarget.All, rawDamage);
-        if(atkType != AttackerType.Debuff)
+        if (atkType != AttackerType.Debuff && !stillShielded)
         {
-            bool fromRight = atkPos.x < transform.position.x;
+            
             //pv.RPC(nameof(RPC_ApplyKnockback), RpcTarget.All, atkPos);
-            pv.RPC(nameof(RPC_SpawnHitFx), RpcTarget.All, transform.position, fromRight);
+            
             TransitionToState(hp <= 0f ? typeof(DeadState) : typeof(HitState));
         }
         else if (hp <= 0f)
@@ -363,6 +367,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
             TransitionToState(typeof(DeadState));
         }
     }
+
     public void SelectNextAttackPattern()
     {
         if (AttackPatterns == null || AttackPatterns.Length == 0) return;
@@ -416,9 +421,31 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     [PunRPC]
     void RPC_SpawnHitFx(Vector3 pos, bool spawnRight)
     {
-        GameObject b = spawnRight ? bloodFxRight : bloodFxLeft;
-        GameObject s = spawnRight ? slashFxRight : slashFxLeft;
-        OneShotFx(b, pos, .7f); OneShotFx(s, pos, .4f);
+        GameObject bloodFx = Instantiate(
+            spawnRight ? bloodFxRight : bloodFxLeft,
+            pos + (Vector3.down * 3f),
+            Quaternion.identity, null);
+        if (bloodFx.TryGetComponent<Animator>(out var bloodFXAnim))
+        {
+            string[] animNames = { "Blood1", "Blood2", "Blood3" };
+            bloodFXAnim.Play(animNames[Random.Range(0, animNames.Length)]);
+        }
+        Destroy(bloodFx, 0.7f);
+
+        GameObject slashFX = Instantiate(
+            spawnRight ? slashFxRight : slashFxLeft,
+            pos + (Vector3.down * 3f),
+            Quaternion.identity, null);
+        if (slashFX.TryGetComponent<Animator>(out var slashFXAnim))
+        {
+            string[] animNames = { "Slash1", "Slash2", "Slash3", "Slash4" };
+            slashFXAnim.Play(animNames[Random.Range(0, animNames.Length)]);
+        }
+        Destroy(slashFX, 0.4f);
+
+        //GameObject b = spawnRight ? bloodFxRight : bloodFxLeft;
+        //GameObject s = spawnRight ? slashFxRight : slashFxLeft;
+        //OneShotFx(b, pos, .7f); OneShotFx(s, pos, .4f);
     }
     void OneShotFx(GameObject prefab, Vector3 pos, float life)
     {

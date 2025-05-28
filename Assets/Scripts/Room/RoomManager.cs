@@ -118,6 +118,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             UIManager.Instance.SetRenderCamera(UICamera);
         }
+
+        InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
     }
 
     private void OnDisable()

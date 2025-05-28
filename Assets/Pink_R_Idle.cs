@@ -55,6 +55,9 @@ public class Pink_R_Idle : StateMachineBehaviour
             case PinkPlayerState.R_finish:
                 animator.SetBool("ultimate", true);
                 break;
+            case PinkPlayerState.Dash:
+                pc.nextState = PinkPlayerState.R_Idle;
+                break;
 
 
         }
