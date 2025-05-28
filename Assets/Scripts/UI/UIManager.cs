@@ -5,6 +5,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+public enum ArrowTarget
+{
+    door,
+    blessing
+}
+
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
@@ -16,7 +22,9 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Canvas cameraCanvas;
     [SerializeField]
-    private TargetIndicator targetIndicator;
+    private TargetIndicator doorTargetIndicator;
+    [SerializeField]
+    private TargetIndicator blessingTargetIndicator;
 
     private CanvasScaler scaler;
 
@@ -41,7 +49,8 @@ public class UIManager : MonoBehaviour
     public void SetRenderCamera(Camera camera)
     {
         cameraCanvas.worldCamera = camera;
-        targetIndicator.SetCamera(camera);
+        doorTargetIndicator.SetCamera(camera);
+        blessingTargetIndicator.SetCamera(camera);
     }
 
     void Start()
@@ -163,12 +172,12 @@ public class UIManager : MonoBehaviour
         OffTargetIndicator();
 
         CloseAllUI();
-        if (scene.name.StartsWith("Level")||scene.name=="StageTest1" || scene.name == "Tutorial" || scene.name == "PvP")
+        if (scene.name.StartsWith("Level") || scene.name == "StageTest1" || scene.name == "Tutorial" || scene.name == "PvP")
         {
             OpenPanelInOverlayCanvas<UIIngameMainPanel>();
             OpenPanelInOverlayCanvas<UIMinimapPanel>(additive: true);
         }
-        else if(scene.name == "Restart")
+        else if (scene.name == "Restart")
         {
             CloseAllUI();
             OpenPanelInOverlayCanvas<UiStartPanel>();
@@ -181,14 +190,25 @@ public class UIManager : MonoBehaviour
         OpenPanelInOverlayCanvas<T>();
     }
 
-    public void OnTargetIndicator(Transform target)
+    public void OnTargetIndicator(Transform targetPos, ArrowTarget target)
     {
-        targetIndicator.SetTarget(target);
-        targetIndicator.gameObject.SetActive(true);
+        switch (target)
+        {
+            case ArrowTarget.door:
+                doorTargetIndicator.SetTarget(targetPos);
+                doorTargetIndicator.gameObject.SetActive(true);
+                break;
+            case ArrowTarget.blessing:
+                blessingTargetIndicator.SetTarget(targetPos);
+                blessingTargetIndicator.gameObject.SetActive(true);
+                break;
+
+        }
     }
 
     public void OffTargetIndicator()
     {
-        targetIndicator.gameObject.SetActive(false);
+        doorTargetIndicator.gameObject.SetActive(false);
+        blessingTargetIndicator.gameObject.SetActive(false);
     }
 }

@@ -660,12 +660,12 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void RPC_OnTargetIndicator(int viewID)
+    public void RPC_OnTargetIndicator(int viewID, ArrowTarget target)
     {
         PhotonView targetView = PhotonView.Find(viewID);
         if (targetView != null)
         {
-            UIManager.Instance.OnTargetIndicator(targetView.transform);
+            UIManager.Instance.OnTargetIndicator(targetView.transform, target);
         }
     }
 }

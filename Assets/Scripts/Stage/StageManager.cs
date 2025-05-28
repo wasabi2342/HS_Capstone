@@ -211,20 +211,28 @@ public class StageManager : MonoBehaviour
                     rewardSpawn.position,
                     doorPrefab.transform.rotation);
 
-                    UIManager.Instance.OnTargetIndicator(door.transform);
+                    UIManager.Instance.OnTargetIndicator(door.transform, ArrowTarget.door);
+
                     if (PhotonNetwork.IsConnected)
                     {
-                        PhotonNetworkManager.Instance.photonView.RPC("RPC_OnTargetIndicator", RpcTarget.Others, door.GetPhotonView().ViewID);
+                        PhotonNetworkManager.Instance.photonView.RPC("RPC_OnTargetIndicator", RpcTarget.Others, door.GetPhotonView().ViewID, ArrowTarget.door);
                     }
                 }
                 if (!isEndStage)
                 {
                     if (blessingNPC != null && blessingSpawn != null)
                     {
-                        PhotonNetwork.Instantiate(
+                        GameObject blessing = PhotonNetwork.Instantiate(
                         blessingNPCPrefabName,
                         blessingSpawn.position,
                         blessingNPC.transform.rotation);
+
+                        UIManager.Instance.OnTargetIndicator(blessing.transform, ArrowTarget.blessing);
+
+                        if (PhotonNetwork.IsConnected)
+                        {
+                            PhotonNetworkManager.Instance.photonView.RPC("RPC_OnTargetIndicator", RpcTarget.Others, blessing.GetPhotonView().ViewID, ArrowTarget.blessing);
+                        }
                     }
                 }
                 for (int i = 0; i < isImmediateSpawnList.Count; i++)
