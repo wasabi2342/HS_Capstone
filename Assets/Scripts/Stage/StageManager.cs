@@ -65,7 +65,7 @@ public class StageManager : MonoBehaviour
             {
                 GameObject blessingNPC = Resources.Load<GameObject>(blessingNPCPrefabName);
 
-                if (blessingNPC != null)
+                if (blessingNPC != null && blessingSpawn != null)
                 {
                     PhotonNetwork.Instantiate(
                     blessingNPCPrefabName,
@@ -204,7 +204,7 @@ public class StageManager : MonoBehaviour
                 GameObject doorPrefab = Resources.Load<GameObject>(doorPrefabName);
                 GameObject blessingNPC = Resources.Load<GameObject>(blessingNPCPrefabName);
 
-                if (doorPrefab != null)
+                if (doorPrefab != null && rewardSpawn != null)
                 {
                     GameObject door =  PhotonNetwork.Instantiate(
                     doorPrefabName,
@@ -219,7 +219,7 @@ public class StageManager : MonoBehaviour
                 }
                 if (!isEndStage)
                 {
-                    if (blessingNPC != null)
+                    if (blessingNPC != null && blessingSpawn != null)
                     {
                         PhotonNetwork.Instantiate(
                         blessingNPCPrefabName,

@@ -24,6 +24,10 @@ public class UIMenuPanel : UIBase
     [SerializeField]
     private Button escapeButton;
     [SerializeField]
+    private Button resetSettingButton;
+    [SerializeField]
+    private Button changeNicknameButton;
+    [SerializeField]
     private TMP_Dropdown resolutionDropdown;
     [SerializeField]
     private TMP_Dropdown windowDropdown;
@@ -65,6 +69,10 @@ public class UIMenuPanel : UIBase
                 }
             });
         }
+
+        resetSettingButton.onClick.AddListener(() => DataManager.Instance.RestSettingData());
+
+        changeNicknameButton.onClick.AddListener(() => UIManager.Instance.OpenPopupPanelInOverlayCanvas<UISetNicknamePanel>());
 
         closeUIAction = CloseUI;
         InputManager.Instance.PlayerInput.actions["ESC"].performed += closeUIAction;

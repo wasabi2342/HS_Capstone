@@ -302,7 +302,16 @@ public class DataManager : MonoBehaviour
             settingData = new SettingData();
             Debug.Log("[DataManager] No setting file found. Creating default.");
             SaveSettingData(); // 초기 저장
+            ApplySettings();
         }
+    }
+
+    public void RestSettingData()
+    {
+        settingData = new SettingData();
+        Debug.Log("설정 초기화");
+        SaveSettingData(); // 초기 저장
+        ApplySettings();
     }
 
     private void ApplySettings()
