@@ -86,8 +86,6 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable, IMovable
     {
         runTimeData = new PlayerRunTimeData(characterBaseStats);
 
-        BindCooldown();
-
         playerBlessing = GetComponent<PlayerBlessing>();
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
@@ -119,6 +117,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable, IMovable
                 gameObject.AddComponent<StudioListener>();
 
                 runTimeData.LoadFromJsonFile();
+
+                BindCooldown();
 
                 animator.speed = runTimeData.attackSpeed;
 
