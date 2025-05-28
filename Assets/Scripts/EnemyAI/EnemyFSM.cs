@@ -206,6 +206,22 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
             Agent.enabled && Agent.velocity.sqrMagnitude > .0001f)
             lastMoveX = Agent.velocity.x >= 0 ? 1f : -1f;
     }
+    /*──────────────────── Target 상태 체크 ────────────────────*/
+    bool IsPlayerIncapacitated(Transform trg)
+    {
+        // ─ White 플레이어 ─
+        if (trg.TryGetComponent(out WhitePlayerController wp))
+            return wp.currentState == WhitePlayerState.Stun
+                || wp.currentState == WhitePlayerState.Death;
+        if (trg.TryGetComponent(out PinkPlayerController pp))
+            return pp.currentState == PinkPlayerState.Stun
+                || pp.currentState == PinkPlayerState.Death;
+        // ─ 공통 베이스(다른 색 플레이어) ─
+        if (trg.TryGetComponent(out ParentPlayerController ppc))
+            return ppc.IsStunState();                   // Parent 쪽 ‘Stun’ 판정
+
+        return false;   // 이상 없으면 정상
+    }
     /// <summary>
     /// Target이 죽었거나 비활성화되면 어그로 해제 후 새 타겟 탐색.
     /// 없으면 Wander로 전환.
@@ -228,7 +244,8 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
                     invalid = (float)hpField.GetValue(dmg) <= 0f;
             }
         }
-
+        if (!invalid && IsPlayerIncapacitated(Target))
+            invalid = true;
         if (!invalid) return;          // 아직 살아 있으면 그대로
 
         /* ───── 어그로 해제 ───── */
