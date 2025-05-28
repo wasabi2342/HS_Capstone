@@ -117,7 +117,7 @@ public class SkillEffect : MonoBehaviourPun
                 ApplyAttackEffectOnly(other); // 이펙트 및 사운드
 
                 // 넉백 적용
-                ApplyKnockback(other);
+                // ApplyKnockback(other);
             }
         }
         else if (damageable != null)
