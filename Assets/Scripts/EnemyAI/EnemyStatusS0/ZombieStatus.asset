@@ -35,4 +35,8 @@ MonoBehaviour:
   attackDuration: 1
   attackCoolTime: 2
   attackDamage: 10
-  attackWeights: []
+  attackWeights:
+  - scriptName: GhoulAttack
+    weight: 0.5
+  - scriptName: GhoulLongAttack
+    weight: 0.5
