@@ -11,7 +11,7 @@ public class PinkPlayerR_AttackStack : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        
+
         if (pinkPlayerController == null)
             pinkPlayerController = animator.GetComponent<PinkPlayerController>();
 
@@ -26,7 +26,9 @@ public class PinkPlayerR_AttackStack : StateMachineBehaviour
         //animator.SetInteger("R_attackStack", pinkPlayerController.R_attackStack);
 
         pinkPlayerController.currentState = PinkPlayerState.R_hit;
-        pinkPlayerController.nextState = PinkPlayerState.R_Idle;
+
+        if (pinkPlayerController.nextState == PinkPlayerState.R_hit)
+            pinkPlayerController.nextState = PinkPlayerState.R_Idle;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -42,17 +44,6 @@ public class PinkPlayerR_AttackStack : StateMachineBehaviour
         if (pinkPlayerController.nextState == PinkPlayerState.R_hit)
         {
             animator.SetBool("AttackContinue", true);
-            //if (PhotonNetwork.IsConnected)
-            //{
-            //    whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
-            //}
-        }
-        else
-        {
-            //if (PhotonNetwork.IsConnected)
-            // {
-            //    whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
-            // }
         }
     }
 
