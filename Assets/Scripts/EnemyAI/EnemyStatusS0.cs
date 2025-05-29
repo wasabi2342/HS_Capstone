@@ -28,7 +28,7 @@ public class EnemyStatusSO : ScriptableObject
     public float detectRange = 1f; // 플레이어 감지 범위
     public float attackRange = .5f; // 공격 범위
     public LayerMask playerLayerMask; // 플레이어 감지를 위한 레이어 마스크 [2, 3]
-    public float waitCoolTime = 0.5f; // 공격 준비 시간 (wait cool)
+
     public float attackDuration = 1.0f; // 공격 애니메이션/판정 시간 (추정)
     public float attackCoolTime = 2.0f; // 공격 후 쿨다운 (attack cool)
 
