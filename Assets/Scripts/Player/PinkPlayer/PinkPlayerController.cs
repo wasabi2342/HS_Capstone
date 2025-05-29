@@ -807,26 +807,41 @@ public class PinkPlayerController : ParentPlayerController
 
     public override void StartMouseRCoolDown()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.StartMouseRCoolDown();
     }
 
     public override void StartShiftCoolDown()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.StartShiftCoolDown();
     }
 
     public override void StartUltimateCoolDown()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.StartUltimateCoolDown();
     }
 
     public override void StartAttackCooldown()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.StartAttackCooldown();
     }
 
     public override void StartSpaceCooldown()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.StartSpaceCooldown();
     }
 
