@@ -72,7 +72,7 @@ public class ServantChaseState : ServantBaseState
         if ((fsm.TargetEnemy.position - transform.position).sqrMagnitude <= atkR * atkR)
         {
             agent.isStopped = true;
-            fsm.TransitionToState(typeof(ServantAttackState));
+            fsm.TransitionToState(typeof(ServantWaitCoolState));
             return;
         }
 

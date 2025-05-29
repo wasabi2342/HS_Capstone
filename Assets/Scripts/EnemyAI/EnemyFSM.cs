@@ -321,6 +321,72 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     };
 
     /* ────────────────── Detect Target (Taunt > Player > Servant) ──────────────────── */
+
+    void TrySwitchTargetToAttacker(Vector3 hitPos)
+    {
+        const float PICK_RADIUS = 3f;
+
+        // 모든 콜라이더를 가져와서 직접 필터링
+        Collider[] allCols = Physics.OverlapSphere(
+            hitPos, PICK_RADIUS,
+            -1,  // 모든 레이어
+            QueryTriggerInteraction.Ignore);
+
+        Debug.Log($"[Monster] 공격 위치 {hitPos}에서 {allCols.Length}개 콜라이더 발견");
+
+        Transform nearest = null;
+        float minDist = float.MaxValue;
+
+        foreach (var col in allCols)
+        {
+            // 플레이어 태그가 있는 모든 오브젝트 검사
+            if (col.CompareTag("Player"))
+            {
+                float dist = Vector3.Distance(hitPos, col.transform.position);
+
+                // ServantFSM 컴포넌트 확인
+                var servantFSM = col.GetComponentInParent<ServantFSM>();
+                if (servantFSM != null)
+                {
+                    Debug.Log($"[Monster] 소환수 발견! {servantFSM.name} at {servantFSM.transform.position}, 거리: {dist}");
+
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        nearest = servantFSM.transform;
+                    }
+                }
+                else
+                {
+                    // 플레이어 컨트롤러 확인
+                    var playerController = col.GetComponentInParent<ParentPlayerController>();
+                    if (playerController != null)
+                    {
+                        Debug.Log($"[Monster] 플레이어 발견! {playerController.name} at {playerController.transform.position}, 거리: {dist}");
+
+                        if (dist < minDist)
+                        {
+                            minDist = dist;
+                            nearest = playerController.transform;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (nearest != null)
+        {
+            Debug.Log($"[Monster] 공격자로 타겟 변경: {nearest.name}");
+            Target = nearest;
+            lastAttacker = nearest;
+            lastAttackTime = Time.time;
+        }
+        else
+        {
+            Debug.Log("[Monster] 공격자를 찾지 못함!");
+        }
+    }
+
     float detT;
     const float DET_INT = .2f;
 
@@ -330,7 +396,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         if (detT < DET_INT) return;
         detT = 0f;
 
-        // 0) 도발 우선
+        // 1순위: 도발
         ITauntable[] taunts = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
                                     .OfType<ITauntable>()
                                     .Where(t => t.IsActive)
@@ -341,58 +407,116 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
             return;
         }
 
-        if (lastAttacker != null && Time.time - lastAttackTime < ATTACKER_PRIORITY_DURATION) 
+        // 2순위: 최근 공격자
+        if (lastAttacker != null &&
+            lastAttacker.gameObject.activeInHierarchy &&
+            Time.time - lastAttackTime < ATTACKER_PRIORITY_DURATION)
         {
-            Target = lastAttacker;
-            return;
+            bool attackerAlive = true;
+
+            if (lastAttacker.TryGetComponent(out IDamageable dmg))
+            {
+                var hpField = dmg.GetType().GetField("currentHP");
+                if (hpField != null && hpField.FieldType == typeof(float))
+                    attackerAlive = (float)hpField.GetValue(dmg) > 0f;
+            }
+
+            if (attackerAlive)
+            {
+                Target = lastAttacker;
+                return;
+            }
+            else
+            {
+                lastAttacker = null;
+                lastAttackTime = 0f;
+            }
         }
-        // 1) 플레이어와 서번트를 모두 감지
-        Collider[] playerCols = Physics.OverlapSphere(transform.position, enemyStatus.detectRange, playerMask, QueryTriggerInteraction.Ignore);
-        Collider[] servantCols = Physics.OverlapSphere(transform.position, enemyStatus.detectRange, servantMask, QueryTriggerInteraction.Ignore);
 
-        Transform nearestPlayer = FindNearest(playerCols);
-        Transform nearestServant = FindNearest(servantCols);
+        // 3순위: 일반 탐지 - 태그 기반
+        Collider[] allCols = Physics.OverlapSphere(
+            transform.position,
+            enemyStatus.detectRange,
+            -1 // 모든 레이어
+            );
 
-        float playerDist = nearestPlayer ? (nearestPlayer.position - transform.position).sqrMagnitude : float.PositiveInfinity;
-        float servantDist = nearestServant ? (nearestServant.position - transform.position).sqrMagnitude : float.PositiveInfinity;
+        List<Transform> validTargets = new List<Transform>();
 
-        // 2) 거리 기반 우선순위 결정
-        if (playerDist < servantDist)
-            Target = nearestPlayer;
-        else
-            Target = nearestServant;
-    }
-
-
-
-    void TrySwitchTargetToAttacker(Vector3 hitPos)
-    {
-        const float PICK_RADIUS = 2f;
-        int mask = playerMask | servantMask;
-        Collider[] cols = Physics.OverlapSphere(
-            hitPos, PICK_RADIUS,
-            mask,
-            QueryTriggerInteraction.Ignore);
-
-        Transform nearest = FindNearest(cols);      // EnemyFSM에 이미 구현돼 있음
-        if (nearest != null && nearest != Target)
+        foreach (var col in allCols)
         {
-            lastAttacker
-                = nearest;
-            lastAttackTime
-                = Time.time;
-            Target = nearest;
+            if (col.CompareTag("Player"))
+            {
+                // 소환수인지 확인
+                var servantFSM = col.GetComponentInParent<ServantFSM>();
+                if (servantFSM != null)
+                {
+                    validTargets.Add(servantFSM.transform);
+                }
+                else
+                {
+                    // 플레이어인지 확인
+                    var playerController = col.GetComponentInParent<ParentPlayerController>();
+                    if (playerController != null)
+                    {
+                        validTargets.Add(playerController.transform);
+                    }
+                }
+            }
         }
+
+        // 가장 가까운 대상 찾기
+        Transform nearest = null;
+        float minDist = float.MaxValue;
+
+        foreach (var t in validTargets)
+        {
+            float dist = Vector3.Distance(transform.position, t.position);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                nearest = t;
+            }
+        }
+
+        Target = nearest;
     }
     Transform FindNearest(Collider[] arr)
     {
         Transform best = null;
         float minSq = float.PositiveInfinity;
+
         foreach (var c in arr)
         {
-            float d = (c.transform.position - transform.position).sqrMagnitude;
-            if (d < minSq) { minSq = d; best = c.transform; }
+            if (!c.CompareTag("Player")) continue;
+
+            // 유효한 타겟인지 확인 (소환수 또는 플레이어)
+            Transform validTarget = null;
+
+            var servantFSM = c.GetComponentInParent<ServantFSM>();
+            if (servantFSM != null)
+            {
+                validTarget = servantFSM.transform;
+            }
+            else
+            {
+                var playerController = c.GetComponentInParent<ParentPlayerController>();
+                if (playerController != null)
+                {
+                    validTarget = playerController.transform;
+                }
+            }
+
+            if (validTarget != null)
+            {
+                float d = (validTarget.position - transform.position).sqrMagnitude;
+                if (d < minSq)
+                {
+                    minSq = d;
+                    best = validTarget;
+                }
+            }
         }
+
         return best;
     }
 
@@ -419,6 +543,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         if (!PhotonNetwork.IsMasterClient) return;
         lastHitPos = atkPos;
         TrySwitchTargetToAttacker(atkPos);
+        TransitionToState(typeof(ChaseState));
         float rawDamage = damage;
         /* 실드 → HP 차감 */
         if (shield > 0f)
