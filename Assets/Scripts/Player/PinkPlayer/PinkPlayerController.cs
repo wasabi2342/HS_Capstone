@@ -680,7 +680,7 @@ public class PinkPlayerController : ParentPlayerController
     {
         int stacks = myServantsCount;
         float totalShield = 30f * stacks;
-        float totalDuration = 2f * stacks;
+        float totalDuration = 5f * stacks; // 기존 2초에서 5초로 늘림
 
         StartCoroutine(R_Time(totalDuration));
         if (runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil == 1)
