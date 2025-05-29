@@ -29,6 +29,7 @@ public class ServantAttackCollider : MonoBehaviourPun
         if (dmg != null)
         {
             dmg.TakeDamage(fsm.attackDamage, transform.position, AttackerType.PinkPlayer);
+            AudioManager.Instance.PlayOneShot("event:/Character/Character-pink/spear attack", transform.position, RpcTarget.All);
         }
     }
 }
