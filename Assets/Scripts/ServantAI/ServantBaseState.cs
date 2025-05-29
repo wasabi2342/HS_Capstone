@@ -18,7 +18,7 @@ public abstract class ServantBaseState : IState
         transform = s.transform;
     }
 
-    protected bool CanControlAgent => agent != null;
+    protected bool CanControlAgent => agent != null && agent.enabled && agent.isOnNavMesh;
 
     protected void SetAgentStopped(bool stop)
     {
