@@ -761,6 +761,7 @@ public class WhitePlayerController : ParentPlayerController
     {
         currentState = WhitePlayerState.Stun;
         Debug.Log("플레이어 기절");
+        PhotonNetworkManager.Instance.ReportPlayerStun(photonView.Owner.ActorNumber);
         animator.SetBool("stun", true);
         //if (PhotonNetwork.IsConnected)
         //{
@@ -792,7 +793,7 @@ public class WhitePlayerController : ParentPlayerController
         {
             stunElapsed += Time.deltaTime;
 
-            if (photonView.IsMine)
+            if (photonView.IsMine && stunSlider != null)
             {
                 stunSlider.fillAmount = 1 - (stunElapsed / stunDuration);
             }
