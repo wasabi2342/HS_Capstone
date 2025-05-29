@@ -101,7 +101,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         Agent.updatePosition = PhotonNetwork.IsMasterClient;
         Agent.updateRotation = false;
         Agent.updateUpAxis = false;  // 2D 평면일 땐 선택
-        Agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
+        Agent.obstacleAvoidanceType = ObstacleAvoidanceType.GoodQualityObstacleAvoidance;
         /* ─ 회피 우선순위 : Master 쪽에서만 무작위 부여 ─ */
         if (PhotonNetwork.IsMasterClient)
         {
