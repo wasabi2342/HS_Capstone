@@ -30,6 +30,7 @@ public class ServantWaitCoolState : ServantBaseState
 
     IEnumerator WaitRoutine()
     {
+        Debug.Log($"WaitCoolTime 사용 중: {fsm.waitCoolTime}");
         yield return new WaitForSeconds(fsm.waitCoolTime);
         // 사거리 내면 Attack, 아니면 Chase
         bool inRange = !fsm.Agent.pathPending

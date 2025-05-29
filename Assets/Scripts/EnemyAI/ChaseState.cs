@@ -115,7 +115,7 @@ public class ChaseState : BaseState
             fsm.TransitionToState(typeof(WaitCoolState)); return;
         }
 
-        /* ▶ 정렬 실패 타이머 */
+        /* 정렬 실패 타이머 */
         bool needAlign = reached && zAbs > tolOut && inAtk;
         noAlignT = needAlign ? noAlignT + Time.deltaTime : 0f;
 
