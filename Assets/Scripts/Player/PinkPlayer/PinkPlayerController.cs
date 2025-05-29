@@ -1557,6 +1557,7 @@ public class PinkPlayerController : ParentPlayerController
     private void EnterStunState()
     {
         currentState = PinkPlayerState.Stun;
+        PhotonNetworkManager.Instance.ReportPlayerStun(photonView.Owner.ActorNumber);
         Debug.Log("플레이어 기절");
         animator.SetBool("stun", true);
         //if (PhotonNetwork.IsConnected)
@@ -1589,7 +1590,7 @@ public class PinkPlayerController : ParentPlayerController
         {
             stunElapsed += Time.deltaTime;
 
-            if (photonView.IsMine)
+            if (photonView.IsMine && stunSlider != null)
             {
                 stunSlider.fillAmount = 1 - (stunElapsed / stunDuration);
             }

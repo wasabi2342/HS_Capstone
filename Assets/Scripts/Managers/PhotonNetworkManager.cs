@@ -21,6 +21,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     private Coroutine finalRewardNextStageCoroutine;
 
     private HashSet<int> deadPlayers = new HashSet<int>();
+    private HashSet<int> stunPlayers = new HashSet<int>();
 
     private bool isInPvPArea = false;
 
@@ -509,16 +510,44 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     }
 
     /// <summary>
+    /// 플레이어 스턴 시 호출
+    /// </summary>
+    public void ReportPlayerStun(int actorNumber)
+    {
+        if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
+        {
+            if (!stunPlayers.Contains(actorNumber))
+            {
+                stunPlayers.Add(actorNumber);
+                Debug.Log($"플레이어 {actorNumber} 스턴. 현재 스턴자 수: {stunPlayers.Count}");
+
+                if (isInPvPArea)
+                {
+                    //CheckRemainingTeamsAndEndGame();
+                }
+                else
+                {
+                    CheckAllPlayersDead();
+                }
+            }
+        }
+        else
+        {
+            photonView.RPC(nameof(RPC_ReportPlayerStun), RpcTarget.MasterClient, actorNumber);
+        }
+    }
+
+    /// <summary>
     /// 플레이어 부활 시 호출
     /// </summary>
     public void ReportPlayerRevive(int actorNumber)
     {
         if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
         {
-            if (deadPlayers.Contains(actorNumber))
+            if (stunPlayers.Contains(actorNumber))
             {
-                deadPlayers.Remove(actorNumber);
-                Debug.Log($"플레이어 {actorNumber} 부활. 현재 사망자 수: {deadPlayers.Count}");
+                stunPlayers.Remove(actorNumber);
+                Debug.Log($"플레이어 {actorNumber} 부활. 현재 사망자 수: {stunPlayers.Count}");
             }
         }
         else
@@ -563,6 +592,12 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
+    private void RPC_ReportPlayerStun(int actorNumber)
+    {
+        ReportPlayerStun(actorNumber);
+    }
+
+    [PunRPC]
     private void RPC_ReportPlayerDeath(int actorNumber)
     {
         ReportPlayerDeath(actorNumber);
@@ -581,7 +616,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
         int totalPlayers = PhotonNetwork.OfflineMode ? 1 : PhotonNetwork.CurrentRoom.PlayerCount;
 
-        if (deadPlayers.Count >= totalPlayers)
+        if (deadPlayers.Count >= totalPlayers || stunPlayers.Count >= totalPlayers)
         {
             Debug.Log("모든 플레이어가 사망했습니다. 마을 씬으로 전환합니다.");
 

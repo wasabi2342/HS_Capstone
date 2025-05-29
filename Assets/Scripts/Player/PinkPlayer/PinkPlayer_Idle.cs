@@ -10,11 +10,11 @@ public class PinkPlayer_Idle : StateMachineBehaviour
     {
         if (photonView == null)
             photonView = animator.GetComponent<PhotonView>();
-        if (PhotonNetwork.IsConnected && !photonView.IsMine)
-            return;
         if (pinkPlayerController == null)
             pinkPlayerController = animator.GetComponent<PinkPlayerController>();
         pinkPlayerController.currentState = PinkPlayerState.Idle;
+        if (PhotonNetwork.IsConnected && !photonView.IsMine)
+            return;
         pinkPlayerController.isUltimateActive = false;
         animator.SetBool("Pre-Attack", false);
         animator.SetBool("Pre-Input", false);
