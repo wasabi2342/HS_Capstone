@@ -12,6 +12,7 @@ public class AttackState : BaseState
         fsm.SelectNextAttackPattern();
         RefreshFacingToTarget();
         SetAgentStopped(true);
+        if (fsm.Agent) fsm.Agent.ResetPath();
         // ─ 방향 넘겨 주기 ─
         fsm.AttackComponent.SetDirection(fsm.CurrentFacing);
         string clipBase = fsm.AttackComponent?.AnimKey ?? "Attack";

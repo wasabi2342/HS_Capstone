@@ -125,7 +125,11 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITaunta
             : enemyLayerMask;                    // PVE = 몬스터만
 
         // 2) 가장 가까운 IDamageable 찾기
-        Collider[] cols = Physics.OverlapSphere(transform.position, detectRange, mask);
+        Collider[] cols = Physics.OverlapSphere(
+            transform.position,
+            detectRange,
+            mask,
+            QueryTriggerInteraction.Collide);
         float closest = float.MaxValue;
         Transform pick = null;
 

@@ -27,16 +27,16 @@ public class AttackCoolState : BaseState
             RefreshFacingToTarget();           // 바라보는 방향만 유지
             return;
         }
-
+        bool aligned = fsm.IsAlignedAndInRange();
         /* 2) 쿨타임이 끝난 뒤 분기 */
-        if (fsm.IsTargetInDetectRange())       // 탐지 반경 안 → 추적 재개
+        if (aligned)       // 탐지 반경 안 → 추적 재개
         {
-            SetAgentStopped(false);
-            fsm.TransitionToState(typeof(ChaseState));
+            SetAgentStopped(true);
+            fsm.TransitionToState(typeof(WaitCoolState));
         }
         else                                   // 멀어짐 → 순찰/귀환
         {
-            fsm.Target = null;
+            SetAgentStopped(false);
             fsm.TransitionToState(typeof(WanderState));  // 필요하면 ReturnState
         }
     }
