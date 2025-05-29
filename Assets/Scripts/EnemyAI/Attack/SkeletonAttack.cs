@@ -21,6 +21,7 @@ public class SkeletonAttack : MonoBehaviourPun, IMonsterAttack
     float facing = 1f;         // +1 ⇢ Right, -1 ⇢ Left
     EnemyFSM fsm;
     public string AnimKey => "Attack1";
+    public float WindUpRate => 0.50f;
     void Awake() => fsm = GetComponent<EnemyFSM>();
     public void SetFirePointRight() => ShiftFirePoint(+1);
     public void SetFirePointLeft() => ShiftFirePoint(-1);

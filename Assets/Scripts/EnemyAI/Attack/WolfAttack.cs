@@ -26,6 +26,7 @@ public class WolfAttack : MonoBehaviour, IMonsterAttack
     private EnemyFSM fsm;
     private Animator animator;
     public string AnimKey => "Attack1";
+    public float WindUpRate => 0.60f;
     void Awake()
     {
         animator = GetComponent<Animator>();

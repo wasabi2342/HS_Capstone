@@ -18,6 +18,7 @@ public class GhoulAttack : MonoBehaviourPun, IMonsterAttack
     EnemyFSM fsm;               // 위치 이동에 사용
 
     public string AnimKey => "Attack1";
+    public float WindUpRate => 0.50f;
 
     void Awake()
     {
