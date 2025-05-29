@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 204455341570526544}
   - component: {fileID: 7823707909380629626}
   - component: {fileID: 9049417103047113351}
+  - component: {fileID: 4322926006276344658}
   m_Layer: 0
   m_Name: Ult_HeadParitcle_Right
   m_TagString: Untagged
@@ -27,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 1510920382958068904}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.278125, y: 0.1968751, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.375, y: 0.525, z: 0.375}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -110,3 +111,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4322926006276344658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1510920382958068904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6714531c8cf89f142aa576a25ef10be5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 0}
+  hitlagTime: 0
+  attackerType: 0
+  animationSpeed: 1
+  childEffect: {fileID: 0}

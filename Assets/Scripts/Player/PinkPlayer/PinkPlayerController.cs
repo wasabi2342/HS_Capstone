@@ -680,7 +680,7 @@ public class PinkPlayerController : ParentPlayerController
     {
         int stacks = myServantsCount;
         float totalShield = 30f * stacks;
-        float totalDuration = 5f * stacks; // 기존 2초에서 5초로 늘림
+        float totalDuration = 10f * stacks; // 기존 2초에서 5초로 늘림
 
         StartCoroutine(R_Time(totalDuration));
         if (runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil == 1)
@@ -1066,9 +1066,14 @@ public class PinkPlayerController : ParentPlayerController
 
         // Photon에 접속 중이든 아니든, 로컬에서 이펙트를 생성하는 코드
         SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
-        
+
         // 머리 이펙트 생성
-        Instantiate(Resources.Load<SkillEffect>(headEffectPath), targetPos, Quaternion.identity);
+        SkillEffect headEffect = Instantiate(Resources.Load<SkillEffect>(headEffectPath), targetPos, Quaternion.identity);
+
+        if(headEffect == null)
+        {
+            Debug.Log("이펙트 생성 실패");
+        }
 
         // Init 메서드 호출, 여기서 다시 호출할지 말지 고민중 --> 아마 기획 나오면 더 고칠 예정
         //skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine);
