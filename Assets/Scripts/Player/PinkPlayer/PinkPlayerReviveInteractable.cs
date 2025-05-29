@@ -24,7 +24,7 @@ public class PinkPlayerReviveInteractable : GaugeInteraction
             return;
         }
 
-    
+
 
         // 같은 팀일 때만 부활 상호작용
         if (IsSameTeam(localPhotonView, otherPhotonView))
@@ -42,7 +42,7 @@ public class PinkPlayerReviveInteractable : GaugeInteraction
         }
 
         PhotonView otherView = other.GetComponentInParent<PhotonView>();
-        if (otherView.IsMine)
+        if (otherView != null && otherView.IsMine)
             otherPhotonView = otherView;
 
         Debug.Log("부활 상호작용 enter");
