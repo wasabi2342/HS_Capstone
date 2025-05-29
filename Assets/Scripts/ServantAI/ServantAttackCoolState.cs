@@ -23,13 +23,9 @@ public class ServantAttackCoolState : ServantBaseState
 
     IEnumerator CoolRoutine()
     {
+        Debug.Log($"AttackCoolTime 사용 중: {fsm.attackCoolTime}");
         yield return new WaitForSeconds(fsm.attackCoolTime);
-        // 사거리 내면 대기(공격 직전), 아니면 Wander
-        bool inRange = !fsm.Agent.pathPending
-                       && fsm.Agent.remainingDistance <= fsm.attackRange;
-        fsm.TransitionToState(inRange
-            ? typeof(ServantWaitCoolState)
-            : typeof(ServantWanderState));
+        fsm.TransitionToState(typeof(ServantChaseState));
     }
 
     public override void Exit()

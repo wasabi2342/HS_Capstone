@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.AI;
+using System.Linq;
 using Photon.Pun;
 using Unity.AppUI.UI;
-using System.Linq;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(NavMeshAgent), typeof(PhotonView))]
 public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
@@ -38,6 +39,9 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     [HideInInspector] public float preferredSide = 0f;   // -1 왼쪽, +1 오른쪽
     private Vector3 lastHitPos;
     public Vector3 LastHitPos => lastHitPos; // 공격자 위치
+    Transform lastAttacker;
+    float lastAttackTime;
+    const float ATTACKER_PRIORITY_DURATION = 1.0f;
 
     /* ───────── UI ───────── */
     UIEnemyHealthBar uiHP;                      // ★ EnemyAI 식 Resources 스폰
@@ -319,6 +323,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     /* ────────────────── Detect Target (Taunt > Player > Servant) ──────────────────── */
     float detT;
     const float DET_INT = .2f;
+
     public void DetectTarget()
     {
         detT += Time.deltaTime;
@@ -336,6 +341,11 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
             return;
         }
 
+        if (lastAttacker != null && Time.time - lastAttackTime < ATTACKER_PRIORITY_DURATION) 
+        {
+            Target = lastAttacker;
+            return;
+        }
         // 1) 플레이어와 서번트를 모두 감지
         Collider[] playerCols = Physics.OverlapSphere(transform.position, enemyStatus.detectRange, playerMask, QueryTriggerInteraction.Ignore);
         Collider[] servantCols = Physics.OverlapSphere(transform.position, enemyStatus.detectRange, servantMask, QueryTriggerInteraction.Ignore);
@@ -353,17 +363,26 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
             Target = nearestServant;
     }
 
+
+
     void TrySwitchTargetToAttacker(Vector3 hitPos)
     {
-        const float PICK_RADIUS = 2f;              // 피격 지점 2 m 안
+        const float PICK_RADIUS = 2f;
+        int mask = playerMask | servantMask;
         Collider[] cols = Physics.OverlapSphere(
-                            hitPos, PICK_RADIUS,
-                            playerMask,                // EnemyFSM에 이미 존재
-                            QueryTriggerInteraction.Ignore);
+            hitPos, PICK_RADIUS,
+            mask,
+            QueryTriggerInteraction.Ignore);
 
         Transform nearest = FindNearest(cols);      // EnemyFSM에 이미 구현돼 있음
-        if (nearest && nearest != Target)
+        if (nearest != null && nearest != Target)
+        {
+            lastAttacker
+                = nearest;
+            lastAttackTime
+                = Time.time;
             Target = nearest;
+        }
     }
     Transform FindNearest(Collider[] arr)
     {
@@ -388,6 +407,9 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
     {
         // ‘Default’ 타입으로 실제 RPC 호출
         DamageToMaster_RPC(damage, attackerPos, (int)AttackerType.Default);
+        TrySwitchTargetToAttacker(attackerPos);
+        TransitionToState(typeof(ChaseState));
+
     }
     [PunRPC]
     public void DamageToMaster_RPC(float damage, Vector3 atkPos, int t = 0)

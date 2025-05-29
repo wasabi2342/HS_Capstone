@@ -107,6 +107,7 @@ GameObject:
   - component: {fileID: 338244296540735563}
   - component: {fileID: 7471104878824668836}
   - component: {fileID: -8471816262643456948}
+  - component: {fileID: 656598278300476925}
   m_Layer: 13
   m_Name: Servant
   m_TagString: Player
@@ -345,8 +346,8 @@ MonoBehaviour:
   detectRange: 3
   attackRange: 3
   attackDuration: 0.5
-  waitCoolTime: 5
-  attackCoolTime: 5
+  waitCoolTime: 2
+  attackCoolTime: 3
   enemyLayerMask:
     serializedVersion: 2
     m_Bits: 128
@@ -381,6 +382,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 215ac8956e7a9f64f997f88809d5456e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &656598278300476925
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765914048162278020}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &2400343500577941846
 GameObject:
   m_ObjectHideFlags: 0

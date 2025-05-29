@@ -42,7 +42,7 @@ public class ServantAttackState : ServantBaseState
         fsm.Attack.DisableAttack();
 
         yield return new WaitForSeconds(fsm.attackDuration * 0.3f);
-        fsm.TransitionToState(typeof(ServantChaseState));
+        fsm.TransitionToState(typeof(ServantAttackCoolState));
     }
 
     public override void Exit()
