@@ -7,6 +7,7 @@ public enum AttackerType
     WhitePlayer,
     PinkPlayer,
     Enemy,
+    Servant,
     Debuff  
 }
 

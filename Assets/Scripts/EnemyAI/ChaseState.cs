@@ -72,7 +72,7 @@ public class ChaseState : BaseState
     public override void Execute()
     {
         if (!PhotonNetwork.IsMasterClient) return;
-
+        fsm.DetectTarget();
         /* 0) 타깃 유효/추적 한계 */
         if (fsm.Target == null || !fsm.Target.gameObject.activeInHierarchy)
         { fsm.TransitionToState(typeof(WanderState)); return; }

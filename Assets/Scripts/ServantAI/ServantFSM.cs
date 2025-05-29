@@ -106,6 +106,13 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITaunta
         // 마스터 클라이언트만 FSM 시작
         isPvpScene = SceneManager.GetActiveScene().name.Contains("PVP");
         TransitionToState(typeof(ServantSpawnState));
+        Debug.Log($"[Servant] 소환수 정보 - Name: {name}, Layer: {gameObject.layer} ({LayerMask.LayerToName(gameObject.layer)}), Tag: {tag}");
+
+        // 모든 자식 오브젝트의 레이어도 확인
+        foreach (Transform child in GetComponentsInChildren<Transform>())
+        {
+            Debug.Log($"[Servant] 자식 '{child.name}' Layer: {child.gameObject.layer} ({LayerMask.LayerToName(child.gameObject.layer)})");
+        }
     }
 
     void Update()
