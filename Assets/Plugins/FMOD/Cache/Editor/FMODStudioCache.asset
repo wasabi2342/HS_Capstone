@@ -231,10 +231,10 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/SFX.bank
   Name: SFX
   StudioPath: bank:/SFX
-  lastModified: 638839854006152063
+  lastModified: 638841303316315439
   FileSizes:
   - Name: Desktop
-    Value: 3085952
+    Value: 3365824
   Exists: 1
 --- !u!114 &-7277115923810616009
 MonoBehaviour:
@@ -289,7 +289,7 @@ MonoBehaviour:
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 800
+  Length: 1044
 --- !u!114 &-7103501870966613584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -641,6 +641,60 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 400
+--- !u!114 &-2319440931536000315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-sword/idle_sheathing
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-sword/idle_sheathing
+  Guid:
+    Data1: -1307393019
+    Data2: 1135574464
+    Data3: -544595303
+    Data4: -279306723
+  Banks:
+  - {fileID: -7421424251647880275}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1253
+--- !u!114 &-2179616334527492844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-pink/tackle_hit
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-pink/tackle_hit
+  Guid:
+    Data1: -1621020814
+    Data2: 1094013734
+    Data3: -1276383832
+    Data4: 1330487728
+  Banks:
+  - {fileID: -7421424251647880275}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 780
 --- !u!114 &-1595637218342268040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -721,7 +775,7 @@ MonoBehaviour:
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 300
+  Length: 900
 --- !u!114 &-1104474775719495698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -872,10 +926,10 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638839803979795280
+  lastModified: 638841293554352259
   FileSizes:
   - Name: Desktop
-    Value: 3900
+    Value: 4100
   Exists: 1
 --- !u!114 &11400000
 MonoBehaviour:
@@ -957,13 +1011,45 @@ MonoBehaviour:
   - {fileID: 8061658713403568735}
   - {fileID: -6883283443935452021}
   - {fileID: -5016959358879916570}
+  - {fileID: 2289304706100162236}
+  - {fileID: -2319440931536000315}
+  - {fileID: -2179616334527492844}
+  - {fileID: 5629995566390649769}
+  - {fileID: 140705900896278528}
   EditorParameters: []
   MasterBanks:
   - {fileID: 3115102933838971153}
   StringsBanks:
   - {fileID: -317018885262630109}
-  cacheTime: 638839854006152063
+  cacheTime: 638841303316315439
   cacheVersion: 131846
+--- !u!114 &140705900896278528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-sword/idle_sheathing2
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-sword/idle_sheathing2
+  Guid:
+    Data1: -1107912632
+    Data2: 1324904313
+    Data3: 2140704904
+    Data4: 2022489889
+  Banks:
+  - {fileID: -7421424251647880275}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1340
 --- !u!114 &404670437726411930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1072,6 +1158,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 2089
+--- !u!114 &2289304706100162236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-pink/ult_swing
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-pink/ult_swing
+  Guid:
+    Data1: 540818374
+    Data2: 1270055664
+    Data3: -1467900230
+    Data4: 1809759094
+  Banks:
+  - {fileID: -7421424251647880275}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1121
 --- !u!114 &2432742145502592159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1195,7 +1308,7 @@ MonoBehaviour:
   Path: Assets/Sounds/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638839748845983650
+  lastModified: 638841293554342259
   FileSizes:
   - Name: Desktop
     Value: 3471104
@@ -1416,6 +1529,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 750
+--- !u!114 &5629995566390649769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Character/Character-sword/idle_sheathing3
+  m_EditorClassIdentifier: 
+  Path: event:/Character/Character-sword/idle_sheathing3
+  Guid:
+    Data1: 1869042468
+    Data2: 1197428886
+    Data3: 1937092271
+    Data4: 324269890
+  Banks:
+  - {fileID: -7421424251647880275}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 320
 --- !u!114 &5641675681596416974
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1550,7 +1690,7 @@ MonoBehaviour:
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 1295
+  Length: 1344
 --- !u!114 &6811943106624089155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1739,7 +1879,7 @@ MonoBehaviour:
   Parameters: []
   MinDistance: 1
   MaxDistance: 20
-  Length: 1000
+  Length: 1368
 --- !u!114 &8106513926248087651
 MonoBehaviour:
   m_ObjectHideFlags: 0

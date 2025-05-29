@@ -101,7 +101,14 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         Agent.updatePosition = PhotonNetwork.IsMasterClient;
         Agent.updateRotation = false;
         Agent.updateUpAxis = false;  // 2D 평면일 땐 선택
-
+        Agent.obstacleAvoidanceType = ObstacleAvoidanceType.GoodQualityObstacleAvoidance;
+        /* ─ 회피 우선순위 : Master 쪽에서만 무작위 부여 ─ */
+        if (PhotonNetwork.IsMasterClient)
+        {
+            ActiveMonsterCount++;
+            // 10 ~ 90 사이 난수 (0/99는 ‘절대 안 비켜’ 또는 ‘항상 비켜’라 충돌 유발)
+            Agent.avoidancePriority = Random.Range(10, 91);
+        }
         /* FSM 상태 등록 */
         states[typeof(WanderState)] = new WanderState(this);
         states[typeof(IdleState)] = new IdleState(this);
@@ -136,8 +143,6 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
             uiHP.SetHP(1f);
             uiHP.SetShield(maxShield > 0 ? 1f : 0f);
         }
-
-        if (PhotonNetwork.IsMasterClient) ActiveMonsterCount++;
 
 
         enemyStatus = Instantiate(enemyStatus);
@@ -182,6 +187,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
             }
             // DeadState.cs에는 이미 DestroyLater 코루틴이 구현되어 있으므로 
             // 여기서 추가 파괴 로직이 필요하지 않음
+            ValidateTarget();
         }
         else
         {
@@ -199,6 +205,63 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         if (PhotonNetwork.IsMasterClient &&
             Agent.enabled && Agent.velocity.sqrMagnitude > .0001f)
             lastMoveX = Agent.velocity.x >= 0 ? 1f : -1f;
+    }
+    /*──────────────────── Target 상태 체크 ────────────────────*/
+    bool IsPlayerIncapacitated(Transform trg)
+    {
+        // ─ White 플레이어 ─
+        if (trg.TryGetComponent(out WhitePlayerController wp))
+            return wp.currentState == WhitePlayerState.Stun
+                || wp.currentState == WhitePlayerState.Death;
+        if (trg.TryGetComponent(out PinkPlayerController pp))
+            return pp.currentState == PinkPlayerState.Stun
+                || pp.currentState == PinkPlayerState.Death;
+        // ─ 공통 베이스(다른 색 플레이어) ─
+        if (trg.TryGetComponent(out ParentPlayerController ppc))
+            return ppc.IsStunState();                   // Parent 쪽 ‘Stun’ 판정
+
+        return false;   // 이상 없으면 정상
+    }
+    /// <summary>
+    /// Target이 죽었거나 비활성화되면 어그로 해제 후 새 타겟 탐색.
+    /// 없으면 Wander로 전환.
+    /// </summary>
+    void ValidateTarget()
+    {
+        if (Target == null) return;
+
+        // 1) 객체가 파괴/비활성화됐을 때
+        bool invalid = !Target.gameObject.activeInHierarchy;
+
+        // 2) HP 0 확인
+        if (!invalid)
+        {
+            // 예: IDamageable 인터페이스만 있는 경우
+            if (Target.TryGetComponent(out IDamageable dmg))
+            {
+                var hpField = dmg.GetType().GetField("currentHP");
+                if (hpField != null && hpField.FieldType == typeof(float))
+                    invalid = (float)hpField.GetValue(dmg) <= 0f;
+            }
+        }
+        if (!invalid && IsPlayerIncapacitated(Target))
+            invalid = true;
+        if (!invalid) return;          // 아직 살아 있으면 그대로
+
+        /* ───── 어그로 해제 ───── */
+        Target = null;
+
+        /* 다른 플레이어 / 소환수 재탐지 */
+        DetectTarget();
+
+        /* 새 대상 없으면 Wander로 */
+        if (Target == null &&
+            !(CurrentState is WanderState ||
+              CurrentState is ReturnState ||
+              CurrentState is IdleState))
+        {
+            TransitionToState(typeof(WanderState));
+        }
     }
 
     public void PlayDirectionalAnim(string action)
@@ -348,17 +411,16 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         }
         bool fromRight = atkPos.x < transform.position.x;
         pv.RPC(nameof(RPC_SpawnHitFx), RpcTarget.All, transform.position, fromRight);
+        pv.RPC(nameof(RPC_PlayHitSound), RpcTarget.All, (int)atkType, transform.position); 
         bool stillShielded = shield > 0f;
         float prevHP = hp;
         hp = Mathf.Max(0f, hp - damage);
         float deltaHP = prevHP - hp;
         pv.RPC(nameof(UpdateHP), RpcTarget.AllBuffered, hp / maxHP);
         pv.RPC(nameof(RPC_ShowDamage), RpcTarget.All, rawDamage);
+        /* ─ 상태 전이 ─ */
         if (atkType != AttackerType.Debuff && !stillShielded)
         {
-            
-            //pv.RPC(nameof(RPC_ApplyKnockback), RpcTarget.All, atkPos);
-            
             TransitionToState(hp <= 0f ? typeof(DeadState) : typeof(HitState));
         }
         else if (hp <= 0f)
@@ -367,7 +429,27 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
             TransitionToState(typeof(DeadState));
         }
     }
+    [PunRPC]
+    void RPC_PlayHitSound(int attackerType, Vector3 pos)
+    {
+        switch ((AttackerType)attackerType)
+        {
+            case AttackerType.WhitePlayer:
+                AudioManager.Instance.PlayOneShot(
+                    "event:/Character/Character-sword/katana_attack", pos);
+                break;
 
+            case AttackerType.PinkPlayer:
+                AudioManager.Instance.PlayOneShot(
+                    "event:/Character/Character-pink/mace_attack", pos);
+                break;
+
+            default:    // 기타 타입 – 공통 타격음 또는 무음
+                AudioManager.Instance.PlayOneShot(
+                    "event:/Character/Common/hit_generic", pos);
+                break;
+        }
+    }
     public void SelectNextAttackPattern()
     {
         if (AttackPatterns == null || AttackPatterns.Length == 0) return;

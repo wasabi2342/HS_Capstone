@@ -62,7 +62,24 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITaunta
     // ── Taunt ─────────────────────────────────────────────────
     public bool IsActive => tauntActive && Time.time < tauntEndTime;
     public Transform TauntPoint => transform;
+    void EnsureAgentOnNavMesh(float searchRadius = 5f)
+    {
+        if (Agent == null || Agent.isOnNavMesh) return;
 
+        // 가장 가까운 NavMesh 지점 샘플링
+        if (NavMesh.SamplePosition(transform.position,
+                                   out var hit, searchRadius,
+                                   NavMesh.AllAreas))
+        {
+            Agent.Warp(hit.position);     // 올바른 좌표로 순간이동
+            Agent.enabled = true;
+        }
+        else
+        {
+            Debug.LogWarning("[ServantFSM] NavMesh를 찾지 못했습니다. Agent 비활성화");
+            Agent.enabled = false;        // 문제 씬(PVP 등)에서 오류 차단
+        }
+    }
     void Awake()
     {
         Agent = GetComponent<NavMeshAgent>();
@@ -71,7 +88,7 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITaunta
         Attack = GetComponent<IMonsterAttack>();
 
         currentHP = maxHealth;
-
+        EnsureAgentOnNavMesh();
         // 상태 등록
         states[typeof(ServantSpawnState)] = new ServantSpawnState(this);
         states[typeof(ServantIdleState)] = new ServantIdleState(this);
@@ -125,7 +142,11 @@ public class ServantFSM : MonoBehaviourPun, IPunObservable, IDamageable, ITaunta
             : enemyLayerMask;                    // PVE = 몬스터만
 
         // 2) 가장 가까운 IDamageable 찾기
-        Collider[] cols = Physics.OverlapSphere(transform.position, detectRange, mask);
+        Collider[] cols = Physics.OverlapSphere(
+            transform.position,
+            detectRange,
+            mask,
+            QueryTriggerInteraction.Collide);
         float closest = float.MaxValue;
         Transform pick = null;
 

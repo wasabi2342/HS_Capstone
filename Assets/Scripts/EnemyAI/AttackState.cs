@@ -12,6 +12,7 @@ public class AttackState : BaseState
         fsm.SelectNextAttackPattern();
         RefreshFacingToTarget();
         SetAgentStopped(true);
+        if (fsm.Agent) fsm.Agent.ResetPath();
         // ─ 방향 넘겨 주기 ─
         fsm.AttackComponent.SetDirection(fsm.CurrentFacing);
         string clipBase = fsm.AttackComponent?.AnimKey ?? "Attack";
@@ -29,16 +30,19 @@ public class AttackState : BaseState
 
     IEnumerator AttackRoutine()
     {
-        float half = status.attackDuration * 0.5f;
+        float windUpRate = fsm.AttackComponent is IMonsterAttack atk
+                           ? Mathf.Clamp01(atk.WindUpRate)
+                           : 0.5f;                         // 안전값
 
-        /* 윈드업 구간 */
-        yield return new WaitForSeconds(half);
-        /* 실제 공격 활성화 */
-        fsm.AttackComponent?.Attack(fsm.Target);
-        /* 후딜 구간 */
-        yield return new WaitForSeconds(half);
+        float windUp = status.attackDuration * windUpRate;
+        float follow = status.attackDuration - windUp;
 
-        /* 다음 상태로 */
+        yield return new WaitForSeconds(windUp);           // 개별 몬스터 산출
+
+        fsm.AttackComponent?.Attack(fsm.Target);           // 돌진·투사체 등 실제 실행
+
+        yield return new WaitForSeconds(follow);           // 후딜
+
         fsm.TransitionToState(typeof(AttackCoolState));
     }
 

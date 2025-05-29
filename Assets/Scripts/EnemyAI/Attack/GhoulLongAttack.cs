@@ -17,6 +17,7 @@ public class GhoulLongAttack : MonoBehaviourPun, IMonsterAttack
     float facing = 1f;                              // +1 -> Right, –1 -> Left
 
     public string AnimKey => "Attack2";
+    public float WindUpRate => 0.50f;
 
     void Awake()
     {

@@ -5,12 +5,15 @@ using Photon.Pun;
 public class WaitCoolState : BaseState
 {
     Coroutine waitCo;
-    
+    float waitTime;                     // 이번 사이클의 랜덤 대기 시간
 
     public WaitCoolState(EnemyFSM f) : base(f) { }
 
     public override void Enter()
     {
+        // 이번에 사용할 대기 시간을 0.01~0.10 초 사이에서 결정
+        waitTime = Random.Range(0.01f, 0.10f);
+
         RefreshFacingToTarget();
         SetAgentStopped(true);
         fsm.Anim.speed = 1f;
@@ -27,7 +30,7 @@ public class WaitCoolState : BaseState
     {
         if (!PhotonNetwork.IsMasterClient) return;
 
-        /* z-축 틀어졌거나 사정권 벗어남 → Chase */
+        /* z-축이 틀어졌거나 사정권 벗어남 → Chase 전환 */
         float zAbs = Mathf.Abs(transform.position.z - fsm.Target.position.z);
         if (zAbs > fsm.TolOutCache || !fsm.IsTargetInAttackRange())
         {
@@ -43,13 +46,14 @@ public class WaitCoolState : BaseState
 
     IEnumerator WaitRoutine()
     {
-        yield return new WaitForSeconds(status.waitCoolTime);
+        /* 랜덤 대기 */
+        yield return new WaitForSeconds(waitTime);
 
         bool aligned = fsm.IsAlignedAndInRange();        // 정렬 + 사정거리
-        bool canAtk = aligned /* && fsm.CanAttackNow() */; // 필요하면 조건 추가
+        bool canAtk = aligned; 
 
         if (fsm.debugMode)
-            Debug.Log($"[WaitCool] {status.waitCoolTime:F1}s → "
+            Debug.Log($"[WaitCool] {waitTime:F2}s → "
                     + (canAtk ? "Attack" : aligned ? "Detour" : "Chase"), fsm);
 
         if (canAtk)
