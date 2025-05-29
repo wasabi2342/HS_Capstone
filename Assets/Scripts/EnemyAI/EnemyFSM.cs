@@ -411,7 +411,7 @@ public class EnemyFSM : MonoBehaviourPun, IPunObservable, IDamageable
         }
         bool fromRight = atkPos.x < transform.position.x;
         pv.RPC(nameof(RPC_SpawnHitFx), RpcTarget.All, transform.position, fromRight);
-        pv.RPC(nameof(RPC_PlayHitSound), RpcTarget.All, (int)atkType, transform.position); 
+        //pv.RPC(nameof(RPC_PlayHitSound), RpcTarget.All, (int)atkType, transform.position); 
         bool stillShielded = shield > 0f;
         float prevHP = hp;
         hp = Mathf.Max(0f, hp - damage);

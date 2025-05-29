@@ -3,6 +3,7 @@ using FMODUnity;
 using FMOD.Studio;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using Photon.Pun;
 
 
 public enum SoundType
@@ -85,6 +86,11 @@ public class AudioManager : MonoBehaviour
         instance.setVolume(masterVolume);
         instance.start();
         instance.release();
+    }
+
+    public void PlayOneShot(string eventPath, Vector3 position, RpcTarget rpcTarget)
+    {
+        PhotonNetworkManager.Instance.photonView.RPC("RPC_PlayOneShot", rpcTarget, eventPath, position);
     }
 
     public void PlayLoop(string eventPath, Vector3 position)

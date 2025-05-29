@@ -12,6 +12,8 @@ public class SkillEffect : MonoBehaviourPun
     [SerializeField]
     private AttackerType attackerType;
     [SerializeField]
+    private string soundClip = null;
+    [SerializeField]
     private float animationSpeed = 1f;
     [SerializeField]
     private GameObject childEffect;
@@ -160,14 +162,29 @@ public class SkillEffect : MonoBehaviourPun
 
     private void ApplySoundEffect()
     {
-        switch (attackerType)
+        if (soundClip == "")
         {
-            case AttackerType.WhitePlayer:
-                AudioManager.Instance.PlayOneShot("event:/Character/Character-sword/katana_attack", transform.position);
-                break;
-            case AttackerType.PinkPlayer:
-                AudioManager.Instance.PlayOneShot("event:/Character/Character-pink/mace_attack", transform.position);
-                break;
+            switch (attackerType)
+            {
+                case AttackerType.WhitePlayer:
+                    AudioManager.Instance.PlayOneShot("event:/Character/Character-sword/katana_attack", transform.position, RpcTarget.All);
+                    break;
+                case AttackerType.PinkPlayer:
+                    AudioManager.Instance.PlayOneShot("event:/Character/Character-pink/mace_attack", transform.position, RpcTarget.All);
+                    break;
+            }
+        }
+        else
+        {
+            switch (attackerType)
+            {
+                case AttackerType.WhitePlayer:
+                    AudioManager.Instance.PlayOneShot($"event:/Character/Character-sword/{soundClip}", transform.position, RpcTarget.All);
+                    break;
+                case AttackerType.PinkPlayer:
+                    AudioManager.Instance.PlayOneShot($"event:/Character/Character-pink/{soundClip}", transform.position, RpcTarget.All);
+                    break;
+            }
         }
     }
 

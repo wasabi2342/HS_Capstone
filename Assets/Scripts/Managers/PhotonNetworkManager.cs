@@ -703,4 +703,10 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             UIManager.Instance.OnTargetIndicator(targetView.transform, target);
         }
     }
+
+    [PunRPC]
+    public void RPC_PlayOneShot(string eventPath, Vector3 position)
+    {
+        AudioManager.Instance.PlayOneShot(eventPath, position);
+    }
 }
