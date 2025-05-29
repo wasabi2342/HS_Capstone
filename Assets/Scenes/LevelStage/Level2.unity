@@ -15984,19 +15984,19 @@ MonoBehaviour:
   - countMul: 1
     hpMul: 1
     atkMul: 1
-    shieldMul: 1
+    shieldMul: 0.75
   - countMul: 1
     hpMul: 1.5
     atkMul: 1.2
-    shieldMul: 1.2
+    shieldMul: 0.75
   - countMul: 2
-    hpMul: 2
+    hpMul: 1
+    atkMul: 1
+    shieldMul: 0.75
+  - countMul: 2
+    hpMul: 1.5
     atkMul: 1.2
-    shieldMul: 1.4
-  - countMul: 2
-    hpMul: 2.5
-    atkMul: 1.5
-    shieldMul: 1.6
+    shieldMul: 0.75
 --- !u!1001 &526445917
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -50255,7 +50255,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 27, y: 50, z: 12}
+  m_Size: {x: 27, y: 50, z: 30}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1783167033
 PrefabInstance:
