@@ -7,6 +7,7 @@ using System.Reflection;
 enum Characters
 {
     WhitePlayer,
+    PinkPlayer,
     Max
 }
 
@@ -16,6 +17,11 @@ public class DataManager : MonoBehaviour
     public List<SpecialEffectData> effectList;
     public List<BlessingEffectLinkData> linkList;
     public List<BasicAttackComboData> basicAttackComboDatas;
+    public List<R_AttackComboData> r_AttackComboDatas;
+    public List<CharacterDescription> characterDescriptions;
+
+    public SettingData settingData;
+    private string settingDataPath;
 
     public static DataManager Instance { get; private set; }
 
@@ -24,17 +30,25 @@ public class DataManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(this);
         }
-        DontDestroyOnLoad(gameObject);
 
-        skillList = LoadSkillCsv("CSV/skills");
-        effectList = LoadSpecialEffectCsv("CSV/effects");
-        linkList = LoadBlessingEffectLinkCsv("CSV/blessing_effect_links");
-        basicAttackComboDatas = LoadComboCsv("CSV/BasicAttackCombo");
+        skillList = LoadSkillCsv("CSV/Blessing_Table");
+        effectList = LoadSpecialEffectCsv("CSV/Special_Table");
+        linkList = LoadBlessingEffectLinkCsv("CSV/Bless_Special_Table");
+        basicAttackComboDatas = LoadComboCsv("CSV/Norm_Attack_Table");
+        r_AttackComboDatas = LoadComboCsv2("CSV/R_Attack_Table");
+        characterDescriptions = LoadCharacterDescriptionCsv("CSV/Character_Description");
+    }
+
+    private void Start()
+    {
+        settingDataPath = Path.Combine(Application.persistentDataPath, "setting.json");
+        LoadSettingData();
     }
 
     private List<SkillData> LoadSkillCsv(string resourcePath)
@@ -54,24 +68,41 @@ public class DataManager : MonoBehaviour
 
         for (int i = 1; i < lines.Length; i++)
         {
-            var values = lines[i].Trim().Split(',');
-            Debug.Log(values);
-            if (values.Length < 10) continue;
+            var line = lines[i].Trim();
+            if (string.IsNullOrWhiteSpace(line)) continue;
 
-            var data = ScriptableObject.CreateInstance<SkillData>();
-            data.ID = int.Parse(values[0]);
-            data.Devil = int.Parse(values[1]);
-            data.Bind_Key = int.Parse(values[2]);
-            data.Character = int.Parse(values[3]);
-            data.Blessing_name = values[4];
-            data.Bless_Discript = values[5];
-            data.AttackDamageCoefficient = float.Parse(values[6]);
-            data.AbilityPowerCoefficient = float.Parse(values[7]);
-            data.Cooldown = float.Parse(values[8]);
-            data.Stack = int.Parse(values[9]);
+            var values = line.Split(',');
+            if (values.Length < 10)
+            {
+                Debug.LogWarning($"줄 {i} 건너뜀 - 값 부족: {line}");
+                continue;
+            }
 
-            list.Add(data);
+            try
+            {
+                Debug.Log($"줄 {i} 파싱 시도: {line}");
+
+                var data = ScriptableObject.CreateInstance<SkillData>();
+                data.ID = int.Parse(values[0]);
+                data.Devil = int.Parse(values[1]);
+                data.Bind_Key = int.Parse(values[2]);
+                data.Character = int.Parse(values[3]);
+                data.Blessing_name = values[4];
+                data.Bless_Discript = values[5];
+
+                data.AttackDamageCoefficient = float.Parse(values[6].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                data.AbilityPowerCoefficient = float.Parse(values[7].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                data.Cooldown = float.Parse(values[8].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                data.Stack = int.Parse(values[9]);
+
+                list.Add(data);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"줄 {i} 파싱 중 오류 발생: {line}\n에러: {e.Message}");
+            }
         }
+
         return list;
     }
 
@@ -144,6 +175,50 @@ public class DataManager : MonoBehaviour
         return list;
     }
 
+    private List<R_AttackComboData> LoadComboCsv2(string resourcePath)
+    {
+        var list = new List<R_AttackComboData>();
+        TextAsset csvFile = Resources.Load<TextAsset>(resourcePath);
+        if (csvFile == null) return list;
+
+        var lines = csvFile.text.Split('\n');
+        for (int i = 1; i < lines.Length; i++)
+        {
+            var values = lines[i].Trim().Split(',');
+            if (values.Length < 4) continue;
+
+            var data = ScriptableObject.CreateInstance<R_AttackComboData>();
+            data.ID = int.Parse(values[0]);
+            data.Character = int.Parse(values[1]);
+            data.Combo_Index = int.Parse(values[2]);
+            data.Damage = float.Parse(values[3]);
+
+            list.Add(data);
+        }
+        return list;
+    }
+
+    private List<CharacterDescription> LoadCharacterDescriptionCsv(string resourcePath)
+    {
+        var list = new List<CharacterDescription>();
+        TextAsset csvFile = Resources.Load<TextAsset>(resourcePath);
+        if (csvFile == null) return list;
+
+        var lines = csvFile.text.Split('\n');
+        for (int i = 1; i < lines.Length; i++)
+        {
+            var values = lines[i].Trim().Split(',');
+            if (values.Length < 2) continue;
+
+            var data = ScriptableObject.CreateInstance<CharacterDescription>();
+            data.characterName = values[0];
+            data.description = values[1];
+
+            list.Add(data);
+        }
+        return list;
+    }
+
     public SkillData FindSkillByBlessingKeyAndCharacter(int bindKey, int blessing, int character)
     {
         return skillList.Find(skill =>
@@ -205,5 +280,69 @@ public class DataManager : MonoBehaviour
         return -1f;
     }
 
+    public void SaveSettingData()
+    {
+        string json = JsonUtility.ToJson(settingData, true);
+        File.WriteAllText(settingDataPath, json);
+        Debug.Log($"[DataManager] Setting saved to {settingDataPath}");
+    }
+
+    public void LoadSettingData()
+    {
+        if (File.Exists(settingDataPath))
+        {
+            string json = File.ReadAllText(settingDataPath);
+            settingData = new SettingData();
+            JsonUtility.FromJsonOverwrite(json, settingData);
+            ApplySettings();
+            Debug.Log("[DataManager] Setting loaded.");
+        }
+        else
+        {
+            settingData = new SettingData();
+            Debug.Log("[DataManager] No setting file found. Creating default.");
+            SaveSettingData(); // 초기 저장
+            ApplySettings();
+        }
+    }
+
+    public void RestSettingData()
+    {
+        settingData = new SettingData();
+        Debug.Log("설정 초기화");
+        SaveSettingData(); // 초기 저장
+        ApplySettings();
+    }
+
+    private void ApplySettings()
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.SetVCAMasterVolume(settingData.masterVolume);
+            AudioManager.Instance.SetVCABGMVolume(settingData.bgmVolume);
+            AudioManager.Instance.SetVCASFXVolume(settingData.sfxVolume);
+        }
+
+        Screen.SetResolution(
+            settingData.resolution.x,
+            settingData.resolution.y,
+            settingData.screenMode
+        );
+    }
+
+
+    //기본 설정값
+    [System.Serializable]
+    public class SettingData
+    {
+        public float masterVolume = 0.5f;
+        public float bgmVolume = 0.5f;
+        public float sfxVolume = 0.5f;
+
+        public Vector2Int resolution = new Vector2Int(1920, 1080);
+        public FullScreenMode screenMode = FullScreenMode.FullScreenWindow;
+
+        public bool tutorialCompleted = false;
+    }
 }
 

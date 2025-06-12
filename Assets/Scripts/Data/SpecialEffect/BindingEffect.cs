@@ -7,6 +7,8 @@ public class BindingEffect : BaseSpecialEffect
     {
         // 속박 시키는 코드 추가하기
         Debug.Log("적 속박");
+        collider.GetComponent<DebuffController>().ApplyDebuff(SpecialEffectType.Bind, duration, value);
+
     }
 
     public override void Init(float value, float duration, ParentPlayerController playerController)

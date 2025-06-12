@@ -5,11 +5,23 @@ using UnityEngine.Events;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
+using TMPro;
+using FMODUnity;
 
-public class ParentPlayerController : MonoBehaviourPun, IDamageable
+public class ParentPlayerController : MonoBehaviourPun, IDamageable, IMovable
 {
     [SerializeField]
     protected float hitlagTime = 0.117f;
+    [SerializeField]
+    protected SpriteRenderer shadow;
+    [SerializeField]
+    protected TextMeshProUGUI nicknameText;
+    [SerializeField]
+    protected RuntimeAnimatorController myController;
+    [SerializeField]
+    protected RuntimeAnimatorController othersController;
+
+    public Transform footPivot;
 
     // 죽음, 기절 관련 ui, 체력바 ui
 
@@ -30,6 +42,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     public UnityEvent<float> AttackStackUpdate;
     public UnityEvent<float, float> ShieldUpdate;
     public UnityEvent<UIIcon, Color> SkillOutlineUpdate;
+    public UnityEvent OnHitEvent;
+
 
     public CooldownChecker[] cooldownCheckers = new CooldownChecker[(int)Skills.Max];
 
@@ -39,7 +53,9 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     [SerializeField]
     protected CharacterStats characterBaseStats;
-    protected PlayerRunTimeData runTimeData;
+    public PlayerRunTimeData runTimeData;
+
+    protected Rigidbody rb;
 
     // 실드
     protected List<Shield> shields = new List<Shield>();
@@ -47,47 +63,116 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     protected PlayerBlessing playerBlessing;
 
-    protected Animator animator;
+    public Animator animator;
 
     public int attackStack = 0;
 
+    public float damageBuff = 1;
+
+    private bool isInPVPArea;
+
+    private bool inputLocked = false;   // 이동/입력 잠금 여부
+
+    public float MoveSpeed
+    {
+        get => runTimeData.moveSpeed;
+        set => runTimeData.moveSpeed = value;
+    }
+    public void StopMove(bool stop) => inputLocked = stop;
+    protected bool IsInputLocked => inputLocked;
     #region Unity Lifecycle
 
     protected virtual void Awake()
     {
         runTimeData = new PlayerRunTimeData(characterBaseStats);
 
-        if (PhotonNetwork.IsConnected)
+        playerBlessing = GetComponent<PlayerBlessing>();
+        rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
+
+        if(myController != null && othersController != null)
         {
             if (photonView.IsMine)
             {
-                runTimeData.LoadFromJsonFile();
-                photonView.RPC("UpdateHP", RpcTarget.Others, runTimeData.currentHealth);
+                animator.runtimeAnimatorController = myController;
             }
             else
             {
-                RoomManager.Instance.AddPlayerDic(photonView.Owner.ActorNumber, gameObject);
+                animator.runtimeAnimatorController = othersController;
             }
         }
 
-        BindCooldown();
-
-        runTimeData.currentHealth = characterBaseStats.maxHP;
-        // 시작 시 체력 UI 업데이트
-        OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
-
-        playerBlessing = GetComponent<PlayerBlessing>();
-
-        animator = GetComponent<Animator>();
         if (animator == null)
         {
             Debug.LogError("Animator 컴포넌트를 찾을 수 없습니다! (WhitePlayerController)");
         }
+    }
 
-        animator.speed = runTimeData.attackSpeed;
+    protected virtual void Start()
+    {
+        if (PhotonNetwork.IsConnected)
+        {
+            if (photonView.IsMine)
+            {
+                gameObject.AddComponent<StudioListener>();
+
+                runTimeData.LoadFromJsonFile();
+
+                BindCooldown();
+
+                animator.speed = runTimeData.attackSpeed;
+
+                //if (isInPVPArea)
+                //    runTimeData.currentHealth = characterBaseStats.maxHP;
+
+                RecoverHealth(20f);
+
+                // 내 체력으로 동기화
+                photonView.RPC("UpdateHP", RpcTarget.OthersBuffered, runTimeData.currentHealth);
+                nicknameText.text = PhotonNetwork.CurrentRoom.Players[photonView.Owner.ActorNumber].NickName;
+                nicknameText.color = new Color32(102, 204, 255, 255);
+
+                // UI 갱신용 invoke
+                OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
+
+                // pvp 테스트 임시 코드
+                //SetTeamId(PhotonNetwork.LocalPlayer.ActorNumber);
+            }
+            else
+            {
+                RoomManager.Instance.AddPlayerDic(photonView.Owner.ActorNumber, gameObject);
+                nicknameText.text = PhotonNetwork.CurrentRoom.Players[photonView.Owner.ActorNumber].NickName;
+
+                // 나와 팀 ID 비교
+                object myTeamIdObj, otherTeamIdObj;
+                PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("TeamId", out myTeamIdObj);
+                photonView.Owner.CustomProperties.TryGetValue("TeamId", out otherTeamIdObj);
+
+                if (myTeamIdObj != null && otherTeamIdObj != null && !myTeamIdObj.Equals(otherTeamIdObj))
+                {
+                    // 팀 ID 다르면 빨간색
+                    nicknameText.color = Color.red;
+                }
+                else
+                {
+                    // 같은 팀 또는 TeamId 없음
+                    nicknameText.color = new Color32(102, 255, 102, 255);
+                }
+            }
+        }
     }
 
     #endregion
+
+    public void SetIsInPVPArea(bool value)
+    {
+        isInPVPArea = value;
+    }
+
+    public void UpdateHP()
+    {
+        OnHealthChanged?.Invoke(runTimeData.currentHealth / characterBaseStats.maxHP);
+    }
 
     public virtual void BindCooldown()
     {
@@ -141,37 +226,46 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
         return totalShield;
     }
 
+    [PunRPC]
+    public void TakeDamageRPC(float damage, Vector3 pos, int attackerTypeInt)
+    {
+        TakeDamage(damage, pos, (AttackerType)attackerTypeInt);
+    }
+
     // 2) 추가 파라미터 useRPC를 사용한 데미지 처리
-    public virtual void TakeDamage(float damage)
+    public virtual void TakeDamage(float damage, Vector3 attackerPos, AttackerType attackerType = AttackerType.Default)
     {
 
         if (PhotonNetwork.InRoom)
         {
             if (!photonView.IsMine) return;
 
-            if (PhotonNetwork.IsMasterClient)
+            OnHitEvent?.Invoke();
+
+            while (damage > 0 && shields.Count > 0)
             {
-                while (damage > 0 && shields.Count > 0)
+                if (shields[0].amount > damage)
                 {
-                    if (shields[0].amount > damage)
-                    {
-                        shields[0].amount -= damage;
-                        Debug.Log($"실드로 {damage} 피해 흡수! 남은 실드: {shields[0].amount}");
-                        ShieldUpdate?.Invoke(GetTotalShield(), maxShield);
-                        return;
-                    }
-                    else
-                    {
-                        damage -= shields[0].amount;
-                        Debug.Log($"실드 {shields[0]} 소진 후 파괴됨");
-                        shields.RemoveAt(0);
-                        ShieldUpdate?.Invoke(GetTotalShield(), maxShield);
-                    }
-                }
-                if (damage == 0)
-                {
+                    shields[0].amount -= damage;
+                    Debug.Log($"실드로 {damage} 피해 흡수! 남은 실드: {shields[0].amount}");
+                    ShieldUpdate?.Invoke(GetTotalShield(), maxShield);
                     return;
                 }
+                else
+                {
+                    damage -= shields[0].amount;
+                    Debug.Log($"실드 {shields[0]} 소진 후 파괴됨");
+                    shields.RemoveAt(0);
+                    ShieldUpdate?.Invoke(GetTotalShield(), maxShield);
+                }
+            }
+            if (damage == 0)
+            {
+                return;
+            }
+
+            if (PhotonNetwork.IsMasterClient)
+            {
 
                 // Master Client는 직접 체력 계산
                 runTimeData.currentHealth -= damage;
@@ -186,12 +280,14 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
             else
             {
                 // Master Client가 아니라면, 피해량을 Master에 전송
-                photonView.RPC("DamageToMaster", RpcTarget.MasterClient, damage);
+                photonView.RPC("DamageToMaster", RpcTarget.MasterClient, damage, attackerPos);
             }
         }
 
         else
         {
+            OnHitEvent?.Invoke();
+
             while (damage > 0 && shields.Count > 0)
             {
                 if (shields[0].amount > damage)
@@ -224,7 +320,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
 
     [PunRPC]
-    public virtual void DamageToMaster(float damage)
+    public virtual void DamageToMaster(float damage, Vector3 attackerPos)
     {
         if (!PhotonNetwork.IsMasterClient)
             return;
@@ -277,7 +373,7 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     /// </summary>
     public virtual void ExitSuperArmorState()
     {
-        isSuperArmor = true;
+        isSuperArmor = false;
     }
 
     /// <summary>
@@ -354,6 +450,8 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     #endregion
 
+    private List<float> attackSpeedBuffs = new List<float>();
+
     public virtual void BuffAttackSpeed(float value, float duration)
     {
         StartCoroutine(BuffAttackSpeedTimer(value, duration));
@@ -361,11 +459,64 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
 
     private IEnumerator BuffAttackSpeedTimer(float value, float duration)
     {
-        animator.speed = runTimeData.attackSpeed * value;
+        attackSpeedBuffs.Add(value);
+        UpdateAttackSpeed();
+
+        Debug.Log("공격속도버프 적용됨. 현재 스택 수: " + attackSpeedBuffs.Count);
 
         yield return new WaitForSeconds(duration);
 
-        animator.speed = runTimeData.attackSpeed;
+        attackSpeedBuffs.Remove(value);
+        UpdateAttackSpeed();
+
+        Debug.Log("공격속도버프 제거됨. 현재 스택 수: " + attackSpeedBuffs.Count);
+    }
+
+    private void UpdateAttackSpeed()
+    {
+        float totalMultiplier = 1f;
+        foreach (float buff in attackSpeedBuffs)
+        {
+            totalMultiplier *= buff;
+        }
+
+        animator.speed = runTimeData.attackSpeed * totalMultiplier;
+        Debug.Log("공격속도 : " + animator.speed);
+    }
+
+    private List<float> moveSpeedBuffs = new List<float>();
+
+    public virtual void BuffMoveSpeed(float value, float duration)
+    {
+        Debug.Log("이동속도버프 value:" + value + "duration" + duration);
+        StartCoroutine(BuffMoveSpeedTimer(value, duration));
+    }
+
+    private IEnumerator BuffMoveSpeedTimer(float value, float duration)
+    {
+        moveSpeedBuffs.Add(value);
+        UpdateMoveSpeed();
+
+        Debug.Log("이동속도버프 적용됨. 현재 스택 수: " + moveSpeedBuffs.Count);
+
+        yield return new WaitForSeconds(duration);
+
+        moveSpeedBuffs.Remove(value);
+        UpdateMoveSpeed();
+
+        Debug.Log("이동속도버프 제거됨. 현재 스택 수: " + moveSpeedBuffs.Count);
+    }
+
+    private void UpdateMoveSpeed()
+    {
+        float totalMultiplier = 1f;
+        foreach (float buff in moveSpeedBuffs)
+        {
+            totalMultiplier *= buff;
+        }
+
+        runTimeData.moveSpeed = characterBaseStats.moveSpeed * totalMultiplier;
+        Debug.Log("이동속도 : " + runTimeData.moveSpeed + "totalMultiplier : " + totalMultiplier);
     }
 
     private IEnumerator PauseForSeconds()
@@ -388,5 +539,125 @@ public class ParentPlayerController : MonoBehaviourPun, IDamageable
     public float ReturnAbilityPower()
     {
         return runTimeData.abilityPower;
+    }
+
+    [PunRPC]
+    public virtual void SyncBoolParameter(string parameter, bool value)
+    {
+        animator.SetBool(parameter, value);
+    }
+
+    public virtual void SetBoolParameter(string parameter, bool value)
+    {
+        photonView.RPC("SyncBoolParameter", RpcTarget.Others, parameter, value);
+    }
+
+    [PunRPC]
+    public virtual void SyncIntParameter(string parameter, int value)
+    {
+        animator.SetInteger(parameter, value);
+    }
+
+    public virtual void SetIntParameter(string parameter, int value)
+    {
+        photonView.RPC("SyncIntParameter", RpcTarget.Others, parameter, value);
+    }
+
+    [PunRPC]
+    public virtual void SyncFloatParameter(string parameter, float value)
+    {
+        animator.SetFloat(parameter, value);
+    }
+
+    public virtual void SetFloatParameter(string parameter, float value)
+    {
+        photonView.RPC("SyncFloatParameter", RpcTarget.Others, parameter, value);
+    }
+
+    [PunRPC]
+    public virtual void SyncTriggerParameter(string parameter)
+    {
+        animator.SetTrigger(parameter);
+    }
+
+    public virtual void SetTriggerParameter(string parameter)
+    {
+        photonView.RPC("SyncTriggerParameter", RpcTarget.Others, parameter);
+    }
+    public string ReturnCharacterName()
+    {
+        return characterBaseStats.name;
+    }
+
+    [PunRPC]
+    public virtual void CreateAnimation(string name, Vector3 pos, bool isChild, float speed)
+    {
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>(name), transform.position, Quaternion.identity);
+        if(isChild)
+            skillEffect.transform.parent = transform;
+    }
+
+    public virtual void ShadowOff()
+    {
+        shadow.enabled = false;
+    }
+
+    public virtual void ShadowOn()
+    {
+        shadow.enabled = true;
+    }
+
+    public void DeleteRuntimeData()
+    {
+        runTimeData.DeleteRunTimeData();
+    }
+
+    public void SetTeamId(int teamId)
+    {
+        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+        {
+            { "TeamId", teamId }
+        };
+
+        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+        Debug.Log($"TeamId가 {teamId}로 설정되었습니다.");
+    }
+
+    public virtual bool IsStunState()
+    {
+        return false;
+    }
+
+    public virtual void ReduceReviveTime(float reduceTime = 1.0f)
+    {
+
+    }
+
+    public void SyncAnimation(string stateName)
+    {
+        if (!photonView.IsMine)
+            return;
+        photonView.RPC("RPC_SyncAnimation", RpcTarget.Others, stateName);
+    }
+
+    [PunRPC]
+    public void RPC_SyncAnimation(string stateName)
+    {
+        animator.Play(stateName);
+    }
+
+    public void SyncTriggerAnimation(string trigger)
+    {
+        if (!photonView.IsMine)
+            return;
+
+        photonView.RPC("RPC_SyncTriggerAnimation", RpcTarget.Others, trigger);
+    }
+
+
+    [PunRPC]
+    public void RPC_SyncTriggerAnimation(string trigger)
+    {
+        animator.SetTrigger(trigger);
     }
 }

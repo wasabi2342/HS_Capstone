@@ -17,6 +17,13 @@ public class OdinEditor: OdinEditorWindow
 
     }
 
+    [Button("가호획득", ButtonSizes.Large)]
+    public void OpenBlessingPanel()
+    {
+        UIManager.Instance.OpenPopupPanelInCameraCanvas<UISelectBlessingPanel>();
+        Debug.Log("가호획득 버튼 클릭됨");
+    }
+
     [MenuItem("오딘 테스트 에디터/멀로로 기획 QA에디터")]
     private static void OpenWindow()
     {

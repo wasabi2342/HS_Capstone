@@ -28,5 +28,8 @@ public abstract class BaseSpecialEffect : ScriptableObject
         return isInstant;
     }
 
-    public abstract void ApplyEffect();
+    public virtual void ApplyEffect()
+    {
+        Debug.Log("가호 효과 적용");
+    }
 }

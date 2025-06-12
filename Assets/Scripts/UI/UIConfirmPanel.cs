@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,7 +14,7 @@ public class UIConfirmPanel : UIBase
 
     public void Init(Action confirmEvent, Action cancelEvent, string message)
     {
-        if(confirmEvent ==  null)
+        if (confirmEvent == null)
         {
             Debug.Log("¾×¼Ç ³Î");
         }
@@ -22,6 +23,10 @@ public class UIConfirmPanel : UIBase
         confirmButton.onClick.AddListener(() => confirmEvent.Invoke());
         cancelButton.onClick.AddListener(() => cancelEvent.Invoke());
         this.message.text = message;
+        //if (PhotonNetwork.IsConnected)
+        //{
+        //    //PhotonNetwork.CurrentRoom.IsOpen = false;
+        //}
     }
 
     public override void OnDisable()

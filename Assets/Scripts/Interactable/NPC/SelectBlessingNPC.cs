@@ -8,6 +8,12 @@ public class SelectBlessingNPC : MonoBehaviour, IInteractable
     private bool canIneract = true;
     [SerializeField]
     private Canvas canvas;
+    
+    // 현재 상호작용 가능 상태를 확인하는 메서드
+    public bool CanInteract()
+    {
+        return canIneract;
+    }
 
     public void OnInteract(InputAction.CallbackContext ctx)
     {
@@ -16,14 +22,14 @@ public class SelectBlessingNPC : MonoBehaviour, IInteractable
         {
             Debug.Log("상호작용 함수 호출 if문 실행");
             canIneract = false;
-            UIManager.Instance.OpenPopupPanel<UISelectBlessingPanel>();
-            InputManager.Instance.ChangeDefaultMap("UI");
+            UIManager.Instance.OpenPopupPanelInCameraCanvas<UISelectBlessingPanel>();
+            InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (canIneract && (other.CompareTag("Player") && (!PhotonNetwork.InRoom ||
+        if (canIneract && (other.CompareTag("Interactable") && (!PhotonNetwork.InRoom ||
             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine))))
         {
             canvas.gameObject.SetActive(true);
@@ -32,7 +38,7 @@ public class SelectBlessingNPC : MonoBehaviour, IInteractable
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player") && (!PhotonNetwork.InRoom ||
+        if (other.CompareTag("Interactable") && (!PhotonNetwork.InRoom ||
             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
             canvas.gameObject.SetActive(false);

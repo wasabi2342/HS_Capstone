@@ -13,6 +13,7 @@ public class UISelectBlessingPanel : UIBase
 
     private bool[] isFlipped;
 
+    public bool isSelected = false;
 
     private List<SkillWithLevel> newBlessings = new List<SkillWithLevel>();
 
@@ -26,9 +27,9 @@ public class UISelectBlessingPanel : UIBase
     private void PickUpBlessing()
     {
         var arr = RoomManager.Instance.ReturnLocalPlayer().GetComponent<PlayerBlessing>().ReturnSkillWithLevel();
-        if(arr == null)
-            Debug.Log("arr ³Î");
-        for(int i =0; i < arr.Length; i++)
+        if (arr == null)
+            Debug.Log("arr ï¿½ï¿½");
+        for (int i = 0; i < arr.Length; i++)
         {
             Debug.Log(arr[i]);
         }
@@ -83,6 +84,8 @@ public class UISelectBlessingPanel : UIBase
 
     public override void Init()
     {
+        InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
+
         isFlipped = new bool[buttons.Count];
         PickUpBlessing();
         int index = 0;
@@ -118,10 +121,11 @@ public class UISelectBlessingPanel : UIBase
                     buttons[index2].transform.DOLocalRotate(new Vector3(0, 90, 0), 0.3f).OnComplete(() =>
                     {
                         buttons[index2].GetComponent<UISelectBlessingButton>().SetEnabled();
+                        isFlipped[index2] = true;
+
                         buttons[index2].transform.DOLocalRotate(new Vector3(0, 0, 0), 0.3f).OnComplete(() =>
                         {
-                            isFlipped[index2] = true;
-                            buttons[index2].image.sprite = null;
+
                             buttons[index2].interactable = true;
                         });
                     });
@@ -134,11 +138,18 @@ public class UISelectBlessingPanel : UIBase
 
     private void SelectBleesing()
     {
+        if (selectedBlessing == null)
+        {
+            return;
+        }
+
         if (selectedBlessing.level != 0)
         {
             RoomManager.Instance.ReturnLocalPlayer().GetComponent<PlayerBlessing>().UpdateBlessing(selectedBlessing);
-            InputManager.Instance.ChangeDefaultMap("Player");
+            InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
             UIManager.Instance.ClosePeekUI();
+            isSelected = true;
         }
+        
     }
 }

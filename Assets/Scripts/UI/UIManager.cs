@@ -1,12 +1,32 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public enum ArrowTarget
+{
+    door,
+    blessing
+}
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
 
     private Stack<UIBase> uiStack = new Stack<UIBase>();
+
+    [SerializeField]
+    private Canvas overlayCanvas;
+    [SerializeField]
+    private Canvas cameraCanvas;
+    [SerializeField]
+    private TargetIndicator doorTargetIndicator;
+    [SerializeField]
+    private TargetIndicator blessingTargetIndicator;
+
+    private CanvasScaler scaler;
 
     private void Awake()
     {
@@ -26,33 +46,45 @@ public class UIManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    void Start()
+    public void SetRenderCamera(Camera camera)
     {
-        OpenPanel<UiStartPanel>();
-        
-        string nickname = PlayerPrefs.GetString("Nickname");
-        
-        if (nickname != "")
-        {
-            PhotonNetworkManager.Instance.SetNickname(nickname);
-        }
-        else
-        {
-            OpenPopupPanel<UISetNicknamePanel>();
-        }
+        cameraCanvas.worldCamera = camera;
+        doorTargetIndicator.SetCamera(camera);
+        blessingTargetIndicator.SetCamera(camera);
     }
 
-    public void OpenPanel<T>() where T : UIBase
+    void Start()
+    {
+        //OpenPanel<UiStartPanel>();
+        OpenPanelInOverlayCanvas<UILogoPanel>();
+    }
+
+    public T OpenPanelInOverlayCanvas<T>(bool additive = false) where T : UIBase
     {
         string prefabName = typeof(T).Name;
         GameObject prefab = Resources.Load<GameObject>($"UI/{prefabName}");
 
-        GameObject panelInstance = Instantiate(prefab);
-        panelInstance.transform.SetParent(transform, false);
+        GameObject panelInstance = Instantiate(prefab, overlayCanvas.transform, false);
+        T panel = panelInstance.GetComponent<T>();
 
-        ClosePeekUI();
+        if (!additive) ClosePeekUI();
 
-        uiStack.Push(panelInstance.GetComponent<T>());
+        uiStack.Push(panel);
+        return panel;
+    }
+
+    public T OpenPanelInCameraCanvas<T>(bool additive = false) where T : UIBase
+    {
+        string prefabName = typeof(T).Name;
+        GameObject prefab = Resources.Load<GameObject>($"UI/{prefabName}");
+
+        GameObject panelInstance = Instantiate(prefab, cameraCanvas.transform, false);
+        T panel = panelInstance.GetComponent<T>();
+
+        if (!additive) ClosePeekUI();
+
+        uiStack.Push(panel);
+        return panel;
     }
 
     public void ClosePeekUI()
@@ -70,26 +102,46 @@ public class UIManager : MonoBehaviour
 
     public void CloseAllUI()
     {
-        if (uiStack.Count > 0)
+        while (uiStack.Count > 0)
         {
-            Destroy(uiStack.Pop().gameObject);
-            CloseAllUI();
+            UIBase ui = uiStack.Pop();
+
+            if (ui != null && ui.gameObject != null)
+            {
+                Destroy(ui.gameObject);
+            }
         }
     }
 
-    public T OpenPopupPanel<T>() where T : UIBase
+    public T OpenPopupPanelInOverlayCanvas<T>() where T : UIBase
     {
         if (uiStack.Count > 0)
-            uiStack.Peek().gameObject.GetComponent<CanvasGroup  >().interactable = false;
+            uiStack.Peek().gameObject.GetComponent<CanvasGroup>().interactable = false;
 
         string prefabName = typeof(T).Name;
         GameObject prefab = Resources.Load<GameObject>($"UI/{prefabName}");
 
         GameObject panelInstance = Instantiate(prefab);
-        panelInstance.transform.SetParent(transform, false);
+        panelInstance.transform.SetParent(overlayCanvas.transform, false);
 
         T popup = panelInstance.GetComponent<T>();
+        uiStack.Push(popup);
 
+        return popup;
+    }
+
+    public T OpenPopupPanelInCameraCanvas<T>() where T : UIBase
+    {
+        if (uiStack.Count > 0)
+            uiStack.Peek().gameObject.GetComponent<CanvasGroup>().interactable = false;
+
+        string prefabName = typeof(T).Name;
+        GameObject prefab = Resources.Load<GameObject>($"UI/{prefabName}");
+
+        GameObject panelInstance = Instantiate(prefab);
+        panelInstance.transform.SetParent(cameraCanvas.transform, false);
+
+        T popup = panelInstance.GetComponent<T>();
         uiStack.Push(popup);
 
         return popup;
@@ -97,11 +149,11 @@ public class UIManager : MonoBehaviour
 
     public void OnSkillInfo()
     {
-        if(uiStack.Peek() is UIIngameMainPanel)
+        if (uiStack.Peek() is UIIngameMainPanel)
         {
-            OpenPopupPanel<UISkillInfoPanel>();
+            OpenPopupPanelInOverlayCanvas<UISkillInfoPanel>();
         }
-        else if(uiStack.Peek() is UISkillInfoPanel)
+        else if (uiStack.Peek() is UISkillInfoPanel)
         {
             ClosePeekUI();
         }
@@ -111,17 +163,52 @@ public class UIManager : MonoBehaviour
     {
         if (uiStack.Count > 0)
             return uiStack.Peek();
-        else 
+        else
             return null;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name.StartsWith("Stage"))
+        OffTargetIndicator();
+
+        CloseAllUI();
+        if (scene.name.StartsWith("Level") || scene.name == "StageTest1" || scene.name == "Tutorial" || scene.name == "PvP")
         {
-            UIManager.Instance.CloseAllUI();
-            UIManager.Instance.OpenPanel<UIIngameMainPanel>();
-            //ReturnLocalPlayer().GetComponent<WhitePlayercontroller_event>().isInVillage = false;
+            OpenPanelInOverlayCanvas<UIIngameMainPanel>();
+            OpenPanelInOverlayCanvas<UIMinimapPanel>(additive: true);
         }
+        else if (scene.name == "Restart")
+        {
+            CloseAllUI();
+            OpenPanelInOverlayCanvas<UiStartPanel>();
+        }
+    }
+
+    public void CloseAllAndOpen<T>() where T : UIBase
+    {
+        CloseAllUI();
+        OpenPanelInOverlayCanvas<T>();
+    }
+
+    public void OnTargetIndicator(Transform targetPos, ArrowTarget target)
+    {
+        switch (target)
+        {
+            case ArrowTarget.door:
+                doorTargetIndicator.SetTarget(targetPos);
+                doorTargetIndicator.gameObject.SetActive(true);
+                break;
+            case ArrowTarget.blessing:
+                blessingTargetIndicator.SetTarget(targetPos);
+                blessingTargetIndicator.gameObject.SetActive(true);
+                break;
+
+        }
+    }
+
+    public void OffTargetIndicator()
+    {
+        doorTargetIndicator.gameObject.SetActive(false);
+        blessingTargetIndicator.gameObject.SetActive(false);
     }
 }

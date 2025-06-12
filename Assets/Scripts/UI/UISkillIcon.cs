@@ -10,6 +10,8 @@ public class UISkillIcon : MonoBehaviour
     private Button skillButton;
     [SerializeField]
     private Image cooldownImage;
+    [SerializeField]
+    private Image skillImage;
 
     private float cooldownTimer;
 
@@ -32,6 +34,11 @@ public class UISkillIcon : MonoBehaviour
     public void StartUpdateSkillCooldown(float leftCooldown, float maxCooldown)
     {
         cooldownImage.fillAmount = Mathf.Max(leftCooldown / maxCooldown, 0);
+    }
+
+    public void SetImage(string playerCharacter, Skills skills, Blessings blessings)
+    {
+        skillImage.sprite = Resources.Load<Sprite>($"SkillIcon/{playerCharacter}/{skills}_{blessings}");
     }
 
     //public void UpdateCooldownTimer(float time)

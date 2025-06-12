@@ -167,7 +167,7 @@ public class WhitePlayerAttackZone : MonoBehaviourPun
                 abilityAction?.Invoke(other);
                 isFirstHit = false;
             }
-            other.GetComponent<IDamageable>().TakeDamage(Damage);
+            other.GetComponent<IDamageable>().TakeDamage(Damage, transform.position);
             StartHitlag();
         }
     }

@@ -1,5 +1,7 @@
 using NUnit.Framework.Constraints;
+using Photon.Pun;
 using Photon.Realtime;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,16 +13,15 @@ public class UICreateRoomPanel : UIBase
     [SerializeField]
     private List<Button> maxPlayerButtons;
     [SerializeField]
-    private List<Button> gameLevelButtons;
-    [SerializeField]
     private Toggle isVisibleToggle;
     [SerializeField]
     private Button confirmButton;
     [SerializeField]
     private Button cancelButton;
+    [SerializeField]
+    private InputField passwordInputField;
 
     private int maxPlayer;
-    private string difficulty;
 
     void Start()
     {
@@ -31,38 +32,56 @@ public class UICreateRoomPanel : UIBase
     {
         cancelButton.onClick.AddListener(OnClickedCancelButton);
         confirmButton.onClick.AddListener(OnClickedConfirmButton);
-        foreach (Button button in maxPlayerButtons)
+        for (int i = 0; i < maxPlayerButtons.Count; i++)
         {
-            button.onClick.AddListener(() => OnClickedMaxPlayerButton(int.Parse(button.GetComponentInChildren<Text>().text), button));
+            int maxPlayers = i + 2; // 인원수는 2부터 시작
+            Button button = maxPlayerButtons[i];
+            button.onClick.AddListener(() => OnClickedMaxPlayerButton(maxPlayers, button));
         }
+        isVisibleToggle.onValueChanged.AddListener(OnisVisibleToggleChanged);
+        passwordInputField.gameObject.SetActive(false); 
+    }
 
-        foreach (Button button in gameLevelButtons)
+    private void OnisVisibleToggleChanged(bool isOn)
+    {
+        if (isOn)
         {
-            button.onClick.AddListener(() => OnclickedGameLevelButton(button.GetComponentInChildren<Text>().text, button));
+            passwordInputField.gameObject.SetActive(true);
+        }
+        else
+        {
+            passwordInputField.gameObject.SetActive(false);
         }
     }
 
     private void OnClickedCancelButton()
     {
-        UIManager.Instance.ClosePeekUI();
+        PhotonNetwork.Disconnect();
+        UIManager.Instance.OpenPanelInOverlayCanvas<UiStartPanel>();
     }
 
     private void OnClickedConfirmButton()
     {
-        if (roomNameInputField.text != "" && maxPlayer != 0 && difficulty !="")
+        if (roomNameInputField.text != "" && maxPlayer != 0)
         {
             RoomOptions roomOptions = new RoomOptions();
             roomOptions.MaxPlayers = maxPlayer;
-            roomOptions.IsVisible = !isVisibleToggle.isOn;
-            roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable
+            if (isVisibleToggle.isOn)
             {
-                { "Difficulty", $"{difficulty}" }
-            };
-            PhotonNetworkManager.Instance.CreateRoom(roomNameInputField.text, roomOptions);
+                roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable
+                {
+                    { "Password", passwordInputField.text }
+                };
+            }
+
+            // 비밀번호를 로비에서 볼 수 있게 설정
+            roomOptions.CustomRoomPropertiesForLobby = new string[] { "Password" };
+
+            PhotonNetworkConnectManager.Instance.CreateRoom(roomNameInputField.text, roomOptions);
         }
         else
         {
-            UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("내용을 입력해 주세요.");
+            UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("내용을 입력해 주세요.");
         }
     }
 
@@ -75,18 +94,6 @@ public class UICreateRoomPanel : UIBase
             btn.interactable = true;
         }
 
-        button.interactable = false;
-    }
-
-    private void OnclickedGameLevelButton(string difficulty, Button button)
-    {
-        this.difficulty = difficulty;
-
-        foreach (Button btn in gameLevelButtons)
-        {
-            btn.interactable = true;
-        }
-        
         button.interactable = false;
     }
 }

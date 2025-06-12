@@ -140,7 +140,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 5b86a0308ab46a04f8ee087bc6d23554, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -252,7 +252,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 65527
 --- !u!1 &6988057903445344002
 GameObject:
   m_ObjectHideFlags: 0
@@ -333,8 +333,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 1446405667, guid: 5c94fe6094e264144bdcba6bd7c44345, type: 3}
-  m_Color: {r: 1, g: 1, b: 0, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 4ddb5b0826a7bf8478e8ab929732aca5, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -354,7 +354,7 @@ Animator:
   m_GameObject: {fileID: 6988057903445344002}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 28ccff2b1fb0336479d1fb936a8427ca, type: 2}
+  m_Controller: {fileID: 9100000, guid: 3ee44297ffe6ae543954815270aee0d7, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -380,7 +380,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gauge: {fileID: 905456174186085873}
   canvas: {fileID: 4355996317995846281}
-  characterPrefab: {fileID: 4131734313779836671, guid: ba6efa9bb87af894fb704d05abf5d40a, type: 3}
+  holdTime: 1
+  characterPrefab: {fileID: 673988289270443858, guid: f6ea7a56633cac841b8b86bd805c780e, type: 3}
 --- !u!65 &4286156186492955576
 BoxCollider:
   m_ObjectHideFlags: 0

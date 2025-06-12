@@ -21,7 +21,7 @@ public class EnterStageNPC : MonoBehaviour, IInteractable
                 }
                 else
                 {
-                    UIManager.Instance.OpenPopupPanel<UIDialogPanel>().SetInfoText("모든 플레이어가 밖으로 나와야 합니다.");
+                    UIManager.Instance.OpenPopupPanelInOverlayCanvas<UIDialogPanel>().SetInfoText("모든 플레이어가 밖으로 나와야 합니다.");
                 }
             }
         }
@@ -29,7 +29,7 @@ public class EnterStageNPC : MonoBehaviour, IInteractable
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && (!PhotonNetwork.InRoom ||
+        if (other.CompareTag("Interactable") && (!PhotonNetwork.InRoom ||
             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
             canvas.gameObject.SetActive(true);
@@ -38,7 +38,7 @@ public class EnterStageNPC : MonoBehaviour, IInteractable
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player") && (!PhotonNetwork.InRoom ||
+        if (other.CompareTag("Interactable") && (!PhotonNetwork.InRoom ||
             (PhotonNetwork.InRoom && other.GetComponentInParent<PhotonView>().IsMine)))
         {
             canvas.gameObject.SetActive(false);

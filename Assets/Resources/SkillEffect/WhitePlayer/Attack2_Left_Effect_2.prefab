@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 7527232499734469018}
   - component: {fileID: 3423805332886409993}
   - component: {fileID: 4518934799247137540}
-  - component: {fileID: 4725002201744197463}
   - component: {fileID: 4486044326596546648}
+  - component: {fileID: -7403392250603133550}
   m_Layer: 12
   m_Name: Attack2_Left_Effect_2
   m_TagString: Untagged
@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.7, z: 0.5}
+  m_LocalScale: {x: 0.375, y: 0.525, z: 0.375}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -79,16 +79,16 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: ed958f1b7d368864085150bc3028469e, type: 3}
-  m_Color: {r: 0.9764706, g: 0.5137255, b: 1, a: 1}
+  m_SortingOrder: 3
+  m_Sprite: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 20, y: 20}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!95 &3423805332886409993
@@ -101,7 +101,7 @@ Animator:
   m_GameObject: {fileID: 662842400168973053}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 8101f965b6f98f742a0149bb5ac3445e, type: 2}
+  m_Controller: {fileID: 9100000, guid: 297368f8835c7db49a917e7fd9ff74ea, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -126,29 +126,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 0}
-  hitlagTime: 0.13
---- !u!114 &4725002201744197463
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 662842400168973053}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents: []
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
+  hitlagTime: 0.04
+  attackerType: 1
+  animationSpeed: 1
+  childEffect: {fileID: 4622890463185001732, guid: 33959439971611a44b94efa54559d59d, type: 3}
 --- !u!65 &4486044326596546648
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -166,7 +147,19 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
-  m_Size: {x: 12, y: 4, z: 0.5}
+  m_Size: {x: 12, y: 4, z: 2}
   m_Center: {x: -1, y: 0.5, z: 0}
+--- !u!114 &-7403392250603133550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 662842400168973053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e013e64be0a9c164386ad452f38a19de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -1,6 +1,12 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+public enum InputDefaultMap
+{
+    Player,
+    UI
+}
+
 public class InputManager : MonoBehaviour
 {
     public static InputManager Instance { get; private set; }
@@ -12,27 +18,28 @@ public class InputManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(this);
         }
-        DontDestroyOnLoad(gameObject);
 
         PlayerInput = GetComponent<PlayerInput>();
     }
-    
-    public bool ChangeDefaultMap(string actionMap)
+
+    public bool ChangeDefaultMap(InputDefaultMap actionMap)
     {
-        if (PlayerInput.actions.FindActionMap(actionMap) == null)
+        switch (actionMap)
         {
-            Debug.Log("actionMap¿Ã æ¯¿Ω");
-            return false;
+            case InputDefaultMap.Player:
+                PlayerInput.SwitchCurrentActionMap("Player");
+                return true;
+            case InputDefaultMap.UI:
+                PlayerInput.SwitchCurrentActionMap("UI");
+                return true;
         }
-        else
-        {
-            PlayerInput.SwitchCurrentActionMap(actionMap);
-            return true;
-        }
+
+        return false;
     }
 }

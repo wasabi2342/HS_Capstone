@@ -1,5 +1,7 @@
 using Photon.Pun;
 using Photon.Realtime;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -33,25 +35,54 @@ public class UIIngameMainPanel : UIBase
     private RectTransform partyHPParent;
     [SerializeField]
     private UIPartyHPContent partyHPContent;
+    [SerializeField]
+    private TextMeshProUGUI etherText;
+    [SerializeField]
+    private TextMeshProUGUI goldText;
+    [SerializeField]
+    private List<Image> playerIconList = new List<Image>();
+    [SerializeField]
+    private Image hitOverlay;
+    [SerializeField]
+    private float hitOverlayDuration = 0.5f;
+
+    private Coroutine hitOverlayCoroutine;
 
     private Dictionary<int, UIPartyHPContent> contentPairs = new Dictionary<int, UIPartyHPContent>();
 
+    private System.Action<InputAction.CallbackContext> openBlessingInfoAction;
+
     private void Start()
     {
-        InputManager.Instance.PlayerInput.actions["OpenBlessingInfo"].performed += ctx => OpenBlessingInfoPanel(ctx);
+        //StartCoroutine(Co_Start());
+
+        openBlessingInfoAction = OpenBlessingInfoPanel;
+        InputManager.Instance.PlayerInput.actions["OpenBlessingInfo"].performed += openBlessingInfoAction;
+
         RoomManager.Instance.UIUpdate += AddPartyPlayerHPbar;
         Init();
     }
 
+    IEnumerator Co_Start()
+    {
+        yield return new WaitForFixedUpdate();
+
+        openBlessingInfoAction = OpenBlessingInfoPanel;
+        InputManager.Instance.PlayerInput.actions["OpenBlessingInfo"].performed += openBlessingInfoAction;
+
+        RoomManager.Instance.UIUpdate += AddPartyPlayerHPbar;
+        Init();
+    }
 
     [SerializeField] private Image stunOverlay;
     [SerializeField] private Image stunSlider;
 
     public override void Init() // 선택된 캐릭터 정보를 받아와 이미지 갱신
     {
-        foreach (var icon in uISkillIcons)
+        string playerCharacter = RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>().ReturnCharacterName();
+        for (int i = 0; i < uISkillIcons.Count; i++)
         {
-
+            uISkillIcons[i].SetImage(playerCharacter, (Skills)i, Blessings.None);
         }
 
         ParentPlayerController playerController = RoomManager.Instance.ReturnLocalPlayer().GetComponent<ParentPlayerController>();
@@ -59,6 +90,8 @@ public class UIIngameMainPanel : UIBase
         {
             playerController.OnHealthChanged.RemoveAllListeners();
             playerController.OnHealthChanged.AddListener(UpdateHPImage);
+            playerController.OnAttackCooldownUpdate.RemoveAllListeners();
+            playerController.OnAttackCooldownUpdate.AddListener(uISkillIcons[(int)UIIcon.mouseL].StartUpdateSkillCooldown);
             playerController.ShiftCoolDownUpdate.RemoveAllListeners();
             playerController.ShiftCoolDownUpdate.AddListener(uISkillIcons[(int)UIIcon.shift].StartUpdateSkillCooldown);
             playerController.UltimateCoolDownUpdate.RemoveAllListeners();
@@ -76,6 +109,19 @@ public class UIIngameMainPanel : UIBase
             playerController.stunSlider = stunSlider;
             playerController.ShieldUpdate.RemoveAllListeners();
             playerController.ShieldUpdate.AddListener(UpdateShieldImage);
+            playerController.OnHitEvent.RemoveAllListeners();
+            playerController.OnHitEvent.AddListener(OnHitOverlay);
+            playerController.UpdateHP();
+        }
+
+        if (Enum.TryParse<Characters>(playerController.ReturnCharacterName(), out var character))
+        {
+            int characterInt = (int)character;
+            playerIconList[characterInt].gameObject.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("변환 실패!");
         }
     }
 
@@ -88,33 +134,59 @@ public class UIIngameMainPanel : UIBase
         {
             playerController.OnHealthChanged.RemoveAllListeners();
             playerController.OnHealthChanged.AddListener(content.UpdateHPImage);
+            playerController.UpdateHP();
         }
         contentPairs[actnum] = content;
     }
 
     private void OnDisable()
     {
+        if (InputManager.Instance != null && InputManager.Instance.PlayerInput != null)
+        {
+            InputManager.Instance.PlayerInput.actions["OpenBlessingInfo"].performed -= openBlessingInfoAction;
+        }
+
         ParentPlayerController playerController;
 
         foreach (var keyValuePair in contentPairs)
         {
-            playerController = RoomManager.Instance.players[keyValuePair.Key].GetComponent<ParentPlayerController>();
-            if (playerController != null)
+            if (RoomManager.Instance.players.ContainsKey(keyValuePair.Key))
             {
-                playerController.OnHealthChanged.RemoveListener(keyValuePair.Value.UpdateHPImage);
+                if (RoomManager.Instance.players[keyValuePair.Key] != null)
+                {
+                    playerController = RoomManager.Instance.players[keyValuePair.Key].GetComponent<ParentPlayerController>();
+
+                    if (playerController != null)
+                    {
+                        playerController.OnHealthChanged.RemoveListener(keyValuePair.Value.UpdateHPImage);
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"Key {keyValuePair.Key} not found in players dictionary.");
             }
         }
 
-        playerController = RoomManager.Instance.players[PhotonNetwork.LocalPlayer.ActorNumber].GetComponent<ParentPlayerController>();
-        if (playerController != null)
+        int localActorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+
+        if (RoomManager.Instance.players.ContainsKey(localActorNumber) && RoomManager.Instance.players[localActorNumber] != null)
         {
-            playerController.OnHealthChanged.RemoveListener(UpdateHPImage);
-            playerController.ShiftCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.shift].StartUpdateSkillCooldown);
-            playerController.UltimateCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.r].StartUpdateSkillCooldown);
-            playerController.MouseRightSkillCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.mouseR].StartUpdateSkillCooldown);
-            playerController.OnDashCooldownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.space].StartUpdateSkillCooldown);
-            playerController.AttackStackUpdate.RemoveListener(UpdateMouseLeftStack);
-            playerController.SkillOutlineUpdate.RemoveAllListeners();
+            playerController = RoomManager.Instance.players[localActorNumber].GetComponent<ParentPlayerController>();
+            if (playerController != null)
+            {
+                playerController.OnHealthChanged.RemoveListener(UpdateHPImage);
+                playerController.ShiftCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.shift].StartUpdateSkillCooldown);
+                playerController.UltimateCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.r].StartUpdateSkillCooldown);
+                playerController.MouseRightSkillCoolDownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.mouseR].StartUpdateSkillCooldown);
+                playerController.OnDashCooldownUpdate.RemoveListener(uISkillIcons[(int)UIIcon.space].StartUpdateSkillCooldown);
+                playerController.AttackStackUpdate.RemoveListener(UpdateMouseLeftStack);
+                playerController.SkillOutlineUpdate.RemoveAllListeners();
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"Local player with ActorNumber {localActorNumber} not found in players dictionary.");
         }
     }
 
@@ -132,8 +204,10 @@ public class UIIngameMainPanel : UIBase
 
     public void OpenBlessingInfoPanel(InputAction.CallbackContext ctx)
     {
-        UIManager.Instance.OpenPopupPanel<UISkillInfoPanel>();
-        InputManager.Instance.ChangeDefaultMap("UI");
+        if (UIManager.Instance.ReturnPeekUI() as UIMenuPanel)
+            return;
+        UIManager.Instance.OpenPopupPanelInOverlayCanvas<UISkillInfoPanel>();
+        InputManager.Instance.ChangeDefaultMap(InputDefaultMap.UI);
     }
 
     public void UpdateIconOutline(UIIcon icon, Color color)
@@ -156,5 +230,43 @@ public class UIIngameMainPanel : UIBase
     {
         shieldImage.fillAmount = shieldAmount / maxShield;
         shieldText.text = $"{shieldAmount}/{maxShield}";
+    }
+
+    public void OnHitOverlay()
+    {
+        // 이전 코루틴이 실행 중이면 중단
+        if (hitOverlayCoroutine != null)
+        {
+            StopCoroutine(hitOverlayCoroutine);
+        }
+
+        // 새 코루틴 시작
+        hitOverlayCoroutine = StartCoroutine(HitOverlayFade());
+    }
+
+    private IEnumerator HitOverlayFade()
+    {
+        // 이미지 활성화 및 알파 1로 설정
+        hitOverlay.gameObject.SetActive(true);
+        Color color = hitOverlay.color;
+        color.a = 1f;
+        hitOverlay.color = color;
+
+        float duration = 1f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.fixedDeltaTime;
+            color.a = Mathf.Lerp(1f, 0f, elapsed / duration);
+            hitOverlay.color = color;
+            yield return new WaitForFixedUpdate();
+        }
+
+        // 완전히 투명해진 후 비활성화
+        color.a = 0f;
+        hitOverlay.color = color;
+        hitOverlay.gameObject.SetActive(false);
+        hitOverlayCoroutine = null;
     }
 }

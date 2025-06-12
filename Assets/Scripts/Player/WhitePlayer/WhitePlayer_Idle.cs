@@ -8,76 +8,120 @@ public class WhitePlayer_Idle : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if(whitePlayerController == null)
+        if (photonView == null)
+            photonView = animator.GetComponent<PhotonView>();
+        //if (PhotonNetwork.IsConnected && !photonView.IsMine)
+        //    return;
+
+        if (whitePlayerController == null)
             whitePlayerController = animator.GetComponent<WhitePlayerController>();
         whitePlayerController.currentState = WhitePlayerState.Idle;
+        animator.SetBool("basicattack", false);
+        animator.SetBool("guard", false);
+        animator.SetBool("skill", false);
+        animator.SetBool("ultimate", false);
+        animator.SetBool("dash", false);
+
+        whitePlayerController.ExitInvincibleState();
+        whitePlayerController.ExitSuperArmorState();
+
         animator.SetBool("Pre-Attack", false);
         animator.SetBool("Pre-Input", false);
         animator.SetBool("CancleState", false);
         animator.SetBool("FreeState", false);
         animator.SetBool("run", false);
-        animator.SetBool("revive", false); 
+        animator.SetBool("revive", false);
         animator.SetInteger("CounterStack", 0);
+        if (PhotonNetwork.IsConnected)
+            whitePlayerController.SetTriggerParameter("idle");
     }
 
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        if (photonView == null)
+            photonView = animator.GetComponent<PhotonView>();
+        if (PhotonNetwork.IsConnected && !photonView.IsMine)
+            return;
         if (whitePlayerController == null)
             whitePlayerController = animator.GetComponent<WhitePlayerController>();
-        if(photonView == null)
-            photonView = animator.GetComponent<PhotonView>();
-        if(!photonView.IsMine)
-            return;
-        switch (whitePlayerController.nextState)
+
+        var state = whitePlayerController.nextState;
+
+        if (state == WhitePlayerState.Idle) return;
+
+        switch (state)
         {
-            case WhitePlayerState.Idle:
-                break;
             case WhitePlayerState.Run:
                 animator.SetBool("run", true);
+                if (PhotonNetwork.IsConnected)
+                {
+                    whitePlayerController.SetTriggerParameter("runStart");
+                    whitePlayerController.SetBoolParameter("run", true);
+                }
                 whitePlayerController.currentState = WhitePlayerState.Run;
                 break;
             case WhitePlayerState.BasicAttack:
                 whitePlayerController.attackStack++;
                 Debug.Log(whitePlayerController.attackStack);
                 animator.SetInteger("AttackStack", whitePlayerController.attackStack);
-                whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
                 whitePlayerController.AttackStackUpdate?.Invoke(whitePlayerController.attackStack);
-                animator.SetBool("basicattack",true);
-                whitePlayerController.SetBoolParameter("basicattack", true);
                 whitePlayerController.currentState = WhitePlayerState.BasicAttack;
+
+                Vector3 mousePos = whitePlayerController.GetMouseWorldPosition();
+                animator.SetBool("Right", mousePos.x > whitePlayerController.transform.position.x);
+                
+                animator.SetBool("basicattack", true);
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    whitePlayerController.SetIntParameter("AttackStack", whitePlayerController.attackStack);
+                //    whitePlayerController.SetBoolParameter("basicattack", true);
+                //    whitePlayerController.SetBoolParameter("Right", mousePos.x > whitePlayerController.transform.position.x);
+                //}
                 break;
             case WhitePlayerState.Guard:
                 animator.SetBool("guard", true);
-                whitePlayerController.SetBoolParameter("guard", true);
                 whitePlayerController.currentState = WhitePlayerState.Guard;
+                //if (PhotonNetwork.IsConnected)
+                //    whitePlayerController.SetBoolParameter("guard", true);
                 break;
             case WhitePlayerState.Skill:
                 animator.SetBool("skill", true);
-                whitePlayerController.SetBoolParameter("skill", true);
                 whitePlayerController.currentState = WhitePlayerState.Skill;
+                //if (PhotonNetwork.IsConnected)
+                //    whitePlayerController.SetBoolParameter("skill", true);
                 break;
             case WhitePlayerState.Ultimate:
                 animator.SetBool("ultimate", true);
-                whitePlayerController.SetBoolParameter("ultimate", true);
                 whitePlayerController.currentState = WhitePlayerState.Ultimate;
+                //if (PhotonNetwork.IsConnected)
+                //    whitePlayerController.SetBoolParameter("ultimate", true);
                 break;
             case WhitePlayerState.Dash:
-                animator.SetTrigger("dash");
+                animator.SetBool("dash",true);
                 whitePlayerController.currentState = WhitePlayerState.Dash;
+                if (PhotonNetwork.IsConnected)
+                    whitePlayerController.SetTriggerParameter("dash");
                 break;
-
         }
+
+        // 상태 처리 후 Idle로 리셋해서 중복 처리 방지
+        whitePlayerController.nextState = WhitePlayerState.Idle;
     }
+
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        if (photonView == null)
+            photonView = animator.GetComponent<PhotonView>();
+        if (PhotonNetwork.IsConnected && !photonView.IsMine)
+            return;
         if (whitePlayerController == null)
             whitePlayerController = animator.GetComponent<WhitePlayerController>();
 
         whitePlayerController.nextState = WhitePlayerState.Idle;
-        animator.SetBool("Pre-Attack", false); 
+        animator.SetBool("Pre-Attack", false);
         animator.SetBool("Pre-Input", false);
     }
 

@@ -21,17 +21,9 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 21300000, guid: 511b86a3f190b834db91cc316338d296, type: 3}
+      value: {fileID: 21300000, guid: 7f48d9455ea10a143984fe0123396c0c, type: 3}
     - time: 0.1
-      value: {fileID: 21300000, guid: dea3095536d094148a61672259407d52, type: 3}
-    - time: 0.2
-      value: {fileID: 21300000, guid: a4f9923432beeb4418e1551d866ad5be, type: 3}
-    - time: 0.3
-      value: {fileID: 21300000, guid: 665655c4583bd7f4a96bca29255e0a71, type: 3}
-    - time: 0.4
-      value: {fileID: 21300000, guid: 4e3e53ae5a0a75c4ea652341ec1d2f08, type: 3}
-    - time: 0.5
-      value: {fileID: 21300000, guid: 96fabff88b97db346ad6e1e60093d685, type: 3}
+      value: {fileID: 21300000, guid: 315ba1f870aef9141983d4e356758346, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -54,18 +46,14 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 21300000, guid: 511b86a3f190b834db91cc316338d296, type: 3}
-    - {fileID: 21300000, guid: dea3095536d094148a61672259407d52, type: 3}
-    - {fileID: 21300000, guid: a4f9923432beeb4418e1551d866ad5be, type: 3}
-    - {fileID: 21300000, guid: 665655c4583bd7f4a96bca29255e0a71, type: 3}
-    - {fileID: 21300000, guid: 4e3e53ae5a0a75c4ea652341ec1d2f08, type: 3}
-    - {fileID: 21300000, guid: 96fabff88b97db346ad6e1e60093d685, type: 3}
+    - {fileID: 21300000, guid: 7f48d9455ea10a143984fe0123396c0c, type: 3}
+    - {fileID: 21300000, guid: 315ba1f870aef9141983d4e356758346, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.6
+    m_StopTime: 0.2
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -84,4 +72,18 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 0
+    functionName: OnAttackCollider
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.2
+    functionName: OffAttackCollider
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

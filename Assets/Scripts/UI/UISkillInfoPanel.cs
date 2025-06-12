@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -17,7 +18,9 @@ public class UISkillInfoPanel : UIBase
 {
     [SerializeField]
     private UISkillDataSlot[] dataSlots = new UISkillDataSlot[5];
-    
+
+    private Action<InputAction.CallbackContext> closeUIAction;
+
     private void Start()
     {
         Init();
@@ -30,15 +33,16 @@ public class UISkillInfoPanel : UIBase
         {
             if (blessings[i].level == 0)
             {
-                dataSlots[i].Init("가호 없음", ((Skills)i).ToString());
+                dataSlots[i].Init(blessings[i]);
             }
             else
             {
-                dataSlots[i].Init(blessings[i].skillData.Blessing_name + blessings[i].level + "레벨", ((Skills)i).ToString());
+                dataSlots[i].Init(blessings[i]);
             }
         }
 
-        InputManager.Instance.PlayerInput.actions["Tab"].performed += ctx => CloseUI(ctx);
+        closeUIAction = CloseUI;
+        InputManager.Instance.PlayerInput.actions["Tab"].performed += closeUIAction;
     }
 
     public void CloseUI(InputAction.CallbackContext ctx)
@@ -46,7 +50,17 @@ public class UISkillInfoPanel : UIBase
         if(UIManager.Instance.ReturnPeekUI() as UISkillInfoPanel)
         {
             UIManager.Instance.ClosePeekUI();
-            InputManager.Instance.ChangeDefaultMap("Player");
+            InputManager.Instance.ChangeDefaultMap(InputDefaultMap.Player);
+        }
+    }
+
+    public override void OnDisable()
+    {
+        base.OnDisable();
+
+        if (InputManager.Instance != null && InputManager.Instance.PlayerInput != null && closeUIAction != null)
+        {
+            InputManager.Instance.PlayerInput.actions["Tab"].performed -= closeUIAction;
         }
     }
 }

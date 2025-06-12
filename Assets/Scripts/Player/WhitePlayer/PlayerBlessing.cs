@@ -92,4 +92,26 @@ public class PlayerBlessing : MonoBehaviourPun
             return specialEffectList[specialEffectID];
         }
     }
+
+    public void TryApplyDebuffOnHit(SkillWithLevel skillWithLevel, EnemyFSM fsm)
+    {
+        if (skillWithLevel == null || fsm == null)
+            return;
+
+        if (skillWithLevel.level <= 0)
+            return;
+
+        var effectType = skillWithLevel.skillData.debuffType;
+        if (effectType == SpecialEffectType.None)
+            return;
+
+        float duration = skillWithLevel.skillData.debuffDuration;
+        float value = skillWithLevel.skillData.debuffValue;
+
+        if (fsm.debuff != null)
+        {
+            fsm.debuff.ApplyDebuff(effectType, duration, value);
+        }
+    }
+
 }

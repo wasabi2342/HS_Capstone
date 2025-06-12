@@ -1,93 +1,103 @@
-﻿using UnityEngine;
+﻿// ===================== RewardButton.cs =====================
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class RewardButton : MonoBehaviour
 {
-    public int rewardIndex;          // 0=A, 1=B …
-    public Button unityButton;
+    /* ───────── 정적 (현재 선택된 버튼) ───────── */
+    private static RewardButton currentlySelected = null;
 
-    [Header("Highlight Images")]
-    public Image normalHighlight;    // 첫 클릭 노랑
-    public Image selectHighlight;    // 두 번째 클릭 초록
-    public Image selectRoad;         // 초록 길(옵션)
+    /* ───────── Inspector ───────── */
+    [Header("General")]
+    public int rewardIndex;          // 보상 인덱스
+    public Button unityButton;          // 클릭 이벤트용
 
-    [Header("Check Icons")]
-    public Transform checkParent;
-    public GameObject checkPrefab;
-    public float checkSpacing = 20f;
-    private List<GameObject> spawnedChecks = new List<GameObject>();
+    [Header("Check Slots (미리 배치한 이미지)")]
+    public GameObject[] checkSlots;     // Slot0, Slot1, … (SetActive=false 로 시작)
 
-    public bool isSelected = false;
-    public bool isVoted = false;
+    /* ───────── 내부 자료구조 ───────── */
+    private readonly List<int> voteOrder = new();   // 왼→오른쪽 순서
+    private readonly HashSet<int> voters = new(); // 중복 방지
 
+    /* ───────── 상태 ───────── */
+    [HideInInspector] public bool isSelected = false; // 1차 선택 여부
+    public bool isVoted = false;         // 투표 확정 여부
+
+    /* ───────── 초기화 ───────── */
     public void Init()
     {
-        if (unityButton != null)
-            unityButton.interactable = true;
+        if (unityButton) unityButton.interactable = true;
 
-        if (normalHighlight != null) normalHighlight.enabled = false;
-        if (selectHighlight != null) selectHighlight.enabled = false;
-        if (selectRoad != null) selectRoad.enabled = false;
-
-        foreach (var c in spawnedChecks)
-            Destroy(c);
-        spawnedChecks.Clear();
+        voteOrder.Clear();
+        voters.Clear();
+        foreach (var slot in checkSlots)
+            slot.SetActive(false);
 
         isSelected = false;
         isVoted = false;
+
+        if (currentlySelected == this)
+            currentlySelected = null;
     }
 
+    /* ───────── 클릭 ───────── */
     public void OnClickButton()
     {
-        // 이미 투표 확정(초록)이면 무시
-        if (isVoted) return;
+        if (isVoted) return; // 이미 확정된 버튼이면 무시
 
-        // 첫 클릭 → 노랑
-        if (!isSelected && !isVoted)
+        /* ① 첫 번째 클릭 → 선택 & 상세 보기 */
+        if (currentlySelected != this)
         {
-            // 다른 노랑 해제
-            RewardManager.Instance.UnhighlightAllNonVoted(this);
+            if (currentlySelected != null)
+                currentlySelected.isSelected = false; // 이전 선택 해제
 
+            currentlySelected = this;
             isSelected = true;
-            if (normalHighlight != null)
-                normalHighlight.enabled = true;
-
-            // 보상 상세 표시 (로컬 전용)
-            RewardManager.Instance.ShowDetailLocal(rewardIndex);
+            UIRewardPanel.Instance.ShowDetailLocal(rewardIndex);
+            return;
         }
-        // 두 번째 클릭 → 초록 (투표 요청)
-        else if (isSelected && !isVoted)
-        {
-            isVoted = true;
 
-            if (normalHighlight != null) normalHighlight.enabled = false;
-            if (selectHighlight != null) selectHighlight.enabled = true;
-            if (selectRoad != null) selectRoad.enabled = true;
-
-            RewardManager.Instance.ShowDetailLocal(rewardIndex);
-
-            // 로컬 → 마스터에게 “이걸로 투표”
-            RewardManager.Instance.RequestVote(rewardIndex);
-        }
+        /* ② 두 번째 클릭 → 투표 확정 */
+        ConfirmVote();
     }
 
-    public void DisableNormalHighlight()
+    private void ConfirmVote()
     {
-        if (normalHighlight != null)
-            normalHighlight.enabled = false;
-        isSelected = false;
+        isVoted = true;
+
+        // 다른 버튼 잠금
+        foreach (var b in UIRewardPanel.Instance.rewardButtons)
+            if (b != this && b.unityButton)
+                b.unityButton.interactable = false;
+
+        UIRewardPanel.Instance.RequestVote(rewardIndex);
     }
 
-    // 마스터가 RPC_AddCheckMark → 모든 클라이언트에서 2개씩 아이콘 생성
-    public void AddCheckIcon()
+    /* ───────── 체크 아이콘 추가 (왼쪽부터) ───────── */
+    public void AddCheckIcon(int actorNum)
     {
-        if (checkPrefab == null || checkParent == null) return;
+        if (voters.Contains(actorNum)) return;            // 중복 방지
+        if (voteOrder.Count >= checkSlots.Length) return; // 슬롯 초과 방지
 
-        GameObject newCheck = Instantiate(checkPrefab, checkParent);
-        int idx = spawnedChecks.Count;
-        newCheck.transform.localPosition = new Vector3(idx * checkSpacing, 0f, 0f);
+        int idx = voteOrder.Count;        // 왼쪽부터 채움
+        checkSlots[idx].SetActive(true);
 
-        spawnedChecks.Add(newCheck);
+        voteOrder.Add(actorNum);
+        voters.Add(actorNum);
+    }
+
+    /* ───────── 체크 아이콘 제거 (오른쪽부터) ───────── */
+    public void RemoveCheckIcon(int actorNum)
+    {
+        if (!voters.Contains(actorNum)) return;
+
+        int removeIdx = voteOrder.IndexOf(actorNum);
+        voters.Remove(actorNum);
+        voteOrder.RemoveAt(removeIdx);
+
+        /* 모든 슬롯 재정렬 : 왼쪽부터 voteOrder 수만큼만 활성화 */
+        for (int i = 0; i < checkSlots.Length; i++)
+            checkSlots[i].SetActive(i < voteOrder.Count);
     }
 }

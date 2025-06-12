@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="Event" id="{da7e6301-efa8-4243-8f1d-19a650b9ce22}">
+		<property name="name">
+			<value>reward drop</value>
+		</property>
+		<property name="outputFormat">
+			<value>1</value>
+		</property>
+		<relationship name="folder">
+			<destination>{fef434fd-320d-4845-990c-a225952d1590}</destination>
+		</relationship>
+		<relationship name="mixerInput">
+			<destination>{cad26858-6133-426a-bca6-eebc89fd6850}</destination>
+		</relationship>
+		<relationship name="banks">
+			<destination>{0b294ce9-98fa-48cf-9be2-9fab6d86a035}</destination>
+		</relationship>
+	</object>
+	<object class="MixerInput" id="{cad26858-6133-426a-bca6-eebc89fd6850}">
+		<relationship name="output">
+			<destination>{dcef9976-f8e9-43a9-9c6c-ae1a81b3a2fa}</destination>
+		</relationship>
+	</object>
+</objects>

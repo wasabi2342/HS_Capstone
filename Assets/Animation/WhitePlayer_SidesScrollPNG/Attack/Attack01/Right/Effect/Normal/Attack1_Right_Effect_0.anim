@@ -21,9 +21,11 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 21300000, guid: e9339866f14411144a5b1c9a34ddd046, type: 3}
+      value: {fileID: 21300000, guid: c215358d25ffc2f4a8c4be18176724b4, type: 3}
     - time: 0.1
-      value: {fileID: 21300000, guid: e19f81bb064727042b877e42f893ab27, type: 3}
+      value: {fileID: 21300000, guid: a999791bb0fd5074cb94da836b91b7c0, type: 3}
+    - time: 0.2
+      value: {fileID: 21300000, guid: 94fcb7d8fdead1846b6d41acb94ef381, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -46,14 +48,15 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 21300000, guid: e9339866f14411144a5b1c9a34ddd046, type: 3}
-    - {fileID: 21300000, guid: e19f81bb064727042b877e42f893ab27, type: 3}
+    - {fileID: 21300000, guid: c215358d25ffc2f4a8c4be18176724b4, type: 3}
+    - {fileID: 21300000, guid: a999791bb0fd5074cb94da836b91b7c0, type: 3}
+    - {fileID: 21300000, guid: 94fcb7d8fdead1846b6d41acb94ef381, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.2
+    m_StopTime: 0.3
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -72,4 +75,18 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 0
+    functionName: OnAttackCollider
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.2
+    functionName: OffAttackCollider
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

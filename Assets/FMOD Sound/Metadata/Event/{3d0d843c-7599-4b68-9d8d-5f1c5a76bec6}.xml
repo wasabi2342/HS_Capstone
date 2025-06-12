@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="Event" id="{3d0d843c-7599-4b68-9d8d-5f1c5a76bec6}">
+		<property name="name">
+			<value>set_chess piece</value>
+		</property>
+		<property name="outputFormat">
+			<value>1</value>
+		</property>
+		<relationship name="folder">
+			<destination>{fef434fd-320d-4845-990c-a225952d1590}</destination>
+		</relationship>
+		<relationship name="mixerInput">
+			<destination>{2a8f2c46-05a8-4da6-8cdd-8b5820e07c98}</destination>
+		</relationship>
+		<relationship name="banks">
+			<destination>{0b294ce9-98fa-48cf-9be2-9fab6d86a035}</destination>
+		</relationship>
+	</object>
+	<object class="MixerInput" id="{2a8f2c46-05a8-4da6-8cdd-8b5820e07c98}">
+		<relationship name="output">
+			<destination>{dcef9976-f8e9-43a9-9c6c-ae1a81b3a2fa}</destination>
+		</relationship>
+	</object>
+</objects>

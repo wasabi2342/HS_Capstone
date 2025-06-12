@@ -1,19 +1,22 @@
 {
   "dependencies": {
+    "com.heurekagames.assethunterpro": {
+      "version": "file:com.heurekagames.assethunterpro",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "com.heurekagames.utils": {
+      "version": "file:com.heurekagames.utils",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.starphaselab.core": {
       "version": "file:com.starphaselab.core",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
-    },
-    "com.starphaselab.rngneeds": {
-      "version": "file:com.starphaselab.rngneeds",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.unity.collections": "1.2.4",
-        "com.starphaselab.core": "0.1.2"
-      }
     },
     "com.unity.2d.animation": {
       "version": "10.1.4",
@@ -29,8 +32,8 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.aseprite": {
-      "version": "1.1.7",
-      "depth": 1,
+      "version": "1.1.9",
+      "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.2d.common": "6.0.6",
@@ -42,7 +45,7 @@
     },
     "com.unity.2d.common": {
       "version": "9.0.7",
-      "depth": 2,
+      "depth": 1,
       "source": "registry",
       "dependencies": {
         "com.unity.burst": "1.8.4",
@@ -108,7 +111,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ai.navigation": {
-      "version": "2.0.6",
+      "version": "2.0.7",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -117,7 +120,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.behavior": {
-      "version": "1.0.8",
+      "version": "1.0.9",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -130,6 +133,15 @@
         "com.unity.nuget.newtonsoft-json": "3.2.1",
         "com.unity.modules.particlesystem": "1.0.0",
         "com.unity.modules.unitywebrequest": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.bindings.openimageio": {
+      "version": "1.0.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.collections": "1.0.0"
       },
       "url": "https://packages.unity.com"
     },
@@ -235,7 +247,7 @@
     },
     "com.unity.mathematics": {
       "version": "1.3.2",
-      "depth": 2,
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -271,6 +283,17 @@
         "com.unity.modules.imgui": "1.0.0",
         "com.unity.modules.physics": "1.0.0",
         "com.unity.settings-manager": "1.0.3"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.recorder": {
+      "version": "5.1.2",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.timeline": "1.8.7",
+        "com.unity.collections": "1.2.4",
+        "com.unity.bindings.openimageio": "1.0.0"
       },
       "url": "https://packages.unity.com"
     },

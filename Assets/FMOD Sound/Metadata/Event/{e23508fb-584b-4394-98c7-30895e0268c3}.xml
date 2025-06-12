@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="Event" id="{e23508fb-584b-4394-98c7-30895e0268c3}">
+		<property name="name">
+			<value>skeleton die</value>
+		</property>
+		<property name="outputFormat">
+			<value>2</value>
+		</property>
+		<relationship name="folder">
+			<destination>{a9244f8a-4045-4eaf-b098-4564e43a8458}</destination>
+		</relationship>
+		<relationship name="mixerInput">
+			<destination>{e23d0c86-a14c-4463-b518-8c11fc931375}</destination>
+		</relationship>
+		<relationship name="banks">
+			<destination>{0b294ce9-98fa-48cf-9be2-9fab6d86a035}</destination>
+		</relationship>
+	</object>
+	<object class="MixerInput" id="{e23d0c86-a14c-4463-b518-8c11fc931375}">
+		<relationship name="output">
+			<destination>{dcef9976-f8e9-43a9-9c6c-ae1a81b3a2fa}</destination>
+		</relationship>
+	</object>
+</objects>

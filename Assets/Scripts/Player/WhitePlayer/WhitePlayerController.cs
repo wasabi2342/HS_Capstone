@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections;
 using Photon.Pun;
 using UnityEngine.UI;
@@ -11,58 +11,62 @@ public enum WhitePlayerState { Idle, Run, BasicAttack, Hit, Dash, Skill, Ultimat
 
 public class WhitePlayerController : ParentPlayerController
 {
-    [Header("´ë½¬ ¼³Á¤")]
+
+
+    [Header("ëŒ€ì‰¬ ì„¤ì •")]
     public float dashDistance = 2f;
     public float dashDoubleClickThreshold = 0.3f;
+    public float dashDuration = 0.2f;
+    private Vector3 dashDirection;
+    private Vector3 facingDirection = Vector3.right;
     //private float lastDashClickTime = -Mathf.Infinity;
 
-    [Header("Áß½ÉÁ¡ ¼³Á¤")]
-    [Tooltip("±âº» CenterPoint (¾Ö´Ï¸ŞÀÌ¼Ç ÀÌº¥Æ® µî¿¡¼­ »ç¿ë)")]
+    [Header("ì¤‘ì‹¬ì  ì„¤ì •")]
+    [Tooltip("ê¸°ë³¸ CenterPoint (ì• ë‹ˆë©”ì´ì…˜ ì´ë²¤íŠ¸ ë“±ì—ì„œ ì‚¬ìš©)")]
     public Transform centerPoint;
     public float centerPointOffsetDistance = 0.5f;
-    [Tooltip("8¹æÇâ CenterPoint ¹è¿­ (¼ø¼­: 0=À§, 1=¿ì»ó, 2=¿À¸¥ÂÊ, 3=¿ìÇÏ, 4=¾Æ·¡, 5=ÁÂÇÏ, 6=¿ŞÂÊ, 7=ÁÂ»ó)")]
+    [Tooltip("8ë°©í–¥ CenterPoint ë°°ì—´ (ìˆœì„œ: 0=ìœ„, 1=ìš°ìƒ, 2=ì˜¤ë¥¸ìª½, 3=ìš°í•˜, 4=ì•„ë˜, 5=ì¢Œí•˜, 6=ì™¼ìª½, 7=ì¢Œìƒ)")]
     public Transform[] centerPoints = new Transform[8];
     private int currentDirectionIndex = 0;
 
-    // ÀÌµ¿ ÀÔ·Â ¹× »óÅÂ
+    // ì´ë™ ì…ë ¥ ë° ìƒíƒœ
     private Vector2 moveInput;
     public WhitePlayerState currentState = WhitePlayerState.Idle;
     public WhitePlayerState nextState = WhitePlayerState.Idle;
 
     protected override void Awake()
-
     {
-        //AttackCollider = GetComponentInChildren<WhitePlayerAttackZone>();
-
         base.Awake();
+        facingDirection = Vector3.right;
     }
 
-    private void Start()
+
+    protected override void Start()
     {
+        base.Start();
+
         currentState = WhitePlayerState.Idle;
 
-        if (photonView.IsMine)
+        if (photonView.IsMine || !PhotonNetwork.IsConnected)
         {
-            if (photonView.IsMine)
+            if (stunOverlay != null) stunOverlay.enabled = false;
+            if (stunSlider != null) stunSlider.gameObject.SetActive(false);
+            if (hpBar != null) hpBar.enabled = true;
+
+            gaugeInteraction = GetComponentInChildren<GaugeInteraction>();
+
+            if (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil != null && runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil != 0)
             {
-
-                if (stunOverlay != null) stunOverlay.enabled = false;
-                if (stunSlider != null) stunSlider.enabled = false;
-                if (hpBar != null) hpBar.enabled = true;
-
-                gaugeInteraction = GetComponentInChildren<GaugeInteraction>();
-
-                var eventController = GetComponent<WhitePlayercontroller_event>();
-                if (eventController != null)
-                {
-                    //eventController.OnInteractionEvent += HandleReviveInteraction;
-                }
+                animator.SetInteger("mouseRightBlessing", runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil);
             }
         }
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
+        if (!photonView.IsMine)
+            return;
+
         if (currentState == WhitePlayerState.Death)
         {
             if (Input.GetKeyDown(KeyCode.X))
@@ -74,19 +78,23 @@ public class WhitePlayerController : ParentPlayerController
 
         UpdateCenterPoint();
         HandleMovement();
+
     }
 
-    // ÀÔ·Â Ã³¸® °ü·Ã
-    // WhitePlayercontroller_event.cs¿¡¼­ È£ÃâÇÏ¿© ÀÌµ¿ ÀÔ·ÂÀ» ¼³Á¤
+    // ì…ë ¥ ì²˜ë¦¬ ê´€ë ¨
     public void SetMoveInput(Vector2 input)
     {
         moveInput = input;
     }
 
-    // ÀÌµ¿ Ã³¸®
+    // ì´ë™ ì²˜ë¦¬
     private void HandleMovement()
     {
-        if (currentState == WhitePlayerState.Death) return;
+        if (IsInputLocked) return;
+        if (currentState == WhitePlayerState.Death || currentState == WhitePlayerState.Stun)
+        {
+            return;
+        }
 
         float h = moveInput.x;
         float v = moveInput.y;
@@ -100,10 +108,6 @@ public class WhitePlayerController : ParentPlayerController
                 if (!animator.GetBool("Pre-Input"))
                 {
                     animator.SetBool("Pre-Input", true);
-                    if (PhotonNetwork.IsConnected)
-                    {
-                        photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                    }
                 }
             }
             else if (nextState > WhitePlayerState.Run)
@@ -111,6 +115,8 @@ public class WhitePlayerController : ParentPlayerController
                 if (animator.GetBool("run"))
                 {
                     animator.SetBool("run", false);
+                    if (PhotonNetwork.IsConnected)
+                        SetBoolParameter("run", false);
                 }
             }
         }
@@ -123,28 +129,33 @@ public class WhitePlayerController : ParentPlayerController
             if (animator.GetBool("run"))
             {
                 animator.SetBool("run", false);
+                if (PhotonNetwork.IsConnected)
+                    SetBoolParameter("run", false);
             }
             return;
 
         }
 
-
         if (currentState != WhitePlayerState.Run)
             return;
 
-
-
-        if (isMoving)
+        if (currentState == WhitePlayerState.Run)
         {
-            Vector3 moveDir;
-            moveDir = (Mathf.Abs(v) > 0.01f) ? new Vector3(h, 0, v).normalized : new Vector3(h, 0, 0).normalized;
-            transform.Translate(moveDir * runTimeData.moveSpeed * Time.deltaTime, Space.World);
-        }
+            // ì—¬ê¸°ì„œë§Œ ë°©í–¥ ê³ ì • ê°±ì‹ 
+            if (h > 0.01f) facingDirection = Vector3.right;
+            else if (h < -0.01f) facingDirection = Vector3.left;
 
-        if (animator != null)
-        {
+            // ì´ë™
+            Vector3 moveDir = (Mathf.Abs(v) > 0.01f)
+                ? new Vector3(h, 0, v).normalized
+                : new Vector3(h, 0, 0).normalized;
+            rb.MovePosition(rb.position + moveDir * MoveSpeed * Time.fixedDeltaTime);
+
             animator.SetFloat("moveX", h);
             animator.SetFloat("moveY", v);
+
+            SetFloatParameter("moveX", h);
+            SetFloatParameter("moveY", v);
         }
     }
 
@@ -164,69 +175,44 @@ public class WhitePlayerController : ParentPlayerController
         }
     }
 
+
     private int DetermineDirectionIndex(Vector2 input)
     {
         if (input.magnitude < 0.01f)
             return currentDirectionIndex;
+
         float angle = Mathf.Atan2(input.x, input.y) * Mathf.Rad2Deg;
         if (angle < 0) angle += 360f;
-        int idx = Mathf.RoundToInt(angle / 45f) % 8;
-        return idx;
+        return Mathf.RoundToInt(angle / 45f) % 8;
     }
 
-    // ´ë½¬ Ã³¸®
+    private Vector3 lastFacingDirection = Vector3.right;
 
     public void HandleDash()
     {
-        if (currentState == WhitePlayerState.Death || currentState == WhitePlayerState.Dash)
+        if (currentState == WhitePlayerState.Death
+         || currentState == WhitePlayerState.Dash
+         || currentState == WhitePlayerState.Stun)
             return;
-        if (currentState == WhitePlayerState.Stun)
-            return;
+
         if (!cooldownCheckers[(int)Skills.Space].CanUse())
             return;
-        currentState = WhitePlayerState.Dash;
-        animator.ResetTrigger("run");
 
-        animator.SetBool("dash", true);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "dash", true);
-        }
-        Vector3 dashDir = new Vector3(moveInput.x, 0, 0);
+        nextState = WhitePlayerState.Dash;
 
-        if (dashDir == Vector3.zero)
-        {
-            dashDir = Vector3.right;
-        }
-
-        StartCoroutine(DoDash(dashDir));
+        dashDirection = facingDirection;
     }
-
-    private IEnumerator DoDash(Vector3 dashDir)
-    {
-        Vector3 startPos = transform.position;
-        Vector3 targetPos = startPos + dashDir.normalized * dashDistance;
-        yield return null;
-        transform.position = targetPos;
-    }
-
 
     public void HandleNormalAttack()
     {
 
-        if (currentState != WhitePlayerState.Death)
+        if (currentState != WhitePlayerState.Death || currentState != WhitePlayerState.Stun)
         {
             if (currentState == WhitePlayerState.Parry)
             {
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
                 animator.SetBool("basicattack", true);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "basicattack", true);
-                }
-                //photonView.RPC("PlayAnimation", RpcTarget.All, "basicattack");
                 currentState = WhitePlayerState.Counter;
                 return;
             }
@@ -235,58 +221,27 @@ public class WhitePlayerController : ParentPlayerController
                 animator.SetBool("Counter", true);
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Counter", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                }
                 return;
             }
-            else if (nextState < WhitePlayerState.BasicAttack)
+            else if (nextState < WhitePlayerState.BasicAttack && cooldownCheckers[(int)Skills.Mouse_L].CanUse())
             {
 
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                }
                 nextState = WhitePlayerState.BasicAttack;
             }
 
-            if (attackStack >= 4)
-            {
-                animator.SetBool("Pre-Attack", false);
-                animator.SetBool("Pre-Input", false);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", false);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", false);
-                }
-                currentState = WhitePlayerState.Idle;
-                attackStack = 0;
-                AttackStackUpdate?.Invoke(attackStack);
-                Debug.Log("°ø°İ ½ºÅÃ 4 µµ´Ş: ÄŞº¸ Á¾·á ¹× ÃÊ±âÈ­");
-                return;
-            }
-
-            if (currentState == WhitePlayerState.BasicAttack)
+            if (currentState == WhitePlayerState.BasicAttack && cooldownCheckers[(int)Skills.Mouse_L].CanUse())
             {
 
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
                 animator.SetBool("Pre-Input", true);
-
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                }
             }
         }
     }
 
-    // Æ¯¼ö °ø°İ
+    // íŠ¹ìˆ˜ ê³µê²©
     public void HandleSpecialAttack()
     {
         if (currentState != WhitePlayerState.Death)
@@ -298,19 +253,12 @@ public class WhitePlayerController : ParentPlayerController
                 animator.SetBool("Pre-Input", true);
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                }
             }
 
         }
     }
 
-    // ±Ã±Ø±â °ø°İ 
+    // ê¶ê·¹ê¸° ê³µê²© 
     public void HandleUltimateAttack()
     {
         if (currentState != WhitePlayerState.Death)
@@ -323,73 +271,99 @@ public class WhitePlayerController : ParentPlayerController
                 animator.SetBool("Pre-Input", true);
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                }
             }
         }
     }
 
-
-    //public WhitePlayerAttackZone AttackCollider;
-
-    // °ø°İ ¾Ö´Ï¸ŞÀÌ¼Ç ÀÌº¥Æ®¿ë ½ºÅÓ (WhitePlayerController_AttackStack¿¡¼­ È£Ãâ) 
+    // ê³µê²© ì• ë‹ˆë©”ì´ì…˜ ì´ë²¤íŠ¸ìš© ìŠ¤í… (WhitePlayerController_AttackStackì—ì„œ í˜¸ì¶œ) 
 
     public override void StartMouseRCoolDown()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.StartMouseRCoolDown();
     }
 
     public override void StartShiftCoolDown()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.StartShiftCoolDown();
     }
 
     public override void StartUltimateCoolDown()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.StartUltimateCoolDown();
     }
 
     public override void StartAttackCooldown()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.StartAttackCooldown();
     }
 
     public override void StartSpaceCooldown()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.StartSpaceCooldown();
     }
 
     public void OnAttackPreAttckStart()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         animator.SetBool("CancleState", true);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", true);
-        }
-        Debug.Log("¼±µô ½ÃÀÛ");
+        Debug.Log("ì„ ë”œ ì‹œì‘");
     }
 
     public void OnAttackPreAttckEnd()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         animator.SetBool("CancleState", false);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
-        }
-        Debug.Log("¼±µô Á¾·á");
+        Debug.Log("ì„ ë”œ ì¢…ë£Œ");
     }
 
     public void OnMoveFront(float value)
     {
-        transform.Translate((GetMouseWorldPosition() - transform.position).normalized * value);
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
+        rb.MovePosition(rb.position + ((GetMouseWorldPosition() - transform.position).normalized * value));
     }
 
-    private Vector3 GetMouseWorldPosition()
+    public void OnMoveFront2(float value)
+    {
+        Vector3 movement;
+        float h = moveInput.x;
+        float v = moveInput.y;
+        bool isMoving = (Mathf.Abs(h) > 0.01f || Mathf.Abs(v) > 0.01f);
+
+        if (isMoving)
+        {
+            movement = (Mathf.Abs(v) > 0.01f)
+                  ? new Vector3(h, 0, v).normalized
+                  : new Vector3(h, 0, 0).normalized;
+
+            movement = movement * value;
+        }
+
+
+        else { movement = dashDirection * value; }
+        rb.MovePosition(rb.position + movement);
+    }
+    public Vector3 GetMouseWorldPosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Plane groundPlane = new Plane(Vector3.up, new Vector3(0, transform.position.y, 0));
@@ -403,298 +377,272 @@ public class WhitePlayerController : ParentPlayerController
         return Vector3.zero;
     }
 
-    #region ½ºÅ³ ÀÌÆåÆ® »ı¼º
+    #region ìŠ¤í‚¬ ì´í™íŠ¸ ìƒì„±
 
-    // ±Ã±Ø±â ÀÌÆåÆ® »ı¼º
+    // ê¶ê·¹ê¸° ì´í™íŠ¸ ìƒì„±
     public void CreateUltimateEffect()
     {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
+        float damage = (runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
+
+        // Photonì— ì ‘ì† ì¤‘ì¸ì§€ í™•ì¸í•˜ì—¬ isMine ì„¤ì •
+        bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
+
+        SkillEffect skillEffect = null;
+        Vector3 targetPos = transform.position;
+        string effectPath;
         if (animator.GetBool("Right"))
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}", transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag);
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}"), transform.position + new Vector3(8.5f, 0, 0), Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag);
-            }
+            effectPath = $"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Right_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos + new Vector3(6f, 0, 0), Quaternion.identity);
         }
         else
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}", transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag);
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}"), transform.position + new Vector3(-8.5f, 0, 0), Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag);
-            }
+            effectPath = $"SkillEffect/WhitePlayer/WhitePlayer_Ultimateffect_Left_{runTimeData.skillWithLevel[(int)Skills.R].skillData.Devil}";
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos + new Vector3(-6f, 0, 0), Quaternion.identity);
         }
+
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, false, animator.speed);
+
+        skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.R].skillData.ID, this) : null);
     }
 
-    // ÆòÅ¸ ÀÌÆåÆ® »ı¼º
+    // í‰íƒ€ ì´í™íŠ¸ ìƒì„±
     public void CreateBasicAttackEffect()
     {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
+        float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
+        float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * coefficient * damageBuff;
+
+        // Photonì— ì ‘ì† ì¤‘ì¸ì§€ í™•ì¸í•˜ì—¬ isMine ì„¤ì •
+        bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
+
+        SkillEffect skillEffect = null;
+        Vector3 targetPos = transform.position;
+        string effectPath;
+
         if (animator.GetBool("Right"))
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
-                    float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * coefficient;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Attack{attackStack}_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
-                    skillEffect.transform.parent = transform;
-                }
-            }
-            else
-            {
-                float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
-                float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * coefficient;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Attack{attackStack}_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
-                skillEffect.transform.parent = transform;
-            }
+            effectPath = $"SkillEffect/WhitePlayer/Attack{attackStack}_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}";
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
         }
         else
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
-                    float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * coefficient;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Attack{attackStack}_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.transform.parent = transform;
-                    skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
-                }
-            }
-            else
-            {
-                float coefficient = DataManager.Instance.FindDamageByCharacterAndComboIndex(characterBaseStats.characterId, attackStack);
-                float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * coefficient;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Attack{attackStack}_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.transform.parent = transform;
-                skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this));
-            }
+            effectPath = $"SkillEffect/WhitePlayer/Attack{attackStack}_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.Devil}";
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), targetPos, Quaternion.identity);
         }
+
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true, animator.speed);
+
+        skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_L].skillData.ID, this) : null);
+
+        //// 4) ë„‰ë°± ë°°ìˆ˜ ì„¤ì • (ì¶”ê°€ëœ ì½”ë“œ)
+        ////    attackStackì´ 1ì¼ ë• 1.0, 2ì¼ ë• 1.2, 3ì¼ ë• 1.4 ì‹ìœ¼ë¡œ
+        //float knockbackMultiplier = 1f + 0.2f * (attackStack - 1);
+        //skillEffect.SetKnockbackMultiplier(knockbackMultiplier);
+
+        skillEffect.transform.parent = transform;
     }
 
-    // ½ÃÇÁÆ® ½ºÅ³ ÀÌÆåÆ® »ı¼º
+    // ì‹œí”„íŠ¸ ìŠ¤í‚¬ ì´í™íŠ¸ ìƒì„±
     public void CreateShiftSkillEffect()
     {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
+        float damage = (runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
+
+        // Photonì— ì ‘ì† ì¤‘ì¸ì§€ í™•ì¸í•˜ì—¬ isMine ì„¤ì •
+        bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
+
+        SkillEffect skillEffect = null;
+        Vector3 targetPos = transform.position;
+        string effectPath;
+
         if (animator.GetBool("Right"))
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/ShiftSkill_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this));
-                    skillEffect.transform.parent = transform;
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/ShiftSkill_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this));
-                skillEffect.transform.parent = transform;
-            }
+            effectPath = $"SkillEffect/WhitePlayer/ShiftSkill_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}";
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
         }
         else
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/ShiftSkill_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.transform.parent = transform;
-                    skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this));
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/ShiftSkill_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.transform.parent = transform;
-                skillEffect.Init(damage, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this));
-            }
+            effectPath = $"SkillEffect/WhitePlayer/ShiftSkill_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.Devil}";
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
         }
+
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true, animator.speed);
+
+        skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, isMine ? playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Shift_L].skillData.ID, this) : null);
+        skillEffect.transform.parent = transform;
     }
 
-    // Ä«¿îÅÍ ÀÌÆåÆ® »ı¼º
+    // ì¹´ìš´í„° ì´í™íŠ¸ ìƒì„±
     public void CreateCounterSkillEffect()
     {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
+        float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
+
+        // Photonì— ì ‘ì† ì¤‘ì¸ì§€ í™•ì¸í•˜ì—¬ isMine ì„¤ì •
+        bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
+
+        SkillEffect skillEffect = null;
+        Vector3 targetPos = transform.position;
+        string effectPath;
+
         if (animator.GetBool("Right"))
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Counter_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag);
-                    skillEffect.transform.parent = transform;
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Counter_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag);
-                skillEffect.transform.parent = transform;
-            }
+            effectPath = $"SkillEffect/WhitePlayer/Counter_Right_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
         }
         else
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Counter_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.transform.parent = transform;
-                    skillEffect.Init(damage, StartHitlag);
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Counter_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}"), transform.position, Quaternion.identity);
-                skillEffect.transform.parent = transform;
-                skillEffect.Init(damage, StartHitlag);
-            }
+            effectPath = $"SkillEffect/WhitePlayer/Counter_Left_Effect_{runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.Devil}";
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
         }
+
+        //if (PhotonNetwork.IsConnected && photonView.IsMine)
+        //    photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos);
+
+        skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, null);
+        skillEffect.transform.parent = transform;
     }
 
-    // ÆĞ¸µ ÀÌÆåÆ® »ı¼º
+    // íŒ¨ë§ ì´í™íŠ¸ ìƒì„±
     public void CreateParrySkillEffect()
     {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
+        float damage = (runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower) * damageBuff;
+
+        // Photonì— ì ‘ì† ì¤‘ì¸ì§€ í™•ì¸í•˜ì—¬ isMine ì„¤ì •
+        bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
+
+        SkillEffect skillEffect = null;
+        Vector3 targetPos = transform.position;
+        string effectPath;
+
         if (animator.GetBool("Right"))
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Parry_Right_Effect", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.Init(damage, StartHitlag);
-                    skillEffect.transform.parent = transform;
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Parry_Right_Effect"), transform.position, Quaternion.identity);
-                skillEffect.Init(damage, StartHitlag);
-                skillEffect.transform.parent = transform;
-            }
+            effectPath = "SkillEffect/WhitePlayer/Parry_Right_Effect";
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
         }
         else
         {
-            if (PhotonNetwork.IsConnected)
-            {
-                if (photonView.IsMine)
-                {
-                    float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                    SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/WhitePlayer/Parry_Left_Effect", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                    skillEffect.transform.parent = transform;
-                    skillEffect.Init(damage, StartHitlag);
-                }
-            }
-            else
-            {
-                float damage = runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AttackDamageCoefficient * runTimeData.attackPower + runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.AbilityPowerCoefficient * runTimeData.abilityPower;
-                SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/WhitePlayer/Parry_Left_Effect"), transform.position, Quaternion.identity);
-                skillEffect.transform.parent = transform;
-                skillEffect.Init(damage, StartHitlag);
-            }
+            effectPath = "SkillEffect/WhitePlayer/Parry_Left_Effect";
+            skillEffect = Instantiate(Resources.Load<SkillEffect>(effectPath), transform.position, Quaternion.identity);
         }
+
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+            photonView.RPC("CreateAnimation", RpcTarget.Others, effectPath, targetPos, true, animator.speed);
+
+        skillEffect.Init(isMine ? damage : 0, StartHitlag, isMine, null);
+        skillEffect.transform.parent = transform;
     }
 
-    // ½ºÆäÀÌ½º ÀÌÆåÆ® ÄÁÅ×ÀÌ³Ê¿¡ È¿°ú¸¸ ³ªÅ¸³ªµµ·Ï
+    // ìŠ¤í˜ì´ìŠ¤ ì´í™íŠ¸ ì»¨í…Œì´ë„ˆì— íš¨ê³¼ë§Œ ë‚˜íƒ€ë‚˜ë„ë¡
     public void CreateSpaceSkillEffect()
     {
-        if (PhotonNetwork.IsConnected)
+        if (!photonView.IsMine)
         {
-            if (photonView.IsMine)
-            {
-                SkillEffect skillEffect = PhotonNetwork.Instantiate($"SkillEffect/EffectContainer", transform.position, Quaternion.identity).GetComponent<SkillEffect>();
-                skillEffect.transform.parent = transform;
-                skillEffect.Init(0, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Space].skillData.ID, this));
-            }
+            return;
         }
-        else
-        {
-            SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/EffectContainer"), transform.position, Quaternion.identity);
-            skillEffect.transform.parent = transform;
-            skillEffect.Init(0, StartHitlag, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Space].skillData.ID, this));
-        }
+        Debug.Log("ìŠ¤í˜ì´ìŠ¤ë°” ì´í™íŠ¸ ìƒì„±");
+        // Photonì— ì ‘ì† ì¤‘ì´ ì•„ë‹ ë•Œ photonView.IsMine ê°’ì€ falseë¡œ ì²˜ë¦¬
+        bool isMine = PhotonNetwork.IsConnected ? photonView.IsMine : true;
+
+        SkillEffect skillEffect = Instantiate(Resources.Load<SkillEffect>($"SkillEffect/EffectContainer"), transform.position, Quaternion.identity);
+        skillEffect.transform.parent = transform;
+        skillEffect.Init(0, StartHitlag, isMine, playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Space].skillData.ID, this));
     }
 
     #endregion
 
+    [PunRPC]
+    public override void CreateAnimation(string name, Vector3 pos, bool isChild, float speed)
+    {
+        base.CreateAnimation(name, pos, isChild, speed);
+    }
+
     public void GetUltimateBonus()
     {
-        Debug.Log("±Ã±Ø±â ³³µµ ¹öÇÁ");
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
+        Debug.Log("ê¶ê·¹ê¸° ë‚©ë„ ë²„í”„");
     }
 
     public void UltimateMove(float distance)
     {
-        transform.position += new Vector3(distance, 0, 0);
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
+        //transform.position += new Vector3(distance, 0, 0);
+        Vector3 targetPosition = rb.position + new Vector3(distance, 0, 0);
+        rb.MovePosition(targetPosition);
     }
 
     public void OnAttackAllowNextInput()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         animator.SetBool("FreeState", true);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", true);
-        }
-        Debug.Log("ÀÚÀ¯»óÅÂ");
+        //if (PhotonNetwork.IsConnected)
+        //{
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", true);
+        //}
+        Debug.Log("ììœ ìƒíƒœ");
     }
 
     public void OnAttackAnimationEnd()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         attackStack = 0;
         AttackStackUpdate?.Invoke(attackStack);
         animator.SetBool("Pre-Attack", false);
         animator.SetBool("FreeState", false);
         animator.SetBool("CancleState", false);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", false);
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", false);
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
-        }
-        Debug.Log(" ¾Ö´Ï¸ŞÀÌ¼Ç Á¾·á");
+        //if (PhotonNetwork.IsConnected)
+        //{
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", false);
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "FreeState", false);
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "CancleState", false);
+        //}
+        Debug.Log(" ì• ë‹ˆë©”ì´ì…˜ ì¢…ë£Œ");
     }
 
     public void InitAttackStak()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         attackStack = 0;
         AttackStackUpdate?.Invoke(attackStack);
     }
 
-    // °¡µå/ÆĞ¸µ Ã³¸®
+    // ê°€ë“œ/íŒ¨ë§ ì²˜ë¦¬
     public void HandleGuard()
     {
         if (currentState != WhitePlayerState.Death)
@@ -707,32 +655,37 @@ public class WhitePlayerController : ParentPlayerController
                 animator.SetBool("Pre-Input", true);
                 Vector3 mousePos = GetMouseWorldPosition();
                 animator.SetBool("Right", mousePos.x > transform.position.x);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
-                }
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Attack", true);
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Pre-Input", true);
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "Right", mousePos.x > transform.position.x);
+                //}
             }
         }
     }
 
-    // ÇÇ°İ ¹× »ç¸Á Ã³¸®
-    public override void TakeDamage(float damage)
+    // í”¼ê²© ë° ì‚¬ë§ ì²˜ë¦¬
+    public override void TakeDamage(float damage, Vector3 attackerPos, AttackerType attackerType = AttackerType.Default)
     {
+        if (PhotonNetwork.IsConnected && !photonView.IsMine)
+        {
+            return;
+        }
         if (currentState == WhitePlayerState.Death || currentState == WhitePlayerState.Stun)
         {
             return;
         }
+        AudioManager.Instance.PlayOneShot("event:/Character/Common/Character Hit", transform.position);
         if (isInvincible)
         {
             if (currentState == WhitePlayerState.Guard)
             {
                 animator.SetBool("parry", true);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "parry", true);
-                }
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "parry", true);
+                //}
                 //photonView.RPC("PlayAnimation", RpcTarget.All, "parry");
 
                 currentState = WhitePlayerState.Parry;
@@ -742,9 +695,9 @@ public class WhitePlayerController : ParentPlayerController
             return;
         }
 
-        base.TakeDamage(damage);
+        base.TakeDamage(damage, attackerPos);
 
-        Debug.Log("ÇÃ·¹ÀÌ¾î Ã¼·Â: " + runTimeData.currentHealth);
+        Debug.Log("í”Œë ˆì´ì–´ ì²´ë ¥: " + runTimeData.currentHealth);
 
         if (runTimeData.currentHealth <= 0)
         {
@@ -764,55 +717,56 @@ public class WhitePlayerController : ParentPlayerController
                 //photonView.RPC("PlayAnimation", RpcTarget.All, "hit");
 
                 animator.SetBool("hit", true);
-                if (PhotonNetwork.IsConnected)
-                {
-                    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "hit", true);
-                }
+                //if (PhotonNetwork.IsConnected)
+                //{
+                //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "hit", true);
+                //}
                 currentState = WhitePlayerState.Hit;
             }
             //StartCoroutine(CoHitReaction());
         }
-
-
     }
+
     [PunRPC]
-    public override void DamageToMaster(float damage)
+    public override void DamageToMaster(float damage, Vector3 attakerPos)
     {
-        base.DamageToMaster(damage);
+        base.DamageToMaster(damage, attakerPos);
     }
 
     [PunRPC]
     public override void UpdateHP(float hp)
     {
         base.UpdateHP(hp);
-        Debug.Log(photonView.ViewID + "ÇÃ·¹ÀÌ¾î Ã¼·Â: " + runTimeData.currentHealth);
+        Debug.Log(photonView.ViewID + "í”Œë ˆì´ì–´ ì²´ë ¥: " + runTimeData.currentHealth);
 
         if (runTimeData.currentHealth <= 0)
         {
             if (currentState != WhitePlayerState.Stun)
             {
-                currentState = WhitePlayerState.Stun;
+                if (photonView.IsMine)
+                    EnterStunState();
             }
         }
 
-        Debug.Log(photonView.ViewID + " ÇÃ·¹ÀÌ¾î Ã¼·Â ¾÷µ¥ÀÌÆ®µÊ: " + runTimeData.currentHealth);
+        Debug.Log(photonView.ViewID + " í”Œë ˆì´ì–´ ì²´ë ¥ ì—…ë°ì´íŠ¸ë¨: " + runTimeData.currentHealth);
     }
 
-    // ±âÀı
+    // ê¸°ì ˆ
 
-    // GaugeInteraction Å¬·¡½º ÂüÁ¶
+    // GaugeInteraction í´ë˜ìŠ¤ ì°¸ì¡°
     private GaugeInteraction gaugeInteraction;
 
     private Coroutine stunCoroutine;
     private void EnterStunState()
     {
         currentState = WhitePlayerState.Stun;
-        Debug.Log("ÇÃ·¹ÀÌ¾î ±âÀı");
+        Debug.Log("í”Œë ˆì´ì–´ ê¸°ì ˆ");
+        PhotonNetworkManager.Instance.ReportPlayerStun(photonView.Owner.ActorNumber);
         animator.SetBool("stun", true);
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC("SyncBoolParameter", RpcTarget.Others, "stun", true);
-        }
+        //if (PhotonNetwork.IsConnected)
+        //{
+        //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "stun", true);
+        //}
 
         if (stunCoroutine != null)
             StopCoroutine(stunCoroutine);
@@ -820,45 +774,73 @@ public class WhitePlayerController : ParentPlayerController
         stunCoroutine = StartCoroutine(CoStunDuration());
     }
 
+    private float stunElapsed;
+
     private IEnumerator CoStunDuration()
     {
         float stunDuration = 30f;
-        float elapsed = 0f;
+        stunElapsed = 0f;
 
         if (photonView.IsMine)
         {
             stunOverlay.enabled = true;
-            stunSlider.enabled = true;
+            stunSlider.gameObject.SetActive(true);
             stunSlider.fillAmount = 1f;
-            hpBar.enabled = false;  // ±âÀı »óÅÂ¿¡¼± Ã¼·Â¹Ù ºñÈ°¼ºÈ­
+            hpBar.enabled = false;  // ê¸°ì ˆ ìƒíƒœì—ì„  ì²´ë ¥ë°” ë¹„í™œì„±í™”
         }
 
-        while (elapsed < stunDuration && currentState == WhitePlayerState.Stun)
+        while (stunElapsed < stunDuration && currentState == WhitePlayerState.Stun)
         {
-            elapsed += Time.deltaTime;
+            stunElapsed += Time.deltaTime;
 
-            if (photonView.IsMine)
+            if (photonView.IsMine && stunSlider != null)
             {
-                stunSlider.fillAmount = 1 - (elapsed / stunDuration);
+                stunSlider.fillAmount = 1 - (stunElapsed / stunDuration);
             }
 
             yield return null;
         }
 
-        if (currentState == WhitePlayerState.Stun)  // ¿©ÀüÈ÷ ±âÀı»óÅÂ¶ó¸é
+        if (currentState == WhitePlayerState.Stun)  // ì—¬ì „íˆ ê¸°ì ˆìƒíƒœë¼ë©´
         {
             TransitionToDeath();
         }
 
         if (photonView.IsMine)
         {
-            stunSlider.enabled = false;
+            stunSlider.gameObject.SetActive(false);
             stunOverlay.enabled = false;
         }
     }
 
+    public override void ReduceReviveTime(float reduceTime = 1.0f)
+    {
+        if (photonView.IsMine)
+        {
+            OnHitEvent.Invoke();
+            stunElapsed += reduceTime;
+        }
+        else
+        {
+            photonView.RPC("RPC_ReduceReviveTime", photonView.Owner, reduceTime);
+        }
+    }
+
+    [PunRPC]
+    public void RPC_ReduceReviveTime(float reduceTime)
+    {
+        ReduceReviveTime(reduceTime);
+    }
+
+    public override bool IsStunState()
+    {
+        return currentState == WhitePlayerState.Stun;
+    }
+
     public void Revive()
     {
+        Debug.Log("Revive ì‹¤í–‰ë¨");
+
         if (!photonView.IsMine)
         {
             photonView.RPC("ReviveRPC", photonView.Owner);
@@ -872,23 +854,30 @@ public class WhitePlayerController : ParentPlayerController
                 stunCoroutine = null;
             }
 
+            SetTriggerParameter("revive");
+
             currentState = WhitePlayerState.Idle;
 
             if (photonView.IsMine)
             {
-                stunSlider.enabled = false;
+                stunSlider.gameObject.SetActive(false);
                 stunOverlay.enabled = false;
                 hpBar.enabled = true;
             }
 
             animator.SetBool("revive", true);
-            if (PhotonNetwork.IsConnected)
-            {
-                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "revive", true);
-            }
+            //if (PhotonNetwork.IsConnected)
+            //{
+            //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "revive", true);
+            //}
 
-            photonView.RPC("UpdateHP", RpcTarget.All, 20f); // ¿©±â¼­ Ã¼·Â ¾÷µ¥ÀÌÆ®
-            Debug.Log("ÇÃ·¹ÀÌ¾î ºÎÈ°");
+            photonView.RPC("UpdateHP", RpcTarget.All, 20f); // ì—¬ê¸°ì„œ ì²´ë ¥ ì—…ë°ì´íŠ¸
+            Debug.Log("í”Œë ˆì´ì–´ ë¶€í™œ");
+
+            if (PhotonNetworkManager.Instance != null)
+            {
+                PhotonNetworkManager.Instance.ReportPlayerRevive(photonView.Owner.ActorNumber);
+            }
         }
     }
 
@@ -902,42 +891,60 @@ public class WhitePlayerController : ParentPlayerController
     private void TransitionToDeath()
     {
         currentState = WhitePlayerState.Death;
-        Debug.Log("ÇÃ·¹ÀÌ¾î »ç¸Á");
+        Debug.Log("í”Œë ˆì´ì–´ ì‚¬ë§");
+
+        if (PhotonNetworkManager.Instance != null)
+        {
+            PhotonNetworkManager.Instance.ReportPlayerDeath(photonView.Owner.ActorNumber);
+        }
+
         if (photonView.IsMine)
         {
-            stunSlider.enabled = false;
+            stunSlider.gameObject.SetActive(false);
             stunOverlay.enabled = false;
-            hpBar.enabled = false;  // »ç¸Á½Ã Ã¼·Â¹Ù ºñÈ°¼ºÈ­
+            hpBar.enabled = false;  // ì‚¬ë§ì‹œ ì²´ë ¥ë°” ë¹„í™œì„±í™”
         }
 
         if (animator != null)
         {
             animator.SetBool("die", true);
-            if (PhotonNetwork.IsConnected)
-            {
-                photonView.RPC("SyncBoolParameter", RpcTarget.Others, "die", true);
-            }
+            //if (PhotonNetwork.IsConnected)
+            //{
+            //    photonView.RPC("SyncBoolParameter", RpcTarget.Others, "die", true);
+            //}
         }
     }
 
 
     public override void EnterInvincibleState()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.EnterInvincibleState();
     }
 
     public override void ExitInvincibleState()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.ExitInvincibleState();
     }
 
     public override void EnterSuperArmorState()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.EnterSuperArmorState();
     }
 
     public override void ExitSuperArmorState()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         base.ExitSuperArmorState();
     }
 
@@ -948,25 +955,25 @@ public class WhitePlayerController : ParentPlayerController
     }
 
     [PunRPC]
-    public void SyncBoolParameter(string parameter, bool value)
+    public override void SyncBoolParameter(string parameter, bool value)
     {
-        animator.SetBool(parameter, value);
+        base.SyncBoolParameter(parameter, value);
     }
 
-    public void SetBoolParameter(string parameter, bool value)
+    public override void SetBoolParameter(string parameter, bool value)
     {
-        photonView.RPC("SyncBoolParameter", RpcTarget.Others, parameter, value);
+        base.SetBoolParameter(parameter, value);
     }
 
     [PunRPC]
-    public void SyncIntParameter(string parameter, int value)
+    public override void SyncIntParameter(string parameter, int value)
     {
-        animator.SetInteger(parameter, value);
+        base.SyncIntParameter(parameter, value);
     }
 
-    public void SetIntParameter(string parameter, int value)
+    public override void SetIntParameter(string parameter, int value)
     {
-        photonView.RPC("SyncIntParameter", RpcTarget.Others, parameter, value);
+        base.SetIntParameter(parameter, value);
     }
 
     public override void RecoverHealth(float value)
@@ -991,6 +998,19 @@ public class WhitePlayerController : ParentPlayerController
 
     public void Guard_01_Crocell_AddShield()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+            return;
+
         playerBlessing.FindSkillEffect(runTimeData.skillWithLevel[(int)Skills.Mouse_R].skillData.ID, this).ApplyEffect();
+    }
+
+    public override void ShadowOff()
+    {
+        base.ShadowOff();
+    }
+
+    public override void ShadowOn()
+    {
+        base.ShadowOn();
     }
 }
